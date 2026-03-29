@@ -20,7 +20,7 @@ export class Intro extends Scene
     {
         this.load.setPath('assets');
         
-        this.load.image('background', 'bg2.png');
+        this.load.image('background', 'bg-garden-genesis.png');
         this.load.image('logo', 'tilegameheading.png');
     }
 
@@ -43,7 +43,7 @@ export class Intro extends Scene
         this.exit_text.setOrigin(0);
         this.exit_text.setInteractive({ useHandCursor: true });
         this.exit_text.on('pointerdown', () => {
-            this.scene.start('MainMenu');
+            this.scene.stop('Intro');
         });
 
         const credits_text = this.add.text(850, 650, 'Credits', {
