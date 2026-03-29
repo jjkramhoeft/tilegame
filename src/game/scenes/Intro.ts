@@ -1,0 +1,60 @@
+import { Scene } from 'phaser';
+
+const COLORS = {
+    title: '#5eb1da',
+    titleStroke: '#000000',
+    uiText: '#93c9e4',
+    uiTextBorder: '#000000',
+};
+
+export class Intro extends Scene
+{
+    exit_text: Phaser.GameObjects.Text;
+
+    constructor ()
+    {
+        super('Intro');
+    }
+
+    preload ()
+    {
+        this.load.setPath('assets');
+        
+        this.load.image('background', 'bg2.png');
+        this.load.image('logo', 'tilegameheading.png');
+    }
+
+    create ()
+    {
+        this.add.image(512, 384, 'background');
+        this.add.image(512, 150, 'logo').setDepth(100);
+
+        this.add.text(512, 415, 'Den 1. Have - Gartnerens Lærling', {
+            fontFamily: 'Arial Black', fontSize: 38, color: COLORS.title,
+            stroke: COLORS.titleStroke, strokeThickness: 8,
+            align: 'center'
+        }).setOrigin(0.5).setDepth(100);
+        
+        this.exit_text = this.add.text(915, 700, 'Exit', {
+            fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
+            stroke: COLORS.uiTextBorder, strokeThickness: 8,
+            align: 'center'
+        });
+        this.exit_text.setOrigin(0);
+        this.exit_text.setInteractive({ useHandCursor: true });
+        this.exit_text.on('pointerdown', () => {
+            this.scene.start('MainMenu');
+        });
+
+        const credits_text = this.add.text(850, 650, 'Credits', {
+            fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
+            stroke: COLORS.uiTextBorder, strokeThickness: 8,
+            align: 'center'
+        });
+        credits_text.setOrigin(0);
+        credits_text.setInteractive({ useHandCursor: true });
+        credits_text.on('pointerdown', () => {
+            this.scene.start('Credits');
+        });
+    }
+}

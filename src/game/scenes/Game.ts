@@ -20,7 +20,7 @@ export class Game extends Scene
         
         this.add.image(512, 384, 'background');
         this.add.image(512, 150, 'logo').setDepth(100);
-        this.add.text(512, 415, 'Den 1. Have - Gartnerens Lærling', {
+        this.add.text(512, 415, '...', {
             fontFamily: 'Arial Black', fontSize: 38, color: '#5eb1da',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'

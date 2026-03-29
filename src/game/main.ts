@@ -1,3 +1,4 @@
+import { Intro as GameIntro } from './scenes/Intro';
 import { Game as MainGame } from './scenes/Game';
 import { AUTO, Game, Scale,Types } from 'phaser';
 
@@ -14,6 +15,7 @@ const config: Types.Core.GameConfig = {
         autoCenter: Scale.CENTER_BOTH
     },
     scene: [
+        GameIntro,
         MainGame
     ]
 };
