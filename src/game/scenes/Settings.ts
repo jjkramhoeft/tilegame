@@ -18,7 +18,7 @@ const BG_OPTIONS = [
 
 export class Settings extends Scene
 {
-    private musicIndex = 3;
+    private musicIndex = 1;
     private bgIndex = 2;
 
     constructor ()

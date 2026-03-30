@@ -28,14 +28,19 @@ export class Intro extends Scene
 
     create ()
     {
-        const musicVolume = this.registry.get('musicVolume');
+        let musicVolume = this.registry.get('musicVolume');
+        if (typeof musicVolume !== 'number') {
+            this.registry.set('musicVolume', 0.1);
+            musicVolume = 0.1;
+        }
+
+        this.sound.volume = musicVolume;
 
         this.add.image(512, 384, 'background');
         this.add.image(512, 150, 'logo').setDepth(100);
 
         this.introMusic = this.sound.add('introMusic', {
-            loop: true,
-            volume: typeof musicVolume === 'number' ? musicVolume : 0.5
+            loop: true
         });
         this.introMusic.play();
 
@@ -79,6 +84,18 @@ export class Intro extends Scene
         settings_text.on('pointerdown', () => {
             this.introMusic?.stop();
             this.scene.start('Settings');
+        });
+
+        this.exit_text = this.add.text(20, 700, 'New Game', {
+            fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
+            stroke: COLORS.uiTextBorder, strokeThickness: 8,
+            align: 'center'
+        });
+        this.exit_text.setOrigin(0);
+        this.exit_text.setInteractive({ useHandCursor: true });
+        this.exit_text.on('pointerdown', () => {
+            this.introMusic?.stop();
+            this.scene.start('Game');
         });
 
         this.events.once('shutdown', () => {

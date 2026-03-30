@@ -29,11 +29,14 @@ export class Credits extends Scene
     {
         const centerY = this.cameras.main.centerY;
         const centerX = this.cameras.main.centerX;
-        const musicVolume = this.registry.get('musicVolume');
+        const registryVolume = this.registry.get('musicVolume');
+        const musicVolume = typeof registryVolume === 'number' ? registryVolume : 0.1;
+
+        this.registry.set('musicVolume', musicVolume);
+        this.sound.volume = musicVolume;
 
         this.creditsMusic = this.sound.add('creditsMusic', {
-            loop: true,
-            volume: typeof musicVolume === 'number' ? musicVolume : 0.5
+            loop: true
         });
         this.creditsMusic.play();
 
