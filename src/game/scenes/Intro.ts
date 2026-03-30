@@ -67,6 +67,18 @@ export class Intro extends Scene
             this.scene.start('Credits');
         });
 
+        const settings_text = this.add.text(827, 600, 'Settings', {
+            fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
+            stroke: COLORS.uiTextBorder, strokeThickness: 8,
+            align: 'center'
+        });
+        settings_text.setOrigin(0);
+        settings_text.setInteractive({ useHandCursor: true });
+        settings_text.on('pointerdown', () => {
+            this.introMusic?.stop();
+            this.scene.start('Settings');
+        });
+
         this.events.once('shutdown', () => {
             this.introMusic?.stop();
             this.introMusic?.destroy();

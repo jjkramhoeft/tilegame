@@ -9,6 +9,8 @@ const COLORS = {
 
 export class Credits extends Scene
 {
+    creditsMusic?: Phaser.Sound.BaseSound;
+
     constructor ()
     {
         super('Credits');
@@ -20,12 +22,19 @@ export class Credits extends Scene
         
         this.load.image('credit-bg', 'bg-lake.png');
         this.load.image('logo', 'tilegameheading.png');
+        this.load.audio('creditsMusic', 'music-awesome-god2.ogg');
     }
 
     create ()
     {
         const centerY = this.cameras.main.centerY;
         const centerX = this.cameras.main.centerX;
+
+        this.creditsMusic = this.sound.add('creditsMusic', {
+            loop: true,
+            volume: 0.05
+        });
+        this.creditsMusic.play();
 
         this.add.image(centerX, centerY, 'credit-bg');
         this.add.image(centerX+180, 120, 'logo').setDepth(100);
@@ -68,7 +77,14 @@ export class Credits extends Scene
         exit_text.setOrigin(0);
         exit_text.setInteractive({ useHandCursor: true });
         exit_text.on('pointerdown', () => {
+            this.creditsMusic?.stop();
             this.scene.start('Intro');
+        });
+
+        this.events.once('shutdown', () => {
+            this.creditsMusic?.stop();
+            this.creditsMusic?.destroy();
+            this.creditsMusic = undefined;
         });
     }
 }
