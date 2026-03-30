@@ -10,6 +10,7 @@ const COLORS = {
 export class Intro extends Scene
 {
     exit_text: Phaser.GameObjects.Text;
+    introMusic?: Phaser.Sound.BaseSound;
 
     constructor ()
     {
@@ -22,12 +23,19 @@ export class Intro extends Scene
         
         this.load.image('background', 'bg-garden-genesis.png');
         this.load.image('logo', 'tilegameheading.png');
+        this.load.audio('introMusic', 'music-awesome-god.ogg');
     }
 
     create ()
     {
         this.add.image(512, 384, 'background');
         this.add.image(512, 150, 'logo').setDepth(100);
+
+        this.introMusic = this.sound.add('introMusic', {
+            loop: true,
+            volume: 0.05
+        });
+        this.introMusic.play();
 
         this.add.text(512, 415, 'Den 1. Have - Gartnerens Lærling', {
             fontFamily: 'Arial Black', fontSize: 38, color: COLORS.title,
@@ -43,6 +51,7 @@ export class Intro extends Scene
         this.exit_text.setOrigin(0);
         this.exit_text.setInteractive({ useHandCursor: true });
         this.exit_text.on('pointerdown', () => {
+            this.introMusic?.stop();
             this.scene.stop('Intro');
         });
 
@@ -54,7 +63,14 @@ export class Intro extends Scene
         credits_text.setOrigin(0);
         credits_text.setInteractive({ useHandCursor: true });
         credits_text.on('pointerdown', () => {
+            this.introMusic?.stop();
             this.scene.start('Credits');
+        });
+
+        this.events.once('shutdown', () => {
+            this.introMusic?.stop();
+            this.introMusic?.destroy();
+            this.introMusic = undefined;
         });
     }
 }
