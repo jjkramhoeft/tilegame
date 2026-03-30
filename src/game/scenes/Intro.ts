@@ -28,12 +28,14 @@ export class Intro extends Scene
 
     create ()
     {
+        const musicVolume = this.registry.get('musicVolume');
+
         this.add.image(512, 384, 'background');
         this.add.image(512, 150, 'logo').setDepth(100);
 
         this.introMusic = this.sound.add('introMusic', {
             loop: true,
-            volume: 0.05
+            volume: typeof musicVolume === 'number' ? musicVolume : 0.5
         });
         this.introMusic.play();
 
