@@ -1,6 +1,10 @@
 import { Scene } from 'phaser';
 
 const TILE_SIZE = 64;
+const WATER_TILE_INDEX = 5;
+const LAVA_TILE_INDEX = 9;
+const WATER_ANIM_KEY = 'water-flow';
+const LAVA_ANIM_KEY = 'lava-flow';
 
 const MAP_DATA: number[][] = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -35,13 +39,25 @@ export class Game extends Scene
             frameWidth: TILE_SIZE,
             frameHeight: TILE_SIZE
         });
+        this.load.spritesheet('water', 'Water64.png', {
+            frameWidth: TILE_SIZE,
+            frameHeight: TILE_SIZE
+        });
        
     }
 
     create ()
     {
+        const baseLayerData = MAP_DATA.map((row) => row.map((tile) => {
+            if (tile === WATER_TILE_INDEX || tile === LAVA_TILE_INDEX) {
+                return -1;
+            }
+
+            return tile;
+        }));
+
         const map = this.make.tilemap({
-            data: MAP_DATA,
+            data: baseLayerData,
             tileWidth: TILE_SIZE,
             tileHeight: TILE_SIZE
         });
@@ -53,7 +69,50 @@ export class Game extends Scene
         }
 
         map.createLayer(0, tileset, 0, 0);
+        this.createAnimatedTileAnims();
+        this.createAnimatedTiles();
 
         this.cameras.main.setBounds(0, 0, 16 * TILE_SIZE, 16 * TILE_SIZE);
+    }
+
+    private createAnimatedTileAnims (): void
+    {
+        if (!this.anims.exists(WATER_ANIM_KEY)) {
+            this.anims.create({
+                key: WATER_ANIM_KEY,
+                frames: this.anims.generateFrameNumbers('water', { start: 0, end: 7 }),
+                frameRate: 8,
+                repeat: -1
+            });
+        }
+
+        if (!this.anims.exists(LAVA_ANIM_KEY)) {
+            this.anims.create({
+                key: LAVA_ANIM_KEY,
+                frames: this.anims.generateFrameNumbers('water', { start: 32, end: 39 }),
+                frameRate: 8,
+                repeat: -1
+            });
+        }
+    }
+
+    private createAnimatedTiles (): void
+    {
+        for (let y = 0; y < MAP_DATA.length; y++) {
+            for (let x = 0; x < MAP_DATA[y].length; x++) {
+                const tile = MAP_DATA[y][x];
+
+                if (tile !== WATER_TILE_INDEX && tile !== LAVA_TILE_INDEX) {
+                    continue;
+                }
+
+                const animKey = tile === WATER_TILE_INDEX ? WATER_ANIM_KEY : LAVA_ANIM_KEY;
+
+                this.add
+                    .sprite(x * TILE_SIZE, y * TILE_SIZE, 'water')
+                    .setOrigin(0, 0)
+                    .play(animKey);
+            }
+        }
     }
 }
