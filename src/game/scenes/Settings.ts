@@ -7,7 +7,7 @@ const COLORS = {
     uiTextBorder: '#000000',
 };
 
-const MUSIC_LEVELS = [0, 0.1, 0.25, 0.5, 0.75, 1];
+const MUSIC_LEVELS = [0, 0.05, 0.1, 0.25, 0.5, 0.75, 1];
 const BG_OPTIONS = [
     { label: 'Forest', value: '#233d2a' },
     { label: 'Lake', value: '#1f3e56' },

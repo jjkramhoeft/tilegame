@@ -30,8 +30,8 @@ export class Intro extends Scene
     {
         let musicVolume = this.registry.get('musicVolume');
         if (typeof musicVolume !== 'number') {
-            this.registry.set('musicVolume', 0.1);
-            musicVolume = 0.1;
+            this.registry.set('musicVolume', 0.05);
+            musicVolume = 0.05
         }
 
         this.sound.volume = musicVolume;
