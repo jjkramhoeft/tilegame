@@ -1,6 +1,7 @@
 import { Intro } from './scenes/Intro';
 import { Game as MainGame } from './scenes/Game';
 import { Credits } from './scenes/Credits';
+import { Settings } from './scenes/Settings';
 import { AUTO, Game, Scale,Types } from 'phaser';
 
 // Find out more information about the Game Config at:
@@ -18,7 +19,8 @@ const config: Types.Core.GameConfig = {
     scene: [
         Intro,
         MainGame,
-        Credits
+        Credits,
+        Settings
     ]
 };
 
