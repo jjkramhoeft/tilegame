@@ -73,7 +73,7 @@ export class WorldMap
             frameHeight: TILE_SIZE
         });
 
-        scene.load.spritesheet(BORDER_TILESET_KEY, 'tile-boarder.png', {
+        scene.load.spritesheet(BORDER_TILESET_KEY, 'tile-border.png', {
             frameWidth: TILE_SIZE,
             frameHeight: TILE_SIZE
         });

@@ -49,10 +49,10 @@ export interface DemoBlockingPlacement
 }
 
 export const ANIMATED_BASE_TILE_CONFIG: Readonly<Record<number, AnimatedTileConfig>> = {
-    [VOID_TILE_INDEX]: { animKey: VOID_ANIM_KEY, startFrame: 8, endFrame: 15, frameRate: 8 },
-    [WATER_TILE_INDEX]: { animKey: WATER_ANIM_KEY, startFrame: 0, endFrame: 7, frameRate: 8 },
-    [CRYSTAL_TILE_INDEX]: { animKey: CRYSTAL_ANIM_KEY, startFrame: 16, endFrame: 23, frameRate: 8 },
-    [LAVA_TILE_INDEX]: { animKey: LAVA_ANIM_KEY, startFrame: 32, endFrame: 39, frameRate: 8 },
+    [VOID_TILE_INDEX]: { animKey: VOID_ANIM_KEY, startFrame: 24, endFrame: 31, frameRate: 3 },
+    [WATER_TILE_INDEX]: { animKey: WATER_ANIM_KEY, startFrame: 8, endFrame: 15, frameRate: 8 },
+    [CRYSTAL_TILE_INDEX]: { animKey: CRYSTAL_ANIM_KEY, startFrame: 0, endFrame: 7, frameRate: 9 },
+    [LAVA_TILE_INDEX]: { animKey: LAVA_ANIM_KEY, startFrame: 32, endFrame: 39, frameRate: 2 },
 };
 
 export const ANIMATED_TILE_OVERRIDES: Readonly<Record<number, string>> = {
@@ -94,31 +94,35 @@ export const DEMO_BASE_LAYER: readonly (readonly number[])[] = [
 ];
 
 export const DEMO_BORDER_LAYER: readonly (readonly number[])[] = [
-    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
-    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, 4, 8, EMPTY_TILE, EMPTY_TILE],
-    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, 12, 16, EMPTY_TILE, EMPTY_TILE],
-    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, 24, EMPTY_TILE, EMPTY_TILE],
-    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, 32, EMPTY_TILE, EMPTY_TILE],
-    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
-    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, 14, 14, 14, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
+    [13, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, 30,         EMPTY_TILE],
+    [13, 10,         15,         EMPTY_TILE, 29,         EMPTY_TILE, 31],
+    [9, EMPTY_TILE, 17,         13,         EMPTY_TILE, 15,         31],
+    [9, EMPTY_TILE, 8,          6,          EMPTY_TILE, 1,          EMPTY_TILE],
+    [25        , 8,          4,          EMPTY_TILE, EMPTY_TILE, 1,          EMPTY_TILE],
+    [EMPTY_TILE, 24,         24,         36,         36,         32,         EMPTY_TILE],
 ];
 
 export const DEMO_DECORATION_LAYER: readonly (readonly number[])[] = [
     [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
-    [EMPTY_TILE, 78, 80, 82, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
-    [EMPTY_TILE, 84, EMPTY_TILE, 90, EMPTY_TILE, 43, EMPTY_TILE],
-    [EMPTY_TILE, 59, 61, EMPTY_TILE, 87, 44, EMPTY_TILE],
-    [EMPTY_TILE, EMPTY_TILE, 68, EMPTY_TILE, 89, EMPTY_TILE, EMPTY_TILE],
-    [EMPTY_TILE, 75, 77, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, 42, 43, 44, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, 45, 49, 50, EMPTY_TILE, 0, EMPTY_TILE],
+    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, 51, 40, 1, EMPTY_TILE],
+    [EMPTY_TILE, EMPTY_TILE, 18, 19, 41, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
     [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
 ];
 
 export const DEMO_BLOCKING_PLACEMENTS: readonly DemoBlockingPlacement[] = [
-    { x: 2, y: 2, blocking: 8, floating: 16 },
-    { x: 3, y: 2, blocking: 9, floating: 17 },
-    { x: 1, y: 4, blocking: 0 },
-    { x: 2, y: 4, blocking: 1 },
-    { x: 4, y: 5, blocking: 18, floating: 26 },
+    { x: 1, y: 1, blocking: 30 },
+    { x: 2, y: 1, blocking: EMPTY_TILE, floating: 0 },
+    { x: 2, y: 2, blocking: 52 },
+    { x: 3, y: 1, blocking: EMPTY_TILE, floating: 3 },
+    { x: 3, y: 2, blocking: 55 },
+    { x: 5, y: 2, blocking: 15 },
+    { x: 4, y: 3, blocking: EMPTY_TILE, floating: 8 },
+    { x: 4, y: 4, blocking: 60 },
+    { x: 2, y: 4, blocking: 0 },
 ];
 
 export function getAnimatedTileConfig (tileIndex: number): AnimatedTileConfig | undefined
