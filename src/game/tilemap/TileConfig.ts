@@ -2,7 +2,7 @@ export const TILE_SIZE = 64;
 
 export const BASE_LAYER_DEPTH = 0;
 export const ANIMATED_LAYER_DEPTH = 10;
-export const DETAIL_LAYER_DEPTH = 20;
+export const DECORATION_LAYER_DEPTH = 20;
 
 export const WATER_TILE_INDEX = 5;
 export const LAVA_TILE_INDEX = 8;

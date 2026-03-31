@@ -13,7 +13,7 @@ export class AnimatedTileLayer
 {
     static preload (scene: Phaser.Scene): void
     {
-        scene.load.spritesheet(WATER_SPRITESHEET_KEY, 'Water64.png', {
+        scene.load.spritesheet(WATER_SPRITESHEET_KEY, 'tile-base-animated.png', {
             frameWidth: TILE_SIZE,
             frameHeight: TILE_SIZE
         });
