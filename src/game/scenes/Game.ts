@@ -3,6 +3,8 @@ import { WorldMap } from '../tilemap/WorldMap';
 
 export class Game extends Scene
 {
+    private worldMap?: WorldMap;
+
     constructor ()
     {
         super('Game');
@@ -16,6 +18,13 @@ export class Game extends Scene
 
     create ()
     {
-        WorldMap.create(this);
+        this.worldMap = new WorldMap(this);
+        this.worldMap.initializeEmpty();
+        this.worldMap.seedDemoWorld();
+    }
+
+    update ()
+    {
+        this.worldMap?.update();
     }
 }

@@ -1,69 +1,137 @@
 export const TILE_SIZE = 64;
+export const EMPTY_TILE = -1;
 
-export const BASE_LAYER_DEPTH = 0;
-export const ANIMATED_LAYER_DEPTH = 10;
-export const DECORATION_LAYER_DEPTH = 20;
+export const BASE_LAYER_DEPTH = -10000;
+export const ANIMATED_LAYER_DEPTH = -9000;
+export const BORDER_LAYER_DEPTH = -8000;
+export const DECORATION_LAYER_DEPTH = -7000;
+export const ACTOR_DEPTH_BASE = 1000;
+export const FLOATING_LAYER_DEPTH = 200000;
+
+export const BASE_TILESET_KEY = 'tile-base';
+export const ANIMATED_TILESET_KEY = 'tile-animated';
+export const BORDER_TILESET_KEY = 'tile-border';
+export const DECORATION_TILESET_KEY = 'tile-decoration';
+export const BLOCKING_TILESET_KEY = 'tile-blocking';
+export const FLOATING_TILESET_KEY = 'tile-floating';
 
 export const WATER_TILE_INDEX = 5;
 export const LAVA_TILE_INDEX = 8;
+export const VOID_TILE_INDEX = 0;
+export const CRYSTAL_TILE_INDEX = 7;
 
+export const VOID_ANIM_KEY = 'void-flow';
 export const WATER_ANIM_KEY = 'water-flow';
+export const CRYSTAL_ANIM_KEY = 'crystal-flow';
 export const LAVA_ANIM_KEY = 'lava-flow';
 
-/** Tile indexes that are replaced by animated sprites (excluded from the static tilemap layer). */
+export interface AnimatedTileConfig
+{
+    animKey: string;
+    startFrame: number;
+    endFrame: number;
+    frameRate: number;
+}
+
+export interface BlockingTileMetadata
+{
+    collisionOffsetY: number;
+    collisionHeight: number;
+    sortOffsetY: number;
+}
+
+export interface DemoBlockingPlacement
+{
+    x: number;
+    y: number;
+    blocking: number;
+    floating?: number;
+}
+
+export const ANIMATED_BASE_TILE_CONFIG: Readonly<Record<number, AnimatedTileConfig>> = {
+    [VOID_TILE_INDEX]: { animKey: VOID_ANIM_KEY, startFrame: 8, endFrame: 15, frameRate: 8 },
+    [WATER_TILE_INDEX]: { animKey: WATER_ANIM_KEY, startFrame: 0, endFrame: 7, frameRate: 8 },
+    [CRYSTAL_TILE_INDEX]: { animKey: CRYSTAL_ANIM_KEY, startFrame: 16, endFrame: 23, frameRate: 8 },
+    [LAVA_TILE_INDEX]: { animKey: LAVA_ANIM_KEY, startFrame: 32, endFrame: 39, frameRate: 8 },
+};
+
 export const ANIMATED_TILE_OVERRIDES: Readonly<Record<number, string>> = {
+    [VOID_TILE_INDEX]: VOID_ANIM_KEY,
     [WATER_TILE_INDEX]: WATER_ANIM_KEY,
+    [CRYSTAL_TILE_INDEX]: CRYSTAL_ANIM_KEY,
     [LAVA_TILE_INDEX]: LAVA_ANIM_KEY,
 };
-// 0 void, 1 rock, 2 desert, 3 grass, 4 forest, 5 water, 6 swamp, 7 crystal, 8 lava, 9 mountain. detail overlay
-export const MAP_DATA: number[][] = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 2, 2, 2, 2, 2, 2, 3, 3, 3, 0, 0, 0, 0],
-    [0, 0, 0, 2, 2, 2, 2, 2, 3, 3, 3, 0, 0, 0, 0, 0],
-    [0, 8, 8, 2, 2, 2, 2, 2, 3, 3, 3, 0, 0, 0, 0, 0],
-    [0, 5, 5, 2, 2, 2, 2, 2, 3, 3, 3, 0, 0, 0, 0, 0],
-    [0, 5, 5, 5, 5, 1, 1, 1, 1, 3, 3, 3, 3, 4, 4, 0],
-    [0, 5, 5, 5, 5, 1, 1, 1, 1, 3, 3, 3, 3, 4, 4, 0],
-    [0, 6, 6, 6, 6, 1, 1, 1, 1, 3, 3, 3, 3, 0, 0, 0],
-    [0, 6, 6, 6, 6, 1, 1, 1, 1, 3, 3, 3, 3, 0, 0, 0],
-    [0, 6, 6, 6, 6, 6, 4, 4, 4, 3, 3, 3, 3, 0, 0, 0],
-    [0, 9, 9, 1, 1, 4, 4, 4, 4, 4, 5, 5, 5, 5, 0, 0],
-    [0, 9, 9, 1, 1, 4, 4, 4, 4, 4, 7, 7, 7, 0, 0, 0],
-    [0, 9, 9, 1, 1, 4, 4, 4, 4, 4, 7, 7, 7, 0, 0, 0],
-    [0, 8, 8, 1, 1, 4, 4, 4, 4, 4, 7, 7, 7, 0, 0, 0],
-    [0, 8, 8, 1, 1, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-];
-// -1 no details, 0-39 borders.
-// 40-48 crystals, 49-57 mushrooms, 58-72 roks, 73-92 small plants.
-export const DETAIL_MAP_DATA: number[][] = [
-    [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
-    [-1,-1,-1,59, 0,-1, 0,68,71,78,79,80,-1,-1,-1,-1],
-    [-1,-1,-1, 3,56,-1,-1,70,75,76,77,-1,-1,-1,-1,-1],
-    [-1,-1, 9,-1,62,-1,78,-1,81,82,83,-1,-1,-1,-1,-1],
-    [-1,-1, 9,-1,61, 6,-1, 6,84,85,86,-1,-1,-1,-1,-1],
-    [-1,-1,-1, 8, 8,68, 8,-1,12,87,88,89,90,-1,-1,-1],
-    [-1,26,-1,26, 5,-1,-1,-1,13,91,-1,75,77,-1,-1,-1],
-    [25,55,54,53,52,27,61,-1,-1,79,81,83,85,-1,-1,-1],
-    [25,51,50,-1,55,26,-1,18,13,76,78,80,82,-1,-1,-1],
-    [25,54,52,53,51,50,27,-1, 4,84,86,88,90,-1,-1,-1],
-    [-1,24,24,24,-1,24,-1,-1,-1,12,19,-1,-1,-1,-1,-1],
-    [-1,-1,-1,60,59, 7,-1,-1,-1,29,40,41,42,-1,-1,-1],
-    [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,43,44,45,-1,-1,-1],
-    [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,46,47,-1,-1,-1,-1],
-    [-1,-1,-1,65,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
-    [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+
+export const DEFAULT_BLOCKING_TILE_METADATA: Readonly<BlockingTileMetadata> = {
+    collisionOffsetY: 34,
+    collisionHeight: 18,
+    sortOffsetY: 52,
+};
+
+export const BLOCKING_TILE_METADATA: Readonly<Record<number, BlockingTileMetadata>> = {
+    0: { collisionOffsetY: 30, collisionHeight: 20, sortOffsetY: 50 },
+    1: { collisionOffsetY: 30, collisionHeight: 20, sortOffsetY: 50 },
+    2: { collisionOffsetY: 32, collisionHeight: 18, sortOffsetY: 52 },
+    3: { collisionOffsetY: 32, collisionHeight: 18, sortOffsetY: 52 },
+    8: { collisionOffsetY: 38, collisionHeight: 16, sortOffsetY: 56 },
+    9: { collisionOffsetY: 38, collisionHeight: 16, sortOffsetY: 56 },
+    10: { collisionOffsetY: 38, collisionHeight: 16, sortOffsetY: 56 },
+    11: { collisionOffsetY: 38, collisionHeight: 16, sortOffsetY: 56 },
+    16: { collisionOffsetY: 36, collisionHeight: 18, sortOffsetY: 54 },
+    17: { collisionOffsetY: 36, collisionHeight: 18, sortOffsetY: 54 },
+    18: { collisionOffsetY: 40, collisionHeight: 14, sortOffsetY: 58 },
+    19: { collisionOffsetY: 40, collisionHeight: 14, sortOffsetY: 58 },
+};
+
+export const DEMO_BASE_LAYER: readonly (readonly number[])[] = [
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 3, 3, 3, 5, 5, 0],
+    [0, 3, 4, 4, 5, 7, 0],
+    [0, 2, 2, 4, 3, 7, 0],
+    [0, 2, 1, 1, 3, 8, 0],
+    [0, 6, 6, 9, 9, 8, 0],
+    [0, 0, 0, 0, 0, 0, 0],
 ];
 
-export function validateLayerDimensions (baseLayerData: number[][], overlayLayerData: number[][], overlayName: string): void
+export const DEMO_BORDER_LAYER: readonly (readonly number[])[] = [
+    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, 4, 8, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, 12, 16, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, 24, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, 32, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
+];
+
+export const DEMO_DECORATION_LAYER: readonly (readonly number[])[] = [
+    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, 78, 80, 82, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, 84, EMPTY_TILE, 90, EMPTY_TILE, 43, EMPTY_TILE],
+    [EMPTY_TILE, 59, 61, EMPTY_TILE, 87, 44, EMPTY_TILE],
+    [EMPTY_TILE, EMPTY_TILE, 68, EMPTY_TILE, 89, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, 75, 77, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
+    [EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE],
+];
+
+export const DEMO_BLOCKING_PLACEMENTS: readonly DemoBlockingPlacement[] = [
+    { x: 2, y: 2, blocking: 8, floating: 16 },
+    { x: 3, y: 2, blocking: 9, floating: 17 },
+    { x: 1, y: 4, blocking: 0 },
+    { x: 2, y: 4, blocking: 1 },
+    { x: 4, y: 5, blocking: 18, floating: 26 },
+];
+
+export function getAnimatedTileConfig (tileIndex: number): AnimatedTileConfig | undefined
 {
-    if (baseLayerData.length !== overlayLayerData.length) {
-        throw new Error(`${overlayName} row count must match the base layer.`);
-    }
+    return ANIMATED_BASE_TILE_CONFIG[tileIndex];
+}
 
-    for (let rowIndex = 0; rowIndex < baseLayerData.length; rowIndex++) {
-        if (baseLayerData[rowIndex].length !== overlayLayerData[rowIndex].length) {
-            throw new Error(`${overlayName} width mismatch at row ${rowIndex}.`);
-        }
-    }
+export function getBlockingTileMetadata (tileIndex: number): BlockingTileMetadata
+{
+    return BLOCKING_TILE_METADATA[tileIndex] ?? DEFAULT_BLOCKING_TILE_METADATA;
+}
+
+export function toTileKey (x: number, y: number): string
+{
+    return `${x},${y}`;
 }

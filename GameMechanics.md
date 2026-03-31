@@ -11,14 +11,14 @@ The tile map consist of six layers
 - Floating Layer: (treetops and mountaintops, and unique objects). This layer is always show on top of the player
 - Blocking Layer: (trees and giant mushrooms, large rocks and crystals, large cacti, mountain bases and tree bases, and unique objects). This layer contains tileData with collision objects. If the players y value is lager than the collision objects y value then this tile is show below the player, otherwise it is shown on top of the player
 - Decoration Layer (pebbles, small plants and crystals). This layer is always below the player
-- Boarder Layer (four per biome - up,right,down,left). This layer is always below the player. This layer is used to make the transition from one biome to another smoother.
+- Border Layer (four per biome - up,right,down,left). This layer is always below the player. This layer is used to make the transition from one biome to another smoother.
 - Animated Layer (water, lava, crystal and void have an associated animated layer). This layer is always below the player
 - Base Layer (void, rock, desert, grass, forest, water, swamp, crystal, lava, and mountain are the ten base static layers for each biome). This layer is always below the player
 
 ### Funtions
 
 - Start/Initialize empty, all tiles in all layers are empty (minus one)
-- Create Tile for dynamicly adding tile to the map: CreateTime(base, boarder, decoration, blocking, floating)
+- Create Tile for dynamicly adding tile to the map: CreateTile(x, y, base, border, decoration, blocking, floating)
 
 ## Characters
 
