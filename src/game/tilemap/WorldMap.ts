@@ -14,7 +14,7 @@ export class WorldMap
 {
     static preload (scene: Phaser.Scene): void
     {
-        scene.load.spritesheet('tiles', 'tile-base-static.png', {
+        scene.load.spritesheet('tiles', 'tile-base.png', {
             frameWidth: TILE_SIZE,
             frameHeight: TILE_SIZE
         });

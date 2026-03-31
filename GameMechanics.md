@@ -4,11 +4,14 @@
 
 ### Layers
 
-- Floating Layer (treetops and mountaintops, and unique objects)
-- Blocking Layer (trees and giant musrooms, large rocks and crystals, large cacti, mountain bases and tree bases, and unique objects)
-- Decoration Layer (pebbles, small plants and crystals)
-- Boarder Layer (four per biome - up,right,down,left)
-- Base Layer (water,lava,crystal and void are animated - rock,desert,grass,forest,swamp,moutain are static)
+The tile map consist of six layers
+
+- Floating Layer: (treetops and mountaintops, and unique objects). This layer is allways show on top of the player
+- Blocking Layer: (trees and giant musrooms, large rocks and crystals, large cacti, mountain bases and tree bases, and unique objects). This layer contains tileData with collision objects. If the players y value is lager than the collision objects y value then this tile is show below the player, otherwies it is shown on top of the player
+- Decoration Layer (pebbles, small plants and crystals). This layer is allways below the player
+- Boarder Layer (four per biome - up,right,down,left). This layer is allways below the player. This layer is used to make the transition from one biome to another smoother.
+- Animated Layer (water, lava, crystal and void have an associated animated layer). This layer is allways below the player
+- Base Layer (void, rock, desert, grass, forest, water, swamp, crystal, lava, and moutain are the ten base static layers for each biome). This layer is allways below the player
 
 ### Funtions
 
@@ -21,7 +24,7 @@
 
 - Can move in eight direction
 - Can Face in four direction
-- Animated: Idle, Walking, Attack/Cast, Die/Fall
+- Animated: Idle, Walking, Attack/Cast, Swim, Die/Fall
 - Two starter options: Male or female
 - Four Weapon progressions: None, Dagger, Staff, Sword
 - Four Outfit progressions: None, Bare, Basic, Armor
