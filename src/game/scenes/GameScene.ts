@@ -17,7 +17,6 @@ export class GameScene extends Scene
     {
         this.load.setPath('assets');
         WorldMap.preload(this);
-        this.load.image(ASSET_KEYS.PLAYER, 'player.png');
     }
 
     create ()
@@ -28,8 +27,8 @@ export class GameScene extends Scene
 
         this.#player = new Player({
             scene: this,
-            position: {x: 100, y: 100},
-            assetKey: ASSET_KEYS.PLAYER,
+            position: {x: 150, y: 150},
+            assetKey: ASSET_KEYS.MALE_NUDE_NONE_IDLE,
             frame: 0
         });
 

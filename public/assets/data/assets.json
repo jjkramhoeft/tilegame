@@ -1,23 +1,52 @@
 [
-    {
+  {
     "path": "assets",
     "files": [
       {
         "type": "spritesheet",
         "key": "male-nude-none-walk",
         "textureURL": "male-nude-none-walk.png",
-        "frameConfig": { "frameWidth": 64, "frameHeight": 64 }
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
       },
       {
         "type": "spritesheet",
         "key": "male-nude-none-idle",
         "textureURL": "male-nude-none-idle.png",
-        "frameConfig": { "frameWidth": 64, "frameHeight": 64 }
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-none-thrust",
+        "textureURL": "male-nude-none-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-none-hurt",
+        "textureURL": "male-nude-none-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
       },
       {
         "type": "image",
         "key": "background",
         "url": "bg-garden-genesis.png"
+      },
+      {
+        "type": "image",
+        "key": "credit-bg",
+        "url": "bg-lake.png"
       },
       {
         "type": "image",
@@ -28,6 +57,11 @@
         "type": "audio",
         "key": "introMusic",
         "url": "music-awesome-god.ogg"
+      },
+      {
+        "type": "audio",
+        "key": "creditsMusic",
+        "url": "music-awesome-god2.ogg"
       }
     ]
   }

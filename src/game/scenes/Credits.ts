@@ -16,15 +16,6 @@ export class Credits extends Scene
         super('Credits');
     }
 
-    preload ()
-    {
-        this.load.setPath('assets');
-        
-        this.load.image('credit-bg', 'bg-lake.png');
-        this.load.image('logo', 'tilegameheading.png');
-        this.load.audio('creditsMusic', 'music-awesome-god2.ogg');
-    }
-
     create ()
     {
         const centerY = this.cameras.main.centerY;

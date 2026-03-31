@@ -1,5 +1,4 @@
 import { Scene } from 'phaser';
-import { ASSET_KEYS, ASSET_PACK_KEYS } from '../../assets';
 import { SCENE_KEYS } from './scene-keys';
 
 const COLORS = {
@@ -16,8 +15,6 @@ export class Intro extends Scene {
     constructor() {
         super('Intro');
     }
-
-    preload() { }
 
     create() {
         let musicVolume = this.registry.get('musicVolume');
