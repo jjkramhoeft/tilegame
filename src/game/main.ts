@@ -1,8 +1,9 @@
 import { Intro } from './scenes/Intro';
-import { Game as MainGame } from './scenes/Game';
+import { GameScene } from './scenes/GameScene';
 import { Credits } from './scenes/Credits';
 import { Settings } from './scenes/Settings';
 import { AUTO, Game, Scale,Types } from 'phaser';
+import { PreloadScene } from './scenes/preload-scene';
 
 // Find out more information about the Game Config at:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -17,8 +18,9 @@ const config: Types.Core.GameConfig = {
         autoCenter: Scale.CENTER_BOTH
     },
     scene: [
+        PreloadScene,
         Intro,
-        MainGame,
+        GameScene,
         Credits,
         Settings
     ]

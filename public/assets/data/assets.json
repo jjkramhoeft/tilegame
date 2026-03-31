@@ -1,0 +1,34 @@
+[
+    {
+    "path": "assets",
+    "files": [
+      {
+        "type": "spritesheet",
+        "key": "male-nude-none-walk",
+        "textureURL": "male-nude-none-walk.png",
+        "frameConfig": { "frameWidth": 64, "frameHeight": 64 }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-none-idle",
+        "textureURL": "male-nude-none-idle.png",
+        "frameConfig": { "frameWidth": 64, "frameHeight": 64 }
+      },
+      {
+        "type": "image",
+        "key": "background",
+        "url": "bg-garden-genesis.png"
+      },
+      {
+        "type": "image",
+        "key": "logo",
+        "url": "tilegameheading.png"
+      },
+      {
+        "type": "audio",
+        "key": "introMusic",
+        "url": "music-awesome-god.ogg"
+      }
+    ]
+  }
+]
