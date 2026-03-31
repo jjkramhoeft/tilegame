@@ -34,7 +34,7 @@ export const MAP_DATA: number[][] = [
     [0, 8, 8, 1, 1, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ];
-// -1 no details, 0-7 crystals, 8-15 mushrooms, 16-31 roks, 32-52 small plants.
+// -1 no details, 0-8 crystals, 9-17 mushrooms, 18-32 roks, 33-52 small plants.
 export const DETAIL_MAP_DATA: number[][] = [
     [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
     [-1,-1,-1,19,-1,-1,-1,28,31,38,39,40,-1,-1,-1,-1],
