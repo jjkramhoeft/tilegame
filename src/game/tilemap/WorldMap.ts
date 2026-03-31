@@ -1,6 +1,14 @@
 import Phaser from 'phaser';
-import { TILE_SIZE, ANIMATED_TILE_OVERRIDES, MAP_DATA } from './TileConfig';
+import {
+    ANIMATED_TILE_OVERRIDES,
+    BASE_LAYER_DEPTH,
+    DETAIL_MAP_DATA,
+    MAP_DATA,
+    TILE_SIZE,
+    validateLayerDimensions,
+} from './TileConfig';
 import { AnimatedTileLayer } from './AnimatedTileLayer';
+import { DetailTileLayer } from './DetailTileLayer';
 
 export class WorldMap
 {
@@ -12,10 +20,13 @@ export class WorldMap
         });
 
         AnimatedTileLayer.preload(scene);
+        DetailTileLayer.preload(scene);
     }
 
     static create (scene: Phaser.Scene): void
     {
+        validateLayerDimensions(MAP_DATA, DETAIL_MAP_DATA, 'Detail layer');
+
         const baseLayerData = MAP_DATA.map((row) =>
             row.map((tile) => (ANIMATED_TILE_OVERRIDES[tile] !== undefined ? -1 : tile))
         );
@@ -32,9 +43,16 @@ export class WorldMap
             throw new Error('Failed to create tileset from assets/tiles.png');
         }
 
-        map.createLayer(0, tileset, 0, 0);
+        const baseLayer = map.createLayer(0, tileset, 0, 0);
+
+        if (!baseLayer) {
+            throw new Error('Failed to create base tile layer.');
+        }
+
+        baseLayer.setDepth(BASE_LAYER_DEPTH);
 
         AnimatedTileLayer.create(scene, MAP_DATA);
+        DetailTileLayer.create(scene, DETAIL_MAP_DATA);
 
         const mapWidth = MAP_DATA[0].length * TILE_SIZE;
         const mapHeight = MAP_DATA.length * TILE_SIZE;

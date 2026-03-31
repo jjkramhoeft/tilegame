@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import {
+    ANIMATED_LAYER_DEPTH,
     TILE_SIZE,
     WATER_ANIM_KEY,
     LAVA_ANIM_KEY,
@@ -59,6 +60,7 @@ export class AnimatedTileLayer
                 scene.add
                     .sprite(x * TILE_SIZE, y * TILE_SIZE, WATER_SPRITESHEET_KEY)
                     .setOrigin(0, 0)
+                    .setDepth(ANIMATED_LAYER_DEPTH)
                     .play(animKey);
             }
         }
