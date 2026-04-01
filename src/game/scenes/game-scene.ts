@@ -1,13 +1,12 @@
-import { Scene } from 'phaser';
+import * as Phaser from 'phaser';
 import { WorldMap } from '../tilemap/WorldMap';
 import { Player } from '../game-objects/player/player';
-import { ASSET_KEYS } from '../common/assets';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Spider } from '../game-objects/enemies/spider';
 import { Wisp } from '../game-objects/enemies/wisp';
 import { Drow } from '../game-objects/enemies/boss/drow';
 
-export class GameScene extends Scene
+export class GameScene extends Phaser.Scene
 {
     #controls!: KeyboardComponent;
     #player!: Player;
@@ -41,7 +40,7 @@ export class GameScene extends Scene
         }
         this.#controls = new KeyboardComponent(this.input.keyboard);
        
-        //this.#setupMap();        
+        this.#setupMap();        
 
         this.#setupPlayer();
         this.#setupCamera();
