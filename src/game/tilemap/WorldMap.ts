@@ -96,7 +96,7 @@ export class WorldMap
 
     initializeEmpty (): void
     {
-        this.refreshCameraBounds();
+        //this.refreshCameraBounds();
     }
 
     seedDemoWorld (): void
@@ -331,7 +331,7 @@ export class WorldMap
             sortY,
         });
 
-        this.blockingTiles.addTilesetImage
+        //this.blockingTiles.addTilesetImage
     }
 
     private syncOccupiedTile (
@@ -358,7 +358,7 @@ export class WorldMap
             this.occupiedTiles.delete(key);
         }
 
-        this.refreshCameraBounds();
+        //this.refreshCameraBounds();
     }
 
     private refreshCameraBounds (): void

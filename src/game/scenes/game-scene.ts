@@ -94,7 +94,7 @@ export class GameScene extends Phaser.Scene
     }
 
     #setupCamera(): void {
-        this.cameras.main.setBounds(0, 0, 1024, 768);
+        this.cameras.main.setBounds(-100, -100, 2000, 2000);
         this.cameras.main.startFollow(this.#player);
     }
 }
