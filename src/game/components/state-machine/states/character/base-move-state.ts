@@ -23,34 +23,38 @@ export abstract class BaseMoveState extends BaseCharacterState {
   protected handleCharacterMovement(): void {
     const controls = this._gameObject.controls;
 
+    // horizontal movement
+    if (controls.isLeftDown) {
+      this.updateVelocity(true, -1);
+      this.updateDirection(DIRECTION.LEFT);
+    } else if (controls.isRightDown) {
+      this.updateVelocity(true, 1);
+      this.updateDirection(DIRECTION.RIGHT);
+    } else {
+      this.updateVelocity(true, 0);
+    }
+    
+    const isHorizontally = controls.isLeftDown || controls.isRightDown;
+    const isMovingVertically = controls.isDownDown || controls.isUpDown;
+
     // vertical movement
     if (controls.isUpDown) {
       this.updateVelocity(false, -1);
-      this.updateDirection(DIRECTION.UP);
+      if(!isHorizontally)
+      {
+        this.updateDirection(DIRECTION.UP);
+      }
     } else if (controls.isDownDown) {
       this.updateVelocity(false, 1);
-      this.updateDirection(DIRECTION.DOWN);
+      if(!isHorizontally)      
+      {
+        this.updateDirection(DIRECTION.DOWN);
+      }
     } else {
       this.updateVelocity(false, 0);
     }
 
-    const isMovingVertically = controls.isDownDown || controls.isUpDown;
-    // horizontal movement
-    if (controls.isLeftDown) {
-      this.flip(true);
-      this.updateVelocity(true, -1);
-      if (!isMovingVertically) {
-        this.updateDirection(DIRECTION.LEFT);
-      }
-    } else if (controls.isRightDown) {
-      this.flip(false);
-      this.updateVelocity(true, 1);
-      if (!isMovingVertically) {
-        this.updateDirection(DIRECTION.RIGHT);
-      }
-    } else {
-      this.updateVelocity(true, 0);
-    }
+    
 
     this.normalizeVelocity();
   }
