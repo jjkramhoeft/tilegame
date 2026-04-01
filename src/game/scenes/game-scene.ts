@@ -1,7 +1,7 @@
 import { Scene } from 'phaser';
 import { WorldMap } from '../tilemap/WorldMap';
-import { Player } from '../game-objects/Player/Player';
-import { ASSET_KEYS } from '../../assets';
+import { Player } from '../game-objects/player/player';
+import { ASSET_KEYS } from '../common/assets';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 
 export class GameScene extends Scene

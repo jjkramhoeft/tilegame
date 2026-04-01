@@ -1,5 +1,161 @@
 [
   {
+    "path": "assets/fonts",
+    "files": [
+      {
+        "type": "font",
+        "key": "FONT_PRESS_START_2P",
+        "url": "Press_Start_2P/PressStart2P-Regular.ttf",
+        "format": "truetype"
+      }
+    ]
+  },
+  {
+    "path": "assets/images/hud",
+    "files": [
+      {
+        "type": "aseprite",
+        "key": "HUD_NUMBERS",
+        "textureURL": "heart_and_hud_numbers.png",
+        "atlasURL": "heart_and_hud_numbers.json"
+      }
+    ]
+  },
+  {
+    "path": "assets/images/ui",
+    "files": [
+      {
+        "type": "image",
+        "key": "UI_DIALOG",
+        "url": "dialog_ui.png"
+      },
+      {
+        "type": "image",
+        "key": "UI_CURSOR",
+        "url": "cursor_white.png"
+      },
+      {
+        "type": "spritesheet",
+        "key": "UI_ICONS",
+        "url": "icons.png",
+        "frameConfig": { "frameWidth": 16, "frameHeight": 16 }
+      }
+    ]
+  },
+  {
+    "path": "assets/images/player",
+    "files": [
+      {
+        "type": "aseprite",
+        "key": "PLAYER",
+        "textureURL": "main_green.png",
+        "atlasURL": "main_green.json"
+      },
+      {
+        "type": "spritesheet",
+        "key": "DAGGER",
+        "url": "dagger.png",
+        "frameConfig": { "frameWidth": 16, "frameHeight": 16 }
+      }
+    ]
+  },
+  {
+    "path": "assets/images/levels/common",
+    "files": [
+      {
+        "type": "image",
+        "key": "COLLISION",
+        "url": "collision.png"
+      },
+      {
+        "type": "atlas",
+        "key": "DUNGEON_OBJECTS",
+        "textureURL": "dungeon_objects.png",
+        "atlasURL": "dungeon_objects.json"
+      },
+      {
+        "type": "image",
+        "key": "POT",
+        "url": "pot.png"
+      },
+      {
+        "type": "spritesheet",
+        "key": "POT_BREAK",
+        "url": "pot_break.png",
+        "frameConfig": { "frameWidth": 32, "frameHeight": 32 }
+      }
+    ]
+  },
+  {
+    "path": "assets/images/enemies",
+    "files": [
+      {
+        "type": "aseprite",
+        "key": "SPIDER",
+        "textureURL": "spider.png",
+        "atlasURL": "spider.json"
+      },
+      {
+        "type": "aseprite",
+        "key": "WISP",
+        "textureURL": "wisp.png",
+        "atlasURL": "wisp.json"
+      },
+      {
+        "type": "spritesheet",
+        "key": "ENEMY_DEATH",
+        "url": "enemy_death.png",
+        "frameConfig": { "frameWidth": 16, "frameHeight": 16 }
+      },
+      {
+        "type": "aseprite",
+        "key": "DROW",
+        "textureURL": "drow.png",
+        "atlasURL": "drow.json"
+      }
+    ]
+  },
+  {
+    "path": "assets/images/levels/dungeon_1",
+    "files": [
+      {
+        "type": "image",
+        "key": "DUNGEON_1_BACKGROUND",
+        "url": "dungeon_1_background.png"
+      },
+      {
+        "type": "image",
+        "key": "DUNGEON_1_FOREGROUND",
+        "url": "dungeon_1_foreground.png"
+      },
+      {
+        "type": "tilemapTiledJSON",
+        "key": "DUNGEON_1_LEVEL",
+        "url": "dungeon_1.json"
+      }
+    ]
+  },
+  {
+    "path": "assets/images/levels/world",
+    "files": [
+      {
+        "type": "image",
+        "key": "WORLD_BACKGROUND",
+        "url": "world_background.png"
+      },
+      {
+        "type": "image",
+        "key": "WORLD_FOREGROUND",
+        "url": "world_foreground.png"
+      },
+      {
+        "type": "tilemapTiledJSON",
+        "key": "WORLD_LEVEL",
+        "url": "world.json"
+      }
+    ]
+  },
+  {
     "path": "assets",
     "files": [
       {
@@ -33,6 +189,1122 @@
         "type": "spritesheet",
         "key": "male-nude-none-hurt",
         "textureURL": "male-nude-none-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-none-walk",
+        "textureURL": "male-bare-none-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-none-idle",
+        "textureURL": "male-bare-none-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-none-thrust",
+        "textureURL": "male-bare-none-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-none-hurt",
+        "textureURL": "male-bare-none-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-none-walk",
+        "textureURL": "male-basic-none-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-none-idle",
+        "textureURL": "male-basic-none-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-none-thrust",
+        "textureURL": "male-basic-none-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-none-hurt",
+        "textureURL": "male-basic-none-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-none-walk",
+        "textureURL": "male-armor-none-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-none-idle",
+        "textureURL": "male-armor-none-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-none-thrust",
+        "textureURL": "male-armor-none-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-none-hurt",
+        "textureURL": "male-armor-none-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-dagger-walk",
+        "textureURL": "male-nude-dagger-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-dagger-idle",
+        "textureURL": "male-nude-dagger-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-dagger-thrust",
+        "textureURL": "male-nude-dagger-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-dagger-hurt",
+        "textureURL": "male-nude-dagger-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-dagger-walk",
+        "textureURL": "male-bare-dagger-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-dagger-idle",
+        "textureURL": "male-bare-dagger-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-dagger-thrust",
+        "textureURL": "male-bare-dagger-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-dagger-hurt",
+        "textureURL": "male-bare-dagger-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-dagger-walk",
+        "textureURL": "male-basic-dagger-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-dagger-idle",
+        "textureURL": "male-basic-dagger-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-dagger-thrust",
+        "textureURL": "male-basic-dagger-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-dagger-hurt",
+        "textureURL": "male-basic-dagger-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-dagger-walk",
+        "textureURL": "male-armor-dagger-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-dagger-idle",
+        "textureURL": "male-armor-dagger-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-dagger-thrust",
+        "textureURL": "male-armor-dagger-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-dagger-hurt",
+        "textureURL": "male-armor-dagger-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-staff-walk",
+        "textureURL": "male-nude-staff-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-staff-idle",
+        "textureURL": "male-nude-staff-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-staff-thrust",
+        "textureURL": "male-nude-staff-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-staff-hurt",
+        "textureURL": "male-nude-staff-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-staff-walk",
+        "textureURL": "male-bare-staff-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-staff-idle",
+        "textureURL": "male-bare-staff-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-staff-thrust",
+        "textureURL": "male-bare-staff-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-staff-hurt",
+        "textureURL": "male-bare-staff-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-staff-walk",
+        "textureURL": "male-basic-staff-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-staff-idle",
+        "textureURL": "male-basic-staff-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-staff-thrust",
+        "textureURL": "male-basic-staff-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-staff-hurt",
+        "textureURL": "male-basic-staff-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-staff-walk",
+        "textureURL": "male-armor-staff-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-staff-idle",
+        "textureURL": "male-armor-staff-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-staff-thrust",
+        "textureURL": "male-armor-staff-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-staff-hurt",
+        "textureURL": "male-armor-staff-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-sword-walk",
+        "textureURL": "male-nude-sword-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-sword-idle",
+        "textureURL": "male-nude-sword-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-sword-thrust128",
+        "textureURL": "male-nude-sword-thrust128.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-nude-sword-hurt",
+        "textureURL": "male-nude-sword-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-sword-walk",
+        "textureURL": "male-bare-sword-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-sword-idle",
+        "textureURL": "male-bare-sword-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-sword-thrust128",
+        "textureURL": "male-bare-sword-thrust128.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-bare-sword-hurt",
+        "textureURL": "male-bare-sword-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-sword-walk",
+        "textureURL": "male-basic-sword-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-sword-idle",
+        "textureURL": "male-basic-sword-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-sword-thrust128",
+        "textureURL": "male-basic-sword-thrust128.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-basic-sword-hurt",
+        "textureURL": "male-basic-sword-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-sword-walk",
+        "textureURL": "male-armor-sword-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-sword-idle",
+        "textureURL": "male-armor-sword-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-sword-thrust128",
+        "textureURL": "male-armor-sword-thrust128.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "male-armor-sword-hurt",
+        "textureURL": "male-armor-sword-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-none-walk",
+        "textureURL": "female-nude-none-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-none-idle",
+        "textureURL": "female-nude-none-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-none-thrust",
+        "textureURL": "female-nude-none-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-none-hurt",
+        "textureURL": "female-nude-none-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-none-walk",
+        "textureURL": "female-bare-none-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-none-idle",
+        "textureURL": "female-bare-none-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-none-thrust",
+        "textureURL": "female-bare-none-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-none-hurt",
+        "textureURL": "female-bare-none-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-none-walk",
+        "textureURL": "female-basic-none-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-none-idle",
+        "textureURL": "female-basic-none-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-none-thrust",
+        "textureURL": "female-basic-none-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-none-hurt",
+        "textureURL": "female-basic-none-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-none-walk",
+        "textureURL": "female-armor-none-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-none-idle",
+        "textureURL": "female-armor-none-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-none-thrust",
+        "textureURL": "female-armor-none-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-none-hurt",
+        "textureURL": "female-armor-none-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-dagger-walk",
+        "textureURL": "female-nude-dagger-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-dagger-idle",
+        "textureURL": "female-nude-dagger-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-dagger-thrust",
+        "textureURL": "female-nude-dagger-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-dagger-hurt",
+        "textureURL": "female-nude-dagger-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-dagger-walk",
+        "textureURL": "female-bare-dagger-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-dagger-idle",
+        "textureURL": "female-bare-dagger-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-dagger-thrust",
+        "textureURL": "female-bare-dagger-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-dagger-hurt",
+        "textureURL": "female-bare-dagger-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-dagger-walk",
+        "textureURL": "female-basic-dagger-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-dagger-idle",
+        "textureURL": "female-basic-dagger-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-dagger-thrust",
+        "textureURL": "female-basic-dagger-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-dagger-hurt",
+        "textureURL": "female-basic-dagger-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-dagger-walk",
+        "textureURL": "female-armor-dagger-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-dagger-idle",
+        "textureURL": "female-armor-dagger-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-dagger-thrust",
+        "textureURL": "female-armor-dagger-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-dagger-hurt",
+        "textureURL": "female-armor-dagger-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-staff-walk",
+        "textureURL": "female-nude-staff-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-staff-idle",
+        "textureURL": "female-nude-staff-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-staff-thrust",
+        "textureURL": "female-nude-staff-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-staff-hurt",
+        "textureURL": "female-nude-staff-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-staff-walk",
+        "textureURL": "female-bare-staff-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-staff-idle",
+        "textureURL": "female-bare-staff-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-staff-thrust",
+        "textureURL": "female-bare-staff-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-staff-hurt",
+        "textureURL": "female-bare-staff-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-staff-walk",
+        "textureURL": "female-basic-staff-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-staff-idle",
+        "textureURL": "female-basic-staff-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-staff-thrust",
+        "textureURL": "female-basic-staff-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-staff-hurt",
+        "textureURL": "female-basic-staff-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-staff-walk",
+        "textureURL": "female-armor-staff-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-staff-idle",
+        "textureURL": "female-armor-staff-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-staff-thrust",
+        "textureURL": "female-armor-staff-thrust.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-staff-hurt",
+        "textureURL": "female-armor-staff-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-sword-walk",
+        "textureURL": "female-nude-sword-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-sword-idle",
+        "textureURL": "female-nude-sword-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-sword-thrust128",
+        "textureURL": "female-nude-sword-thrust128.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-nude-sword-hurt",
+        "textureURL": "female-nude-sword-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-sword-walk",
+        "textureURL": "female-bare-sword-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-sword-idle",
+        "textureURL": "female-bare-sword-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-sword-thrust128",
+        "textureURL": "female-bare-sword-thrust128.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-bare-sword-hurt",
+        "textureURL": "female-bare-sword-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-sword-walk",
+        "textureURL": "female-basic-sword-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-sword-idle",
+        "textureURL": "female-basic-sword-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-sword-thrust128",
+        "textureURL": "female-basic-sword-thrust128.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-basic-sword-hurt",
+        "textureURL": "female-basic-sword-hurt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-sword-walk",
+        "textureURL": "female-armor-sword-walk.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-sword-idle",
+        "textureURL": "female-armor-sword-idle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-sword-thrust128",
+        "textureURL": "female-armor-sword-thrust128.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "female-armor-sword-hurt",
+        "textureURL": "female-armor-sword-hurt.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64

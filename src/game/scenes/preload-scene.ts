@@ -1,8 +1,8 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
-import { ASSET_KEYS, ASSET_PACK_KEYS } from '../../assets';
-//import { LevelData } from '../common/types';
-//import { DataManager } from '../common/data-manager';
+import { ASSET_KEYS, ASSET_PACK_KEYS } from '../common/assets';
+import { LevelData } from '../common/types';
+import { DataManager } from '../common/data-manager';
 
 export class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -19,15 +19,93 @@ export class PreloadScene extends Phaser.Scene {
   public create(): void {
     this.#createAnimations();
 
-    // const sceneData: LevelData = {
-    //   level: DataManager.instance.data.currentArea.name,
-    //   roomId: DataManager.instance.data.currentArea.startRoomId,
-    //   doorId: DataManager.instance.data.currentArea.startDoorId,
-    // };
+     const sceneData: LevelData = {
+       level: DataManager.instance.data.currentArea.name,
+       roomId: DataManager.instance.data.currentArea.startRoomId,
+       doorId: DataManager.instance.data.currentArea.startDoorId,
+     };
     this.scene.start(SCENE_KEYS.INTRO);
   }
 
   #createAnimations(): void {
+
+    this.anims.createFromAseprite(ASSET_KEYS.HUD_NUMBERS);
+    this.anims.createFromAseprite(ASSET_KEYS.PLAYER);
+    this.anims.createFromAseprite(ASSET_KEYS.SPIDER);
+    this.anims.createFromAseprite(ASSET_KEYS.WISP);
+    this.anims.createFromAseprite(ASSET_KEYS.DROW);
+    this.anims.create({
+      key: ASSET_KEYS.ENEMY_DEATH,
+      frames: this.anims.generateFrameNumbers(ASSET_KEYS.ENEMY_DEATH),
+      frameRate: 6,
+      repeat: 0,
+      delay: 0,
+    });
+    this.anims.create({
+      key: ASSET_KEYS.POT_BREAK,
+      frames: this.anims.generateFrameNumbers(ASSET_KEYS.POT_BREAK),
+      frameRate: 6,
+      repeat: 0,
+      delay: 0,
+      hideOnComplete: true,
+    });
+    this.anims.create({
+      key: ASSET_KEYS.DAGGER,
+      frames: this.anims.generateFrameNumbers(ASSET_KEYS.DAGGER),
+      frameRate: 16,
+      repeat: -1,
+      delay: 0,
+    });
+
+    const anims = this.anims;
+    const sexes =['male','female'];
+    const gears = ['nude','bare','basic','armor'];
+    const weapons = ['none','dagger','staff','sword'];
+
+    // Create basic directional walk animations (8 frames per row)
+    // Sprite sheet layout: row 0 = up, row 1 = left, row 2 = down, row 3 = right  
+    sexes.forEach(sex => {
+        gears.forEach(gear => {
+            weapons.forEach(weapon => {
+                anims.create({ key: `${sex}-${gear}-${weapon}-walk-up`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-walk`, { start: 0, end: 8 }), frameRate: 10, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-walk-left`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-walk`, { start: 9, end: 17}), frameRate: 10, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-walk-down`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-walk`, { start: 18, end: 26 }), frameRate: 10, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-walk-right`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-walk`, { start: 27, end: 35 }), frameRate: 10, repeat: -1 });    
+            });
+        });        
+    });
+     
+    // Create basic directional attack animations (6 frames per row)
+    // Sprite sheet layout: row 0 = up, row 1 = left, row 2 = down, row 3 = right
+    sexes.forEach(sex => {
+        gears.forEach(gear => {            
+            const weapons = ['none','dagger','staff'];
+            weapons.forEach(weapon => {
+                anims.create({ key: `${sex}-${gear}-${weapon}-thrust-up`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-thrust`, { start: 0, end: 7 }), frameRate: 14, repeat: 1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-thrust-left`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-thrust`, { start: 8, end: 15 }), frameRate: 14, repeat: 1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-thrust-down`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-thrust`, { start: 16, end: 23 }), frameRate: 14, repeat: 1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-thrust-right`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-thrust`, { start: 24, end: 31 }), frameRate: 14, repeat: 1 });    
+            });
+            let weapon='sword';
+            anims.create({ key: `${sex}-${gear}-${weapon}-thrust-up`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-thrust128`, { start: 0, end: 5 }), frameRate: 14, repeat: 1 });
+            anims.create({ key: `${sex}-${gear}-${weapon}-thrust-left`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-thrust128`, { start: 6, end: 11 }), frameRate: 14, repeat: 1 });
+            anims.create({ key: `${sex}-${gear}-${weapon}-thrust-down`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-thrust128`, { start: 12, end: 17 }), frameRate: 14, repeat: 1 });
+            anims.create({ key: `${sex}-${gear}-${weapon}-thrust-right`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-thrust128`, { start: 18, end: 23 }), frameRate: 14, repeat: 1 });    
+        });        
+    });
+
+    // Idle = first two frames of each direction
+    sexes.forEach(sex => {
+        gears.forEach(gear => {
+            weapons.forEach(weapon => {
+                anims.create({ key: `${sex}-${gear}-${weapon}-idle-up`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 0, end: 1 }), frameRate: 4, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-idle-left`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 2, end: 3 }), frameRate: 4, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-idle-down`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 4, end: 5 }), frameRate: 4, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-idle-right`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 6, end: 7 }), frameRate: 4, repeat: -1 });    
+            });
+        });        
+    });
+
     /*
     this.anims.createFromAseprite(ASSET_KEYS.HUD_NUMBERS);
     this.anims.createFromAseprite(ASSET_KEYS.PLAYER);

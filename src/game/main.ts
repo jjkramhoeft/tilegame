@@ -1,6 +1,6 @@
 import { PreloadScene } from './scenes/preload-scene';
 import { Intro } from './scenes/Intro';
-import { GameScene } from './scenes/GameScene';
+import { GameScene } from './scenes/game-scene';
 import { Credits } from './scenes/Credits';
 import { Settings } from './scenes/Settings';
 import { AUTO, Game, Scale,Types } from 'phaser';
