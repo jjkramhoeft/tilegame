@@ -3,9 +3,9 @@ import { WorldMap } from '../tilemap/WorldMap';
 import { Player } from '../game-objects/player/player';
 import { ASSET_KEYS } from '../common/assets';
 import { KeyboardComponent } from '../components/input/keyboard-component';
-import { Spider } from '../game-objects/Enemies/spider';
-import { Wisp } from '../game-objects/Enemies/wisp';
-import { Drow } from '../game-objects/Enemies/boss/drow';
+import { Spider } from '../game-objects/enemies/spider';
+import { Wisp } from '../game-objects/enemies/wisp';
+import { Drow } from '../game-objects/enemies/boss/drow';
 
 export class GameScene extends Scene
 {
