@@ -33,28 +33,23 @@ export abstract class BaseMoveState extends BaseCharacterState {
     } else {
       this.updateVelocity(true, 0);
     }
-    
+
     const isHorizontally = controls.isLeftDown || controls.isRightDown;
-    const isMovingVertically = controls.isDownDown || controls.isUpDown;
 
     // vertical movement
     if (controls.isUpDown) {
       this.updateVelocity(false, -1);
-      if(!isHorizontally)
-      {
+      if (!isHorizontally) {
         this.updateDirection(DIRECTION.UP);
       }
     } else if (controls.isDownDown) {
       this.updateVelocity(false, 1);
-      if(!isHorizontally)      
-      {
+      if (!isHorizontally) {
         this.updateDirection(DIRECTION.DOWN);
       }
     } else {
       this.updateVelocity(false, 0);
     }
-
-    
 
     this.normalizeVelocity();
   }

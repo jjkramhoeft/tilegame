@@ -309,6 +309,8 @@ export class WorldMap
         const sortY = worldY + metadata.sortOffsetY;
         const depth = ACTOR_DEPTH_BASE + sortY;
 
+        
+
         if (existingTile) {
             existingTile.image.setPosition(worldX, worldY);
             existingTile.image.setTexture(BLOCKING_TILESET_KEY, frame);
@@ -328,6 +330,8 @@ export class WorldMap
             collisionOffsetY: metadata.collisionOffsetY,
             sortY,
         });
+
+        this.blockingTiles.addTilesetImage
     }
 
     private syncOccupiedTile (
