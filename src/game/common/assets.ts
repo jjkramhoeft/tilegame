@@ -163,7 +163,6 @@ export const ASSET_KEYS = {
   
 } as const;
 
-
 export const PLAYER_ANIMATION_KEYS = {
   WALK_DOWN: 'player_walk_down',
   WALK_UP: 'player_walk_up',

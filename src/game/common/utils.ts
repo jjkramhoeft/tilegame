@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { DIRECTION, LEVEL_NAME } from './common';
-import { CustomGameObject, Direction, GameObject/*, LevelName*/, LevelName, Position } from './types';
+import { CustomGameObject, Direction, GameObject2, LevelName, Position } from './types';
 
 /**
  * Utility function to ensure we handle the full possible range of types when checking a variable for a possible
@@ -26,8 +26,8 @@ export function isDirection(direction: string): direction is Direction {
   return DIRECTION[direction as keyof typeof DIRECTION] !== undefined;
 }
 
-export function isCustomGameObject(gameObject: GameObject): gameObject is GameObject & CustomGameObject {
-  return gameObject['disableObject' as keyof GameObject] !== undefined && gameObject['enableObject' as keyof GameObject] !== undefined;
+export function isCustomGameObject(gameObject: GameObject2): gameObject is GameObject2 & CustomGameObject {
+  return gameObject['disableObject' as keyof GameObject2] !== undefined && gameObject['enableObject' as keyof GameObject2] !== undefined;
 }
 
 export function getDirectionOfObjectFromAnotherObject(object: Position, targetObject: Position): Direction {
