@@ -1,11 +1,11 @@
-import { GameObject } from '../../common/types';
+import { GameObject2 } from '../../common/types';
 import { BaseGameObjectComponent } from './base-game-object-component';
 
 export class SpeedComponent extends BaseGameObjectComponent {
   #speed: number;
 
-  constructor(gameObject: GameObject, speed: number) {
-    super(gameObject);
+  constructor(gameObject2: GameObject2, speed: number) {
+    super(gameObject2);
     this.#speed = speed;
   }
 

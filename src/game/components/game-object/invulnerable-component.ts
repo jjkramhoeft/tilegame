@@ -1,12 +1,12 @@
-import { GameObject } from '../../common/types';
+import { GameObject2 } from '../../common/types';
 import { BaseGameObjectComponent } from './base-game-object-component';
 
 export class InvulnerableComponent extends BaseGameObjectComponent {
   #invulnerable: boolean;
   #invulnerableAfterHitAnimationDuration: number;
 
-  constructor(gameObject: GameObject, invulnerable = false, invulnerableAfterHitAnimationDuration = 0) {
-    super(gameObject);
+  constructor(gameObject2: GameObject2, invulnerable = false, invulnerableAfterHitAnimationDuration = 0) {
+    super(gameObject2);
     this.#invulnerable = invulnerable;
     this.#invulnerableAfterHitAnimationDuration = invulnerableAfterHitAnimationDuration;
   }

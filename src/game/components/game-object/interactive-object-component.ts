@@ -1,4 +1,4 @@
-import { GameObject, InteractiveObjectType } from '../../common/types';
+import { GameObject2, InteractiveObjectType } from '../../common/types';
 import { BaseGameObjectComponent } from './base-game-object-component';
 
 export class InteractiveObjectComponent extends BaseGameObjectComponent {
@@ -7,12 +7,12 @@ export class InteractiveObjectComponent extends BaseGameObjectComponent {
   #canInteractCheck: () => boolean;
 
   constructor(
-    gameObject: GameObject,
+    gameObject2: GameObject2,
     objectType: InteractiveObjectType,
     canInteractCheck = () => true,
     callback = () => undefined,
   ) {
-    super(gameObject);
+    super(gameObject2);
     this.#objectType = objectType;
     this.#callback = callback;
     this.#canInteractCheck = canInteractCheck;

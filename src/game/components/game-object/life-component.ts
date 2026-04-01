@@ -1,12 +1,12 @@
-import { GameObject } from '../../common/types';
+import { GameObject2 } from '../../common/types';
 import { BaseGameObjectComponent } from './base-game-object-component';
 
 export class LifeComponent extends BaseGameObjectComponent {
   #maxLife: number;
   #currentLife: number;
 
-  constructor(gameObject: GameObject, maxLife: number, currentLife = maxLife) {
-    super(gameObject);
+  constructor(gameObject2: GameObject2, maxLife: number, currentLife = maxLife) {
+    super(gameObject2);
     this.#maxLife = maxLife;
     this.#currentLife = currentLife;
   }

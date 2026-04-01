@@ -9,7 +9,7 @@ export type Position = {
   y: number;
 };
 
-export type GameObject = Phaser.GameObjects.Sprite | Phaser.GameObjects.Image;
+export type GameObject2 = Phaser.GameObjects.Sprite | Phaser.GameObjects.Image;
 
 export type Direction = keyof typeof DIRECTION;
 
@@ -17,7 +17,10 @@ export type ChestState = keyof typeof CHEST_STATE;
 
 export type InteractiveObjectType = keyof typeof INTERACTIVE_OBJECT_TYPE;
 
-
+export interface CustomGameObject {
+  enableObject(): void;
+  disableObject(): void;
+}
 
 export type LevelName = keyof typeof LEVEL_NAME;
 
@@ -28,9 +31,3 @@ export type LevelData = {
 };
 
 export type DungeonItem = keyof typeof DUNGEON_ITEM;
-
-
-export interface CustomGameObject {
-  enableObject(): void;
-  disableObject(): void;
-}

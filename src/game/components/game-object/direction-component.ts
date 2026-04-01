@@ -1,13 +1,13 @@
 import { DIRECTION } from '../../common/common';
-import { Direction, GameObject } from '../../common/types';
+import { Direction, GameObject2 } from '../../common/types';
 import { BaseGameObjectComponent } from './base-game-object-component';
 
 export class DirectionComponent extends BaseGameObjectComponent {
   #direction: Direction;
   #callback: (direction: Direction) => void;
 
-  constructor(gameObject: GameObject, onDirectionCallback = () => undefined) {
-    super(gameObject);
+  constructor(gameObject2: GameObject2, onDirectionCallback = () => undefined) {
+    super(gameObject2);
     this.#direction = DIRECTION.DOWN;
     this.#callback = onDirectionCallback;
   }

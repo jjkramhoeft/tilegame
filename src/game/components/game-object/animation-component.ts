@@ -1,4 +1,4 @@
-import { CharacterAnimation, GameObject } from '../../common/types';
+import { CharacterAnimation, GameObject2 } from '../../common/types';
 import { BaseGameObjectComponent } from './base-game-object-component';
 
 export type AnimationConfig = {
@@ -6,12 +6,12 @@ export type AnimationConfig = {
 };
 
 export class AnimationComponent extends BaseGameObjectComponent {
-  declare protected gameObject: Phaser.GameObjects.Sprite;
+  declare protected gameObject2: Phaser.GameObjects.Sprite;
 
   #config: AnimationConfig;
 
-  constructor(gameObject: GameObject, config: AnimationConfig) {
-    super(gameObject);
+  constructor(gameObject2: GameObject2, config: AnimationConfig) {
+    super(gameObject2);
     this.#config = config;
   }
 
@@ -36,11 +36,11 @@ export class AnimationComponent extends BaseGameObjectComponent {
     };
     if (callback) {
       const animationKey = Phaser.Animations.Events.ANIMATION_COMPLETE_KEY + this.#config[characterAnimationKey].key;
-      this.gameObject.once(animationKey, () => {
+      this.gameObject2.once(animationKey, () => {
         callback();
       });
     }
-    this.gameObject.play(animationConfig, this.#config[characterAnimationKey].ignoreIfPlaying);
+    this.gameObject2.play(animationConfig, this.#config[characterAnimationKey].ignoreIfPlaying);
   }
 
   public playAnimationInReverse(characterAnimationKey: CharacterAnimation, callback?: () => void): void {
@@ -57,14 +57,14 @@ export class AnimationComponent extends BaseGameObjectComponent {
     };
     if (callback) {
       const animationKey = Phaser.Animations.Events.ANIMATION_COMPLETE_KEY + this.#config[characterAnimationKey].key;
-      this.gameObject.once(animationKey, () => {
+      this.gameObject2.once(animationKey, () => {
         callback();
       });
     }
-    this.gameObject.playReverse(animationConfig, this.#config[characterAnimationKey].ignoreIfPlaying);
+    this.gameObject2.playReverse(animationConfig, this.#config[characterAnimationKey].ignoreIfPlaying);
   }
 
   public isAnimationPlaying(): boolean {
-    return this.gameObject.anims.isPlaying;
+    return this.gameObject2.anims.isPlaying;
   }
 }
