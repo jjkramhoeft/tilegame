@@ -29,22 +29,19 @@ type DepthTrackedObject = Phaser.GameObjects.GameObject & {
     setDepth: (depth: number) => Phaser.GameObjects.GameObject;
 };
 
-interface OccupiedTile
-{
+interface OccupiedTile {
     x: number;
     y: number;
 }
 
-interface BlockingTileRuntime
-{
+interface BlockingTileRuntime {
     image: Phaser.GameObjects.Image;
     collisionHeight: number;
     collisionOffsetY: number;
     sortY: number;
 }
 
-export class WorldMap
-{
+export class WorldMap {
     private readonly scene: Phaser.Scene;
     private readonly baseTiles = new Map<string, Phaser.GameObjects.Image>();
     private readonly animatedTiles = new Map<string, Phaser.GameObjects.Sprite>();
@@ -55,14 +52,12 @@ export class WorldMap
     private readonly occupiedTiles = new Map<string, OccupiedTile>();
     private trackedDepthTarget?: DepthTrackedObject;
 
-    constructor (scene: Phaser.Scene)
-    {
+    constructor(scene: Phaser.Scene) {
         this.scene = scene;
         this.registerAnimations();
     }
 
-    static preload (scene: Phaser.Scene): void
-    {
+    static preload(scene: Phaser.Scene): void {
         scene.load.spritesheet(BASE_TILESET_KEY, 'tile-base.png', {
             frameWidth: TILE_SIZE,
             frameHeight: TILE_SIZE
@@ -93,22 +88,17 @@ export class WorldMap
             frameHeight: TILE_SIZE
         });
     }
-
-    initializeEmpty (): void
-    {
-        //this.refreshCameraBounds();
-    }
-
-    seedDemoWorld (): void
-    {
+   
+    seedDemoWorld(): void {
+        const offsetX = 10;
         for (let y = 0; y < DEMO_BASE_LAYER.length; y++) {
-            for (let x = 0; x < DEMO_BASE_LAYER[y].length; x++) {
+            for (let x = offsetX; x < offsetX + DEMO_BASE_LAYER[y].length; x++) {
                 this.CreateTile(
                     x,
                     y,
-                    DEMO_BASE_LAYER[y][x],
-                    DEMO_BORDER_LAYER[y][x],
-                    DEMO_DECORATION_LAYER[y][x],
+                    DEMO_BASE_LAYER[y][x - offsetX],
+                    DEMO_BORDER_LAYER[y][x - offsetX],
+                    DEMO_DECORATION_LAYER[y][x - offsetX],
                     EMPTY_TILE,
                     EMPTY_TILE
                 );
@@ -117,40 +107,26 @@ export class WorldMap
 
         for (const placement of DEMO_BLOCKING_PLACEMENTS) {
             this.CreateTile(
-                placement.x,
+                placement.x+offsetX,
                 placement.y,
-                DEMO_BASE_LAYER[placement.y][placement.x],
-                DEMO_BORDER_LAYER[placement.y][placement.x],
-                DEMO_DECORATION_LAYER[placement.y][placement.x],
+                DEMO_BASE_LAYER[placement.y][placement.x+offsetX],
+                DEMO_BORDER_LAYER[placement.y][placement.x+offsetX],
+                DEMO_DECORATION_LAYER[placement.y][placement.x+offsetX],
                 placement.blocking,
                 placement.floating ?? EMPTY_TILE
             );
         }
     }
 
-    CreateTile (
+    CreateTile(
         x: number,
         y: number,
         base: number,
-        border: number,
-        decoration: number,
-        blocking: number,
-        floating: number
-    ): void
-    {
-        this.createTile(x, y, base, border, decoration, blocking, floating);
-    }
-
-    createTile (
-        x: number,
-        y: number,
-        base: number,
-        border = EMPTY_TILE,
-        decoration = EMPTY_TILE,
-        blocking = EMPTY_TILE,
-        floating = EMPTY_TILE
-    ): void
-    {
+        border: number = EMPTY_TILE,
+        decoration: number = EMPTY_TILE,
+        blocking: number = EMPTY_TILE,
+        floating: number = EMPTY_TILE
+    ): void {
         this.renderStaticTile(this.baseTiles, BASE_TILESET_KEY, BASE_LAYER_DEPTH, x, y, base);
         this.renderAnimatedTile(x, y, base);
         this.renderStaticTile(this.borderTiles, BORDER_TILESET_KEY, BORDER_LAYER_DEPTH, x, y, border);
@@ -160,39 +136,21 @@ export class WorldMap
         this.syncOccupiedTile(x, y, base, border, decoration, blocking, floating);
     }
 
-    clearTile (x: number, y: number): void
-    {
-        this.createTile(x, y, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE);
+
+    clearTile(x: number, y: number): void {
+        this.CreateTile(x, y, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE, EMPTY_TILE);
     }
 
-    setTrackedDepthTarget (target?: DepthTrackedObject): void
-    {
-        this.trackedDepthTarget = target;
 
-        if (target) {
-            target.setDepth(ACTOR_DEPTH_BASE + target.y);
-        }
-    }
-
-    update (): void
-    {
-        if (this.trackedDepthTarget) {
-            this.trackedDepthTarget.setDepth(ACTOR_DEPTH_BASE + this.trackedDepthTarget.y);
-        }
-    }
-
-    isBlockedAtTile (x: number, y: number): boolean
-    {
+    isBlockedAtTile(x: number, y: number): boolean {
         return this.blockingTiles.has(toTileKey(x, y));
     }
 
-    getBlockingSortY (x: number, y: number): number | undefined
-    {
+    getBlockingSortY(x: number, y: number): number | undefined {
         return this.blockingTiles.get(toTileKey(x, y))?.sortY;
     }
 
-    getBlockingCollisionRect (x: number, y: number): Phaser.Geom.Rectangle | undefined
-    {
+    getBlockingCollisionRect(x: number, y: number): Phaser.Geom.Rectangle | undefined {
         const tile = this.blockingTiles.get(toTileKey(x, y));
 
         if (!tile) {
@@ -207,8 +165,7 @@ export class WorldMap
         );
     }
 
-    private registerAnimations (): void
-    {
+    private registerAnimations(): void {
         for (const config of Object.values(ANIMATED_BASE_TILE_CONFIG)) {
             if (this.scene.anims.exists(config.animKey)) {
                 continue;
@@ -226,15 +183,14 @@ export class WorldMap
         }
     }
 
-    private renderStaticTile (
+    private renderStaticTile(
         layer: Map<string, Phaser.GameObjects.Image>,
         textureKey: string,
         depth: number,
         x: number,
         y: number,
         frame: number
-    ): void
-    {
+    ): void {
         const key = toTileKey(x, y);
         const worldX = x * TILE_SIZE;
         const worldY = y * TILE_SIZE;
@@ -262,8 +218,7 @@ export class WorldMap
         );
     }
 
-    private renderAnimatedTile (x: number, y: number, baseTileIndex: number): void
-    {
+    private renderAnimatedTile(x: number, y: number, baseTileIndex: number): void {
         const key = toTileKey(x, y);
         const worldX = x * TILE_SIZE;
         const worldY = y * TILE_SIZE;
@@ -292,8 +247,7 @@ export class WorldMap
         this.animatedTiles.set(key, tile);
     }
 
-    private renderBlockingTile (x: number, y: number, frame: number): void
-    {
+    private renderBlockingTile(x: number, y: number, frame: number): void {
         const key = toTileKey(x, y);
         const worldX = x * TILE_SIZE;
         const worldY = y * TILE_SIZE;
@@ -309,7 +263,7 @@ export class WorldMap
         const sortY = worldY + metadata.sortOffsetY;
         const depth = ACTOR_DEPTH_BASE + sortY;
 
-        
+
 
         if (existingTile) {
             existingTile.image.setPosition(worldX, worldY);
@@ -334,7 +288,7 @@ export class WorldMap
         //this.blockingTiles.addTilesetImage
     }
 
-    private syncOccupiedTile (
+    private syncOccupiedTile(
         x: number,
         y: number,
         base: number,
@@ -342,8 +296,7 @@ export class WorldMap
         decoration: number,
         blocking: number,
         floating: number
-    ): void
-    {
+    ): void {
         const key = toTileKey(x, y);
         const hasVisibleTile =
             base !== EMPTY_TILE ||
@@ -361,8 +314,7 @@ export class WorldMap
         //this.refreshCameraBounds();
     }
 
-    private refreshCameraBounds (): void
-    {
+    private refreshCameraBounds(): void {
         if (this.occupiedTiles.size === 0) {
             this.scene.cameras.main.setBounds(
                 0,

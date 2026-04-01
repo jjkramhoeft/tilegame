@@ -49,7 +49,7 @@ export class GameScene extends Phaser.Scene
 
         this.#spider = new Spider({
             scene: this,
-            position: {x: 150, y: 200},
+            position: {x: 350, y: 200},
         });
         this.#spider.enableObject(); 
         this.#enemyGroup.add(this.#spider);
@@ -65,12 +65,12 @@ export class GameScene extends Phaser.Scene
             scene: this,
             position: {x: 250, y: 300},
         });
+        this.#drow.enableObject();
         this.#enemyGroup.add(this.#drow);
     }
 
     update ()
     {
-        this.worldMap?.update();
         this.#enemyGroup?.getChildren().forEach((enemy) => {
                 enemy.update();
         });
@@ -79,14 +79,13 @@ export class GameScene extends Phaser.Scene
 
     #setupMap(): void{
         this.worldMap = new WorldMap(this);
-        this.worldMap.initializeEmpty();
         this.worldMap.seedDemoWorld();
     }
 
     #setupPlayer(): void {
         this.#player = new Player({
             scene: this,
-            position: {x: 150, y: 150},
+            position: {x: 400, y: 250},
             controls: this.#controls,
             maxLife: 3,
             currentLife: 3
