@@ -5,6 +5,8 @@ import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Spider } from '../game-objects/enemies/spider';
 import { Wisp } from '../game-objects/enemies/wisp';
 import { Drow } from '../game-objects/enemies/boss/drow';
+import { Earth } from '../ground/earth';
+import { Tile } from '../ground/tile';
 
 export class GameScene extends Phaser.Scene
 {
@@ -14,6 +16,8 @@ export class GameScene extends Phaser.Scene
     #wisp!:Wisp;
     #drow!: Drow;
     #enemyGroup?: Phaser.GameObjects.Group;
+    #earth!: Earth;
+    #playerStartPosition = { x: 400, y: 250 };
 
     private worldMap?: WorldMap;
 
@@ -39,13 +43,25 @@ export class GameScene extends Phaser.Scene
             return;
         }
         this.#controls = new KeyboardComponent(this.input.keyboard);
+
+        this.#earth = new Earth(this);
+        this.#earth.createMap(100, 100);
        
-        this.#setupMap();        
+        this.#setupMap();  // old
+
+       
 
         this.#setupPlayer();
         this.#setupCamera();
 
         this.#enemyGroup = this.add.group();
+
+        const firstTilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#playerStartPosition.x, this.#playerStartPosition.y,true);
+        const firstTile = new Tile({
+            tilenumber: firstTilePosition,
+            biome: 1,
+        });
+        this.#earth.AddTile(firstTile);      
 
         this.#spider = new Spider({
             scene: this,
@@ -75,6 +91,14 @@ export class GameScene extends Phaser.Scene
                 enemy.update();
         });
 
+        if(this.#controls.isUpJustDown){
+            const tilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y,true);
+            const tile = new Tile({
+            tilenumber: tilePosition,
+            biome: 1,
+        });
+        this.#earth.AddTile(tile);     
+        }
     }
 
     #setupMap(): void{
@@ -85,7 +109,7 @@ export class GameScene extends Phaser.Scene
     #setupPlayer(): void {
         this.#player = new Player({
             scene: this,
-            position: {x: 400, y: 250},
+            position: this.#playerStartPosition,
             controls: this.#controls,
             maxLife: 3,
             currentLife: 3

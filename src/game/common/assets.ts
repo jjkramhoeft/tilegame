@@ -159,7 +159,7 @@ export const ASSET_KEYS = {
   TILESET_DECORATION: 'tileset-decoration',
   TILESET_BORDER: 'tileset-border',
   TILESET_ANIMATED: 'tileset-animated',
-  TILESET_BASE: 'tileset-base',  
+  TILESET_BASE: 'tile-base',  
   
 } as const;
 

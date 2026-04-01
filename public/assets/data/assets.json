@@ -1311,6 +1311,15 @@
         }
       },
       {
+        "type": "spritesheet",
+        "key": "tile-base",
+        "textureURL": "tile-base.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
         "type": "image",
         "key": "background",
         "url": "bg-garden-genesis.png"
