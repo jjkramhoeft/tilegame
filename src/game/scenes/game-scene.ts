@@ -1,5 +1,4 @@
 import * as Phaser from 'phaser';
-import { WorldMap } from '../tilemap/WorldMap';
 import { Player } from '../game-objects/player/player';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Spider } from '../game-objects/enemies/spider';
@@ -19,8 +18,6 @@ export class GameScene extends Phaser.Scene
     #earth!: Earth;
     #playerStartPosition = { x: 400, y: 250 };
 
-    private worldMap?: WorldMap;
-
     constructor ()
     {
         super('GameScene');
@@ -29,13 +26,7 @@ export class GameScene extends Phaser.Scene
     get player(): Player {
         return this.#player;
     }
-
-    preload ()
-    {
-        this.load.setPath('assets');
-        WorldMap.preload(this);
-    }
-
+   
     create ()
     {
         if (!this.input.keyboard) {
@@ -45,11 +36,7 @@ export class GameScene extends Phaser.Scene
         this.#controls = new KeyboardComponent(this.input.keyboard);
 
         this.#earth = new Earth(this);
-        this.#earth.createMap(100, 100);
-       
-        this.#setupMap();  // old map.
-
-       
+        this.#earth.createMap(100, 100);       
 
         this.#setupPlayer();
         this.#setupCamera();
@@ -124,11 +111,6 @@ export class GameScene extends Phaser.Scene
             tilePosition,
             directions);               
         }
-    }
-
-    #setupMap(): void{
-        this.worldMap = new WorldMap(this);
-        this.worldMap.seedDemoWorld();
     }
 
     #setupPlayer(): void {

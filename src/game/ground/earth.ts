@@ -16,6 +16,20 @@ export type EarthCastingConfig = {
     powerLevel: number;
 };
 
+
+interface TileCollisionObject {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+interface TileCollisionData {
+    objectgroup?: {
+        objects?: TileCollisionObject[];
+    };
+}
+
 export class Earth {
 
     protected allTiles: Map<string, Tile> = new Map<string, Tile>();
@@ -96,12 +110,34 @@ export class Earth {
             console.error('Failed to create blocking layer');
             return;
         }
-        const tilesetBlocking = this.blockingLayer.addTilesetImage(
+        let tilesetBlocking = this.blockingLayer.addTilesetImage(
             ASSET_KEYS.TILESET_BLOCKING,
             ASSET_KEYS.TILESET_BLOCKING,
             this.tileSize,
             this.tileSize
         );
+        if (!tilesetBlocking) {
+            console.error('Failed to load rocks tileset');
+            return;
+        }
+        //Add geometric collision shapes to the blocking layer based on the tile.
+        const rocksTileData = (tilesetBlocking.tileData || {}) as Record<number, TileCollisionData>;
+        // Define custom rectangles for any tile index you want
+        for (const tileIndex in rocksTileData) {
+            rocksTileData[tileIndex] = {
+                objectgroup: {
+                    objects: [{
+                        x: 16,
+                        y: 16,
+                        width: 32,
+                        height: 32
+                    }]
+                }
+            };
+        }
+        tilesetBlocking.tileData = rocksTileData;
+
+
         if (!tilesetBlocking) {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BLOCKING}`);
         }
@@ -435,22 +471,22 @@ export class Earth {
             }
         }
         if (tile.decoration >= 0) {
-             if(tile.floating>55){
+            if (tile.floating > 55) {
                 console.warn(`Decoration tile index ${tile.decoration} is out of expected range!`);
             }
             this.decorationLayer.putTileAt(tile.decoration, tile.tileX, tile.tileY);
         }
         if (tile.blocking >= 0) {
-             if(tile.floating>91){
+            if (tile.floating > 91) {
                 console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
             }
             this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
         }
         if (tile.floating >= 0) {
-            if(tile.floating>15){
+            if (tile.floating > 15) {
                 console.warn(`Floating tile index ${tile.floating} is out of expected range!`);
             }
-            this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY-1);
+            this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY - 1);
         }
     }
 
@@ -688,7 +724,7 @@ function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorations: nu
                 blocking = Phaser.Math.RND.integerInRange(minRockBlockingIndex, maxRockBlockingIndex);
             }
             break;
-        case BIOME.DESERT: 
+        case BIOME.DESERT:
             const minDesertBlockingIndex = 94;
             const maxDesertBlockingIndex = 101;
             let desertBlockingChance = 0.01;
@@ -730,11 +766,11 @@ function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorations: nu
             if (Phaser.Math.RND.realInRange(0, 1) < swampBlockingChance) {
                 blocking = Phaser.Math.RND.integerInRange(minSwampBlockingIndex, maxSwampBlockingIndex);
                 if (blocking >= 53) { // floating blockings
-                    floating = blocking + 10 -53;
+                    floating = blocking + 10 - 53;
                 }
             }
             break;
-        case BIOME.CRYSTAL:    
+        case BIOME.CRYSTAL:
             const minCrystalBlockingIndex = 60;
             const maxCrystalBlockingIndex = 83;
             let crystalBlockingChance = 0.20;
