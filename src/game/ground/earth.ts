@@ -545,6 +545,17 @@ export class Earth {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
             this.biomeLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
+            if(tile.biome===5){
+                //water.
+                const sceneX = tile.tileX * this.tileSize;
+                const sceneY = tile.tileY * this.tileSize;
+                this.scene.add
+                    .sprite(sceneX, sceneY, 'tile-animated')
+                    .setOrigin(0, 0)
+                    .setDepth(-1)
+                    .play('water-flow' );
+                
+            }
         }
         if (tile.decoration >= 0) {
             this.decorationLayer.putTileAt(tile.decoration, tile.tileX, tile.tileY);

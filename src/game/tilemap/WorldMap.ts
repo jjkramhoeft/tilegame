@@ -90,7 +90,7 @@ export class WorldMap {
     }
    
     seedDemoWorld(): void {
-        const offsetX = 10;
+        const offsetX = 0;
         for (let y = 0; y < DEMO_BASE_LAYER.length; y++) {
             for (let x = offsetX; x < offsetX + DEMO_BASE_LAYER[y].length; x++) {
                 this.CreateTile(
@@ -127,6 +127,9 @@ export class WorldMap {
         blocking: number = EMPTY_TILE,
         floating: number = EMPTY_TILE
     ): void {
+        if(blocking>-1){
+            console.log(`Creating blocking tile at ${x},${y} with frame ${blocking}`);
+        }
         this.renderStaticTile(this.baseTiles, BASE_TILESET_KEY, BASE_LAYER_DEPTH, x, y, base);
         this.renderAnimatedTile(x, y, base);
         this.renderStaticTile(this.borderTiles, BORDER_TILESET_KEY, BORDER_LAYER_DEPTH, x, y, border);

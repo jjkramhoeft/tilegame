@@ -7,18 +7,10 @@ import {
     ANIMATED_TILE_OVERRIDES,
 } from './TileConfig';
 
-const WATER_SPRITESHEET_KEY = 'water';
+const WATER_SPRITESHEET_KEY = 'tile-animated';
 
 export class AnimatedTileLayer
 {
-    static preload (scene: Phaser.Scene): void
-    {
-        scene.load.spritesheet(WATER_SPRITESHEET_KEY, 'tile-animated.png', {
-            frameWidth: TILE_SIZE,
-            frameHeight: TILE_SIZE
-        });
-    }
-
     static create (scene: Phaser.Scene, mapData: number[][]): void
     {
         AnimatedTileLayer.registerAnims(scene);

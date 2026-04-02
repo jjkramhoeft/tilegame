@@ -1,8 +1,6 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
 import { ASSET_KEYS, ASSET_PACK_KEYS } from '../common/assets';
-import { LevelData } from '../common/types';
-import { DataManager } from '../common/data-manager';
 
 export class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -19,16 +17,28 @@ export class PreloadScene extends Phaser.Scene {
   public create(): void {
     this.#createAnimations();
 
-     const sceneData: LevelData = {
-       level: DataManager.instance.data.currentArea.name,
-       roomId: DataManager.instance.data.currentArea.startRoomId,
-       doorId: DataManager.instance.data.currentArea.startDoorId,
-     };
+    
     this.scene.start(SCENE_KEYS.INTRO);
   }
 
   #createAnimations(): void {
 
+    /*
+    const WATER_ANIM_KEY = 'water-flow';
+    this.anims.create({
+        key: WATER_ANIM_KEY,
+        frames: this.anims.generateFrameNumbers('tile-animated', { start: 0, end: 7 }),
+        frameRate: 8,
+        repeat: -1
+    });
+    const LAVA_ANIM_KEY = 'lava-flow';
+    this.anims.create({
+        key: LAVA_ANIM_KEY,
+        frames: this.anims.generateFrameNumbers('tile-animated', { start: 32, end: 39 }),
+        frameRate: 8,
+        repeat: -1
+    });
+    */
     this.anims.createFromAseprite(ASSET_KEYS.HUD_NUMBERS);
     this.anims.createFromAseprite(ASSET_KEYS.PLAYER);
     this.anims.createFromAseprite(ASSET_KEYS.SPIDER);
