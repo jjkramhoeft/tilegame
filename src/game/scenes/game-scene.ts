@@ -110,15 +110,15 @@ export class GameScene extends Phaser.Scene
             });
             
             this.#earth.AddTiles({
-                isDesertUnlocked: false,
-                isGrassUnlocked: false,
-                isForestUnlocked: false,
-                isSwampUnlocked: false,
-                isCrystalUnlocked: false,
+                isDesertUnlocked: true,
+                isGrassUnlocked: true,
+                isForestUnlocked: true,
+                isSwampUnlocked: true,
+                isCrystalUnlocked: true,
                 isWaterUnlocked: true,
                 isLavaUnlocked: true,
                 isMountainUnlocked: false,
-                powerLevel: 2,
+                powerLevel: 4,
             } as EarthCastingConfig, 
             casterPosition,
             tilePosition,

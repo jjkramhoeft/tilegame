@@ -556,17 +556,23 @@ export class Earth {
                     .setDepth(-1)
                     .play('lava-flow');      
             }else if(tile.biome===BIOME.CRYSTAL){
+                const crystalAnimationChance =0.7;
+                if (Phaser.Math.RND.realInRange(0,1) < crystalAnimationChance) {
                 this.scene.add
                     .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
                     .setOrigin(0, 0)
                     .setDepth(-1)
                     .play('crystal-flow');   
+                }
             }else if(tile.biome===BIOME.VOID){
+                const voidAnimationChance =0.6;
+                if (Phaser.Math.RND.realInRange(0,1) < voidAnimationChance) {
                 this.scene.add
                     .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
                     .setOrigin(0, 0)
                     .setDepth(-1)
-                    .play('void-flow');                
+                    .play('void-flow');        
+                }        
             }
         }
         if (tile.decoration >= 0) {
