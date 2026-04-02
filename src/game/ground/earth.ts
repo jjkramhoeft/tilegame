@@ -23,6 +23,7 @@ export class Earth {
     protected biomeLayer!: Phaser.Tilemaps.Tilemap;
     protected decorationLayer!: Phaser.Tilemaps.Tilemap;
     protected blockingLayer!: Phaser.Tilemaps.Tilemap;
+    protected floatingLayer!: Phaser.Tilemaps.Tilemap;
     private isInitialized = false;
     tileSize = 64;
     constructor(scene: Phaser.Scene) {
@@ -110,6 +111,33 @@ export class Earth {
             return;
         }
         blockingTileLayer.setDepth(0);
+
+        // Set up floating layer.
+        this.floatingLayer = this.scene.make.tilemap({
+            tileWidth: this.tileSize,
+            tileHeight: this.tileSize,
+            width,
+            height,
+        });
+        if (!this.blockingLayer) {
+            console.error('Failed to create blocking layer');
+            return;
+        }
+        const tilesetFloating = this.floatingLayer.addTilesetImage(
+            ASSET_KEYS.TILESET_FLOATING,
+            ASSET_KEYS.TILESET_FLOATING,
+            this.tileSize,
+            this.tileSize
+        );
+        if (!tilesetFloating) {
+            throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_FLOATING}`);
+        }
+        const floatingTileLayer = this.floatingLayer.createBlankLayer('floating', tilesetFloating);
+        if (!floatingTileLayer) {
+            console.error('Failed to create floating tile layer');
+            return;
+        }
+        floatingTileLayer.setDepth(9999999);
 
         this.isInitialized = true;
     }
@@ -331,29 +359,25 @@ export class Earth {
 
     private CreateNewTile(creationConfig: EarthCastingConfig, tilePosition: Position, powerLevel: number, casterTile: Tile | undefined): Tile {
 
-        let casterBiome = casterTile?.biome ?? BIOME.ROCK;       
-        let neighborTiles = this.get4NeighborTiles(tilePosition);
-        // Decide on Biome.
-        let biome: number = DecideBiome(creationConfig, casterBiome, neighborTiles);
-
-        // Decide on Decoration.
-        let countOfNeighborDecorations = 0;
-        for (const neighbor of neighborTiles) {
-            if (neighbor.decoration >= 0) {
-                countOfNeighborDecorations++;
-            }
-        }
-        let casterGotDecoration = casterTile?.decoration !== undefined && casterTile.decoration >= 0;
-        let decoration: number = DicedeDecoration(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel);
+        const casterBiome = casterTile?.biome ?? BIOME.ROCK;
+        const neighborTiles = this.get4NeighborTiles(tilePosition);
+        const biome: number = DecideBiome(creationConfig, casterBiome, neighborTiles);
+        const countOfNeighborDecorations = neighborTiles.filter(n => n.decoration >= 0).length;
+        const countOfNeighborBolcking = neighborTiles.filter(n => n.blocking >= 0).length;
+        const casterGotDecoration = casterTile?.decoration !== undefined && casterTile.decoration >= 0;
+        const decoration: number = DicedeDecoration(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel);
+        const [blocking, floating] = DicedeBlockingAndFloating(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel, decoration, countOfNeighborBolcking);
 
         return new Tile({
             tilenumber: tilePosition,
             biome: biome,
             decoration: decoration,
+            blocking: blocking,
+            floating: floating,
         });
     }
 
-    get4NeighborTiles(tilePosition: Position):Tile[] {
+    get4NeighborTiles(tilePosition: Position): Tile[] {
         const neighborTiles: Tile[] = [];
         let neighborUp = this.getTile(tilePosition.x, tilePosition.y - 1);
         let neighborDown = this.getTile(tilePosition.x, tilePosition.y + 1);
@@ -412,6 +436,12 @@ export class Earth {
         }
         if (tile.decoration >= 0) {
             this.decorationLayer.putTileAt(tile.decoration, tile.tileX, tile.tileY);
+        }
+        if (tile.blocking >= 0) {
+            this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
+        }
+        if (tile.floating >= 0) {
+            this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY-1);
         }
     }
 
@@ -630,5 +660,95 @@ function DicedeDecoration(biome: number, countOfNeighborDecorations: number, cas
         // Lava and mountains has no decorations. 
     }
     return decoration;
+}
+
+function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorations: number, casterGotDecoration: boolean,
+    powerLevel: number, decoration: number, countOfNeighborBolcking: number): [number, number] {
+    let blocking = -1;
+    let floating = -1;
+    switch (biome) {
+        case BIOME.ROCK:
+            const minRockBlockingIndex = 0;
+            const maxRockBlockingIndex = 19;
+            let rockBlockingChance = 0.1;
+            if (casterGotDecoration) { rockBlockingChance += 0.05; }
+            rockBlockingChance += countOfNeighborDecorations * 0.1;
+            rockBlockingChance -= countOfNeighborBolcking * 0.1;
+            rockBlockingChance += powerLevel * 0.05;
+            if (Phaser.Math.RND.realInRange(0, 1) < rockBlockingChance) {
+                blocking = Phaser.Math.RND.integerInRange(minRockBlockingIndex, maxRockBlockingIndex);
+            }
+            break;
+        case BIOME.DESERT: // Cacti missing in sprite!       
+            const minDesertBlockingIndex = 36;
+            const maxDesertBlockingIndex = 38;
+            let desertBlockingChance = 0.01;
+            if (casterGotDecoration) { desertBlockingChance += 0.01; }
+            desertBlockingChance += countOfNeighborDecorations * 0.01;
+            desertBlockingChance += countOfNeighborBolcking * 0.02;
+            desertBlockingChance += powerLevel * 0.01;
+            if (Phaser.Math.RND.realInRange(0, 1) < desertBlockingChance) {
+                blocking = Phaser.Math.RND.integerInRange(minDesertBlockingIndex, maxDesertBlockingIndex);
+            }
+            break;
+        case BIOME.GRASS:
+            const minGrassBlockingIndex = 20;
+            const maxGrassBlockingIndex = 21;
+            let grassBlockingChance = 0.05;
+            if (casterGotDecoration) { grassBlockingChance += 0.02; }
+            grassBlockingChance += countOfNeighborDecorations * 0.05;
+            grassBlockingChance -= countOfNeighborBolcking * 0.1;
+            grassBlockingChance += powerLevel * 0.05;
+            if (Phaser.Math.RND.realInRange(0, 1) < grassBlockingChance) {
+                blocking = Phaser.Math.RND.integerInRange(minGrassBlockingIndex, maxGrassBlockingIndex);
+            }
+            break;
+        case BIOME.FOREST: // forest            
+            const minForestBlockingIndex = 24;
+            const maxForestBlockingIndex = 63;
+            let forestBlockingChance = 0.25;
+            if (casterGotDecoration) { forestBlockingChance += 0.20; }
+            forestBlockingChance += countOfNeighborDecorations * 0.05;
+            forestBlockingChance -= countOfNeighborBolcking * 0.10;
+            forestBlockingChance += powerLevel * 0.05;
+            if (Phaser.Math.RND.realInRange(0, 1) < forestBlockingChance) {
+                blocking = Phaser.Math.RND.integerInRange(minForestBlockingIndex, maxForestBlockingIndex);
+                if (blocking >= 60) {
+                    floating = blocking - 60;
+                }
+            }
+            break;
+        // Water has no decorations. 
+        case BIOME.SWAMP: // swamp            
+            const minSwampBlockingIndex = 64;
+            const maxSwampBlockingIndex = 67;
+            let swampBlockingChance = 0.112;
+            if (casterGotDecoration) { swampBlockingChance += 0.05; }
+            swampBlockingChance += countOfNeighborDecorations * 0.01;
+            swampBlockingChance -= countOfNeighborBolcking * 0.02;
+            swampBlockingChance += powerLevel * 0.02;
+            if (Phaser.Math.RND.realInRange(0, 1) < swampBlockingChance) {
+                blocking = Phaser.Math.RND.integerInRange(minSwampBlockingIndex, maxSwampBlockingIndex);
+                if (blocking >= 0) { // floating blockings
+                    floating = blocking + 8 -64;
+                }
+            }
+            break;
+        case BIOME.CRYSTAL: /* crystal missing in sprite sheet           
+            const minCrystalBlockingIndex = 0;
+            const maxCrystalBlockingIndex = 8;
+            let crystalBlockingChance = 0.20;
+            if (casterGotDecoration) { crystalBlockingChance += 0.15; }
+            crystalBlockingChance += countOfNeighborDecorations * 0.1;
+            crystalBlockingChance += powerLevel * 0.1;
+            if (Phaser.Math.RND.realInRange(0, 1) < crystalBlockingChance) {
+                blocking = Phaser.Math.RND.integerInRange(minCrystalBlockingIndex, maxCrystalBlockingIndex);
+            }*/
+            break;
+        // Lava has no decorations. 
+        // Mountains is missing in sprite sheet.
+    }
+
+    return [blocking, floating];
 }
 

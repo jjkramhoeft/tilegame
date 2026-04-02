@@ -154,10 +154,10 @@ export const ASSET_KEYS = {
   FEMALE_ARMOR_SWORD_HURT: 'female-armour-sword-hurt',
   FEMALE_ARMOR_SWORD_TRUST: 'female-armour-sword-thrust128',
 
-  TILESET_FLOATING: 'tileset-floating',
+  TILESET_FLOATING: 'tile-floating',
   TILESET_BLOCKING: 'tile-blocking',
   TILESET_DECORATION: 'tile-decoration',
-  TILESET_BORDER: 'tileset-border',
+  TILESET_BORDER: 'tile-border',
   TILESET_ANIMATED: 'tileset-animated',
   TILESET_BASE: 'tile-base',  
   
