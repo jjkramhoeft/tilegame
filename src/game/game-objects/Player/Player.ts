@@ -13,14 +13,10 @@ import {
 } from '../../common/config';
 import { CHARACTER_STATES } from '../../components/state-machine/states/character/character-states';
 import { IdleState } from '../../components/state-machine/states/character/idle-state';
-import { LiftState } from '../../components/state-machine/states/character/lift-state';
 import { OpenChestState } from '../../components/state-machine/states/character/open-chest-state';
-import { IdleHoldingState } from '../../components/state-machine/states/character/idle-holding-state';
-import { MoveHoldingState } from '../../components/state-machine/states/character/move-holding-state';
 import { MoveState } from '../../components/state-machine/states/character/move-state';
 import { HurtState } from '../../components/state-machine/states/character/hurt-state';
 import { DeathState } from '../../components/state-machine/states/character/death-state';
-import { ThrowState } from '../../components/state-machine/states/character/throw-state';
 import { AttackState } from '../../components/state-machine/states/character/attack-state';
 import { flash } from '../../common/juice-utils';
 
