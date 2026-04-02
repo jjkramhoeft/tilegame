@@ -3,6 +3,18 @@ import { Position } from '../common/types';
 import * as Phaser from 'phaser';
 import { ASSET_KEYS } from '../common/assets';
 
+export type EarthCastingConfig = {
+    isDesertUnlocked: boolean;
+    isGrassUnlocked: boolean;
+    isForestUnlocked: boolean;
+    isWaterUnlocked: boolean;
+    isSwampUnlocked: boolean;
+    isCrystalUnlocked: boolean;
+    isLavaUnlocked: boolean;
+    isMountainUnlocked: boolean;
+    powerLevel: number;
+};
+
 export class Earth {
 
     protected allTiles: Map<string, Tile> = new Map<string, Tile>();
@@ -47,6 +59,13 @@ export class Earth {
         this.isInitialized = true;
     }
 
+    public AddTiles(creationConfig: EarthCastingConfig, tilePosition: Position) {
+        const tile = new Tile({
+            tilenumber: tilePosition,
+            biome: 1,
+        });
+        this.AddTile(tile);
+    }
 
     public AddTile(tile: Tile) {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);

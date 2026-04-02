@@ -5,7 +5,7 @@ import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Spider } from '../game-objects/enemies/spider';
 import { Wisp } from '../game-objects/enemies/wisp';
 import { Drow } from '../game-objects/enemies/boss/drow';
-import { Earth } from '../ground/earth';
+import { Earth, EarthCastingConfig } from '../ground/earth';
 import { Tile } from '../ground/tile';
 
 export class GameScene extends Phaser.Scene
@@ -93,11 +93,10 @@ export class GameScene extends Phaser.Scene
                 enemy.update();
         });
 
-
+        // Creating new tiles logic. (Temporary, placed here - while developing.)
         if(this.#player.stateMachine.currentStateName === 'ATTACK_STATE'){
             console.log('Player casting/attacking');
             const tilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y,true);
-//            const facingDirection = this.#player.direction;
             const facingDirections = this.#player.getLastMoveDirections();
             console.log(facingDirections);
             facingDirections.forEach(dir => {
@@ -109,17 +108,10 @@ export class GameScene extends Phaser.Scene
                 }
             });
             
-            if(this.#earth.getTile(tilePosition.x, tilePosition.y) == undefined){
-                console.log('placing tile!');
-                const tile = new Tile({
-                    tilenumber: tilePosition,
-                    biome: 1,
-                });
-                this.#earth.AddTile(tile);     
-            }else{
-                console.log('skiping tile!');
-            }
-            
+            this.#earth.AddTiles({
+                isDesertUnlocked: true,
+                powerLevel: 1,
+            } as EarthCastingConfig, tilePosition);               
         }
     }
 
