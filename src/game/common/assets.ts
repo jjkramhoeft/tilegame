@@ -156,7 +156,7 @@ export const ASSET_KEYS = {
 
   TILESET_FLOATING: 'tileset-floating',
   TILESET_BLOCKING: 'tileset-blocking',
-  TILESET_DECORATION: 'tileset-decoration',
+  TILESET_DECORATION: 'tile-decoration',
   TILESET_BORDER: 'tileset-border',
   TILESET_ANIMATED: 'tileset-animated',
   TILESET_BASE: 'tile-base',  

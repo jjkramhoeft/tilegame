@@ -96,10 +96,11 @@ export class GameScene extends Phaser.Scene
         // Creating new tiles logic. (Temporary, placed here - while developing.)
         if(this.#player.stateMachine.currentStateName === 'ATTACK_STATE'){
             console.log('Player casting/attacking');
-            const tilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y,true);
-            const facingDirections = this.#player.getLastMoveDirections();
-            console.log(facingDirections);
-            facingDirections.forEach(dir => {
+            const casterPosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y,true);
+            const tilePosition = {x: casterPosition.x, y: casterPosition.y};
+            const directions = this.#player.getLastMoveDirections();
+            console.log(directions);
+            directions.forEach(dir => {
                 switch(dir){
                     case 'UP': tilePosition.y -= 1; break;
                     case 'DOWN': tilePosition.y += 1; break;
@@ -110,8 +111,13 @@ export class GameScene extends Phaser.Scene
             
             this.#earth.AddTiles({
                 isDesertUnlocked: true,
-                powerLevel: 1,
-            } as EarthCastingConfig, tilePosition);               
+                isGrassUnlocked: true,
+                isForestUnlocked: true,
+                powerLevel: 4,
+            } as EarthCastingConfig, 
+            casterPosition,
+            tilePosition,
+            directions);               
         }
     }
 
