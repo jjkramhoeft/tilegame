@@ -61,7 +61,7 @@ export class Earth {
             return;
         }
         biomeTileLayer.setDepth(-2);
-        
+
         // Set up decoration layer.
         this.decorationLayer = this.scene.make.tilemap({
             tileWidth: this.tileSize,
@@ -329,8 +329,8 @@ export class Earth {
         return targets;
     }
 
-    private CreateNewTile(creationConfig: EarthCastingConfig, tilePosition: Position, powerLevel: number,casterTile: Tile | undefined): Tile {
-        let biome = 1;// rock is default biome.
+    private CreateNewTile(creationConfig: EarthCastingConfig, tilePosition: Position, powerLevel: number, casterTile: Tile | undefined): Tile {
+
         let casterBiome = casterTile?.biome ?? BIOME.ROCK;
         const possibleBiomes = new Map<number, number>(); // biomeId, weight
         if (casterBiome === BIOME.ROCK) {
@@ -353,131 +353,10 @@ export class Earth {
         if (neighborRight) {
             neighborTiles.push(neighborRight);
         }
-        // Deside on Biome.
-        if (creationConfig.isDesertUnlocked || creationConfig.isGrassUnlocked || creationConfig.isForestUnlocked || creationConfig.isWaterUnlocked || creationConfig.isSwampUnlocked || creationConfig.isCrystalUnlocked || creationConfig.isLavaUnlocked || creationConfig.isMountainUnlocked) {
-            if (creationConfig.isDesertUnlocked) {
-                let key=BIOME.DESERT;
-                let weight = 10;
-                if (casterBiome === key) {
-                    weight+=100;
-                }
-                for (const neighbor of neighborTiles) {
-                    if (neighbor.biome === key) {
-                        weight += 10;
-                    }
-                }
-                possibleBiomes.set(key,weight);
-            }
-            if (creationConfig.isGrassUnlocked) {
-                let key=BIOME.GRASS;
-                let weight = 10;
-                if (casterBiome === key) {
-                    weight+=100;
-                }
-                for (const neighbor of neighborTiles) {
-                    if (neighbor.biome === key) {
-                        weight += 10;
-                    }
-                }
-                possibleBiomes.set(key,weight);
-            }
-            if (creationConfig.isForestUnlocked) {
-                let key=BIOME.FOREST;
-                let weight = 10;
-                if (casterBiome === key) {
-                    weight+=100;
-                }
-                for (const neighbor of neighborTiles) {
-                    if (neighbor.biome === key) {
-                        weight += 10;
-                    }
-                }
-                possibleBiomes.set(key,weight);
-            }
-            if (creationConfig.isWaterUnlocked) {
-                let key=BIOME.WATER;
-                let weight = 10;
-                if (casterBiome === key) {
-                    weight+=100;
-                }
-                for (const neighbor of neighborTiles) {
-                    if (neighbor.biome === key) {
-                        weight += 10;
-                    }
-                }
-                possibleBiomes.set(key,weight);
-            }
-            if (creationConfig.isSwampUnlocked) {
-                let key=BIOME.SWAMP;
-                let weight = 10;
-                if (casterBiome === key) {
-                    weight+=100;
-                }
-                for (const neighbor of neighborTiles) {
-                    if (neighbor.biome === key) {
-                        weight += 10;
-                    }
-                }
-                possibleBiomes.set(key,weight);
-            }
-            if (creationConfig.isCrystalUnlocked) {
-                let key=BIOME.CRYSTAL;
-                let weight = 10;
-                if (casterBiome === key) {
-                    weight+=100;
-                }
-                for (const neighbor of neighborTiles) {
-                    if (neighbor.biome === key) {
-                        weight += 10;
-                    }
-                }
-                possibleBiomes.set(key,weight);                
-            }
-            if (creationConfig.isLavaUnlocked) {
-                let key=BIOME.LAVA;
-                let weight = 10;
-                if (casterBiome === key) {
-                    weight+=100;
-                }
-                for (const neighbor of neighborTiles) {
-                    if (neighbor.biome === key) {
-                        weight += 10;
-                    }
-                }
-                possibleBiomes.set(key,weight);
-            }
-            if (creationConfig.isMountainUnlocked) {
-                let key=BIOME.MOUNTAIN;
-                let weight = 10;
-                if (casterBiome === key) {
-                    weight+=100;
-                }
-                for (const neighbor of neighborTiles) {
-                    if (neighbor.biome === key) {
-                        weight += 10;
-                    }
-                }
-                possibleBiomes.set(key,weight);
-            }
-            if (possibleBiomes.size > 0) {
-                let sumOfWeights = 0;
-                possibleBiomes.forEach((weight) => {
-                    sumOfWeights += weight;
-                });
-                let randomWeight = Phaser.Math.RND.realInRange(0, sumOfWeights);
-                let cumulativeWeight = 0;
-                let found = false;
+        // Decide on Biome.
+        let biome: number = DecideBiome(creationConfig, casterBiome, neighborTiles);
 
-                for(const [biomeId, weight] of possibleBiomes) {
-                    cumulativeWeight += weight;
-                    if (randomWeight < cumulativeWeight && !found) {
-                        biome = biomeId;
-                        break;                    
-                    }
-                }
-            }
-        }
-        // Deside on Decoration.
+        // Decide on Decoration.
         let countOfNeighborDecorations = 0;
         for (const neighbor of neighborTiles) {
             if (neighbor.decoration >= 0) {
@@ -492,68 +371,68 @@ export class Earth {
                 const minRockDecorationIndex = 18;
                 const maxRockDecorationIndex = 32;
                 let rockDecorationChance = 0.3;
-                if (casterGotDecoration ) { rockDecorationChance+=0.2;}
+                if (casterGotDecoration) { rockDecorationChance += 0.2; }
                 rockDecorationChance += countOfNeighborDecorations * 0.1;
                 rockDecorationChance += powerLevel * 0.05;
-                if (Phaser.Math.RND.realInRange(0,1) < rockDecorationChance) {
+                if (Phaser.Math.RND.realInRange(0, 1) < rockDecorationChance) {
                     decoration = Phaser.Math.RND.integerInRange(minRockDecorationIndex, maxRockDecorationIndex);
-                } 
+                }
                 break;
             case BIOME.DESERT: // desert            
                 const minDesertDecorationIndex = 28;
                 const maxDesertDecorationIndex = 32;
                 let desertDecorationChance = 0.12;
-                if (casterGotDecoration ) { desertDecorationChance+=0.15;}
+                if (casterGotDecoration) { desertDecorationChance += 0.15; }
                 desertDecorationChance += countOfNeighborDecorations * 0.02;
                 desertDecorationChance += powerLevel * 0.05;
-                if (Phaser.Math.RND.realInRange(0,1) < desertDecorationChance) {
+                if (Phaser.Math.RND.realInRange(0, 1) < desertDecorationChance) {
                     decoration = Phaser.Math.RND.integerInRange(minDesertDecorationIndex, maxDesertDecorationIndex);
-                } 
+                }
                 break;
             case BIOME.GRASS: // grass            
                 const minGrassDecorationIndex = 33;
                 const maxGrassDecorationIndex = 46;
                 let grassDecorationChance = 0.30;
-                if (casterGotDecoration ) { grassDecorationChance+=0.20;}
+                if (casterGotDecoration) { grassDecorationChance += 0.20; }
                 grassDecorationChance += countOfNeighborDecorations * 0.15;
                 grassDecorationChance += powerLevel * 0.05;
-                if (Phaser.Math.RND.realInRange(0,1) < grassDecorationChance) {
+                if (Phaser.Math.RND.realInRange(0, 1) < grassDecorationChance) {
                     decoration = Phaser.Math.RND.integerInRange(minGrassDecorationIndex, maxGrassDecorationIndex);
-                } 
+                }
                 break;
             case BIOME.FOREST: // forest            
                 const minForestDecorationIndex = 47;
                 const maxForestDecorationIndex = 52;
                 let forestDecorationChance = 0.25;
-                if (casterGotDecoration ) { forestDecorationChance+=0.20;}
+                if (casterGotDecoration) { forestDecorationChance += 0.20; }
                 forestDecorationChance += countOfNeighborDecorations * 0.1;
                 forestDecorationChance += powerLevel * 0.05;
-                if (Phaser.Math.RND.realInRange(0,1) < forestDecorationChance) {
+                if (Phaser.Math.RND.realInRange(0, 1) < forestDecorationChance) {
                     decoration = Phaser.Math.RND.integerInRange(minForestDecorationIndex, maxForestDecorationIndex);
-                } 
+                }
                 break;
             // Water has no decorations. 
             case BIOME.SWAMP: // swamp            
                 const minSwampDecorationIndex = 9;
                 const maxSwampDecorationIndex = 17;
                 let swampDecorationChance = 0.20;
-                if (casterGotDecoration ) { swampDecorationChance+=0.15;}
+                if (casterGotDecoration) { swampDecorationChance += 0.15; }
                 swampDecorationChance += countOfNeighborDecorations * 0.1;
                 swampDecorationChance += powerLevel * 0.05;
-                if (Phaser.Math.RND.realInRange(0,1) < swampDecorationChance) {
+                if (Phaser.Math.RND.realInRange(0, 1) < swampDecorationChance) {
                     decoration = Phaser.Math.RND.integerInRange(minSwampDecorationIndex, maxSwampDecorationIndex);
-                } 
+                }
                 break;
             case BIOME.CRYSTAL: // crystal            
                 const minCrystalDecorationIndex = 0;
                 const maxCrystalDecorationIndex = 8;
                 let crystalDecorationChance = 0.20;
-                if (casterGotDecoration ) { crystalDecorationChance+=0.15;}
+                if (casterGotDecoration) { crystalDecorationChance += 0.15; }
                 crystalDecorationChance += countOfNeighborDecorations * 0.1;
                 crystalDecorationChance += powerLevel * 0.1;
-                if (Phaser.Math.RND.realInRange(0,1) < crystalDecorationChance) {
+                if (Phaser.Math.RND.realInRange(0, 1) < crystalDecorationChance) {
                     decoration = Phaser.Math.RND.integerInRange(minCrystalDecorationIndex, maxCrystalDecorationIndex);
-                } 
+                }
                 break;
             // Lava and mountains has no decorations. 
         }
@@ -571,36 +450,36 @@ export class Earth {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
             this.biomeLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
-            if(tile.biome===BIOME.WATER){
+            if (tile.biome === BIOME.WATER) {
                 this.scene.add
                     .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
                     .setOrigin(0, 0)
                     .setDepth(-1)
-                    .play('water-flow');                
-            }else if(tile.biome===BIOME.LAVA){
+                    .play('water-flow');
+            } else if (tile.biome === BIOME.LAVA) {
                 this.scene.add
                     .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
                     .setOrigin(0, 0)
                     .setDepth(-1)
-                    .play('lava-flow');      
-            }else if(tile.biome===BIOME.CRYSTAL){
-                const crystalAnimationChance =0.7;
-                if (Phaser.Math.RND.realInRange(0,1) < crystalAnimationChance) {
-                this.scene.add
-                    .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
-                    .setOrigin(0, 0)
-                    .setDepth(-1)
-                    .play('crystal-flow');   
+                    .play('lava-flow');
+            } else if (tile.biome === BIOME.CRYSTAL) {
+                const crystalAnimationChance = 0.7;
+                if (Phaser.Math.RND.realInRange(0, 1) < crystalAnimationChance) {
+                    this.scene.add
+                        .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
+                        .setOrigin(0, 0)
+                        .setDepth(-1)
+                        .play('crystal-flow');
                 }
-            }else if(tile.biome===BIOME.VOID){
-                const voidAnimationChance =0.6;
-                if (Phaser.Math.RND.realInRange(0,1) < voidAnimationChance) {
-                this.scene.add
-                    .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
-                    .setOrigin(0, 0)
-                    .setDepth(-1)
-                    .play('void-flow');        
-                }        
+            } else if (tile.biome === BIOME.VOID) {
+                const voidAnimationChance = 0.6;
+                if (Phaser.Math.RND.realInRange(0, 1) < voidAnimationChance) {
+                    this.scene.add
+                        .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
+                        .setOrigin(0, 0)
+                        .setDepth(-1)
+                        .play('void-flow');
+                }
             }
         }
         if (tile.decoration >= 0) {
@@ -628,3 +507,125 @@ export class Earth {
         return `${x},${y}`;
     }
 }
+
+function DecideBiome(creationConfig: EarthCastingConfig, casterBiome: number, neighborTiles: Tile[]): number {
+    const possibleBiomes = new Map<number, number>(); // biomeId, weight
+    if (casterBiome === BIOME.ROCK) {
+        possibleBiomes.set(BIOME.ROCK, 100);
+    } else {
+        possibleBiomes.set(BIOME.ROCK, 20);
+    }
+    if (creationConfig.isDesertUnlocked) {
+        let weight = 10;
+        if (casterBiome === BIOME.DESERT) {
+            weight += 100;
+        }
+        for (const neighbor of neighborTiles) {
+            if (neighbor.biome === BIOME.DESERT) {
+                weight += 10;
+            }
+        }
+        possibleBiomes.set(BIOME.DESERT, weight);
+    }
+    if (creationConfig.isGrassUnlocked) {
+        let weight = 10;
+        if (casterBiome === BIOME.GRASS) {
+            weight += 100;
+        }
+        for (const neighbor of neighborTiles) {
+            if (neighbor.biome === BIOME.GRASS) {
+                weight += 10;
+            }
+        }
+        possibleBiomes.set(BIOME.GRASS, weight);
+    }
+    if (creationConfig.isForestUnlocked) {
+        let weight = 10;
+        if (casterBiome === BIOME.FOREST) {
+            weight += 100;
+        }
+        for (const neighbor of neighborTiles) {
+            if (neighbor.biome === BIOME.FOREST) {
+                weight += 10;
+            }
+        }
+        possibleBiomes.set(BIOME.FOREST, weight);
+    }
+    if (creationConfig.isWaterUnlocked) {
+        let weight = 10;
+        if (casterBiome === BIOME.WATER) {
+            weight += 100;
+        }
+        for (const neighbor of neighborTiles) {
+            if (neighbor.biome === BIOME.WATER) {
+                weight += 10;
+            }
+        }
+        possibleBiomes.set(BIOME.WATER, weight);
+    }
+    if (creationConfig.isSwampUnlocked) {
+        let weight = 10;
+        if (casterBiome === BIOME.SWAMP) {
+            weight += 100;
+        }
+        for (const neighbor of neighborTiles) {
+            if (neighbor.biome === BIOME.SWAMP) {
+                weight += 10;
+            }
+        }
+        possibleBiomes.set(BIOME.SWAMP, weight);
+    }
+    if (creationConfig.isCrystalUnlocked) {
+        let weight = 10;
+        if (casterBiome === BIOME.CRYSTAL) {
+            weight += 100;
+        }
+        for (const neighbor of neighborTiles) {
+            if (neighbor.biome === BIOME.CRYSTAL) {
+                weight += 10;
+            }
+        }
+        possibleBiomes.set(BIOME.CRYSTAL, weight);
+    }
+    if (creationConfig.isLavaUnlocked) {
+        let weight = 10;
+        if (casterBiome === BIOME.LAVA) {
+            weight += 100;
+        }
+        for (const neighbor of neighborTiles) {
+            if (neighbor.biome === BIOME.LAVA) {
+                weight += 10;
+            }
+        }
+        possibleBiomes.set(BIOME.LAVA, weight);
+    }
+    if (creationConfig.isMountainUnlocked) {
+        let weight = 10;
+        if (casterBiome === BIOME.MOUNTAIN) {
+            weight += 100;
+        }
+        for (const neighbor of neighborTiles) {
+            if (neighbor.biome === BIOME.MOUNTAIN) {
+                weight += 10;
+            }
+        }
+        possibleBiomes.set(BIOME.MOUNTAIN, weight);
+    }
+    // Now pick between posisible biomes based on weights.
+    if (possibleBiomes.size > 1) {
+        let sumOfWeights = 0;
+        for (const [_, weight] of possibleBiomes) {
+            sumOfWeights += weight;
+        }
+        let randomWeight = Phaser.Math.RND.realInRange(0, sumOfWeights);
+        let cumulativeWeight = 0;
+        for (const [biomeId, weight] of possibleBiomes) {
+            cumulativeWeight += weight;
+            if (randomWeight < cumulativeWeight) {
+                return biomeId;
+            }
+        }
+    }
+    return BIOME.ROCK;
+}
+
