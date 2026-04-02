@@ -331,12 +331,30 @@ export class Earth {
 
     private CreateNewTile(creationConfig: EarthCastingConfig, tilePosition: Position, powerLevel: number, casterTile: Tile | undefined): Tile {
 
-        let casterBiome = casterTile?.biome ?? BIOME.ROCK;
-        const possibleBiomes = new Map<number, number>(); // biomeId, weight
-        if (casterBiome === BIOME.ROCK) {
-            possibleBiomes.set(BIOME.ROCK, 100);
+        let casterBiome = casterTile?.biome ?? BIOME.ROCK;       
+        let neighborTiles = this.get4NeighborTiles(tilePosition);
+        // Decide on Biome.
+        let biome: number = DecideBiome(creationConfig, casterBiome, neighborTiles);
+
+        // Decide on Decoration.
+        let countOfNeighborDecorations = 0;
+        for (const neighbor of neighborTiles) {
+            if (neighbor.decoration >= 0) {
+                countOfNeighborDecorations++;
+            }
         }
-        let neighborTiles = [];
+        let casterGotDecoration = casterTile?.decoration !== undefined && casterTile.decoration >= 0;
+        let decoration: number = DicedeDecoration(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel);
+
+        return new Tile({
+            tilenumber: tilePosition,
+            biome: biome,
+            decoration: decoration,
+        });
+    }
+
+    get4NeighborTiles(tilePosition: Position):Tile[] {
+        const neighborTiles: Tile[] = [];
         let neighborUp = this.getTile(tilePosition.x, tilePosition.y - 1);
         let neighborDown = this.getTile(tilePosition.x, tilePosition.y + 1);
         let neighborLeft = this.getTile(tilePosition.x - 1, tilePosition.y);
@@ -353,97 +371,7 @@ export class Earth {
         if (neighborRight) {
             neighborTiles.push(neighborRight);
         }
-        // Decide on Biome.
-        let biome: number = DecideBiome(creationConfig, casterBiome, neighborTiles);
-
-        // Decide on Decoration.
-        let countOfNeighborDecorations = 0;
-        for (const neighbor of neighborTiles) {
-            if (neighbor.decoration >= 0) {
-                countOfNeighborDecorations++;
-            }
-        }
-        let casterGotDecoration = casterTile?.decoration !== undefined && casterTile.decoration >= 0;
-
-        let decoration = -1;
-        switch (biome) {
-            case BIOME.ROCK: // rock
-                const minRockDecorationIndex = 18;
-                const maxRockDecorationIndex = 32;
-                let rockDecorationChance = 0.3;
-                if (casterGotDecoration) { rockDecorationChance += 0.2; }
-                rockDecorationChance += countOfNeighborDecorations * 0.1;
-                rockDecorationChance += powerLevel * 0.05;
-                if (Phaser.Math.RND.realInRange(0, 1) < rockDecorationChance) {
-                    decoration = Phaser.Math.RND.integerInRange(minRockDecorationIndex, maxRockDecorationIndex);
-                }
-                break;
-            case BIOME.DESERT: // desert            
-                const minDesertDecorationIndex = 28;
-                const maxDesertDecorationIndex = 32;
-                let desertDecorationChance = 0.12;
-                if (casterGotDecoration) { desertDecorationChance += 0.15; }
-                desertDecorationChance += countOfNeighborDecorations * 0.02;
-                desertDecorationChance += powerLevel * 0.05;
-                if (Phaser.Math.RND.realInRange(0, 1) < desertDecorationChance) {
-                    decoration = Phaser.Math.RND.integerInRange(minDesertDecorationIndex, maxDesertDecorationIndex);
-                }
-                break;
-            case BIOME.GRASS: // grass            
-                const minGrassDecorationIndex = 33;
-                const maxGrassDecorationIndex = 46;
-                let grassDecorationChance = 0.30;
-                if (casterGotDecoration) { grassDecorationChance += 0.20; }
-                grassDecorationChance += countOfNeighborDecorations * 0.15;
-                grassDecorationChance += powerLevel * 0.05;
-                if (Phaser.Math.RND.realInRange(0, 1) < grassDecorationChance) {
-                    decoration = Phaser.Math.RND.integerInRange(minGrassDecorationIndex, maxGrassDecorationIndex);
-                }
-                break;
-            case BIOME.FOREST: // forest            
-                const minForestDecorationIndex = 47;
-                const maxForestDecorationIndex = 52;
-                let forestDecorationChance = 0.25;
-                if (casterGotDecoration) { forestDecorationChance += 0.20; }
-                forestDecorationChance += countOfNeighborDecorations * 0.1;
-                forestDecorationChance += powerLevel * 0.05;
-                if (Phaser.Math.RND.realInRange(0, 1) < forestDecorationChance) {
-                    decoration = Phaser.Math.RND.integerInRange(minForestDecorationIndex, maxForestDecorationIndex);
-                }
-                break;
-            // Water has no decorations. 
-            case BIOME.SWAMP: // swamp            
-                const minSwampDecorationIndex = 9;
-                const maxSwampDecorationIndex = 17;
-                let swampDecorationChance = 0.20;
-                if (casterGotDecoration) { swampDecorationChance += 0.15; }
-                swampDecorationChance += countOfNeighborDecorations * 0.1;
-                swampDecorationChance += powerLevel * 0.05;
-                if (Phaser.Math.RND.realInRange(0, 1) < swampDecorationChance) {
-                    decoration = Phaser.Math.RND.integerInRange(minSwampDecorationIndex, maxSwampDecorationIndex);
-                }
-                break;
-            case BIOME.CRYSTAL: // crystal            
-                const minCrystalDecorationIndex = 0;
-                const maxCrystalDecorationIndex = 8;
-                let crystalDecorationChance = 0.20;
-                if (casterGotDecoration) { crystalDecorationChance += 0.15; }
-                crystalDecorationChance += countOfNeighborDecorations * 0.1;
-                crystalDecorationChance += powerLevel * 0.1;
-                if (Phaser.Math.RND.realInRange(0, 1) < crystalDecorationChance) {
-                    decoration = Phaser.Math.RND.integerInRange(minCrystalDecorationIndex, maxCrystalDecorationIndex);
-                }
-                break;
-            // Lava and mountains has no decorations. 
-        }
-
-        // Make the tile.
-        const tile = new Tile({
-            tilenumber: tilePosition,
-            biome: biome,
-            decoration: decoration,
-        });
-        return tile;
+        return neighborTiles;
     }
 
     public AddTile(tile: Tile) {
@@ -627,5 +555,80 @@ function DecideBiome(creationConfig: EarthCastingConfig, casterBiome: number, ne
         }
     }
     return BIOME.ROCK;
+}
+
+function DicedeDecoration(biome: number, countOfNeighborDecorations: number, casterGotDecoration: boolean, powerLevel: number): number {
+    let decoration = -1;
+    switch (biome) {
+        case BIOME.ROCK: // rock
+            const minRockDecorationIndex = 18;
+            const maxRockDecorationIndex = 32;
+            let rockDecorationChance = 0.3;
+            if (casterGotDecoration) { rockDecorationChance += 0.2; }
+            rockDecorationChance += countOfNeighborDecorations * 0.1;
+            rockDecorationChance += powerLevel * 0.05;
+            if (Phaser.Math.RND.realInRange(0, 1) < rockDecorationChance) {
+                decoration = Phaser.Math.RND.integerInRange(minRockDecorationIndex, maxRockDecorationIndex);
+            }
+            break;
+        case BIOME.DESERT: // desert            
+            const minDesertDecorationIndex = 28;
+            const maxDesertDecorationIndex = 32;
+            let desertDecorationChance = 0.12;
+            if (casterGotDecoration) { desertDecorationChance += 0.15; }
+            desertDecorationChance += countOfNeighborDecorations * 0.02;
+            desertDecorationChance += powerLevel * 0.05;
+            if (Phaser.Math.RND.realInRange(0, 1) < desertDecorationChance) {
+                decoration = Phaser.Math.RND.integerInRange(minDesertDecorationIndex, maxDesertDecorationIndex);
+            }
+            break;
+        case BIOME.GRASS: // grass            
+            const minGrassDecorationIndex = 33;
+            const maxGrassDecorationIndex = 46;
+            let grassDecorationChance = 0.30;
+            if (casterGotDecoration) { grassDecorationChance += 0.20; }
+            grassDecorationChance += countOfNeighborDecorations * 0.15;
+            grassDecorationChance += powerLevel * 0.05;
+            if (Phaser.Math.RND.realInRange(0, 1) < grassDecorationChance) {
+                decoration = Phaser.Math.RND.integerInRange(minGrassDecorationIndex, maxGrassDecorationIndex);
+            }
+            break;
+        case BIOME.FOREST: // forest            
+            const minForestDecorationIndex = 47;
+            const maxForestDecorationIndex = 52;
+            let forestDecorationChance = 0.25;
+            if (casterGotDecoration) { forestDecorationChance += 0.20; }
+            forestDecorationChance += countOfNeighborDecorations * 0.1;
+            forestDecorationChance += powerLevel * 0.05;
+            if (Phaser.Math.RND.realInRange(0, 1) < forestDecorationChance) {
+                decoration = Phaser.Math.RND.integerInRange(minForestDecorationIndex, maxForestDecorationIndex);
+            }
+            break;
+        // Water has no decorations. 
+        case BIOME.SWAMP: // swamp            
+            const minSwampDecorationIndex = 9;
+            const maxSwampDecorationIndex = 17;
+            let swampDecorationChance = 0.20;
+            if (casterGotDecoration) { swampDecorationChance += 0.15; }
+            swampDecorationChance += countOfNeighborDecorations * 0.1;
+            swampDecorationChance += powerLevel * 0.05;
+            if (Phaser.Math.RND.realInRange(0, 1) < swampDecorationChance) {
+                decoration = Phaser.Math.RND.integerInRange(minSwampDecorationIndex, maxSwampDecorationIndex);
+            }
+            break;
+        case BIOME.CRYSTAL: // crystal            
+            const minCrystalDecorationIndex = 0;
+            const maxCrystalDecorationIndex = 8;
+            let crystalDecorationChance = 0.20;
+            if (casterGotDecoration) { crystalDecorationChance += 0.15; }
+            crystalDecorationChance += countOfNeighborDecorations * 0.1;
+            crystalDecorationChance += powerLevel * 0.1;
+            if (Phaser.Math.RND.realInRange(0, 1) < crystalDecorationChance) {
+                decoration = Phaser.Math.RND.integerInRange(minCrystalDecorationIndex, maxCrystalDecorationIndex);
+            }
+            break;
+        // Lava and mountains has no decorations. 
+    }
+    return decoration;
 }
 
