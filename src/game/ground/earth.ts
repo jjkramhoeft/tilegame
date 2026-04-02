@@ -38,6 +38,7 @@ export class Earth {
     protected biomeLayer!: Phaser.Tilemaps.Tilemap;
     protected decorationLayer!: Phaser.Tilemaps.Tilemap;
     protected blockingLayer!: Phaser.Tilemaps.Tilemap;
+    protected blockingTileLayer!: Phaser.Tilemaps.TilemapLayer;
     protected floatingLayer!: Phaser.Tilemaps.Tilemap;
     private isInitialized = false;
     private debugGraphics?: Phaser.GameObjects.Graphics;
@@ -52,6 +53,7 @@ export class Earth {
         if (this.isInitialized) {
             return;
         }
+
 
         // Set up base biome layer.
         this.biomeLayer = this.scene.make.tilemap({
@@ -171,6 +173,7 @@ export class Earth {
             return;
         }
         blockingTileLayer.setDepth(0);
+        this.blockingTileLayer = blockingTileLayer;
 
         // Set up floating layer.
         this.floatingLayer = this.scene.make.tilemap({
@@ -205,6 +208,10 @@ export class Earth {
         }
 
         this.isInitialized = true;
+    }
+
+    public getBlockingLayer(): Phaser.Tilemaps.TilemapLayer {
+        return this.blockingTileLayer;
     }
 
     public AddTiles(creationConfig: EarthCastingConfig, casterPosition: Position, primeTargetPosition: Position, directions: Direction[]) {

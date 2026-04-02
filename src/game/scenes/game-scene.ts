@@ -7,28 +7,25 @@ import { Drow } from '../game-objects/enemies/boss/drow';
 import { Earth, EarthCastingConfig } from '../ground/earth';
 import { Tile } from '../ground/tile';
 
-export class GameScene extends Phaser.Scene
-{
+export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
     #player!: Player;
     #spider!: Spider;
-    #wisp!:Wisp;
+    #wisp!: Wisp;
     #drow!: Drow;
     #enemyGroup?: Phaser.GameObjects.Group;
     #earth!: Earth;
     #playerStartPosition = { x: 400, y: 250 };
 
-    constructor ()
-    {
+    constructor() {
         super('GameScene');
     }
 
     get player(): Player {
         return this.#player;
     }
-   
-    create ()
-    {
+
+    create() {
         if (!this.input.keyboard) {
             console.warn('Phaser keyboard plugin is not setup properly.');
             return;
@@ -36,66 +33,68 @@ export class GameScene extends Phaser.Scene
         this.#controls = new KeyboardComponent(this.input.keyboard);
 
         this.#earth = new Earth(this);
-        this.#earth.createMap(100, 100);       
+        this.#earth.createMap(100, 100);
 
         this.#setupPlayer();
         this.#setupCamera();
 
         this.#enemyGroup = this.add.group();
 
-        const firstTilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#playerStartPosition.x, this.#playerStartPosition.y,true);
+        const firstTilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#playerStartPosition.x, this.#playerStartPosition.y, true);
         const firstTile = new Tile({
             tilenumber: firstTilePosition,
             biome: 1,
         });
-        this.#earth.AddTile(firstTile);      
+        this.#earth.AddTile(firstTile);
 
-        
+
         this.#spider = new Spider({
             scene: this,
-            position: {x: 350, y: 200},
+            position: { x: 350, y: 200 },
         });
-        this.#spider.enableObject(); 
+        //this.#spider.enableObject();
         this.#enemyGroup.add(this.#spider);
 
         this.#wisp = new Wisp({
             scene: this,
-            position: {x: 200, y: 250},
+            position: { x: 200, y: 250 },
         });
         //this.#wisp.enableObject();
         this.#enemyGroup.add(this.#wisp);
 
         this.#drow = new Drow({
             scene: this,
-            position: {x: 250, y: 300},
+            position: { x: 250, y: 300 },
         });
         //this.#drow.enableObject();
         this.#enemyGroup.add(this.#drow);
-        
+
+
+        this.#registerColliders();
+
     }
 
-    update ()
-    {
+    update() {
         this.#enemyGroup?.getChildren().forEach((enemy) => {
-                enemy.update();
+            enemy.update();
         });
 
         // Creating new tiles logic. (Temporary, placed here - while developing.)
-        if(this.#player.stateMachine.currentStateName === 'ATTACK_STATE'){
+        if (this.#player.stateMachine.currentStateName === 'ATTACK_STATE') {
             console.log('Player casting/attacking');
-            const casterPosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y,true);
-            const tilePosition = {x: casterPosition.x, y: casterPosition.y};
+            const casterPosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y, true);
+            const tilePosition = { x: casterPosition.x, y: casterPosition.y };
             const directions = this.#player.getLastMoveDirections();
             console.log(directions);
             directions.forEach(dir => {
-                switch(dir){
+                switch (dir) {
                     case 'UP': tilePosition.y -= 1; break;
                     case 'DOWN': tilePosition.y += 1; break;
                     case 'LEFT': tilePosition.x -= 1; break;
                     case 'RIGHT': tilePosition.x += 1; break;
                 }
             });
-            
+
             this.#earth.AddTiles({
                 isDesertUnlocked: false,
                 isGrassUnlocked: false,
@@ -106,10 +105,10 @@ export class GameScene extends Phaser.Scene
                 isLavaUnlocked: false,
                 isMountainUnlocked: false,
                 powerLevel: 4,
-            } as EarthCastingConfig, 
-            casterPosition,
-            tilePosition,
-            directions);               
+            } as EarthCastingConfig,
+                casterPosition,
+                tilePosition,
+                directions);
         }
     }
 
@@ -127,4 +126,15 @@ export class GameScene extends Phaser.Scene
         this.cameras.main.setBounds(-100, -100, 2000, 2000);
         this.cameras.main.startFollow(this.#player);
     }
+
+    #registerColliders(): void {
+
+        // collision between player and map walls
+        this.#earth.getBlockingLayer().setCollision([this.#earth.getBlockingLayer().tileset[0].firstgid]);
+        this.physics.add.collider(this.#player, this.#earth.getBlockingLayer());
+
+
+
+    }
+
 }
