@@ -99,8 +99,8 @@ export class GameScene extends Phaser.Scene
             this.#earth.AddTiles({
                 isDesertUnlocked: false,
                 isGrassUnlocked: false,
-                isForestUnlocked: true,
-                isSwampUnlocked: true,
+                isForestUnlocked: false,
+                isSwampUnlocked: false,
                 isCrystalUnlocked: false,
                 isWaterUnlocked: false,
                 isLavaUnlocked: false,
