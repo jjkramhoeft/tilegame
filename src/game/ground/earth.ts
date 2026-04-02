@@ -435,12 +435,21 @@ export class Earth {
             }
         }
         if (tile.decoration >= 0) {
+             if(tile.floating>55){
+                console.warn(`Decoration tile index ${tile.decoration} is out of expected range!`);
+            }
             this.decorationLayer.putTileAt(tile.decoration, tile.tileX, tile.tileY);
         }
         if (tile.blocking >= 0) {
+             if(tile.floating>91){
+                console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
+            }
             this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
         }
         if (tile.floating >= 0) {
+            if(tile.floating>15){
+                console.warn(`Floating tile index ${tile.floating} is out of expected range!`);
+            }
             this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY-1);
         }
     }
@@ -679,9 +688,9 @@ function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorations: nu
                 blocking = Phaser.Math.RND.integerInRange(minRockBlockingIndex, maxRockBlockingIndex);
             }
             break;
-        case BIOME.DESERT: // Cacti missing in sprite!       
-            const minDesertBlockingIndex = 36;
-            const maxDesertBlockingIndex = 38;
+        case BIOME.DESERT: 
+            const minDesertBlockingIndex = 94;
+            const maxDesertBlockingIndex = 101;
             let desertBlockingChance = 0.01;
             if (casterGotDecoration) { desertBlockingChance += 0.01; }
             desertBlockingChance += countOfNeighborDecorations * 0.01;
@@ -692,20 +701,10 @@ function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorations: nu
             }
             break;
         case BIOME.GRASS:
-            const minGrassBlockingIndex = 20;
-            const maxGrassBlockingIndex = 21;
-            let grassBlockingChance = 0.05;
-            if (casterGotDecoration) { grassBlockingChance += 0.02; }
-            grassBlockingChance += countOfNeighborDecorations * 0.05;
-            grassBlockingChance -= countOfNeighborBolcking * 0.1;
-            grassBlockingChance += powerLevel * 0.05;
-            if (Phaser.Math.RND.realInRange(0, 1) < grassBlockingChance) {
-                blocking = Phaser.Math.RND.integerInRange(minGrassBlockingIndex, maxGrassBlockingIndex);
-            }
             break;
         case BIOME.FOREST: // forest            
-            const minForestBlockingIndex = 24;
-            const maxForestBlockingIndex = 63;
+            const minForestBlockingIndex = 20;
+            const maxForestBlockingIndex = 46;
             let forestBlockingChance = 0.25;
             if (casterGotDecoration) { forestBlockingChance += 0.20; }
             forestBlockingChance += countOfNeighborDecorations * 0.05;
@@ -713,15 +712,16 @@ function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorations: nu
             forestBlockingChance += powerLevel * 0.05;
             if (Phaser.Math.RND.realInRange(0, 1) < forestBlockingChance) {
                 blocking = Phaser.Math.RND.integerInRange(minForestBlockingIndex, maxForestBlockingIndex);
-                if (blocking >= 60) {
-                    floating = blocking - 60;
+                if (blocking >= 37) {
+                    floating = blocking - 37;
                 }
             }
             break;
-        // Water has no decorations. 
+        case BIOME.WATER:
+            break;
         case BIOME.SWAMP: // swamp            
-            const minSwampBlockingIndex = 64;
-            const maxSwampBlockingIndex = 67;
+            const minSwampBlockingIndex = 47;
+            const maxSwampBlockingIndex = 58;
             let swampBlockingChance = 0.112;
             if (casterGotDecoration) { swampBlockingChance += 0.05; }
             swampBlockingChance += countOfNeighborDecorations * 0.01;
@@ -729,24 +729,26 @@ function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorations: nu
             swampBlockingChance += powerLevel * 0.02;
             if (Phaser.Math.RND.realInRange(0, 1) < swampBlockingChance) {
                 blocking = Phaser.Math.RND.integerInRange(minSwampBlockingIndex, maxSwampBlockingIndex);
-                if (blocking >= 0) { // floating blockings
-                    floating = blocking + 8 -64;
+                if (blocking >= 53) { // floating blockings
+                    floating = blocking + 10 -53;
                 }
             }
             break;
-        case BIOME.CRYSTAL: /* crystal missing in sprite sheet           
-            const minCrystalBlockingIndex = 0;
-            const maxCrystalBlockingIndex = 8;
+        case BIOME.CRYSTAL:    
+            const minCrystalBlockingIndex = 60;
+            const maxCrystalBlockingIndex = 83;
             let crystalBlockingChance = 0.20;
             if (casterGotDecoration) { crystalBlockingChance += 0.15; }
             crystalBlockingChance += countOfNeighborDecorations * 0.1;
             crystalBlockingChance += powerLevel * 0.1;
             if (Phaser.Math.RND.realInRange(0, 1) < crystalBlockingChance) {
                 blocking = Phaser.Math.RND.integerInRange(minCrystalBlockingIndex, maxCrystalBlockingIndex);
-            }*/
+            }
             break;
-        // Lava has no decorations. 
-        // Mountains is missing in sprite sheet.
+        case BIOME.LAVA:
+            break;
+        case BIOME.MOUNTAIN:
+            break; // Mountains is missing in sprite sheet.
     }
 
     return [blocking, floating];
