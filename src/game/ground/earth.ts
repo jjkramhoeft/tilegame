@@ -22,6 +22,7 @@ export class Earth {
     protected scene: Phaser.Scene;
     protected biomeLayer!: Phaser.Tilemaps.Tilemap;
     protected decorationLayer!: Phaser.Tilemaps.Tilemap;
+    protected blockingLayer!: Phaser.Tilemaps.Tilemap;
     private isInitialized = false;
     tileSize = 64;
     constructor(scene: Phaser.Scene) {
@@ -82,6 +83,33 @@ export class Earth {
             console.error('Failed to create decoration layer');
             return;
         }
+
+        // Set up blocking layer.
+        this.blockingLayer = this.scene.make.tilemap({
+            tileWidth: this.tileSize,
+            tileHeight: this.tileSize,
+            width,
+            height,
+        });
+        if (!this.blockingLayer) {
+            console.error('Failed to create blocking layer');
+            return;
+        }
+        const tilesetBlocking = this.blockingLayer.addTilesetImage(
+            ASSET_KEYS.TILESET_BLOCKING,
+            ASSET_KEYS.TILESET_BLOCKING,
+            this.tileSize,
+            this.tileSize
+        );
+        if (!tilesetBlocking) {
+            throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BLOCKING}`);
+        }
+        const blockingTileLayer = this.blockingLayer.createBlankLayer('blocking', tilesetBlocking);
+        if (!blockingTileLayer) {
+            console.error('Failed to create blocking tile layer');
+            return;
+        }
+        blockingTileLayer.setDepth(0);
 
         this.isInitialized = true;
     }

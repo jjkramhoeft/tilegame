@@ -63,7 +63,7 @@ export class GameScene extends Phaser.Scene
         });
         this.#earth.AddTile(firstTile);      
 
-        /*
+        
         this.#spider = new Spider({
             scene: this,
             position: {x: 350, y: 200},
@@ -84,7 +84,7 @@ export class GameScene extends Phaser.Scene
         });
         this.#drow.enableObject();
         this.#enemyGroup.add(this.#drow);
-        */
+        
     }
 
     update ()
