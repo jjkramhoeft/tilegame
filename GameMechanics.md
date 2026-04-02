@@ -54,3 +54,17 @@ The tile map consist of six layers
 - Blocked by blocking layer
 - Falls from void or empty tiles
 - Needs path finding
+
+## Biomes
+
+-1 ´none´
+0 Void
+1 Rock
+2 Desert
+3 grass
+4 forest
+5 water
+6 swamp
+7 crystal
+8 lava
+9 mountain

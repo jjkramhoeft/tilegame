@@ -1,5 +1,6 @@
 import { Tile } from './tile';
 import { Position, Direction } from '../common/types';
+import { BIOME } from '../common/common';
 import * as Phaser from 'phaser';
 import { ASSET_KEYS } from '../common/assets';
 
@@ -33,57 +34,54 @@ export class Earth {
             return;
         }
 
+        // Set up base biome layer.
         this.biomeLayer = this.scene.make.tilemap({
             tileWidth: this.tileSize,
             tileHeight: this.tileSize,
             width,
             height,
         });
-
+        if (!this.biomeLayer) {
+            console.error('Failed to create biome layer');
+            return;
+        }
         const tilesetBase = this.biomeLayer.addTilesetImage(
             ASSET_KEYS.TILESET_BASE,
             ASSET_KEYS.TILESET_BASE,
             this.tileSize,
             this.tileSize
         );
-
         if (!tilesetBase) {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BASE}`);
         }
-
-        this.biomeLayer.createBlankLayer('biome', tilesetBase);
-
-        if (!this.biomeLayer) {
-            console.error('Failed to create biome layer');
+        const biomeTileLayer = this.biomeLayer.createBlankLayer('biome', tilesetBase);
+        if (!biomeTileLayer) {
+            console.error('Failed to create biome tile layer');
             return;
         }
-
+        biomeTileLayer.setDepth(-2);
+        
+        // Set up decoration layer.
         this.decorationLayer = this.scene.make.tilemap({
             tileWidth: this.tileSize,
             tileHeight: this.tileSize,
             width,
             height,
         });
-
         const tilesetDeco = this.decorationLayer.addTilesetImage(
             ASSET_KEYS.TILESET_DECORATION,
             ASSET_KEYS.TILESET_DECORATION,
             this.tileSize,
             this.tileSize
         );
-
         if (!tilesetDeco) {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_DECORATION}`);
         }
-
         this.decorationLayer.createBlankLayer('decoration', tilesetDeco);
-
         if (!this.decorationLayer) {
             console.error('Failed to create decoration layer');
             return;
         }
-
-
 
         this.isInitialized = true;
     }
@@ -304,11 +302,11 @@ export class Earth {
     }
 
     private CreateNewTile(creationConfig: EarthCastingConfig, tilePosition: Position, powerLevel: number,casterTile: Tile | undefined): Tile {
-        let biome = 1;
-        let casterBiome = casterTile?.biome ?? 1;
+        let biome = 1;// rock is default biome.
+        let casterBiome = casterTile?.biome ?? BIOME.ROCK;
         const possibleBiomes = new Map<number, number>(); // biomeId, weight
-        if (casterBiome === 1) {
-            possibleBiomes.set(1, 100);
+        if (casterBiome === BIOME.ROCK) {
+            possibleBiomes.set(BIOME.ROCK, 100);
         }
         let neighborTiles = [];
         let neighborUp = this.getTile(tilePosition.x, tilePosition.y - 1);
@@ -330,7 +328,7 @@ export class Earth {
         // Deside on Biome.
         if (creationConfig.isDesertUnlocked || creationConfig.isGrassUnlocked || creationConfig.isForestUnlocked || creationConfig.isWaterUnlocked || creationConfig.isSwampUnlocked || creationConfig.isCrystalUnlocked || creationConfig.isLavaUnlocked || creationConfig.isMountainUnlocked) {
             if (creationConfig.isDesertUnlocked) {
-                let key=2;
+                let key=BIOME.DESERT;
                 let weight = 10;
                 if (casterBiome === key) {
                     weight+=100;
@@ -343,7 +341,7 @@ export class Earth {
                 possibleBiomes.set(key,weight);
             }
             if (creationConfig.isGrassUnlocked) {
-                let key=3;
+                let key=BIOME.GRASS;
                 let weight = 10;
                 if (casterBiome === key) {
                     weight+=100;
@@ -356,7 +354,7 @@ export class Earth {
                 possibleBiomes.set(key,weight);
             }
             if (creationConfig.isForestUnlocked) {
-                let key=4;
+                let key=BIOME.FOREST;
                 let weight = 10;
                 if (casterBiome === key) {
                     weight+=100;
@@ -369,7 +367,7 @@ export class Earth {
                 possibleBiomes.set(key,weight);
             }
             if (creationConfig.isWaterUnlocked) {
-                let key=5;
+                let key=BIOME.WATER;
                 let weight = 10;
                 if (casterBiome === key) {
                     weight+=100;
@@ -382,7 +380,7 @@ export class Earth {
                 possibleBiomes.set(key,weight);
             }
             if (creationConfig.isSwampUnlocked) {
-                let key=6;
+                let key=BIOME.SWAMP;
                 let weight = 10;
                 if (casterBiome === key) {
                     weight+=100;
@@ -395,7 +393,7 @@ export class Earth {
                 possibleBiomes.set(key,weight);
             }
             if (creationConfig.isCrystalUnlocked) {
-                let key=7;
+                let key=BIOME.CRYSTAL;
                 let weight = 10;
                 if (casterBiome === key) {
                     weight+=100;
@@ -408,7 +406,7 @@ export class Earth {
                 possibleBiomes.set(key,weight);                
             }
             if (creationConfig.isLavaUnlocked) {
-                let key=8;
+                let key=BIOME.LAVA;
                 let weight = 10;
                 if (casterBiome === key) {
                     weight+=100;
@@ -421,7 +419,7 @@ export class Earth {
                 possibleBiomes.set(key,weight);
             }
             if (creationConfig.isMountainUnlocked) {
-                let key=9;
+                let key=BIOME.MOUNTAIN;
                 let weight = 10;
                 if (casterBiome === key) {
                     weight+=100;
@@ -462,7 +460,7 @@ export class Earth {
 
         let decoration = -1;
         switch (biome) {
-            case 1: // rock
+            case BIOME.ROCK: // rock
                 const minRockDecorationIndex = 18;
                 const maxRockDecorationIndex = 32;
                 let rockDecorationChance = 0.3;
@@ -473,7 +471,7 @@ export class Earth {
                     decoration = Phaser.Math.RND.integerInRange(minRockDecorationIndex, maxRockDecorationIndex);
                 } 
                 break;
-            case 2: // desert            
+            case BIOME.DESERT: // desert            
                 const minDesertDecorationIndex = 28;
                 const maxDesertDecorationIndex = 32;
                 let desertDecorationChance = 0.12;
@@ -484,7 +482,7 @@ export class Earth {
                     decoration = Phaser.Math.RND.integerInRange(minDesertDecorationIndex, maxDesertDecorationIndex);
                 } 
                 break;
-            case 3: // grass            
+            case BIOME.GRASS: // grass            
                 const minGrassDecorationIndex = 33;
                 const maxGrassDecorationIndex = 46;
                 let grassDecorationChance = 0.30;
@@ -495,7 +493,7 @@ export class Earth {
                     decoration = Phaser.Math.RND.integerInRange(minGrassDecorationIndex, maxGrassDecorationIndex);
                 } 
                 break;
-            case 4: // forest            
+            case BIOME.FOREST: // forest            
                 const minForestDecorationIndex = 47;
                 const maxForestDecorationIndex = 52;
                 let forestDecorationChance = 0.25;
@@ -507,7 +505,7 @@ export class Earth {
                 } 
                 break;
             // Water has no decorations. 
-            case 6: // swamp            
+            case BIOME.SWAMP: // swamp            
                 const minSwampDecorationIndex = 9;
                 const maxSwampDecorationIndex = 17;
                 let swampDecorationChance = 0.20;
@@ -518,7 +516,7 @@ export class Earth {
                     decoration = Phaser.Math.RND.integerInRange(minSwampDecorationIndex, maxSwampDecorationIndex);
                 } 
                 break;
-            case 7: // crystal            
+            case BIOME.CRYSTAL: // crystal            
                 const minCrystalDecorationIndex = 0;
                 const maxCrystalDecorationIndex = 8;
                 let crystalDecorationChance = 0.20;
@@ -545,16 +543,30 @@ export class Earth {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
             this.biomeLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
-            if(tile.biome===5){
-                //water.
-                const sceneX = tile.tileX * this.tileSize;
-                const sceneY = tile.tileY * this.tileSize;
+            if(tile.biome===BIOME.WATER){
                 this.scene.add
-                    .sprite(sceneX, sceneY, 'tile-animated')
+                    .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
                     .setOrigin(0, 0)
                     .setDepth(-1)
-                    .play('water-flow' );
-                
+                    .play('water-flow');                
+            }else if(tile.biome===BIOME.LAVA){
+                this.scene.add
+                    .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
+                    .setOrigin(0, 0)
+                    .setDepth(-1)
+                    .play('lava-flow');      
+            }else if(tile.biome===BIOME.CRYSTAL){
+                this.scene.add
+                    .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
+                    .setOrigin(0, 0)
+                    .setDepth(-1)
+                    .play('crystal-flow');   
+            }else if(tile.biome===BIOME.VOID){
+                this.scene.add
+                    .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
+                    .setOrigin(0, 0)
+                    .setDepth(-1)
+                    .play('void-flow');                
             }
         }
         if (tile.decoration >= 0) {

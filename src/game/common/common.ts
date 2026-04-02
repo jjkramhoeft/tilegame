@@ -48,3 +48,17 @@ export const CHEST_REWARD_TO_DIALOG_MAP = {
   COMPASS: "You fond the Compass! Now you can pinpoint the lair of the dungeon's evil master!",
   NOTHING: '...The chest was empty!',
 } as const;
+
+export const enum BIOME {
+  NONE = -1,
+  VOID = 0,
+  ROCK = 1,
+  DESERT = 2,
+  GRASS = 3,
+  FOREST = 4,
+  WATER = 5,
+  SWAMP = 6,
+  CRYSTAL = 7,
+  LAVA = 8,
+  MOUNTAIN = 9,
+}
