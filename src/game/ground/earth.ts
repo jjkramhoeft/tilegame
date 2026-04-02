@@ -38,6 +38,7 @@ export class Earth {
     protected biomeLayer!: Phaser.Tilemaps.Tilemap;
     protected decorationLayer!: Phaser.Tilemaps.Tilemap;
     protected blockingLayer!: Phaser.Tilemaps.Tilemap;
+    protected blockingTileLayer!: Phaser.Tilemaps.TilemapLayer;
     protected floatingLayer!: Phaser.Tilemaps.Tilemap;
     private isInitialized = false;
     private debugGraphics?: Phaser.GameObjects.Graphics;
@@ -171,6 +172,7 @@ export class Earth {
             return;
         }
         blockingTileLayer.setDepth(0);
+        this.blockingTileLayer = blockingTileLayer;
 
         // Set up floating layer.
         this.floatingLayer = this.scene.make.tilemap({
@@ -534,6 +536,10 @@ export class Earth {
         const tileX = Math.floor((screenX + playOffsetX) / this.tileSize);
         const tileY = Math.floor((screenY + playOffsetY) / this.tileSize);
         return { x: tileX, y: tileY };
+    }
+
+    public getBlockingTileLayer(): Phaser.Tilemaps.TilemapLayer {
+        return this.blockingTileLayer;
     }
 
     private key(x: number, y: number): string {

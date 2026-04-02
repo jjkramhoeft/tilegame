@@ -129,11 +129,9 @@ export class GameScene extends Phaser.Scene {
 
     #registerColliders(): void {
 
-        // collision between player and map walls
-        this.#earth.getBlockingLayer().setCollision([this.#earth.getBlockingLayer().tileset[0].firstgid]);
-        this.physics.add.collider(this.#player, this.#earth.getBlockingLayer());
-
-
+        // collision between player and map 
+        this.#earth.getBlockingTileLayer().setCollision([this.#earth.getBlockingTileLayer().tileset[0].firstgid]);
+        this.physics.add.collider(this.#player, this.#earth.getBlockingTileLayer());
 
     }
 
