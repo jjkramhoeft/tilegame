@@ -1,6 +1,6 @@
 
 import * as Phaser from 'phaser';
-import { GameObject2, Position } from '../../common/types';
+import { Direction, GameObject2, Position } from '../../common/types';
 import { InputComponent } from '../../components/input/input-component';
 import { CharacterGameObject } from '../common/character-game-object';
 import { AnimationConfig } from '../../components/game-object/animation-component';
@@ -94,7 +94,10 @@ export class Player extends CharacterGameObject {
       LIFT_UP: { key: 'male-nude-none-hurt-up', repeat: 0, ignoreIfPlaying: true },
       LIFT_LEFT: { key: 'male-nude-none-hurt-left', repeat: 0, ignoreIfPlaying: true },
       LIFT_RIGHT: { key: 'male-nude-none-hurt-right', repeat: 0, ignoreIfPlaying: true },
+    //  ATTACK_DOWN: { key: 'male-nude-none-attack-down', repeat: 0, ignoreIfPlaying: true },
     };
+
+    
 
     super({
       scene: config.scene,

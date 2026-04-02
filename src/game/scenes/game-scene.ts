@@ -97,13 +97,18 @@ export class GameScene extends Phaser.Scene
         if(this.#player.stateMachine.currentStateName === 'ATTACK_STATE'){
             console.log('Player casting/attacking');
             const tilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y,true);
-            const facingDirection = this.#player.direction;
-            switch(facingDirection){
-                case 'UP': tilePosition.y -= 1; break;
-                case 'DOWN': tilePosition.y += 1; break;
-                case 'LEFT': tilePosition.x -= 1; break;
-                case 'RIGHT': tilePosition.x += 1; break;
-            }
+//            const facingDirection = this.#player.direction;
+            const facingDirections = this.#player.getLastMoveDirections();
+            console.log(facingDirections);
+            facingDirections.forEach(dir => {
+                switch(dir){
+                    case 'UP': tilePosition.y -= 1; break;
+                    case 'DOWN': tilePosition.y += 1; break;
+                    case 'LEFT': tilePosition.x -= 1; break;
+                    case 'RIGHT': tilePosition.x += 1; break;
+                }
+            });
+            
             if(this.#earth.getTile(tilePosition.x, tilePosition.y) == undefined){
                 console.log('placing tile!');
                 const tile = new Tile({

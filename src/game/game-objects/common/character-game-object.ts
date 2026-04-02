@@ -37,7 +37,9 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
   protected _lifeComponent: LifeComponent;
   protected _stateMachine: StateMachine;
   protected _isPlayer: boolean;
-  protected _isDefeated: boolean;
+  protected _isDefeated: boolean;  
+  protected _lastMoveDirections: Direction[] = [];
+  
 
   constructor(config: CharacterConfig) {
     const {
@@ -148,6 +150,16 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
 
     this._stateMachine.setState(CHARACTER_STATES.HURT_STATE, direction);
   }
+
+  
+  public getLastMoveDirections(): Direction[] {
+    return this._lastMoveDirections;
+  }
+
+  public setLastMoveDirections(directions: Direction[]) {
+    this._lastMoveDirections = directions;
+  }
+
 
   public disableObject(): void {
     // disable body on game object so we stop triggering the collision

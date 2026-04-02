@@ -22,14 +22,17 @@ export abstract class BaseMoveState extends BaseCharacterState {
 
   protected handleCharacterMovement(): void {
     const controls = this._gameObject.controls;
+    const directions: Direction[] = [];
 
     // horizontal movement
     if (controls.isLeftDown) {
       this.updateVelocity(true, -1);
       this.updateDirection(DIRECTION.LEFT);
+      directions.push(DIRECTION.LEFT);
     } else if (controls.isRightDown) {
       this.updateVelocity(true, 1);
       this.updateDirection(DIRECTION.RIGHT);
+      directions.push(DIRECTION.RIGHT);
     } else {
       this.updateVelocity(true, 0);
     }
@@ -42,16 +45,22 @@ export abstract class BaseMoveState extends BaseCharacterState {
       if (!isHorizontally) {
         this.updateDirection(DIRECTION.UP);
       }
+      directions.push(DIRECTION.UP);
     } else if (controls.isDownDown) {
       this.updateVelocity(false, 1);
       if (!isHorizontally) {
         this.updateDirection(DIRECTION.DOWN);
       }
+      directions.push(DIRECTION.DOWN);
     } else {
       this.updateVelocity(false, 0);
     }
 
     this.normalizeVelocity();
+    
+    if(directions.length > 0) {
+      this._gameObject.setLastMoveDirections(directions);
+    }
   }
 
   protected normalizeVelocity(): void {
