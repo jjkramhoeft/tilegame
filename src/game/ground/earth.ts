@@ -3,6 +3,7 @@ import { Position, Direction } from '../common/types';
 import { BIOME } from '../common/common';
 import * as Phaser from 'phaser';
 import { ASSET_KEYS } from '../common/assets';
+import { ENABLE_DEBUG_BLOCKING_GEOMETRY } from '../common/config';
 
 export type EarthCastingConfig = {
     isDesertUnlocked: boolean;
@@ -39,6 +40,7 @@ export class Earth {
     protected blockingLayer!: Phaser.Tilemaps.Tilemap;
     protected floatingLayer!: Phaser.Tilemaps.Tilemap;
     private isInitialized = false;
+    private debugGraphics?: Phaser.GameObjects.Graphics;
     tileSize = 64;
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -121,19 +123,42 @@ export class Earth {
             return;
         }
         //Add geometric collision shapes to the blocking layer based on the tile.
+        let blockingData: Map<number, TileCollisionObject> = new Map<number, TileCollisionObject>();
+        blockingData.set(0, { x: 8, y: 8, width: 48, height: 48 });
+        blockingData.set(1, { x: 16, y: 8, width: 32, height: 48 });
+        blockingData.set(7, { x: 7, y: 0, width: 12, height: 11 });
+        blockingData.set(8, { x: 30, y: 20, width: 34, height: 24 });
+
+
         const blockingTileData = (tilesetBlocking.tileData || {}) as Record<number, TileCollisionData>;
         // Define custom rectangles for any tile index you want
         for (const tileIndex in blockingTileData) {
-            blockingTileData[tileIndex] = {
-                objectgroup: {
-                    objects: [{
-                        x: 16,
-                        y: 16,
-                        width: 32,
-                        height: 32
-                    }]
-                }
-            };
+            const o = blockingData.get(Number(tileIndex));
+            if (o) {
+                blockingTileData[tileIndex] = {
+                    objectgroup: {
+                        objects: [{
+                            x: o.x,
+                            y: o.y,
+                            width: o.width,
+                            height: o.height
+                        }]
+                    }
+                };
+            }
+            else {
+                // default geometry for blocking tiles if not specified in blockingData.
+                blockingTileData[tileIndex] = {
+                    objectgroup: {
+                        objects: [{
+                            x: 16,
+                            y: 16,
+                            width: 32,
+                            height: 32
+                        }]
+                    }
+                };
+            }
         }
         tilesetBlocking.tileData = blockingTileData;
 
@@ -174,6 +199,11 @@ export class Earth {
             return;
         }
         floatingTileLayer.setDepth(9999999);
+
+        if (ENABLE_DEBUG_BLOCKING_GEOMETRY) {
+            this.debugGraphics = this.scene.add.graphics();
+            this.debugGraphics.setDepth(1);
+        }
 
         this.isInitialized = true;
     }
@@ -481,6 +511,7 @@ export class Earth {
                 console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
             }
             this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
+            this.drawBlockingDebugGeometry(tile.tileX, tile.tileY);
         }
         if (tile.floating >= 0) {
             if (tile.floating > 15) {
@@ -508,6 +539,28 @@ export class Earth {
 
     private key(x: number, y: number): string {
         return `${x},${y}`;
+    }
+
+    private drawBlockingDebugGeometry(tileX: number, tileY: number): void {
+        if (!ENABLE_DEBUG_BLOCKING_GEOMETRY || !this.debugGraphics) {
+            return;
+        }
+
+        // Draw a red rectangle around the blocking tile
+        const screenX = tileX * this.tileSize;
+        const screenY = tileY * this.tileSize;
+
+        // Draw outline rectangle for the full tile
+        //this.debugGraphics.lineStyle(2, 0xff0000, 1);
+        //this.debugGraphics.strokeRect(screenX, screenY, this.tileSize, this.tileSize);
+
+        // Draw the collision box (currently hardcoded to 16, 16, 32, 32 in createMap)
+        this.debugGraphics.lineStyle(2, 0x00ff00, 1);
+        const collisionX = screenX + 16;
+        const collisionY = screenY + 16;
+        const collisionWidth = 32;
+        const collisionHeight = 32;
+        this.debugGraphics.strokeRect(collisionX, collisionY, collisionWidth, collisionHeight);
     }
 }
 

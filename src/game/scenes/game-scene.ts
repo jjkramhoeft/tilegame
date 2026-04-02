@@ -62,14 +62,14 @@ export class GameScene extends Phaser.Scene
             scene: this,
             position: {x: 200, y: 250},
         });
-        this.#wisp.enableObject();
+        //this.#wisp.enableObject();
         this.#enemyGroup.add(this.#wisp);
 
         this.#drow = new Drow({
             scene: this,
             position: {x: 250, y: 300},
         });
-        this.#drow.enableObject();
+        //this.#drow.enableObject();
         this.#enemyGroup.add(this.#drow);
         
     }
