@@ -125,11 +125,7 @@ export class Player extends CharacterGameObject {
       }),
     );
     this._stateMachine.addState(new DeathState(this));
-    this._stateMachine.addState(new LiftState(this));
     this._stateMachine.addState(new OpenChestState(this));
-    this._stateMachine.addState(new IdleHoldingState(this));
-    this._stateMachine.addState(new MoveHoldingState(this));
-    this._stateMachine.addState(new ThrowState(this));
     this._stateMachine.addState(new AttackState(this));
     this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
 

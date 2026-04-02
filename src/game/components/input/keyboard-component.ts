@@ -3,26 +3,30 @@ import { InputComponent } from './input-component';
 
 export class KeyboardComponent extends InputComponent {
   #cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
-  #attackKey: Phaser.Input.Keyboard.Key;
-  #actionKey: Phaser.Input.Keyboard.Key;
-  #enterKey: Phaser.Input.Keyboard.Key;
   #altUpKey: Phaser.Input.Keyboard.Key;
   #altLeftKey: Phaser.Input.Keyboard.Key;
   #altRightKey: Phaser.Input.Keyboard.Key;
   #altDownKey: Phaser.Input.Keyboard.Key;
+
+  #attackKey: Phaser.Input.Keyboard.Key;
   #altAttackKey: Phaser.Input.Keyboard.Key;
+
+  #actionKey: Phaser.Input.Keyboard.Key;
+  #enterKey: Phaser.Input.Keyboard.Key;
 
   constructor(keyboardPlugin: Phaser.Input.Keyboard.KeyboardPlugin) {
     super();
     this.#cursorKeys = keyboardPlugin.createCursorKeys();
-    this.#attackKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
-    this.#actionKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.X);
-    this.#enterKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     this.#altUpKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     this.#altLeftKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.#altRightKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.#altDownKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+
+    this.#attackKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
     this.#altAttackKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+
+    this.#actionKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+    this.#enterKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     // wasd as alternative to arrow keys for movement, R for cast spell/ability as alternative attack key
     // z = B, Attack
     // x = A, Talk, Run, Lift/Throw, Push/Pull
@@ -33,7 +37,6 @@ export class KeyboardComponent extends InputComponent {
   get isUpDown(): boolean {
     return this.#cursorKeys.up.isDown || this.#altUpKey.isDown;
   }
-
   get isUpJustDown(): boolean {
     return Phaser.Input.Keyboard.JustDown(this.#cursorKeys.up) || Phaser.Input.Keyboard.JustDown(this.#altUpKey);
   }
@@ -41,7 +44,6 @@ export class KeyboardComponent extends InputComponent {
   get isDownDown(): boolean {
     return this.#cursorKeys.down.isDown || this.#altDownKey.isDown;
   }
-
   get isDownJustDown(): boolean {
     return Phaser.Input.Keyboard.JustDown(this.#cursorKeys.down) || Phaser.Input.Keyboard.JustDown(this.#altDownKey);
   }
@@ -49,11 +51,9 @@ export class KeyboardComponent extends InputComponent {
   get isLeftDown(): boolean {
     return this.#cursorKeys.left.isDown || this.#altLeftKey.isDown;
   }
-
   get isRightDown(): boolean {
     return this.#cursorKeys.right.isDown || this.#altRightKey.isDown;
   }
-
   get isActionKeyJustDown(): boolean {
     return Phaser.Input.Keyboard.JustDown(this.#actionKey);
   }

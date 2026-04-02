@@ -47,7 +47,7 @@ export class GameScene extends Phaser.Scene
         this.#earth = new Earth(this);
         this.#earth.createMap(100, 100);
        
-        this.#setupMap();  // old
+        this.#setupMap();  // old map.
 
        
 
@@ -63,6 +63,7 @@ export class GameScene extends Phaser.Scene
         });
         this.#earth.AddTile(firstTile);      
 
+        /*
         this.#spider = new Spider({
             scene: this,
             position: {x: 350, y: 200},
@@ -83,6 +84,7 @@ export class GameScene extends Phaser.Scene
         });
         this.#drow.enableObject();
         this.#enemyGroup.add(this.#drow);
+        */
     }
 
     update ()
@@ -91,13 +93,15 @@ export class GameScene extends Phaser.Scene
                 enemy.update();
         });
 
-        if(this.#controls.isUpJustDown){
+
+        if(this.#player.stateMachine.currentStateName === 'ATTACK_STATE'){
+            console.log('Player casting/attacking');
             const tilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y,true);
             const tile = new Tile({
-            tilenumber: tilePosition,
-            biome: 1,
-        });
-        this.#earth.AddTile(tile);     
+                tilenumber: tilePosition,
+                biome: 1,
+            });
+            this.#earth.AddTile(tile);     
         }
     }
 
