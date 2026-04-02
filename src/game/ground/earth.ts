@@ -117,14 +117,14 @@ export class Earth {
             this.tileSize
         );
         if (!tilesetBlocking) {
-            console.error('Failed to load rocks tileset');
+            console.error('Failed to load blocking tileset');
             return;
         }
         //Add geometric collision shapes to the blocking layer based on the tile.
-        const rocksTileData = (tilesetBlocking.tileData || {}) as Record<number, TileCollisionData>;
+        const blockingTileData = (tilesetBlocking.tileData || {}) as Record<number, TileCollisionData>;
         // Define custom rectangles for any tile index you want
-        for (const tileIndex in rocksTileData) {
-            rocksTileData[tileIndex] = {
+        for (const tileIndex in blockingTileData) {
+            blockingTileData[tileIndex] = {
                 objectgroup: {
                     objects: [{
                         x: 16,
@@ -135,7 +135,7 @@ export class Earth {
                 }
             };
         }
-        tilesetBlocking.tileData = rocksTileData;
+        tilesetBlocking.tileData = blockingTileData;
 
 
         if (!tilesetBlocking) {
