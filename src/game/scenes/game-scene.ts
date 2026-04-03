@@ -130,8 +130,10 @@ export class GameScene extends Phaser.Scene {
     #registerColliders(): void {
 
         // collision between player and map 
-        this.#earth.getBlockingTileLayer().setCollision([this.#earth.getBlockingTileLayer().tileset[0].firstgid]);
-        this.physics.add.collider(this.#player, this.#earth.getBlockingTileLayer());
+        this.physics.add.collider(this.#player, this.#earth.getBlockingGeometryGroup(),
+            (_player, geometry) => {
+                console.log('Player collided with blocking tile index:', (geometry as Phaser.GameObjects.Zone).getData('tileIndex'));
+            });
 
     }
 

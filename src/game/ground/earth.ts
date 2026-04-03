@@ -39,6 +39,7 @@ export class Earth {
     protected decorationLayer!: Phaser.Tilemaps.Tilemap;
     protected blockingLayer!: Phaser.Tilemaps.Tilemap;
     protected blockingTileLayer!: Phaser.Tilemaps.TilemapLayer;
+    protected blockingGeometryGroup!: Phaser.Physics.Arcade.StaticGroup;
     protected floatingLayer!: Phaser.Tilemaps.Tilemap;
     private isInitialized = false;
     private debugGraphics?: Phaser.GameObjects.Graphics;
@@ -173,6 +174,7 @@ export class Earth {
         }
         blockingTileLayer.setDepth(0);
         this.blockingTileLayer = blockingTileLayer;
+        this.blockingGeometryGroup = this.scene.physics.add.staticGroup();
 
         // Set up floating layer.
         this.floatingLayer = this.scene.make.tilemap({
@@ -511,7 +513,8 @@ export class Earth {
             if (tile.floating > 91) {
                 console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
             }
-            this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
+            this.blockingTileLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
+            this.createBlockingGeometryBody(tile.tileX, tile.tileY, tile.blocking);
             this.drawBlockingDebugGeometry(tile.tileX, tile.tileY, tile.blocking);
         }
         if (tile.floating >= 0) {
@@ -542,6 +545,10 @@ export class Earth {
         return this.blockingTileLayer;
     }
 
+    public getBlockingGeometryGroup(): Phaser.Physics.Arcade.StaticGroup {
+        return this.blockingGeometryGroup;
+    }
+
     private key(x: number, y: number): string {
         return `${x},${y}`;
     }
@@ -557,6 +564,22 @@ export class Earth {
 
         this.debugGraphics.lineStyle(2, 0x00ff00, 1);
         this.debugGraphics.strokeRect(screenX + geometry.x, screenY + geometry.y, geometry.width, geometry.height);
+    }
+
+    private createBlockingGeometryBody(tileX: number, tileY: number, tileIndex: number): void {
+        const geometry = this.blockingData.get(tileIndex) ?? { x: 16, y: 16, width: 32, height: 32 };
+        const worldX = tileX * this.tileSize + geometry.x + geometry.width / 2;
+        const worldY = tileY * this.tileSize + geometry.y + geometry.height / 2;
+
+        const collisionZone = this.scene.add.zone(worldX, worldY, geometry.width, geometry.height);
+        collisionZone.setData('tileIndex', tileIndex);
+        this.scene.physics.add.existing(collisionZone, true);
+
+        const body = collisionZone.body as Phaser.Physics.Arcade.StaticBody;
+        body.setSize(geometry.width, geometry.height);
+        body.updateFromGameObject();
+
+        this.blockingGeometryGroup.add(collisionZone);
     }
 }
 
