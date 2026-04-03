@@ -5,6 +5,7 @@ import * as Phaser from 'phaser';
 import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles, DecideBiome, DicedeDecoration, DicedeBlockingAndFloating } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
+import { ENABLE_LOGGING } from '../common/config';
 
 export type EarthCastingConfig = {
     isDesertUnlocked: boolean;
@@ -179,7 +180,9 @@ export class Earth {
 
         const casterBiome = casterTile?.biome ?? BIOME.ROCK;
         const neighborTiles = this.get4NeighborTiles(tilePosition);
+        const neighborBiomes = this.get4NeighborBiomes(tilePosition);
         const biome: number = DecideBiome(creationConfig, casterBiome, neighborTiles);
+        const border: number = DecideBorder(biome, neighborBiomes);
         const countOfNeighborDecorations = neighborTiles.filter(n => n.decoration >= 0).length;
         const countOfNeighborBolcking = neighborTiles.filter(n => n.blocking >= 0).length;
         const casterGotDecoration = casterTile?.decoration !== undefined && casterTile.decoration >= 0;
@@ -189,6 +192,7 @@ export class Earth {
         return new Tile({
             tilenumber: tilePosition,
             biome: biome,
+            border: border,
             decoration: decoration,
             blocking: blocking,
             floating: floating,
@@ -216,9 +220,82 @@ export class Earth {
         return neighborTiles;
     }
 
+
+    private get4NeighborBiomes(tilePosition: Position): number[] {
+        const neighborBiomes: number[] = [];
+        let neighborUp = this.getTile(tilePosition.x, tilePosition.y - 1);
+        let neighborDown = this.getTile(tilePosition.x, tilePosition.y + 1);
+        let neighborLeft = this.getTile(tilePosition.x - 1, tilePosition.y);
+        let neighborRight = this.getTile(tilePosition.x + 1, tilePosition.y);
+        // Borders in tilesheet are ordered as follows: 0: up, 1: right, 2: down, 3: left.
+        if (neighborUp) {
+            if (neighborUp.border < 0) {
+                neighborBiomes.push(neighborUp.biome);
+            } else {
+                const remainderOfBorder = neighborUp.border % 4;
+                if (remainderOfBorder === 2) {
+                    neighborBiomes.push(BIOME.NONE);// Not working Up got an border down.
+                } else {
+                    neighborBiomes.push(neighborUp.biome);
+                }
+            }
+        } else {
+            neighborBiomes.push(BIOME.NONE);
+        }
+
+        if (neighborRight) {
+            if (neighborRight.border < 0) {
+                neighborBiomes.push(neighborRight.biome);
+            } else {
+                const remainderOfBorder = neighborRight.border % 4;
+                if (remainderOfBorder === 3) {
+                    neighborBiomes.push(BIOME.NONE);// Not working Right got an border left.
+                } else {
+                    neighborBiomes.push(neighborRight.biome);
+                }
+            }
+        } else {
+            neighborBiomes.push(BIOME.NONE);
+        }
+
+        if (neighborDown) {
+            if (neighborDown.border < 0) {
+                neighborBiomes.push(neighborDown.biome);
+            } else {
+                const remainderOfBorder = neighborDown.border % 4;
+                if (remainderOfBorder === 0) {
+                    neighborBiomes.push(BIOME.NONE);// Not working Down got an border up.
+                } else {
+                    neighborBiomes.push(neighborDown.biome);
+                }
+            }
+        } else {
+            neighborBiomes.push(BIOME.NONE);
+        }
+
+        if (neighborLeft) {
+            if (neighborLeft.border < 0) {
+                neighborBiomes.push(neighborLeft.biome);
+            } else {
+                const remainderOfBorder = neighborLeft.border % 4;
+                if (remainderOfBorder === 1) {
+                    neighborBiomes.push(BIOME.NONE);// Not working Left got an border right.
+                } else {
+                    neighborBiomes.push(neighborLeft.biome);
+                }
+            }
+        } else {
+            neighborBiomes.push(BIOME.NONE);
+        }
+
+        return neighborBiomes;
+    }
+
+
     public AddTile(tile: Tile) {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
+            if(ENABLE_LOGGING){console.log(`Placing biome tile with index ${tile.biome} at (${tile.tileX}, ${tile.tileY})`);}   
             this.biomeLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
             if (tile.biome === BIOME.WATER) {
                 this.scene.add
@@ -256,36 +333,33 @@ export class Earth {
             if (tile.border > 39) {
                 console.warn(`Border tile index ${tile.border} is out of expected range!`);
             }
+            if(ENABLE_LOGGING){console.log(`Placing border tile with index ${tile.border} at (${tile.tileX}, ${tile.tileY})`);}
             this.borderLayer.putTileAt(tile.border, tile.tileX, tile.tileY);
         }
         if (tile.decoration >= 0) {
             if (tile.decoration > 55) {
                 console.warn(`Decoration tile index ${tile.decoration} is out of expected range!`);
             }
+            if(ENABLE_LOGGING){console.log(`Placing decoration tile with index ${tile.decoration} at (${tile.tileX}, ${tile.tileY})`);}
             this.decorationLayer.putTileAt(tile.decoration, tile.tileX, tile.tileY);
         }
         if (tile.blocking >= 0) {
             if (tile.blocking > 91) {
                 console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
             }
-            this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);            
+            if(ENABLE_LOGGING){console.log(`Placing blocking tile with index ${tile.blocking} at (${tile.tileX}, ${tile.tileY})`);}
+            this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
             this.createBlockingGeometryBody(tile.tileX, tile.tileY, tile.blocking);
-
-            
-            const worldX = tile.tileX*64;
-            const worldY = tile.tileY*64;
+            const worldX = tile.tileX * 64;
+            const worldY = tile.tileY * 64;
             const sprite = this.scene.add.image(worldX, worldY, ASSET_KEYS.TILESET_BLOCKING, tile.blocking).setOrigin(0, 0);
             sprite.setDepth(worldY + 64);
-
-
-
-
-
         }
         if (tile.floating >= 0) {
             if (tile.floating > 15) {
                 console.warn(`Floating tile index ${tile.floating} is out of expected range!`);
             }
+            if(ENABLE_LOGGING){console.log(`Placing floating tile with index ${tile.floating} at (${tile.tileX}, ${tile.tileY})`);}
             this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY - 1);
         }
     }
@@ -331,3 +405,57 @@ export class Earth {
         this.blockingGeometryGroup.add(collisionZone);
     }
 }
+function DecideBorder(biome: number, neighborBiomes: number[]): number {
+    // up right down left
+    if (neighborBiomes.length !== 4) {
+        console.warn(`DecideBorder expected 4 neighbor biomes, got ${neighborBiomes.length}`);
+        return -1;
+    }
+    const posibleBorderCount = neighborBiomes.filter(n => n >= 1 && n != biome).length;
+    if (posibleBorderCount === 0) {
+        return -1;// No neighbors, no border.
+    }
+    const borderSkipChance = 0.002;
+    if (Phaser.Math.RND.realInRange(0, 1) < borderSkipChance) {
+        return -1;
+    }
+    let randomOffset = Phaser.Math.RND.integerInRange(0, posibleBorderCount - 1);
+    if (neighborBiomes[0] >= 1 && neighborBiomes[0] != biome) // Up
+    {
+        if (randomOffset > 0) {
+            randomOffset--;
+        }
+        else {
+            return neighborBiomes[0] * 4;
+        }
+    }
+    if (neighborBiomes[1] >= 1 && neighborBiomes[1] != biome) // Right
+    {
+        if (randomOffset > 0) {
+            randomOffset--;
+        }
+        else {
+            return neighborBiomes[1] * 4 + 1;
+        }
+    }
+    if (neighborBiomes[2] >= 1 && neighborBiomes[2] != biome) // Down
+    {
+        if (randomOffset > 0) {
+            randomOffset--;
+        }
+        else {
+            return neighborBiomes[2] * 4 + 2;
+        }
+    }
+    if (neighborBiomes[3] >= 1 && neighborBiomes[3] != biome) // Left
+    {
+        if (randomOffset > 0) {
+            randomOffset--;
+        }
+        else {
+            return neighborBiomes[3] * 4 + 3;
+        }
+    }
+    return -1;
+}
+

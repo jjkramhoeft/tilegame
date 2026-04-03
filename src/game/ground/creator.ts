@@ -332,8 +332,8 @@ export function DicedeDecoration(biome: number, countOfNeighborDecorations: numb
             }
             break;
         case BIOME.DESERT: // desert            
-            const minDesertDecorationIndex = 28;
-            const maxDesertDecorationIndex = 32;
+            const minDesertDecorationIndex = 30;
+            const maxDesertDecorationIndex = 34;
             let desertDecorationChance = 0.12;
             if (casterGotDecoration) { desertDecorationChance += 0.15; }
             desertDecorationChance += countOfNeighborDecorations * 0.02;
@@ -343,8 +343,8 @@ export function DicedeDecoration(biome: number, countOfNeighborDecorations: numb
             }
             break;
         case BIOME.GRASS: // grass            
-            const minGrassDecorationIndex = 33;
-            const maxGrassDecorationIndex = 46;
+            const minGrassDecorationIndex = 35;
+            const maxGrassDecorationIndex = 48;
             let grassDecorationChance = 0.30;
             if (casterGotDecoration) { grassDecorationChance += 0.20; }
             grassDecorationChance += countOfNeighborDecorations * 0.15;
@@ -354,8 +354,8 @@ export function DicedeDecoration(biome: number, countOfNeighborDecorations: numb
             }
             break;
         case BIOME.FOREST: // forest            
-            const minForestDecorationIndex = 47;
-            const maxForestDecorationIndex = 52;
+            const minForestDecorationIndex = 49;
+            const maxForestDecorationIndex = 55;
             let forestDecorationChance = 0.25;
             if (casterGotDecoration) { forestDecorationChance += 0.20; }
             forestDecorationChance += countOfNeighborDecorations * 0.1;
@@ -411,8 +411,8 @@ export function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorati
             }
             break;
         case BIOME.DESERT:
-            const minDesertBlockingIndex = 94;
-            const maxDesertBlockingIndex = 101;
+            const minDesertBlockingIndex = 84;
+            const maxDesertBlockingIndex = 91;
             let desertBlockingChance = 0.01;
             if (casterGotDecoration) { desertBlockingChance += 0.01; }
             desertBlockingChance += countOfNeighborDecorations * 0.01;
