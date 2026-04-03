@@ -16,7 +16,6 @@ export type EarthCastingConfig = {
     powerLevel: number;
 };
 
-
 interface TileCollisionObject {
     x: number;
     y: number;
@@ -41,7 +40,6 @@ export class Earth {
     protected blockingGeometryGroup!: Phaser.Physics.Arcade.StaticGroup;
     protected floatingLayer!: Phaser.Tilemaps.Tilemap;
     private isInitialized = false;
-    private debugGraphics?: Phaser.GameObjects.Graphics;
     private blockingData: Map<number, TileCollisionObject> = new Map<number, TileCollisionObject>();
     tileSize = 64;
     constructor(scene: Phaser.Scene) {
