@@ -16,6 +16,18 @@ export class GameScene extends Phaser.Scene {
     #enemyGroup?: Phaser.GameObjects.Group;
     #earth!: Earth;
     #playerStartPosition = { x: 32035, y: 32020 };
+    #playerCurrentMagic: EarthCastingConfig = {
+        isDesertUnlocked: false,
+        isGrassUnlocked: false,
+        isForestUnlocked: false,
+        isSwampUnlocked: false,
+        isCrystalUnlocked: false,
+        isWaterUnlocked: false,
+        isLavaUnlocked: false,
+        isMountainUnlocked: false,
+        powerLevel: 1,
+    };
+
 
     constructor() {
         super('GameScene');
@@ -50,21 +62,21 @@ export class GameScene extends Phaser.Scene {
 
         this.#spider = new Spider({
             scene: this,
-            position: { x: 32000+350, y: 32000+200 },
+            position: { x: 32000 + 350, y: 32000 + 200 },
         });
         //this.#spider.enableObject();
         this.#enemyGroup.add(this.#spider);
 
         this.#wisp = new Wisp({
             scene: this,
-            position: { x: 32000+200, y: 32000+250 },
+            position: { x: 32000 + 200, y: 32000 + 250 },
         });
         //this.#wisp.enableObject();
         this.#enemyGroup.add(this.#wisp);
 
         this.#drow = new Drow({
             scene: this,
-            position: { x: 32000+250, y: 32000+300 },
+            position: { x: 32000 + 250, y: 32000 + 300 },
         });
         //this.#drow.enableObject();
         this.#enemyGroup.add(this.#drow);
@@ -95,20 +107,28 @@ export class GameScene extends Phaser.Scene {
                 }
             });
 
-            this.#earth.AddTiles({
-                isDesertUnlocked: true,
-                isGrassUnlocked: true,
-                isForestUnlocked: true,
-                isSwampUnlocked: true,
-                isCrystalUnlocked: true,
-                isWaterUnlocked: true,
-                isLavaUnlocked: true,
-                isMountainUnlocked: false,
-                powerLevel: 4,
-            } as EarthCastingConfig,
-                casterPosition,
-                tilePosition,
-                directions);
+            const feedback = this.#earth.AddTiles(this.#playerCurrentMagic, casterPosition, tilePosition, directions);
+            if (feedback) {
+                if(feedback.rockTilesPlaced > 10) {this.#playerCurrentMagic.isDesertUnlocked = true;}
+                if(feedback.desertTilesPlaced > 10) {this.#playerCurrentMagic.isGrassUnlocked = true;}
+                if(feedback.grassTilesPlaced > 10) {this.#playerCurrentMagic.isForestUnlocked = true;}
+                if(feedback.forestTilesPlaced > 10) {
+                    this.#playerCurrentMagic.isSwampUnlocked = true;
+                    this.#playerCurrentMagic.isWaterUnlocked = true;
+                }
+                if(feedback.forestTilesPlaced > 20) {
+                    this.#playerCurrentMagic.isCrystalUnlocked = true;
+                }
+                if(feedback.forestTilesPlaced > 30) {
+                    this.#playerCurrentMagic.isLavaUnlocked = true;
+                    //this.#playerCurrentMagic.isMountainUnlocked = true;
+                }
+                const sum = feedback.rockTilesPlaced + feedback.desertTilesPlaced + feedback.grassTilesPlaced + feedback.forestTilesPlaced;
+                const x = Math.floor(sum/20);
+                if(x > this.#playerCurrentMagic.powerLevel) {
+                    this.#playerCurrentMagic.powerLevel ++;
+                }
+            }
         }
     }
 

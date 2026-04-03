@@ -3,7 +3,7 @@ import { Position, Direction } from '../common/types';
 import { BIOME } from '../common/common';
 import * as Phaser from 'phaser';
 import { ASSET_KEYS } from '../common/assets';
-import { findTargetTiles, DecideBiome, DicedeDecoration, DicedeBlockingAndFloating } from './creator';
+import { findTargetTiles, DecideBiome, DicedeDecoration, DicedeBlockingAndFloating, DecideBorder } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
 import { ENABLE_LOGGING } from '../common/config';
 
@@ -19,6 +19,16 @@ export type EarthCastingConfig = {
     powerLevel: number;
 };
 
+export type CastingFeedback = {
+    rockTilesPlaced: number;
+    desertTilesPlaced: number;
+    grassTilesPlaced: number;
+    forestTilesPlaced: number;
+    detailsPlaced: number;
+    blocksPlaced: number;
+};
+
+
 export class Earth {
 
     protected allTiles: Map<string, Tile> = new Map<string, Tile>();
@@ -32,7 +42,15 @@ export class Earth {
     protected blockingGeometryGroup!: Phaser.Physics.Arcade.StaticGroup;
     private isInitialized = false;
     private blockingData: Map<number, TileCollisionObject> = new Map<number, TileCollisionObject>();
-    tileSize = 64;
+    private castingFeedback: CastingFeedback = {
+        rockTilesPlaced: 0,
+        desertTilesPlaced: 0,
+        grassTilesPlaced: 0,
+        forestTilesPlaced: 0,
+        detailsPlaced: 0,
+        blocksPlaced: 0,
+    };
+    private tileSize = 64;
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
         this.allTiles = new Map<string, Tile>();
@@ -154,26 +172,24 @@ export class Earth {
         this.isInitialized = true;
     }
 
-    public AddTiles(creationConfig: EarthCastingConfig, casterPosition: Position, primeTargetPosition: Position, directions: Direction[]) {
+    public AddTiles(creationConfig: EarthCastingConfig, casterPosition: Position, primeTargetPosition: Position, directions: Direction[]):CastingFeedback {
         let numberOfPlacedTiles = 0;
         let allTagets = findTargetTiles(primeTargetPosition, directions, creationConfig.powerLevel);
         let casterTile = this.getTile(casterPosition.x, casterPosition.y);
         while (numberOfPlacedTiles < creationConfig.powerLevel) {
             const target = allTagets.shift();
             if (target == undefined) {
-                console.log('No more target tiles to pick!');
-                return;
+                return this.castingFeedback;
             }
             const targetIsOccupied = this.getTile(target.x, target.y) !== undefined;
             if (targetIsOccupied) {
-                console.log('Target tile is occupied, skipping!');
                 continue;
             } else {
-                console.log('Placing new tile at target!');
                 this.AddTile(this.CreateNewTile(creationConfig, target, creationConfig.powerLevel, casterTile));
                 numberOfPlacedTiles++;
             }
         }
+        return this.castingFeedback;
     }
 
     private CreateNewTile(creationConfig: EarthCastingConfig, tilePosition: Position, powerLevel: number, casterTile: Tile | undefined): Tile {
@@ -188,6 +204,23 @@ export class Earth {
         const casterGotDecoration = casterTile?.decoration !== undefined && casterTile.decoration >= 0;
         const decoration: number = DicedeDecoration(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel);
         const [blocking, floating] = DicedeBlockingAndFloating(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel, decoration, countOfNeighborBolcking);
+
+        if(biome === BIOME.ROCK) {
+            this.castingFeedback.rockTilesPlaced++;
+        } else if(biome === BIOME.DESERT) {
+            this.castingFeedback.desertTilesPlaced++;
+        } else if(biome === BIOME.GRASS) {
+            this.castingFeedback.grassTilesPlaced++;
+        } else if(biome === BIOME.FOREST) {
+            this.castingFeedback.forestTilesPlaced++;
+        } 
+        if(decoration >= 0) {
+            this.castingFeedback.detailsPlaced++;
+        }
+        if(blocking >= 0) {
+            this.castingFeedback.blocksPlaced++;
+        }
+
 
         return new Tile({
             tilenumber: tilePosition,
@@ -405,57 +438,7 @@ export class Earth {
         this.blockingGeometryGroup.add(collisionZone);
     }
 }
-function DecideBorder(biome: number, neighborBiomes: number[]): number {
-    // up right down left
-    if (neighborBiomes.length !== 4) {
-        console.warn(`DecideBorder expected 4 neighbor biomes, got ${neighborBiomes.length}`);
-        return -1;
-    }
-    const posibleBorderCount = neighborBiomes.filter(n => n >= 1 && n != biome).length;
-    if (posibleBorderCount === 0) {
-        return -1;// No neighbors, no border.
-    }
-    const borderSkipChance = 0.002;
-    if (Phaser.Math.RND.realInRange(0, 1) < borderSkipChance) {
-        return -1;
-    }
-    let randomOffset = Phaser.Math.RND.integerInRange(0, posibleBorderCount - 1);
-    if (neighborBiomes[0] >= 1 && neighborBiomes[0] != biome) // Up
-    {
-        if (randomOffset > 0) {
-            randomOffset--;
-        }
-        else {
-            return neighborBiomes[0] * 4;
-        }
-    }
-    if (neighborBiomes[1] >= 1 && neighborBiomes[1] != biome) // Right
-    {
-        if (randomOffset > 0) {
-            randomOffset--;
-        }
-        else {
-            return neighborBiomes[1] * 4 + 1;
-        }
-    }
-    if (neighborBiomes[2] >= 1 && neighborBiomes[2] != biome) // Down
-    {
-        if (randomOffset > 0) {
-            randomOffset--;
-        }
-        else {
-            return neighborBiomes[2] * 4 + 2;
-        }
-    }
-    if (neighborBiomes[3] >= 1 && neighborBiomes[3] != biome) // Left
-    {
-        if (randomOffset > 0) {
-            randomOffset--;
-        }
-        else {
-            return neighborBiomes[3] * 4 + 3;
-        }
-    }
-    return -1;
-}
+
+
+
 

@@ -476,4 +476,57 @@ export function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorati
     return [blocking, floating];
 }
 
+export function DecideBorder(biome: number, neighborBiomes: number[]): number {
+    // up right down left
+    if (neighborBiomes.length !== 4) {
+        console.warn(`DecideBorder expected 4 neighbor biomes, got ${neighborBiomes.length}`);
+        return -1;
+    }
+    const posibleBorderCount = neighborBiomes.filter(n => n >= 1 && n != biome).length;
+    if (posibleBorderCount === 0) {
+        return -1;// No neighbors, no border.
+    }
+    const borderSkipChance = 0.002;
+    if (Phaser.Math.RND.realInRange(0, 1) < borderSkipChance) {
+        return -1;
+    }
+    let randomOffset = Phaser.Math.RND.integerInRange(0, posibleBorderCount - 1);
+    if (neighborBiomes[0] >= 1 && neighborBiomes[0] != biome) // Up
+    {
+        if (randomOffset > 0) {
+            randomOffset--;
+        }
+        else {
+            return neighborBiomes[0] * 4;
+        }
+    }
+    if (neighborBiomes[1] >= 1 && neighborBiomes[1] != biome) // Right
+    {
+        if (randomOffset > 0) {
+            randomOffset--;
+        }
+        else {
+            return neighborBiomes[1] * 4 + 1;
+        }
+    }
+    if (neighborBiomes[2] >= 1 && neighborBiomes[2] != biome) // Down
+    {
+        if (randomOffset > 0) {
+            randomOffset--;
+        }
+        else {
+            return neighborBiomes[2] * 4 + 2;
+        }
+    }
+    if (neighborBiomes[3] >= 1 && neighborBiomes[3] != biome) // Left
+    {
+        if (randomOffset > 0) {
+            randomOffset--;
+        }
+        else {
+            return neighborBiomes[3] * 4 + 3;
+        }
+    }
+    return -1;
+}
 
