@@ -1,7 +1,6 @@
-export const ENABLE_LOGGING = true;
+export const ENABLE_LOGGING = false;
 export const ENABLE_DEBUG_ZONE_AREA = false;
 export const DEBUG_COLLISION_ALPHA = 0.5;
-export const ENABLE_DEBUG_BLOCKING_GEOMETRY = true;
 
 export const PLAYER_SPEED = 90;
 export const PLAYER_INVULNERABLE_AFTER_HIT_DURATION = 1000;

@@ -3,7 +3,6 @@ import { Position, Direction } from '../common/types';
 import { BIOME } from '../common/common';
 import * as Phaser from 'phaser';
 import { ASSET_KEYS } from '../common/assets';
-import { ENABLE_DEBUG_BLOCKING_GEOMETRY } from '../common/config';
 
 export type EarthCastingConfig = {
     isDesertUnlocked: boolean;
@@ -202,11 +201,6 @@ export class Earth {
             return;
         }
         floatingTileLayer.setDepth(9999999);
-
-        if (ENABLE_DEBUG_BLOCKING_GEOMETRY) {
-            this.debugGraphics = this.scene.add.graphics();
-            this.debugGraphics.setDepth(1);
-        }
 
         this.isInitialized = true;
     }
@@ -515,7 +509,6 @@ export class Earth {
             }
             this.blockingTileLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
             this.createBlockingGeometryBody(tile.tileX, tile.tileY, tile.blocking);
-            this.drawBlockingDebugGeometry(tile.tileX, tile.tileY, tile.blocking);
         }
         if (tile.floating >= 0) {
             if (tile.floating > 15) {
@@ -551,19 +544,6 @@ export class Earth {
 
     private key(x: number, y: number): string {
         return `${x},${y}`;
-    }
-
-    private drawBlockingDebugGeometry(tileX: number, tileY: number, tileIndex: number): void {
-        if (!ENABLE_DEBUG_BLOCKING_GEOMETRY || !this.debugGraphics) {
-            return;
-        }
-
-        const screenX = tileX * this.tileSize;
-        const screenY = tileY * this.tileSize;
-        const geometry = this.blockingData.get(tileIndex) ?? { x: 16, y: 16, width: 32, height: 32 };
-
-        this.debugGraphics.lineStyle(2, 0x00ff00, 1);
-        this.debugGraphics.strokeRect(screenX + geometry.x, screenY + geometry.y, geometry.width, geometry.height);
     }
 
     private createBlockingGeometryBody(tileX: number, tileY: number, tileIndex: number): void {
