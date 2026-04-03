@@ -1321,6 +1321,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "tile-border",
+        "textureURL": "tile-border.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "tile-decoration",
         "textureURL": "tile-decoration.png",
         "frameConfig": {

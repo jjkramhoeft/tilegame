@@ -24,6 +24,7 @@ export class Earth {
     protected scene: Phaser.Scene;
     protected tilemap!: Phaser.Tilemaps.Tilemap;
     protected biomeLayer!: Phaser.Tilemaps.TilemapLayer;
+    protected borderLayer!: Phaser.Tilemaps.TilemapLayer;
     protected decorationLayer!: Phaser.Tilemaps.TilemapLayer;
     protected blockingLayer!: Phaser.Tilemaps.TilemapLayer;
     protected floatingLayer!: Phaser.Tilemaps.TilemapLayer;
@@ -69,6 +70,24 @@ export class Earth {
         biomeLayer.setDepth(-10);
         this.biomeLayer = biomeLayer;
 
+        // Set up border layer.
+        const tilesetBorder = this.tilemap.addTilesetImage(
+            ASSET_KEYS.TILESET_BORDER,
+            ASSET_KEYS.TILESET_BORDER,
+            this.tileSize,
+            this.tileSize
+        );
+        if (!tilesetBorder) {
+            throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BORDER}`);
+        }
+        const borderLayer = this.tilemap.createBlankLayer('border', tilesetBorder);
+        if (!borderLayer) {
+            console.error('Failed to create border layer');
+            return;
+        }
+        borderLayer.setDepth(-8);
+        this.borderLayer = borderLayer;
+
         // Set up decoration layer.
         const tilesetDeco = this.tilemap.addTilesetImage(
             ASSET_KEYS.TILESET_DECORATION,
@@ -84,7 +103,7 @@ export class Earth {
             console.error('Failed to create decoration layer');
             return;
         }
-        decorationLayer.setDepth(-8);
+        decorationLayer.setDepth(-7);
         this.decorationLayer = decorationLayer;
 
         // Set up blocking layer.
@@ -109,6 +128,7 @@ export class Earth {
             return;
         }
         blockingLayer.setDepth(0);
+        blockingLayer.setVisible(false);
         this.blockingLayer = blockingLayer;
         this.blockingGeometryGroup = this.scene.physics.add.staticGroup();
 
@@ -232,18 +252,35 @@ export class Earth {
                 }
             }
         }
+        if (tile.border >= 0) {
+            if (tile.border > 39) {
+                console.warn(`Border tile index ${tile.border} is out of expected range!`);
+            }
+            this.borderLayer.putTileAt(tile.border, tile.tileX, tile.tileY);
+        }
         if (tile.decoration >= 0) {
-            if (tile.floating > 55) {
+            if (tile.decoration > 55) {
                 console.warn(`Decoration tile index ${tile.decoration} is out of expected range!`);
             }
             this.decorationLayer.putTileAt(tile.decoration, tile.tileX, tile.tileY);
         }
         if (tile.blocking >= 0) {
-            if (tile.floating > 91) {
+            if (tile.blocking > 91) {
                 console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
             }
-            this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
+            this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);            
             this.createBlockingGeometryBody(tile.tileX, tile.tileY, tile.blocking);
+
+            
+            const worldX = tile.tileX*64;
+            const worldY = tile.tileY*64;
+            const sprite = this.scene.add.image(worldX, worldY, ASSET_KEYS.TILESET_BLOCKING, tile.blocking).setOrigin(0, 0);
+            sprite.setDepth(worldY + 64);
+
+
+
+
+
         }
         if (tile.floating >= 0) {
             if (tile.floating > 15) {
