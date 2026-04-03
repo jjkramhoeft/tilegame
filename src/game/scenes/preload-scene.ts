@@ -23,11 +23,11 @@ export class PreloadScene extends Phaser.Scene {
 
   #createAnimations(): void {
 
-    /*
+    
     const WATER_ANIM_KEY = 'water-flow';
     this.anims.create({
         key: WATER_ANIM_KEY,
-        frames: this.anims.generateFrameNumbers('tile-animated', { start: 0, end: 7 }),
+        frames: this.anims.generateFrameNumbers('tile-animated', { start: 8, end: 15 }),
         frameRate: 8,
         repeat: -1
     });
@@ -38,7 +38,21 @@ export class PreloadScene extends Phaser.Scene {
         frameRate: 8,
         repeat: -1
     });
-    */
+    const CRYSTAL_ANIM_KEY = 'crystal-flow';
+    this.anims.create({
+        key: CRYSTAL_ANIM_KEY,
+        frames: this.anims.generateFrameNumbers('tile-animated', { start: 0, end: 7 }),
+        frameRate: 8,
+        repeat: -1
+    });
+    const VOID_ANIM_KEY = 'void-flow';
+    this.anims.create({
+        key: VOID_ANIM_KEY,
+        frames: this.anims.generateFrameNumbers('tile-animated', { start: 24, end: 31 }),
+        frameRate: 8,
+        repeat: -1
+    });
+    
     this.anims.createFromAseprite(ASSET_KEYS.HUD_NUMBERS);
     this.anims.createFromAseprite(ASSET_KEYS.PLAYER);
     this.anims.createFromAseprite(ASSET_KEYS.SPIDER);

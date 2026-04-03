@@ -15,7 +15,7 @@ export class GameScene extends Phaser.Scene {
     #drow!: Drow;
     #enemyGroup?: Phaser.GameObjects.Group;
     #earth!: Earth;
-    #playerStartPosition = { x: 32000, y: 32000 };
+    #playerStartPosition = { x: 32035, y: 32020 };
 
     constructor() {
         super('GameScene');
@@ -50,23 +50,23 @@ export class GameScene extends Phaser.Scene {
 
         this.#spider = new Spider({
             scene: this,
-            position: { x: 350, y: 200 },
+            position: { x: 32000+350, y: 32000+200 },
         });
-        //this.#spider.enableObject();
+        this.#spider.enableObject();
         this.#enemyGroup.add(this.#spider);
 
         this.#wisp = new Wisp({
             scene: this,
-            position: { x: 200, y: 250 },
+            position: { x: 32000+200, y: 32000+250 },
         });
-        //this.#wisp.enableObject();
+        this.#wisp.enableObject();
         this.#enemyGroup.add(this.#wisp);
 
         this.#drow = new Drow({
             scene: this,
-            position: { x: 250, y: 300 },
+            position: { x: 32000+250, y: 32000+300 },
         });
-        //this.#drow.enableObject();
+        this.#drow.enableObject();
         this.#enemyGroup.add(this.#drow);
 
 
@@ -96,13 +96,13 @@ export class GameScene extends Phaser.Scene {
             });
 
             this.#earth.AddTiles({
-                isDesertUnlocked: false,
-                isGrassUnlocked: false,
-                isForestUnlocked: false,
-                isSwampUnlocked: false,
-                isCrystalUnlocked: false,
-                isWaterUnlocked: false,
-                isLavaUnlocked: false,
+                isDesertUnlocked: true,
+                isGrassUnlocked: true,
+                isForestUnlocked: true,
+                isSwampUnlocked: true,
+                isCrystalUnlocked: true,
+                isWaterUnlocked: true,
+                isLavaUnlocked: true,
                 isMountainUnlocked: false,
                 powerLevel: 4,
             } as EarthCastingConfig,
@@ -120,6 +120,7 @@ export class GameScene extends Phaser.Scene {
             maxLife: 3,
             currentLife: 3
         });
+
     }
 
     #setupCamera(): void {
@@ -128,7 +129,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     #registerColliders(): void {
-
         // collision between player and map 
         this.physics.add.collider(this.#player, this.#earth.getBlockingGeometryGroup()
             /*  , (_player, geometry) => {

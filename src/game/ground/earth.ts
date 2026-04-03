@@ -22,12 +22,12 @@ export class Earth {
 
     protected allTiles: Map<string, Tile> = new Map<string, Tile>();
     protected scene: Phaser.Scene;
-    protected biomeLayer!: Phaser.Tilemaps.Tilemap;
-    protected decorationLayer!: Phaser.Tilemaps.Tilemap;
-    protected blockingLayer!: Phaser.Tilemaps.Tilemap;
-    protected blockingTileLayer!: Phaser.Tilemaps.TilemapLayer;
+    protected tilemap!: Phaser.Tilemaps.Tilemap;
+    protected biomeLayer!: Phaser.Tilemaps.TilemapLayer;
+    protected decorationLayer!: Phaser.Tilemaps.TilemapLayer;
+    protected blockingLayer!: Phaser.Tilemaps.TilemapLayer;
+    protected floatingLayer!: Phaser.Tilemaps.TilemapLayer;
     protected blockingGeometryGroup!: Phaser.Physics.Arcade.StaticGroup;
-    protected floatingLayer!: Phaser.Tilemaps.Tilemap;
     private isInitialized = false;
     private blockingData: Map<number, TileCollisionObject> = new Map<number, TileCollisionObject>();
     tileSize = 64;
@@ -41,18 +41,18 @@ export class Earth {
             return;
         }
 
-        // Set up base biome layer.
-        this.biomeLayer = this.scene.make.tilemap({
+        this.tilemap = this.scene.make.tilemap({
             tileWidth: this.tileSize,
             tileHeight: this.tileSize,
             width,
             height,
         });
-        if (!this.biomeLayer) {
+        if (!this.tilemap) {
             console.error('Failed to create biome layer');
             return;
         }
-        const tilesetBase = this.biomeLayer.addTilesetImage(
+        // Set up base biome layer.
+        const tilesetBase = this.tilemap.addTilesetImage(
             ASSET_KEYS.TILESET_BASE,
             ASSET_KEYS.TILESET_BASE,
             this.tileSize,
@@ -61,21 +61,16 @@ export class Earth {
         if (!tilesetBase) {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BASE}`);
         }
-        const biomeTileLayer = this.biomeLayer.createBlankLayer('biome', tilesetBase);
-        if (!biomeTileLayer) {
+        const biomeLayer = this.tilemap.createBlankLayer('biome', tilesetBase);
+        if (!biomeLayer) {
             console.error('Failed to create biome tile layer');
             return;
         }
-        biomeTileLayer.setDepth(-2);
+        biomeLayer.setDepth(-10);
+        this.biomeLayer = biomeLayer;
 
         // Set up decoration layer.
-        this.decorationLayer = this.scene.make.tilemap({
-            tileWidth: this.tileSize,
-            tileHeight: this.tileSize,
-            width,
-            height,
-        });
-        const tilesetDeco = this.decorationLayer.addTilesetImage(
+        const tilesetDeco = this.tilemap.addTilesetImage(
             ASSET_KEYS.TILESET_DECORATION,
             ASSET_KEYS.TILESET_DECORATION,
             this.tileSize,
@@ -84,24 +79,16 @@ export class Earth {
         if (!tilesetDeco) {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_DECORATION}`);
         }
-        this.decorationLayer.createBlankLayer('decoration', tilesetDeco);
-        if (!this.decorationLayer) {
+        const decorationLayer = this.tilemap.createBlankLayer('decoration', tilesetDeco);
+        if (!decorationLayer) {
             console.error('Failed to create decoration layer');
             return;
         }
+        decorationLayer.setDepth(-8);
+        this.decorationLayer = decorationLayer;
 
         // Set up blocking layer.
-        this.blockingLayer = this.scene.make.tilemap({
-            tileWidth: this.tileSize,
-            tileHeight: this.tileSize,
-            width,
-            height,
-        });
-        if (!this.blockingLayer) {
-            console.error('Failed to create blocking layer');
-            return;
-        }
-        let tilesetBlocking = this.blockingLayer.addTilesetImage(
+        let tilesetBlocking = this.tilemap.addTilesetImage(
             ASSET_KEYS.TILESET_BLOCKING,
             ASSET_KEYS.TILESET_BLOCKING,
             this.tileSize,
@@ -111,34 +98,22 @@ export class Earth {
             console.error('Failed to load blocking tileset');
             return;
         }
-
         //Add geometric collision boxes to the blocking layer based on the tile index.    
         tilesetBlocking.tileData = getBlockingBoxesData(tilesetBlocking); // get in blocking-boxes.ts
-
         if (!tilesetBlocking) {
-            throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BLOCKING}`);
+            throw new Error(`getBlockingBoxesData failed!`);
         }
-        const blockingTileLayer = this.blockingLayer.createBlankLayer('blocking', tilesetBlocking);
-        if (!blockingTileLayer) {
+        const blockingLayer = this.tilemap.createBlankLayer('blocking', tilesetBlocking);
+        if (!blockingLayer) {
             console.error('Failed to create blocking tile layer');
             return;
         }
-        blockingTileLayer.setDepth(0);
-        this.blockingTileLayer = blockingTileLayer;
+        blockingLayer.setDepth(0);
+        this.blockingLayer = blockingLayer;
         this.blockingGeometryGroup = this.scene.physics.add.staticGroup();
 
         // Set up floating layer.
-        this.floatingLayer = this.scene.make.tilemap({
-            tileWidth: this.tileSize,
-            tileHeight: this.tileSize,
-            width,
-            height,
-        });
-        if (!this.blockingLayer) {
-            console.error('Failed to create blocking layer');
-            return;
-        }
-        const tilesetFloating = this.floatingLayer.addTilesetImage(
+        const tilesetFloating = this.tilemap.addTilesetImage(
             ASSET_KEYS.TILESET_FLOATING,
             ASSET_KEYS.TILESET_FLOATING,
             this.tileSize,
@@ -147,12 +122,13 @@ export class Earth {
         if (!tilesetFloating) {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_FLOATING}`);
         }
-        const floatingTileLayer = this.floatingLayer.createBlankLayer('floating', tilesetFloating);
-        if (!floatingTileLayer) {
+        const floatingLayer = this.tilemap.createBlankLayer('floating', tilesetFloating);
+        if (!floatingLayer) {
             console.error('Failed to create floating tile layer');
             return;
         }
-        floatingTileLayer.setDepth(9999999);
+        floatingLayer.setDepth(9999999);
+        this.floatingLayer = floatingLayer;
 
         this.isInitialized = true;
     }
@@ -266,7 +242,7 @@ export class Earth {
             if (tile.floating > 91) {
                 console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
             }
-            this.blockingTileLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
+            this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
             this.createBlockingGeometryBody(tile.tileX, tile.tileY, tile.blocking);
         }
         if (tile.floating >= 0) {
@@ -292,7 +268,7 @@ export class Earth {
         const tileY = Math.floor((screenY + playOffsetY) / this.tileSize);
         return { x: tileX, y: tileY };
     }
-    
+
     // Used by game-scene when setting up collision between player and map 
     public getBlockingGeometryGroup(): Phaser.Physics.Arcade.StaticGroup {
         return this.blockingGeometryGroup;
