@@ -292,11 +292,8 @@ export class Earth {
         const tileY = Math.floor((screenY + playOffsetY) / this.tileSize);
         return { x: tileX, y: tileY };
     }
-
-    public getBlockingTileLayer(): Phaser.Tilemaps.TilemapLayer {
-        return this.blockingTileLayer;
-    }
-
+    
+    // Used by game-scene when setting up collision between player and map 
     public getBlockingGeometryGroup(): Phaser.Physics.Arcade.StaticGroup {
         return this.blockingGeometryGroup;
     }

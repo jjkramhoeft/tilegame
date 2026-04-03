@@ -405,6 +405,7 @@ export function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorati
             rockBlockingChance += countOfNeighborDecorations * 0.1;
             rockBlockingChance -= countOfNeighborBolcking * 0.1;
             rockBlockingChance += powerLevel * 0.05;
+            if(decoration === -1) {rockBlockingChance += 0.01;} 
             if (Phaser.Math.RND.realInRange(0, 1) < rockBlockingChance) {
                 blocking = Phaser.Math.RND.integerInRange(minRockBlockingIndex, maxRockBlockingIndex);
             }

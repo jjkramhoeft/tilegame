@@ -15,7 +15,7 @@ export class GameScene extends Phaser.Scene {
     #drow!: Drow;
     #enemyGroup?: Phaser.GameObjects.Group;
     #earth!: Earth;
-    #playerStartPosition = { x: 400, y: 250 };
+    #playerStartPosition = { x: 32000, y: 32000 };
 
     constructor() {
         super('GameScene');
@@ -33,7 +33,7 @@ export class GameScene extends Phaser.Scene {
         this.#controls = new KeyboardComponent(this.input.keyboard);
 
         this.#earth = new Earth(this);
-        this.#earth.createMap(100, 100);
+        this.#earth.createMap(1000, 1000);
 
         this.#setupPlayer();
         this.#setupCamera();
@@ -123,18 +123,18 @@ export class GameScene extends Phaser.Scene {
     }
 
     #setupCamera(): void {
-        this.cameras.main.setBounds(-100, -100, 2000, 2000);
+        this.cameras.main.setBounds(0, 0, 64000, 64000);
         this.cameras.main.startFollow(this.#player);
     }
 
     #registerColliders(): void {
 
         // collision between player and map 
-        this.physics.add.collider(this.#player, this.#earth.getBlockingGeometryGroup(),
-            (_player, geometry) => {
-                console.log('Player collided with blocking tile index:', (geometry as Phaser.GameObjects.Zone).getData('tileIndex'));
-            });
-
+        this.physics.add.collider(this.#player, this.#earth.getBlockingGeometryGroup()
+            /*  , (_player, geometry) => {
+                    console.log('Player collided with blocking tile index:', (geometry as Phaser.GameObjects.Zone).getData('tileIndex'));
+            }*/
+        );
     }
 
 }
