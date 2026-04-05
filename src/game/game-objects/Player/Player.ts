@@ -19,6 +19,9 @@ import { HurtState } from '../../components/state-machine/states/character/hurt-
 import { DeathState } from '../../components/state-machine/states/character/death-state';
 import { AttackState } from '../../components/state-machine/states/character/attack-state';
 import { flash } from '../../common/juice-utils';
+import { WeaponComponent } from '../../components/game-object/weapon-component';
+import { CollidingObjectsComponent } from '../../components/game-object/colliding-objects-component';
+import { Sword } from '../weapons/sword';
 
 
 export type PlayerConfig = {
@@ -30,6 +33,8 @@ export type PlayerConfig = {
 }
 
 export class Player extends CharacterGameObject {
+#collidingObjectsComponent: CollidingObjectsComponent;
+#weaponComponent: WeaponComponent;
 
   constructor(config: PlayerConfig) {
 
@@ -82,19 +87,6 @@ export class Player extends CharacterGameObject {
       DIE_UP: { key: 'male-nude-none-hurt-up', repeat: 0, ignoreIfPlaying: true },
       DIE_LEFT: { key: 'male-nude-none-hurt-left', repeat: 0, ignoreIfPlaying: true },
       DIE_RIGHT: { key: 'male-nude-none-hurt-right', repeat: 0, ignoreIfPlaying: true },
-      IDLE_HOLD_DOWN: { key: 'male-nude-none-idle-down', repeat: -1, ignoreIfPlaying: true },
-      IDLE_HOLD_UP: { key: 'male-nude-none-idle-up', repeat: -1, ignoreIfPlaying: true },
-      IDLE_HOLD_LEFT: { key: 'male-nude-none-idle-left', repeat: -1, ignoreIfPlaying: true },
-      IDLE_HOLD_RIGHT: { key: 'male-nude-none-idle-right', repeat: -1, ignoreIfPlaying: true },
-      WALK_HOLD_DOWN: { key: 'male-nude-none-walk-down', repeat: -1, ignoreIfPlaying: true },
-      WALK_HOLD_UP: { key: 'male-nude-none-walk-up', repeat: -1, ignoreIfPlaying: true },
-      WALK_HOLD_LEFT: { key: 'male-nude-none-walk-left', repeat: -1, ignoreIfPlaying: true },
-      WALK_HOLD_RIGHT: { key: 'male-nude-none-walk-right', repeat: -1, ignoreIfPlaying: true },
-      LIFT_DOWN: { key: 'male-nude-none-hurt-down', repeat: 0, ignoreIfPlaying: true },
-      LIFT_UP: { key: 'male-nude-none-hurt-up', repeat: 0, ignoreIfPlaying: true },
-      LIFT_LEFT: { key: 'male-nude-none-hurt-left', repeat: 0, ignoreIfPlaying: true },
-      LIFT_RIGHT: { key: 'male-nude-none-hurt-right', repeat: 0, ignoreIfPlaying: true },
-    //  ATTACK_DOWN: { key: 'male-nude-none-attack-down', repeat: 0, ignoreIfPlaying: true },
     };
 
     
@@ -123,10 +115,27 @@ export class Player extends CharacterGameObject {
         flash(this);
       }),
     );
+
+    this._stateMachine.addState(new AttackState(this));
     this._stateMachine.addState(new DeathState(this));
     this._stateMachine.addState(new OpenChestState(this));
     this._stateMachine.addState(new AttackState(this));
     this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
+
+    // add components
+    //this.#collidingObjectsComponent = new CollidingObjectsComponent(this);
+    this.#weaponComponent = new WeaponComponent(this);
+    this.#weaponComponent.weapon = new Sword(
+      this,
+      this.#weaponComponent,
+      {
+        DOWN: PLAYER_ANIMATION_KEYS.ATTACK_DOWN,
+        UP: PLAYER_ANIMATION_KEYS.ATTACK_UP,
+        LEFT: PLAYER_ANIMATION_KEYS.ATTACK_LEFT,
+        RIGHT: PLAYER_ANIMATION_KEYS.ATTACK_RIGHT,
+      },
+      100
+    );
 
     // enable auto update functionality
     config.scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this);

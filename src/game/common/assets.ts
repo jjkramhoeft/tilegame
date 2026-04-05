@@ -188,6 +188,10 @@ export const PLAYER_ANIMATION_KEYS = {
   SWORD_1_ATTACK_DOWN: 'player_atk_1_down',
   SWORD_1_ATTACK_UP: 'player_atk_1_up',
   SWORD_1_ATTACK_SIDE: 'player_atk_1_side',
+  ATTACK_DOWN: 'player_atk_1_down',
+  ATTACK_UP: 'player_atk_1_up',
+  ATTACK_LEFT: 'player_atk_1_side',
+  ATTACK_RIGHT: 'player_atk_1_side',
 } as const;
 
 export const SPIDER_ANIMATION_KEYS = {
