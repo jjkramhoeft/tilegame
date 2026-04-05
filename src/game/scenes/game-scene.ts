@@ -19,13 +19,13 @@ export class GameScene extends Phaser.Scene {
     #playerCurrentMagic: EarthCastingConfig = {
         isDesertUnlocked: false,
         isGrassUnlocked: false,
-        isForestUnlocked: false,
+        isForestUnlocked: true,
         isSwampUnlocked: false,
         isCrystalUnlocked: false,
         isWaterUnlocked: false,
         isLavaUnlocked: false,
         isMountainUnlocked: false,
-        powerLevel: 1,
+        powerLevel: 5,
     };
 
 

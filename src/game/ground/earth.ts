@@ -50,7 +50,8 @@ export class Earth {
         detailsPlaced: 0,
         blocksPlaced: 0,
     };
-    private tileSize = 64;
+    private tileSize = 64;    
+
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
         this.allTiles = new Map<string, Tile>();
@@ -136,11 +137,7 @@ export class Earth {
             console.error('Failed to load blocking tileset');
             return;
         }
-        //Add geometric collision boxes to the blocking layer based on the tile index.    
-        tilesetBlocking.tileData = getBlockingBoxesData(tilesetBlocking); // get in blocking-boxes.ts
-        if (!tilesetBlocking) {
-            throw new Error(`getBlockingBoxesData failed!`);
-        }
+        this.blockingData= getBlockingBoxesData(tilesetBlocking); // get in blocking-boxes.ts
         const blockingLayer = this.tilemap.createBlankLayer('blocking', tilesetBlocking);
         if (!blockingLayer) {
             console.error('Failed to create blocking tile layer');
@@ -423,7 +420,7 @@ export class Earth {
     }
 
     private createBlockingGeometryBody(tileX: number, tileY: number, tileIndex: number): void {
-        const geometry = this.blockingData.get(tileIndex) ?? { x: 16, y: 16, width: 32, height: 32 };
+        const geometry = this.blockingData.get(tileIndex) ?? { x: 32, y: 32, width: 16, height: 16 };
         const worldX = tileX * this.tileSize + geometry.x + geometry.width / 2;
         const worldY = tileY * this.tileSize + geometry.y + geometry.height / 2;
 
