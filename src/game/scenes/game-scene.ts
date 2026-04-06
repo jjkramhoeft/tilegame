@@ -17,14 +17,14 @@ export class GameScene extends Phaser.Scene {
     #earth!: Earth;
     #playerStartPosition = { x: 32035, y: 32020 };
     #playerCurrentMagic: EarthCastingConfig = {
-        isDesertUnlocked: false,
-        isGrassUnlocked: false,
+        isDesertUnlocked: true,
+        isGrassUnlocked: true,
         isForestUnlocked: true,
-        isSwampUnlocked: false,
-        isCrystalUnlocked: false,
-        isWaterUnlocked: false,
-        isLavaUnlocked: false,
-        isMountainUnlocked: false,
+        isSwampUnlocked: true,
+        isCrystalUnlocked: true,
+        isWaterUnlocked: true,
+        isLavaUnlocked: true,
+        isMountainUnlocked: true,
         powerLevel: 5,
     };
 
