@@ -9,13 +9,41 @@ export class AnimationComponent extends BaseGameObjectComponent {
   declare protected gameObject2: Phaser.GameObjects.Sprite;
 
   #config: AnimationConfig;
+  #sex?: string;
+  #gear?: string;
+  #weapon?: string;
 
-  constructor(gameObject2: GameObject2, config: AnimationConfig) {
+  constructor(gameObject2: GameObject2, config: AnimationConfig, sex?: string, gear?: string, weapon?: string) {
     super(gameObject2);
     this.#config = config;
+    this.#sex = sex;
+    this.#gear = gear;
+    this.#weapon = weapon;
+  }
+
+  private getAnimationKeyJJK(characterAnimationKey: CharacterAnimation): string | undefined {
+    if (characterAnimationKey === undefined) {
+      return undefined;
+    }
+    const animP = `${this.#sex}-${this.#gear}-${this.#weapon}-`;
+    switch (characterAnimationKey) {
+      case 'IDLE_DOWN': return animP + 'idle-down';
+      case 'IDLE_UP': return animP + 'idle-up';
+      case 'IDLE_LEFT': return animP + 'idle-left';
+      case 'IDLE_RIGHT': return animP + 'idle-right';
+      case 'WALK_DOWN': return animP + 'walk-down';
+      case 'WALK_UP': return animP + 'walk-up';
+      case 'WALK_LEFT': return animP + 'walk-left';
+      case 'WALK_RIGHT': return animP + 'walk-right';
+    } //case 'HURT_DOWN': return animP + 'hurt-down'; case 'HURT_UP': return animP + 'hurt-up'; case 'HURT_LEFT': return animP + 'hurt-left'; case 'HURT_RIGHT': return animP + 'hurt-right';
+    //case 'DIE_DOWN': return animP + 'die-down';   case 'DIE_UP': return animP + 'die-up';   case 'DIE_LEFT': return animP + 'die-left';   case 'DIE_RIGHT': return animP + 'die-right';      
+    return 'XXXX'; // This is not supposed to happen!
   }
 
   public getAnimationKey(characterAnimationKey: CharacterAnimation): string | undefined {
+    if (this.#sex !== undefined && this.#gear !== undefined && this.#weapon !== undefined) {
+      return this.getAnimationKeyJJK(characterAnimationKey);
+    }
     if (this.#config[characterAnimationKey] === undefined) {
       return undefined;
     }
@@ -29,13 +57,19 @@ export class AnimationComponent extends BaseGameObjectComponent {
       }
       return;
     }
+
+    let key = this.#config[characterAnimationKey].key;
+    if (this.#sex !== undefined && this.#gear !== undefined && this.#weapon !== undefined) {
+      key = this.getAnimationKeyJJK(characterAnimationKey) ?? key;
+    }
+
     const animationConfig: Phaser.Types.Animations.PlayAnimationConfig = {
-      key: this.#config[characterAnimationKey].key,
+      key: key,
       repeat: this.#config[characterAnimationKey].repeat,
       timeScale: 1,
     };
     if (callback) {
-      const animationKey = Phaser.Animations.Events.ANIMATION_COMPLETE_KEY + this.#config[characterAnimationKey].key;
+      const animationKey = Phaser.Animations.Events.ANIMATION_COMPLETE_KEY + key;
       this.gameObject2.once(animationKey, () => {
         callback();
       });

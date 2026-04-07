@@ -22,6 +22,7 @@ import { flash } from '../../common/juice-utils';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
 import { CollidingObjectsComponent } from '../../components/game-object/colliding-objects-component';
 import { Sword } from '../weapons/sword';
+import { JjkWeapons } from '../weapons/jjk-weapons';
 
 
 export type PlayerConfig = {
@@ -30,6 +31,9 @@ export type PlayerConfig = {
   controls: InputComponent;
   maxLife: number;
   currentLife: number;
+  sex: string;
+  gear: string;
+  weapon: string;
 }
 
 export class Player extends CharacterGameObject {
@@ -105,6 +109,9 @@ export class Player extends CharacterGameObject {
       invulnerableAfterHitAnimationDuration: PLAYER_INVULNERABLE_AFTER_HIT_DURATION,
       maxLife: config.maxLife,
       currentLife: config.currentLife,
+      sex: config.sex,
+      gear: config.gear,
+      weapon: config.weapon,
     });
 
     // add state machine
@@ -125,7 +132,7 @@ export class Player extends CharacterGameObject {
     // add components
     //this.#collidingObjectsComponent = new CollidingObjectsComponent(this);
     this.#weaponComponent = new WeaponComponent(this);
-    this.#weaponComponent.weapon = new Sword(
+    this.#weaponComponent.weapon = new JjkWeapons(
       this,
       this.#weaponComponent,
       {
@@ -134,7 +141,10 @@ export class Player extends CharacterGameObject {
         LEFT: PLAYER_ANIMATION_KEYS.ATTACK_LEFT,
         RIGHT: PLAYER_ANIMATION_KEYS.ATTACK_RIGHT,
       },
-      100
+      100,
+      config.sex, 
+      config.gear, 
+      config.weapon
     );
 
     // enable auto update functionality

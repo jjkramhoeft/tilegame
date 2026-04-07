@@ -122,10 +122,10 @@ export class PreloadScene extends Phaser.Scene {
     sexes.forEach(sex => {
         gears.forEach(gear => {
             weapons.forEach(weapon => {
-                anims.create({ key: `${sex}-${gear}-${weapon}-idle-up`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 0, end: 1 }), frameRate: 4, repeat: -1 });
-                anims.create({ key: `${sex}-${gear}-${weapon}-idle-left`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 2, end: 3 }), frameRate: 4, repeat: -1 });
-                anims.create({ key: `${sex}-${gear}-${weapon}-idle-down`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 4, end: 5 }), frameRate: 4, repeat: -1 });
-                anims.create({ key: `${sex}-${gear}-${weapon}-idle-right`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 6, end: 7 }), frameRate: 4, repeat: -1 });    
+                anims.create({ key: `${sex}-${gear}-${weapon}-idle-up`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 0, end: 1 }), frameRate: 2, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-idle-left`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 2, end: 3 }), frameRate: 2, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-idle-down`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 4, end: 5 }), frameRate: 2, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-idle-right`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 6, end: 7 }), frameRate: 2, repeat: -1 });    
             });
         });        
     });

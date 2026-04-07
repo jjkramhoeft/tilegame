@@ -6,6 +6,7 @@ import { Wisp } from '../game-objects/enemies/wisp';
 import { Drow } from '../game-objects/enemies/boss/drow';
 import { Earth, EarthCastingConfig } from '../ground/earth';
 import { Tile } from '../ground/tile';
+import { SEX, WEAPON, GEAR } from '../common/common';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
@@ -138,7 +139,10 @@ export class GameScene extends Phaser.Scene {
             position: this.#playerStartPosition,
             controls: this.#controls,
             maxLife: 3,
-            currentLife: 3
+            currentLife: 3,
+            sex: SEX.FEMALE,
+            gear: GEAR.NONE,
+            weapon: WEAPON.STAFF,
         });
 
     }

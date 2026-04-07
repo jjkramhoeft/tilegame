@@ -22,18 +22,27 @@ export abstract class BaseWeapon implements Weapon {
   protected _sprite: Phaser.GameObjects.Sprite;
   protected _attackAnimationConfig: WeaponAttackAnimationConfig;
   protected _baseDamage: number;
+  protected _sex?: string;
+  protected _gear?: string;
+  protected _weapon?: string;
 
   constructor(
     sprite: Phaser.GameObjects.Sprite,
     weaponComponent: WeaponComponent,
     animationConfig: WeaponAttackAnimationConfig,
     baseDamage: number,
+    sex?: string,
+    gear?: string,
+    weapon?: string,
   ) {
     this._sprite = sprite;
     this._weaponComponent = weaponComponent;
     this._attackAnimationConfig = animationConfig;
     this._baseDamage = baseDamage;
     this._attacking = false;
+    this._sex = sex;
+    this._gear = gear;
+    this._weapon = weapon;
   }
 
   get isAttacking(): boolean {
@@ -45,7 +54,10 @@ export abstract class BaseWeapon implements Weapon {
   }
 
   protected attack(direction: Direction): void {
-    const attackAnimationKey = this._attackAnimationConfig[direction];
+    let attackAnimationKey = this._attackAnimationConfig[direction];
+    if(this._sex !== undefined && this._gear !== undefined && this._weapon !== undefined) {
+      attackAnimationKey = this.getAttackAnimationKeyJJK(direction);
+    }
     this._attacking = true;
     this._sprite.play({ key: attackAnimationKey, repeat: 0 }, true);
     this._weaponComponent.body.enable = true;
@@ -75,5 +87,15 @@ export abstract class BaseWeapon implements Weapon {
 
   public onCollisionCallback(): void {
     // not implemented
+  }
+
+  private getAttackAnimationKeyJJK(direction: Direction): string  {
+    const animP = `${this._sex}-${this._gear}-${this._weapon}-`;
+    switch (direction) {
+      case 'DOWN': return animP + 'thrust-down';
+      case 'UP': return animP + 'thrust-up';
+      case 'LEFT': return animP + 'thrust-left';
+      case 'RIGHT': return animP + 'thrust-right';
+    }
   }
 }

@@ -50,8 +50,8 @@ export function getBlockingBoxesData(t: Phaser.Tilemaps.Tileset): Map<number, Ti
     blockingData.set(27, { x: 27, y: 32, width: 22, height: 20 });//
     blockingData.set(28, { x: 12, y: 20, width: 14, height: 29 });//
     blockingData.set(29, { x: 8, y: 24, width: 48, height: 32 });//
-    blockingData.set(30, { x: 16, y: 16, width: 32, height: 32 });
-    blockingData.set(31, { x: 16, y: 16, width: 32, height: 32 });
+    blockingData.set(30, { x: 16, y: 18, width: 32, height: 32 });
+    blockingData.set(31, { x: 16, y: 26, width: 32, height: 32 });
 
     blockingData.set(32, { x: 11, y: 25, width: 32, height: 28 });
     blockingData.set(33, { x: 16, y: 31, width: 26, height: 22 });//
@@ -77,8 +77,8 @@ export function getBlockingBoxesData(t: Phaser.Tilemaps.Tileset): Map<number, Ti
     blockingData.set(50, { x: 33, y: 20, width: 12, height: 30 });//
     blockingData.set(51, { x: 18, y: 21, width: 32, height: 32 });//
     blockingData.set(52, { x: 18, y: 28, width: 32, height: 30 });//
-    blockingData.set(53, { x: 16, y: 16, width: 32, height: 32 });
-    blockingData.set(54, { x: 24, y: 6, width: 22, height: 12 });
+    blockingData.set(53, { x: 16, y: 16, width: 16, height: 16 });
+    blockingData.set(54, { x: 29, y: 6, width: 12, height: 22 });
     blockingData.set(55, { x: 16, y: 16, width: 28, height: 16 });//
 
     blockingData.set(56, { x: 16, y: 12, width: 32, height: 16 });//
@@ -102,7 +102,7 @@ export function getBlockingBoxesData(t: Phaser.Tilemaps.Tileset): Map<number, Ti
 
     blockingData.set(72, { x: 16, y: 16, width: 32, height: 32 });
     blockingData.set(73, { x: 12, y: 22, width: 38, height: 32 });//
-    blockingData.set(74, { x: 6, y: 14, width: 32, height: 32 });//
+    blockingData.set(74, { x: 16, y: 24, width: 38, height: 32 });//
     blockingData.set(75, { x: 12, y: 26, width: 38, height: 32 });//
     blockingData.set(76, { x: 16, y: 16, width: 32, height: 32 });
     blockingData.set(77, { x: 6, y: 21, width: 52, height: 32 });//

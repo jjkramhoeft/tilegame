@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { ASSET_KEYS } from './assets';
+import { Dagger } from '../game-objects/weapons/dagger';
 
 export const DIRECTION = {
   UP: 'UP',
@@ -61,4 +62,23 @@ export const enum BIOME {
   CRYSTAL = 7,
   LAVA = 8,
   MOUNTAIN = 9,
+}
+
+export const  GEAR = {
+  NONE :'nude',
+  BARE :'bare',
+  BASIC:'basic',
+  ARMOR :'armor '
+}
+
+export const SEX = {
+  MALE : 'male',
+  FEMALE : 'female',
+}
+
+export const WEAPON = {
+  NONE : 'none',
+  DAGGER : 'dagger',
+  STAFF : 'staff',
+  SWORD : 'sword',
 }

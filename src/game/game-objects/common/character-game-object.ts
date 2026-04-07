@@ -26,6 +26,9 @@ export type CharacterConfig = {
   invulnerableAfterHitAnimationDuration?: number;
   maxLife: number;
   currentLife?: number;
+  sex?: string;
+  gear?: string;
+  weapon?: string;
 };
 
 export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite implements CustomGameObject {
@@ -39,6 +42,9 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
   protected _isPlayer: boolean;
   protected _isDefeated: boolean;  
   protected _lastMoveDirections: Direction[] = [];
+  protected _sex?: string;
+  protected _gear?: string;
+  protected _weapon?: string;
   
 
   constructor(config: CharacterConfig) {
@@ -56,6 +62,9 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
       isInvulnerable,
       maxLife,
       currentLife,
+      sex,
+      gear,
+      weapon,
     } = config;
     const { x, y } = position;
     super(scene, x, y, assetKey, frame || 0);
@@ -68,7 +77,7 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     this._controlsComponent = new ControlsComponent(this, inputComponent);
     this._speedComponent = new SpeedComponent(this, speed);
     this._directionComponent = new DirectionComponent(this);
-    this._animationComponent = new AnimationComponent(this, animationConfig);
+    this._animationComponent = new AnimationComponent(this, animationConfig, sex, gear, weapon);
     this._invulnerableComponent = new InvulnerableComponent(
       this,
       isInvulnerable || false,
@@ -85,6 +94,9 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     if (!this._isPlayer) {
       this.disableObject();
     }
+    this._sex = sex;
+    this._gear = gear;
+    this._weapon = weapon;
   }
 
   get isDefeated(): boolean {
