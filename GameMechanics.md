@@ -68,3 +68,23 @@ The tile map consist of six layers
 7 crystal
 8 lava
 9 mountain
+
+## Game UI Dialog
+
+- Heading: A chest with a dagger and some basic cloth
+- Options
+  1) Take weapon from chest (and leave current weapon in chest)
+  2) Take gear from chest (and leave current gear in chest)
+  3) Do nothing
+
+- Heading: A chest with a dagger
+- Options
+  1) Take weapon from chest
+  2)  
+  3) Do nothing
+
+- Heading: An empty chest
+- Options
+  1) Leave weapon in chest
+  2) Leave gear in chest
+  3) Do nothing

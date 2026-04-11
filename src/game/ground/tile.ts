@@ -9,6 +9,7 @@ export type TileConfig = {
     border?: number;
     animation?: number;
     biome?: number;
+    chest?: number;
 };
 
 export class Tile {
@@ -21,6 +22,7 @@ export class Tile {
     public border : number;
     public animation : number;
     public biome : number;
+    public chest : number;
 
     constructor(config: TileConfig) {
         this.tileX = config.tilenumber.x;
@@ -32,5 +34,6 @@ export class Tile {
         this.border = config.border ?? -1;
         this.animation = config.animation ?? -1;
         this.biome = config.biome ?? -1;
+        this.chest = config.chest ?? -1;
     }
 }

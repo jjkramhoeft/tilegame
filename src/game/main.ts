@@ -4,6 +4,7 @@ import { GameScene } from './scenes/game-scene';
 import { Credits } from './scenes/Credits';
 import { Settings } from './scenes/Settings';
 import { AUTO, Game, Scale,Types } from 'phaser';
+import { UiScene } from './scenes/ui-scene';
 
 // Find out more information about the Game Config at:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -22,6 +23,7 @@ const config: Types.Core.GameConfig = {
         PreloadScene,
         Intro,
         GameScene,
+        UiScene,
         Credits,
         Settings
     ],

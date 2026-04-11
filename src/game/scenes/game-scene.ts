@@ -6,7 +6,11 @@ import { Wisp } from '../game-objects/enemies/wisp';
 import { Drow } from '../game-objects/enemies/boss/drow';
 import { Earth, EarthCastingConfig } from '../ground/earth';
 import { Tile } from '../ground/tile';
-import { SEX, WEAPON, GEAR } from '../common/common';
+import { SEX, WEAPON, GEAR, CHEST_STATE } from '../common/common';
+import { CUSTOM_EVENTS, EVENT_BUS } from '../common/event-bus';
+//import { Chest } from '../game-objects/objects/chest';
+import { ChestJJK } from '../game-objects/objects/chestJJK';
+import { GameObject2 } from '../common/types';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
@@ -17,15 +21,17 @@ export class GameScene extends Phaser.Scene {
     #enemyGroup?: Phaser.GameObjects.Group;
     #earth!: Earth;
     #playerStartPosition = { x: 32035, y: 32020 };
+    #chests: ChestJJK[] = [];
+    #chestJJKGroup!: Phaser.GameObjects.Group;
     #playerCurrentMagic: EarthCastingConfig = {
-        isDesertUnlocked: true,
-        isGrassUnlocked: true,
-        isForestUnlocked: true,
-        isSwampUnlocked: true,
-        isCrystalUnlocked: true,
-        isWaterUnlocked: true,
-        isLavaUnlocked: true,
-        isMountainUnlocked: true,
+        isDesertUnlocked: false,
+        isGrassUnlocked: false,
+        isForestUnlocked: false,
+        isSwampUnlocked: false,
+        isCrystalUnlocked: false,
+        isWaterUnlocked: false,
+        isLavaUnlocked: false,
+        isMountainUnlocked: false,
         powerLevel: 5,
     };
 
@@ -48,6 +54,8 @@ export class GameScene extends Phaser.Scene {
         this.#earth = new Earth(this);
         this.#earth.createMap(1000, 1000);
 
+        this.#chestJJKGroup = this.add.group([]);
+
         this.#setupPlayer();
         this.#setupCamera();
 
@@ -60,7 +68,42 @@ export class GameScene extends Phaser.Scene {
         });
         this.#earth.AddTile(firstTile);
 
+        // Temp chests for testing ------------------------------------------------
+        const chest1Tile = new Tile({
+            tilenumber: { x: firstTilePosition.x + 3, y: firstTilePosition.y },
+            biome: 1,
+            chest: 1,
+        });
+        this.#earth.AddTile(chest1Tile);
+        this.#chests.push(new ChestJJK(this, {
+            id: 1,
+            tilePosition: { x: chest1Tile.tileX, y: chest1Tile.tileY },
+            worldPosition: { x: chest1Tile.tileX * 64 , y: chest1Tile.tileY * 64 + 64 },
+            contents: {
+                gear: 'BASIC',
+                weapon: 'DAGGER',
+            }
+        }, CHEST_STATE.REVEALED));
+        this.#chestJJKGroup.add(this.#chests[0]);
 
+        const chest2Tile = new Tile({
+            tilenumber: { x: firstTilePosition.x + 3, y: firstTilePosition.y + 2 },
+            biome: 1,
+            chest: 2,
+        });
+        this.#earth.AddTile(chest2Tile);
+        this.#chests.push(new ChestJJK(this, {
+            id: 2,
+            tilePosition: { x: chest2Tile.tileX, y: chest2Tile.tileY },
+            worldPosition: { x: chest2Tile.tileX * 64, y: chest2Tile.tileY * 64 + 64},
+            contents: {
+                gear: 'NONE',
+                weapon: 'STAFF',
+            }
+        }, CHEST_STATE.REVEALED));
+        this.#chestJJKGroup.add(this.#chests[1]);
+
+        // Temp enemies for testing ------------------------------------------------
         this.#spider = new Spider({
             scene: this,
             position: { x: 32000 + 350, y: 32000 + 200 },
@@ -84,7 +127,9 @@ export class GameScene extends Phaser.Scene {
 
 
         this.#registerColliders();
+        this.#registerCustomEvents();
 
+        this.scene.launch('UiScene');
     }
 
     update() {
@@ -96,15 +141,15 @@ export class GameScene extends Phaser.Scene {
         if (this.#player.stateMachine.currentStateName === 'MOVE_STATE') {
             const playerTilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y, true);
             const tileBelow = this.#earth.getTile(playerTilePosition.x, playerTilePosition.y);
-            if(playerTilePosition.atBorder===false) {
-                if(tileBelow === undefined) {
+            if (playerTilePosition.atBorder === false) {
+                if (tileBelow === undefined) {
                     this.#player.fall();
                 }
             }
-            else if(tileBelow === undefined) {
+            else if (tileBelow === undefined) {
                 //At tile border. Check if other tile also doesn't exist
                 const borderTile = this.#earth.getBorderTile(this.#player.x, this.#player.y);
-                if(borderTile === undefined && tileBelow === undefined) {
+                if (borderTile === undefined && tileBelow === undefined) {
                     this.#player.fall();
                 }
             }
@@ -113,6 +158,10 @@ export class GameScene extends Phaser.Scene {
         // Creating new tiles logic. (Temporary, placed here - while developing.)
         if (this.#player.stateMachine.currentStateName === 'ATTACK_STATE') {
             console.log('Player casting/attacking');
+
+            //EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_DIALOG, 'A chest with a dagger and some basic cloathing.|Take dagger|Take basic cloathing and leave cloth in chest|Leave');
+            //this.scene.pause();
+
             const casterPosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y, true);
             const tilePosition = { x: casterPosition.x, y: casterPosition.y };
             const directions = this.#player.getLastMoveDirections();
@@ -128,24 +177,24 @@ export class GameScene extends Phaser.Scene {
 
             const feedback = this.#earth.AddTiles(this.#playerCurrentMagic, casterPosition, tilePosition, directions);
             if (feedback) {
-                if(feedback.rockTilesPlaced > 10) {this.#playerCurrentMagic.isDesertUnlocked = true;}
-                if(feedback.desertTilesPlaced > 10) {this.#playerCurrentMagic.isGrassUnlocked = true;}
-                if(feedback.grassTilesPlaced > 10) {this.#playerCurrentMagic.isForestUnlocked = true;}
-                if(feedback.forestTilesPlaced > 10) {
+                if (feedback.rockTilesPlaced > 10) { this.#playerCurrentMagic.isDesertUnlocked = true; }
+                if (feedback.desertTilesPlaced > 10) { this.#playerCurrentMagic.isGrassUnlocked = true; }
+                if (feedback.grassTilesPlaced > 10) { this.#playerCurrentMagic.isForestUnlocked = true; }
+                if (feedback.forestTilesPlaced > 10) {
                     this.#playerCurrentMagic.isSwampUnlocked = true;
                     this.#playerCurrentMagic.isWaterUnlocked = true;
                 }
-                if(feedback.forestTilesPlaced > 20) {
+                if (feedback.forestTilesPlaced > 20) {
                     this.#playerCurrentMagic.isCrystalUnlocked = true;
                 }
-                if(feedback.forestTilesPlaced > 30) {
+                if (feedback.forestTilesPlaced > 30) {
                     this.#playerCurrentMagic.isLavaUnlocked = true;
                     //this.#playerCurrentMagic.isMountainUnlocked = true;
                 }
                 const sum = feedback.rockTilesPlaced + feedback.desertTilesPlaced + feedback.grassTilesPlaced + feedback.forestTilesPlaced;
-                const x = Math.floor(sum/20);
-                if(x > this.#playerCurrentMagic.powerLevel) {
-                    this.#playerCurrentMagic.powerLevel ++;
+                const x = Math.floor(sum / 20);
+                if (x > this.#playerCurrentMagic.powerLevel) {
+                    this.#playerCurrentMagic.powerLevel++;
                 }
             }
         }
@@ -177,6 +226,34 @@ export class GameScene extends Phaser.Scene {
                     console.log('Player collided with blocking tile index:', (geometry as Phaser.GameObjects.Zone).getData('tileIndex'));
             }*/
         );
+
+        // register collisions between player and blocking game objects (doors, pots, chests, etc.)
+        this.physics.add.collider(this.#player, this.#chestJJKGroup, (player, gameObject) => {
+            // add game object to players collision list
+            this.#player.collidedWithGameObject(gameObject as GameObject2);
+        });
     }
 
+    #registerCustomEvents(): void {
+        EVENT_BUS.on(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
+        //EVENT_BUS.on(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
+        //EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
+        EVENT_BUS.on(CUSTOM_EVENTS.DIALOG_CLOSED, this.#handleDialogClosed, this);
+
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            EVENT_BUS.off(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
+            //EVENT_BUS.off(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
+            //EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
+            EVENT_BUS.off(CUSTOM_EVENTS.DIALOG_CLOSED, this.#handleDialogClosed, this);
+        });
+    }
+
+    #handleDialogClosed(): void {
+        //this.scene.resume();
+    }
+
+    #handleOpenChest(chest: ChestJJK): void {
+        const message = `You opened the chest and found a ${chest.contents.weapon} and ${chest.contents.gear}.|Take ${chest.contents.weapon}|Take ${chest.contents.gear} and leave ${chest.contents.weapon} in chest|Leave`;
+        EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_DIALOG, message);
+    }
 }

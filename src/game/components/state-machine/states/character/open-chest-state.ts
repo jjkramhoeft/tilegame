@@ -1,8 +1,9 @@
 import { BaseCharacterState } from './base-character-state';
 import { CHARACTER_STATES } from './character-states';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
-import { Chest } from '../../../../game-objects/objects/chest';
+//import { Chest } from '../../../../game-objects/objects/chest';
 import { CUSTOM_EVENTS, EVENT_BUS } from '../../../../common/event-bus';
+import { ChestJJK } from '../../../../game-objects/objects/chestJJK';
 
 export class OpenChestState extends BaseCharacterState {
   constructor(gameObject: CharacterGameObject) {
@@ -10,7 +11,7 @@ export class OpenChestState extends BaseCharacterState {
   }
 
   onEnter(args: unknown[]): void {
-    const chest = args[0] as Chest;
+    const chest = args[0] as ChestJJK;
 
     // make character invulnerable so we can collect the item
     this._gameObject.invulnerableComponent.invulnerable = true;
@@ -19,7 +20,7 @@ export class OpenChestState extends BaseCharacterState {
     this._resetObjectVelocity();
 
     // play lift animation based on game object direction
-    this._gameObject.animationComponent.playAnimation(`LIFT_${this._gameObject.direction}`, () => {
+    //this._gameObject.animationComponent.playAnimation(`LIFT_${this._gameObject.direction}`, () => {
       // emit event data regarding chest
       EVENT_BUS.emit(CUSTOM_EVENTS.OPENED_CHEST, chest);
       // after showing message to player, transition to idle state
@@ -27,7 +28,9 @@ export class OpenChestState extends BaseCharacterState {
         // make character vulnerable so we can take damage
         this._gameObject.invulnerableComponent.invulnerable = false;
         this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
+
+        chest.close();
       });
-    });
+    //});
   }
 }

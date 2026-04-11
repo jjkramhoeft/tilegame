@@ -133,7 +133,7 @@ export class Player extends CharacterGameObject {
     this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
 
     // add components
-    //this.#collidingObjectsComponent = new CollidingObjectsComponent(this);
+    this.#collidingObjectsComponent = new CollidingObjectsComponent(this);
     this.#weaponComponent = new WeaponComponent(this);
     this.#weaponComponent.weapon = new JjkWeapons(
       this,
@@ -174,7 +174,11 @@ export class Player extends CharacterGameObject {
 
   public update(): void {
     super.update();
-    //this.#collidingObjectsComponent.reset();
+    this.#collidingObjectsComponent.reset();
     //this.#weaponComponent.update();
+  }
+  
+  public collidedWithGameObject(gameObject: GameObject2): void {
+    this.#collidingObjectsComponent.add(gameObject);
   }
 }
