@@ -5,6 +5,7 @@ import { InteractiveObjectComponent } from '../../components/game-object/interac
 //import { InventoryManager } from '../../components/inventory/inventory-manager';
 //import { DataManager } from '../../common/data-manager';
 
+
 export type ChestJJKConfig = {
   worldPosition: Position;
   tilePosition: Position;
@@ -13,8 +14,8 @@ export type ChestJJKConfig = {
 }
 
 export type ChestReward = {
-  gear: 'NONE' | 'BASIC' | 'BARE' | 'ARMOR';
-  weapon: 'NONE' | 'DAGGER' | 'STAFF' | 'SWORD';
+  gear: string;
+  weapon: string;
 }
 
 export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameObject {
@@ -22,7 +23,7 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
   #id: number;
   #contents: ChestReward;
 
-  constructor(scene: Phaser.Scene, config: ChestJJKConfig, chestState: ChestState ) {
+  constructor(scene: Phaser.Scene, config: ChestJJKConfig, chestState: ChestState) {
     super(scene, config.worldPosition.x, config.worldPosition.y, 'containers', 0);
 
     // add object to scene and enable phaser physics

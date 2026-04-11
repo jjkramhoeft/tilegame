@@ -11,6 +11,7 @@ import { CUSTOM_EVENTS, EVENT_BUS } from '../common/event-bus';
 //import { Chest } from '../game-objects/objects/chest';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { GameObject2 } from '../common/types';
+import { DataManager } from '../common/data-manager';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
@@ -78,10 +79,10 @@ export class GameScene extends Phaser.Scene {
         this.#chests.push(new ChestJJK(this, {
             id: 1,
             tilePosition: { x: chest1Tile.tileX, y: chest1Tile.tileY },
-            worldPosition: { x: chest1Tile.tileX * 64 , y: chest1Tile.tileY * 64 + 64 },
+            worldPosition: { x: chest1Tile.tileX * 64, y: chest1Tile.tileY * 64 + 64 },
             contents: {
-                gear: 'BASIC',
-                weapon: 'DAGGER',
+                gear: GEAR.BASIC,
+                weapon: WEAPON.DAGGER,
             }
         }, CHEST_STATE.REVEALED));
         this.#chestJJKGroup.add(this.#chests[0]);
@@ -95,10 +96,10 @@ export class GameScene extends Phaser.Scene {
         this.#chests.push(new ChestJJK(this, {
             id: 2,
             tilePosition: { x: chest2Tile.tileX, y: chest2Tile.tileY },
-            worldPosition: { x: chest2Tile.tileX * 64, y: chest2Tile.tileY * 64 + 64},
+            worldPosition: { x: chest2Tile.tileX * 64, y: chest2Tile.tileY * 64 + 64 },
             contents: {
-                gear: 'NONE',
-                weapon: 'STAFF',
+                gear: GEAR.NONE,
+                weapon: WEAPON.STAFF,
             }
         }, CHEST_STATE.REVEALED));
         this.#chestJJKGroup.add(this.#chests[1]);
@@ -159,9 +160,6 @@ export class GameScene extends Phaser.Scene {
         if (this.#player.stateMachine.currentStateName === 'ATTACK_STATE') {
             console.log('Player casting/attacking');
 
-            //EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_DIALOG, 'A chest with a dagger and some basic cloathing.|Take dagger|Take basic cloathing and leave cloth in chest|Leave');
-            //this.scene.pause();
-
             const casterPosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y, true);
             const tilePosition = { x: casterPosition.x, y: casterPosition.y };
             const directions = this.#player.getLastMoveDirections();
@@ -201,6 +199,14 @@ export class GameScene extends Phaser.Scene {
     }
 
     #setupPlayer(): void {
+        DataManager.instance.data = {
+            currentHealth: 6,
+            maxHealth: 6,
+            sex: SEX.MALE,
+            gear: GEAR.NONE,
+            weapon: WEAPON.NONE,
+            lastDialogOptionSelected: 0,
+        };
         this.#player = new Player({
             scene: this,
             position: this.#playerStartPosition,
@@ -249,11 +255,89 @@ export class GameScene extends Phaser.Scene {
     }
 
     #handleDialogClosed(): void {
+        let o = DataManager.instance.data.lastDialogOptionSelected;
         //this.scene.resume();
     }
 
     #handleOpenChest(chest: ChestJJK): void {
-        const message = `You opened the chest and found a ${chest.contents.weapon} and ${chest.contents.gear}.|Take ${chest.contents.weapon}|Take ${chest.contents.gear} and leave ${chest.contents.weapon} in chest|Leave`;
+        let heading = 'You opened an empty chest.';
+        if (chest.contents.weapon !== WEAPON.NONE || chest.contents.gear !== GEAR.NONE) {
+            heading = `You opened a chest and found `;
+            switch (chest.contents.gear) {
+                case GEAR.BARE: heading += 'a piece of cloth'; break;
+                case GEAR.BASIC: heading += 'some simple clothing'; break;
+                case GEAR.ARMOR: heading += 'a shining armor'; break;
+            }
+            if (chest.contents.weapon !== WEAPON.NONE && chest.contents.gear !== GEAR.NONE) {
+                heading += ' and ';
+            }
+            switch (chest.contents.weapon) {
+                case WEAPON.DAGGER: heading += 'a dagger'; break;
+                case WEAPON.STAFF: heading += 'a staff'; break;
+                case WEAPON.SWORD: heading += 'a sword'; break;
+            }
+        }
+        let weaponHasOption = false;
+        let optionWeapon = '';
+        let leaveWeapon = 'leave your current ';
+        switch (DataManager.instance.data.weapon) {
+            case WEAPON.DAGGER: leaveWeapon += 'dagger'; break;
+            case WEAPON.STAFF: leaveWeapon += 'staff'; break;
+            case WEAPON.SWORD: leaveWeapon += 'sword'; break;
+        }
+        if (chest.contents.weapon !== WEAPON.NONE) {
+            weaponHasOption = true;
+            optionWeapon = 'Take ';
+            switch (chest.contents.weapon) {
+                case WEAPON.DAGGER: optionWeapon += 'the dagger'; break;
+                case WEAPON.STAFF: optionWeapon += 'the staff'; break;
+                case WEAPON.SWORD: optionWeapon += 'the sword'; break;
+            }
+            if (DataManager.instance.data.weapon !== WEAPON.NONE) {
+                optionWeapon += ' and ';
+            }
+        }
+        if (DataManager.instance.data.weapon !== WEAPON.NONE) {
+            optionWeapon += leaveWeapon;
+            weaponHasOption = true;
+        }
+        let gearHasOption = false;
+        let optionGear = '';
+        let leaveGear = 'leave your current ';
+        switch (DataManager.instance.data.gear) {
+            case GEAR.BARE: leaveGear += 'piece of cloth'; break;
+            case GEAR.BASIC: leaveGear += 'simple clothing'; break;
+            case GEAR.ARMOR: leaveGear += 'shining armor'; break;
+        }
+        if (chest.contents.gear !== GEAR.NONE) {
+            gearHasOption = true;
+            optionGear = 'Take';
+            switch (chest.contents.gear) {
+                case GEAR.BARE: optionGear += ' the piece of cloth'; break;
+                case GEAR.BASIC: optionGear += ' the simple clothing'; break;
+                case GEAR.ARMOR: optionGear += ' the shining armor'; break;
+            }
+            if (DataManager.instance.data.gear !== GEAR.NONE) {
+                optionGear += ' and ';
+            }
+        }
+        if (DataManager.instance.data.gear !== GEAR.NONE) {
+            optionGear += leaveGear;
+            gearHasOption = true;
+        }
+
+        let message = `${heading}|Leave`;
+        if (gearHasOption && weaponHasOption) {
+            message = `${heading}|${optionWeapon}|${optionGear}|Leave`;
+        } else if (gearHasOption || weaponHasOption) {
+            if (gearHasOption) {
+                message = `${heading}|${optionGear}|Leave`;
+            } else {
+                message = `${heading}|${optionWeapon}|Leave`;
+            }
+        }
         EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_DIALOG, message);
+
     }
+
 }

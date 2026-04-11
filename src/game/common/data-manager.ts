@@ -12,29 +12,10 @@ import { LevelName } from './types';
 export type PlayerData = {
   currentHealth: number;
   maxHealth: number;
-  currentArea: {
-    name: LevelName;
-    startRoomId: number;
-    startDoorId: number;
-  };
-  areaDetails: {
-    [key in LevelName]: {
-      [key: number]: {
-        chests: {
-          [key: string]: {
-            revealed: boolean;
-            opened: boolean;
-          };
-        };
-        doors: {
-          [key: string]: {
-            unlocked: boolean;
-          };
-        };
-      };
-      bossDefeated?: boolean;
-    };
-  };
+  sex: string;
+  gear: string;
+  weapon: string;
+  lastDialogOptionSelected: number;
 };
 
 export class DataManager {
@@ -46,17 +27,10 @@ export class DataManager {
     this.#data = {
       currentHealth: PLAYER_START_MAX_HEALTH,
       maxHealth: PLAYER_START_MAX_HEALTH,
-      currentArea: {
-        name: LEVEL_NAME.DUNGEON_1,
-        startRoomId: 3,
-        startDoorId: 3,
-      },
-      areaDetails: {
-        DUNGEON_1: {
-          bossDefeated: false,
-        },
-        WORLD: {},
-      },
+      sex: 'MALE',
+      gear: '',
+      weapon: '',
+      lastDialogOptionSelected: 0,
     };
   }
 
@@ -73,29 +47,6 @@ export class DataManager {
 
   set data(data: PlayerData) {
     this.#data = { ...data };
-  }
-
-  public updateAreaData(area: LevelName, startRoomId: number, startDoorId: number): void {
-    this.#data.currentArea = {
-      name: area,
-      startDoorId,
-      startRoomId,
-    };
-  }
-
-  public updateChestData(roomId: number, chestId: number, revealed: boolean, opened: boolean): void {
-    this.#populateDefaultRoomData(roomId);
-    this.#data.areaDetails[this.#data.currentArea.name][roomId].chests[chestId] = {
-      revealed,
-      opened,
-    };
-  }
-
-  public updateDoorData(roomId: number, doorId: number, unlocked: boolean): void {
-    this.#populateDefaultRoomData(roomId);
-    this.#data.areaDetails[this.#data.currentArea.name][roomId].doors[doorId] = {
-      unlocked,
-    };
   }
 
   public resetPlayerHealthToMin(): void {
@@ -117,18 +68,5 @@ export class DataManager {
     };
     EVENT_BUS.emit(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, dataToPass);
     this.#data.currentHealth = health;
-  }
-
-  public defeatedCurrentAreaBoss(): void {
-    this.#data.areaDetails[this.#data.currentArea.name].bossDefeated = true;
-  }
-
-  #populateDefaultRoomData(roomId: number): void {
-    if (this.#data.areaDetails[this.#data.currentArea.name][roomId] === undefined) {
-      this.#data.areaDetails[this.#data.currentArea.name][roomId] = {
-        chests: {},
-        doors: {},
-      };
-    }
   }
 }

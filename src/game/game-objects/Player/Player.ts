@@ -1,6 +1,6 @@
 
 import * as Phaser from 'phaser';
-import { Direction, GameObject2, Position } from '../../common/types';
+import { GameObject2, Position } from '../../common/types';
 import { InputComponent } from '../../components/input/input-component';
 import { CharacterGameObject } from '../common/character-game-object';
 import { AnimationConfig } from '../../components/game-object/animation-component';
@@ -21,7 +21,6 @@ import { AttackState } from '../../components/state-machine/states/character/att
 import { flash } from '../../common/juice-utils';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
 import { CollidingObjectsComponent } from '../../components/game-object/colliding-objects-component';
-import { Sword } from '../weapons/sword';
 import { JjkWeapons } from '../weapons/jjk-weapons';
 import { FallingState } from '../../components/state-machine/states/character/falling-state';
 
@@ -95,8 +94,6 @@ export class Player extends CharacterGameObject {
       FALL: { key: 'male-nude-none-fall', repeat: 10, ignoreIfPlaying: true },
     };
 
-
-
     super({
       scene: config.scene,
       position: config.position,
@@ -124,7 +121,6 @@ export class Player extends CharacterGameObject {
         flash(this);
       }),
     );
-
     this._stateMachine.addState(new AttackState(this));
     this._stateMachine.addState(new DeathState(this));
     this._stateMachine.addState(new OpenChestState(this));

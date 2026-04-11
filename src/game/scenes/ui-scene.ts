@@ -3,7 +3,7 @@ import { SCENE_KEYS } from './scene-keys';
 import { ASSET_KEYS, HEART_ANIMATIONS, HEART_TEXTURE_FRAME } from '../common/assets';
 import { DataManager } from '../common/data-manager';
 import { CUSTOM_EVENTS, EVENT_BUS, PLAYER_HEALTH_UPDATE_TYPE, PlayerHealthUpdated } from '../common/event-bus';
-import { DEFAULT_UI_HEADING_STYLE, DEFAULT_UI_OPTION_STYLE, DEFAULT_UI_TEXT_STYLE } from '../common/common';
+import { DEFAULT_UI_HEADING_STYLE, DEFAULT_UI_OPTION_STYLE } from '../common/common';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 
 export class UiScene extends Phaser.Scene {
@@ -124,6 +124,7 @@ export class UiScene extends Phaser.Scene {
   }
 
   public showDialog(message: string): void {
+    this.#selectedMenuOptionIndex = 0;  
     this.#dialogContainer.visible = true;
     let messageParts = message.split('|');
     this.#dialogOptionCount = messageParts.length - 2;
@@ -135,6 +136,9 @@ export class UiScene extends Phaser.Scene {
 
   public update(): void {
     if (this.#controls.isEnterKeyJustDown) {
+      let d = DataManager.instance.data;
+      d.lastDialogOptionSelected = this.#selectedMenuOptionIndex;
+      DataManager.instance.data = d;
       this.#dialogContainer.visible = false;
       EVENT_BUS.emit(CUSTOM_EVENTS.DIALOG_CLOSED);
       return;
@@ -155,5 +159,9 @@ export class UiScene extends Phaser.Scene {
     }
 
     this.#cursorGameObject.setY(85 + this.#selectedMenuOptionIndex * 40);
+  }
+
+  public getSelectedDialogOption(): number {
+    return this.#selectedMenuOptionIndex; 
   }
 }
