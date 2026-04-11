@@ -1,6 +1,5 @@
 import * as Phaser from 'phaser';
 import { ASSET_KEYS } from './assets';
-import { Dagger } from '../game-objects/weapons/dagger';
 
 export const DIRECTION = {
   UP: 'UP',

@@ -92,6 +92,24 @@ export class GameScene extends Phaser.Scene {
             enemy.update();
         });
 
+        // Creating falling logic. (Temporary, placed here - while developing.)
+        if (this.#player.stateMachine.currentStateName === 'MOVE_STATE') {
+            const playerTilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y, true);
+            const tileBelow = this.#earth.getTile(playerTilePosition.x, playerTilePosition.y);
+            if(playerTilePosition.atBorder===false) {
+                if(tileBelow === undefined) {
+                    this.#player.fall();
+                }
+            }
+            else if(tileBelow === undefined) {
+                //At tile border. Check if other tile also doesn't exist
+                const borderTile = this.#earth.getBorderTile(this.#player.x, this.#player.y);
+                if(borderTile === undefined && tileBelow === undefined) {
+                    this.#player.fall();
+                }
+            }
+        }
+
         // Creating new tiles logic. (Temporary, placed here - while developing.)
         if (this.#player.stateMachine.currentStateName === 'ATTACK_STATE') {
             console.log('Player casting/attacking');
@@ -140,9 +158,9 @@ export class GameScene extends Phaser.Scene {
             controls: this.#controls,
             maxLife: 3,
             currentLife: 3,
-            sex: SEX.FEMALE,
+            sex: SEX.MALE,
             gear: GEAR.NONE,
-            weapon: WEAPON.STAFF,
+            weapon: WEAPON.NONE,
         });
 
     }

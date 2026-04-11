@@ -35,9 +35,11 @@ export class AnimationComponent extends BaseGameObjectComponent {
       case 'WALK_UP': return animP + 'walk-up';
       case 'WALK_LEFT': return animP + 'walk-left';
       case 'WALK_RIGHT': return animP + 'walk-right';
+      case 'FALL': return animP + 'fall';
+      case 'DIE_DOWN': return animP + 'die';
     } //case 'HURT_DOWN': return animP + 'hurt-down'; case 'HURT_UP': return animP + 'hurt-up'; case 'HURT_LEFT': return animP + 'hurt-left'; case 'HURT_RIGHT': return animP + 'hurt-right';
     //case 'DIE_DOWN': return animP + 'die-down';   case 'DIE_UP': return animP + 'die-up';   case 'DIE_LEFT': return animP + 'die-left';   case 'DIE_RIGHT': return animP + 'die-right';      
-    return 'XXXX'; // This is not supposed to happen!
+    return 'XXXX'+characterAnimationKey; // This is not supposed to happen!
   }
 
   public getAnimationKey(characterAnimationKey: CharacterAnimation): string | undefined {

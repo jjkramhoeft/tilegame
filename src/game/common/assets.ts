@@ -247,6 +247,7 @@ export const CHARACTER_ANIMATIONS = {
   DIE_UP: 'DIE_UP',
   DIE_LEFT: 'DIE_LEFT',
   DIE_RIGHT: 'DIE_RIGHT',
+  FALL: 'FALL',
 } as const;
 
 export const CHEST_FRAME_KEYS = {

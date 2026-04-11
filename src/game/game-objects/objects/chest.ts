@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { ASSET_KEYS, CHEST_FRAME_KEYS } from '../../common/assets';
-import { CHEST_STATE, INTERACTIVE_OBJECT_TYPE, LEVEL_NAME } from '../../common/common';
+import { CHEST_STATE, INTERACTIVE_OBJECT_TYPE } from '../../common/common';
 import { ChestState, CustomGameObject } from '../../common/types';
 import { InteractiveObjectComponent } from '../../components/game-object/interactive-object-component';
 import { ChestReward, TiledChestObject, TrapType } from '../../common/tiled/types';

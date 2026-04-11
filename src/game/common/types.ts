@@ -7,6 +7,7 @@ export type CharacterAnimation = keyof typeof CHARACTER_ANIMATIONS;
 export type Position = {
   x: number;
   y: number;
+  atBorder?: boolean;
 };
 
 export type GameObject2 = Phaser.GameObjects.Sprite | Phaser.GameObjects.Image;

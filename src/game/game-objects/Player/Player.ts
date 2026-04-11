@@ -23,6 +23,7 @@ import { WeaponComponent } from '../../components/game-object/weapon-component';
 import { CollidingObjectsComponent } from '../../components/game-object/colliding-objects-component';
 import { Sword } from '../weapons/sword';
 import { JjkWeapons } from '../weapons/jjk-weapons';
+import { FallingState } from '../../components/state-machine/states/character/falling-state';
 
 
 export type PlayerConfig = {
@@ -37,12 +38,12 @@ export type PlayerConfig = {
 }
 
 export class Player extends CharacterGameObject {
-#collidingObjectsComponent: CollidingObjectsComponent;
-#weaponComponent: WeaponComponent;
+  #collidingObjectsComponent: CollidingObjectsComponent;
+  #weaponComponent: WeaponComponent;
 
   constructor(config: PlayerConfig) {
 
-    // create animation config for component
+    /* create animation config for component - Original
     const animationConfigMakeZelda: AnimationConfig = {
       WALK_DOWN: { key: PLAYER_ANIMATION_KEYS.WALK_DOWN, repeat: -1, ignoreIfPlaying: true },
       WALK_UP: { key: PLAYER_ANIMATION_KEYS.WALK_UP, repeat: -1, ignoreIfPlaying: true },
@@ -72,7 +73,7 @@ export class Player extends CharacterGameObject {
       LIFT_UP: { key: PLAYER_ANIMATION_KEYS.LIFT_UP, repeat: 0, ignoreIfPlaying: true },
       LIFT_LEFT: { key: PLAYER_ANIMATION_KEYS.LIFT_SIDE, repeat: 0, ignoreIfPlaying: true },
       LIFT_RIGHT: { key: PLAYER_ANIMATION_KEYS.LIFT_SIDE, repeat: 0, ignoreIfPlaying: true },
-    };
+    };*/
     // create animation config for component
     const animationConfig: AnimationConfig = {
       WALK_DOWN: { key: 'male-nude-none-walk-down', repeat: -1, ignoreIfPlaying: true },
@@ -91,9 +92,10 @@ export class Player extends CharacterGameObject {
       DIE_UP: { key: 'male-nude-none-hurt-up', repeat: 0, ignoreIfPlaying: true },
       DIE_LEFT: { key: 'male-nude-none-hurt-left', repeat: 0, ignoreIfPlaying: true },
       DIE_RIGHT: { key: 'male-nude-none-hurt-right', repeat: 0, ignoreIfPlaying: true },
+      FALL: { key: 'male-nude-none-fall', repeat: 10, ignoreIfPlaying: true },
     };
 
-    
+
 
     super({
       scene: config.scene,
@@ -127,6 +129,7 @@ export class Player extends CharacterGameObject {
     this._stateMachine.addState(new DeathState(this));
     this._stateMachine.addState(new OpenChestState(this));
     this._stateMachine.addState(new AttackState(this));
+    this._stateMachine.addState(new FallingState(this));
     this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
 
     // add components
@@ -142,8 +145,8 @@ export class Player extends CharacterGameObject {
         RIGHT: PLAYER_ANIMATION_KEYS.ATTACK_RIGHT,
       },
       100,
-      config.sex, 
-      config.gear, 
+      config.sex,
+      config.gear,
       config.weapon
     );
 
@@ -158,12 +161,16 @@ export class Player extends CharacterGameObject {
     );
 
     this.body?.setSize(this.body.width * 0.43, this.body.height * 0.7, true);
-    this.body?.setOffset(this.body.offset.x+1, this.body.offset.y + 8);
+    this.body?.setOffset(this.body.offset.x + 1, this.body.offset.y + 8);
   }
 
   get physicsBody(): Phaser.Physics.Arcade.Body {
     return this.body as Phaser.Physics.Arcade.Body;
   }
+
+  public fall(): void {
+    this._stateMachine.setState(CHARACTER_STATES.FALLING_STATE);
+  };
 
   public update(): void {
     super.update();

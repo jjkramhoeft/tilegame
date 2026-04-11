@@ -50,7 +50,7 @@ export class Earth {
         detailsPlaced: 0,
         blocksPlaced: 0,
     };
-    private tileSize = 64;    
+    private tileSize = 64;
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -137,7 +137,7 @@ export class Earth {
             console.error('Failed to load blocking tileset');
             return;
         }
-        this.blockingData= getBlockingBoxesData(tilesetBlocking); // get in blocking-boxes.ts
+        this.blockingData = getBlockingBoxesData(tilesetBlocking); // get in blocking-boxes.ts
         const blockingLayer = this.tilemap.createBlankLayer('blocking', tilesetBlocking);
         if (!blockingLayer) {
             console.error('Failed to create blocking tile layer');
@@ -169,7 +169,7 @@ export class Earth {
         this.isInitialized = true;
     }
 
-    public AddTiles(creationConfig: EarthCastingConfig, casterPosition: Position, primeTargetPosition: Position, directions: Direction[]):CastingFeedback {
+    public AddTiles(creationConfig: EarthCastingConfig, casterPosition: Position, primeTargetPosition: Position, directions: Direction[]): CastingFeedback {
         let numberOfPlacedTiles = 0;
         let allTagets = findTargetTiles(primeTargetPosition, directions, creationConfig.powerLevel);
         let casterTile = this.getTile(casterPosition.x, casterPosition.y);
@@ -202,19 +202,19 @@ export class Earth {
         const decoration: number = DicedeDecoration(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel);
         const [blocking, floating] = DicedeBlockingAndFloating(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel, decoration, countOfNeighborBolcking);
 
-        if(biome === BIOME.ROCK) {
+        if (biome === BIOME.ROCK) {
             this.castingFeedback.rockTilesPlaced++;
-        } else if(biome === BIOME.DESERT) {
+        } else if (biome === BIOME.DESERT) {
             this.castingFeedback.desertTilesPlaced++;
-        } else if(biome === BIOME.GRASS) {
+        } else if (biome === BIOME.GRASS) {
             this.castingFeedback.grassTilesPlaced++;
-        } else if(biome === BIOME.FOREST) {
+        } else if (biome === BIOME.FOREST) {
             this.castingFeedback.forestTilesPlaced++;
-        } 
-        if(decoration >= 0) {
+        }
+        if (decoration >= 0) {
             this.castingFeedback.detailsPlaced++;
         }
-        if(blocking >= 0) {
+        if (blocking >= 0) {
             this.castingFeedback.blocksPlaced++;
         }
 
@@ -325,7 +325,7 @@ export class Earth {
     public AddTile(tile: Tile) {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
-            if(ENABLE_LOGGING){console.log(`Placing biome tile with index ${tile.biome} at (${tile.tileX}, ${tile.tileY})`);}   
+            if (ENABLE_LOGGING) { console.log(`Placing biome tile with index ${tile.biome} at (${tile.tileX}, ${tile.tileY})`); }
             this.biomeLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
             if (tile.biome === BIOME.WATER) {
                 this.scene.add
@@ -363,21 +363,21 @@ export class Earth {
             if (tile.border > 39) {
                 console.warn(`Border tile index ${tile.border} is out of expected range!`);
             }
-            if(ENABLE_LOGGING){console.log(`Placing border tile with index ${tile.border} at (${tile.tileX}, ${tile.tileY})`);}
+            if (ENABLE_LOGGING) { console.log(`Placing border tile with index ${tile.border} at (${tile.tileX}, ${tile.tileY})`); }
             this.borderLayer.putTileAt(tile.border, tile.tileX, tile.tileY);
         }
         if (tile.decoration >= 0) {
             if (tile.decoration > 55) {
                 console.warn(`Decoration tile index ${tile.decoration} is out of expected range!`);
             }
-            if(ENABLE_LOGGING){console.log(`Placing decoration tile with index ${tile.decoration} at (${tile.tileX}, ${tile.tileY})`);}
+            if (ENABLE_LOGGING) { console.log(`Placing decoration tile with index ${tile.decoration} at (${tile.tileX}, ${tile.tileY})`); }
             this.decorationLayer.putTileAt(tile.decoration, tile.tileX, tile.tileY);
         }
         if (tile.blocking >= 0) {
             if (tile.blocking > 91) {
                 console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
             }
-            if(ENABLE_LOGGING){console.log(`Placing blocking tile with index ${tile.blocking} at (${tile.tileX}, ${tile.tileY})`);}
+            if (ENABLE_LOGGING) { console.log(`Placing blocking tile with index ${tile.blocking} at (${tile.tileX}, ${tile.tileY})`); }
             this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
             this.createBlockingGeometryBody(tile.tileX, tile.tileY, tile.blocking);
             const worldX = tile.tileX * 64;
@@ -389,13 +389,31 @@ export class Earth {
             if (tile.floating > 15) {
                 console.warn(`Floating tile index ${tile.floating} is out of expected range!`);
             }
-            if(ENABLE_LOGGING){console.log(`Placing floating tile with index ${tile.floating} at (${tile.tileX}, ${tile.tileY})`);}
+            if (ENABLE_LOGGING) { console.log(`Placing floating tile with index ${tile.floating} at (${tile.tileX}, ${tile.tileY})`); }
             this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY - 1);
         }
     }
 
     public getTile(x: number, y: number): Tile | undefined {
         return this.allTiles.get(this.key(x, y));
+    }
+
+    public getBorderTile(screenX: number, screenY: number): Tile | undefined {
+        let playOffsetX = 0;
+        let playOffsetY = 20;
+        const playerTileX = Math.floor((screenX + playOffsetX) / this.tileSize);
+        const playerTileY = Math.floor((screenY + playOffsetY) / this.tileSize);
+        const borderTileX = playerTileX;
+        const borderTileY = playerTileY;
+        if ((screenX + playOffsetX) % this.tileSize < 10) { // Left border
+            return this.allTiles.get(this.key(borderTileX - 1, borderTileY));
+        } else if ((screenX + playOffsetX) % this.tileSize > this.tileSize - 10) { // Right border
+            return this.allTiles.get(this.key(borderTileX + 1, borderTileY));
+        } else if ((screenY + playOffsetY) % this.tileSize < 10) { // Up border
+            return this.allTiles.get(this.key(borderTileX, borderTileY - 1));
+        } else if ((screenY + playOffsetY) % this.tileSize > this.tileSize - 10) { // Down border
+            return this.allTiles.get(this.key(borderTileX, borderTileY + 1));
+        }
     }
 
     public getTileXYFromScreenCoordinates(screenX: number, screenY: number, offsetPlayer: boolean): Position {
@@ -407,7 +425,12 @@ export class Earth {
         }
         const tileX = Math.floor((screenX + playOffsetX) / this.tileSize);
         const tileY = Math.floor((screenY + playOffsetY) / this.tileSize);
-        return { x: tileX, y: tileY };
+        let atBorder = false;
+        if ((screenX + playOffsetX) % this.tileSize < 10 || (screenX + playOffsetX) % this.tileSize > this.tileSize - 10 ||
+            (screenY + playOffsetY) % this.tileSize < 10 || (screenY + playOffsetY) % this.tileSize > this.tileSize - 10) {
+            atBorder = true;
+        }
+        return { x: tileX, y: tileY, atBorder: atBorder };
     }
 
     // Used by game-scene when setting up collision between player and map 
