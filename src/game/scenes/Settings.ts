@@ -78,8 +78,8 @@ export class Settings extends Scene
 
         const centerX = this.cameras.main.centerX;
 
-        this.add.text(centerX, 110, 'Settings', {
-            fontFamily: 'Arial Black', fontSize: 64, color: COLORS.title,
+        this.add.text(centerX, 100, 'Settings', {
+            fontFamily: 'Arial Black', fontSize: 48, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
@@ -95,7 +95,7 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 430,
+            y: 400,
             label: 'Background Color',
             getValueText: () => BG_OPTIONS[this.bgIndex].label,
             onPrevious: () => this.changeBackgroundColor(-1),
@@ -104,7 +104,7 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 570,
+            y: 510,
             label: 'Language',
             getValueText: () => LANGUAGE_OPTIONS[this.languageIndex].label,
             onPrevious: () => this.changeLanguage(-1),
@@ -113,7 +113,7 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 710,
+            y: 620,
             label: 'Playing as',
             getValueText: () => PLAYER_OPTIONS[this.playerIndex].label,
             onPrevious: () => this.changePlayer(-1),
@@ -146,27 +146,29 @@ export class Settings extends Scene
         onNext: () => void;
     }): void
     {
-        this.add.text(config.x, config.y - 55, config.label, {
-            fontFamily: 'Arial Black', fontSize: 36, color: COLORS.uiText,
-            stroke: COLORS.uiTextBorder, strokeThickness: 7,
+        let x1= 80;
+        let x2=700;
+        this.add.text(x1, config.y -25 , config.label, {
+            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.uiText,
+            stroke: COLORS.uiTextBorder, strokeThickness: 5,
+            align: 'left'
+        }).setOrigin(0);
+
+        const previousText = this.add.text(x2 - 170, config.y, '<', {
+            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.uiText,
+            stroke: COLORS.uiTextBorder, strokeThickness: 5,
             align: 'center'
         }).setOrigin(0.5);
 
-        const previousText = this.add.text(config.x - 170, config.y, '<', {
-            fontFamily: 'Arial Black', fontSize: 56, color: COLORS.uiText,
-            stroke: COLORS.uiTextBorder, strokeThickness: 7,
+        const valueText = this.add.text(x2-50, config.y, config.getValueText(), {
+            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.title,
+            stroke: COLORS.titleStroke, strokeThickness: 5,
             align: 'center'
         }).setOrigin(0.5);
 
-        const valueText = this.add.text(config.x, config.y, config.getValueText(), {
-            fontFamily: 'Arial Black', fontSize: 42, color: COLORS.title,
-            stroke: COLORS.titleStroke, strokeThickness: 7,
-            align: 'center'
-        }).setOrigin(0.5);
-
-        const nextText = this.add.text(config.x + 170, config.y, '>', {
-            fontFamily: 'Arial Black', fontSize: 56, color: COLORS.uiText,
-            stroke: COLORS.uiTextBorder, strokeThickness: 7,
+        const nextText = this.add.text(x2 + 170-100, config.y, '>', {
+            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.uiText,
+            stroke: COLORS.uiTextBorder, strokeThickness: 5,
             align: 'center'
         }).setOrigin(0.5);
 
