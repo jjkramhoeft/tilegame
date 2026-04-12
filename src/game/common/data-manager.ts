@@ -16,6 +16,7 @@ export type PlayerData = {
   weapon: string;
   lastDialogOptionSelected: number;
   lastDialogResultInfo?: DialogResultInfo;
+  languageIsDanish: boolean;
 };
 
 export class DataManager {
@@ -31,6 +32,7 @@ export class DataManager {
       gear: '',
       weapon: '',
       lastDialogOptionSelected: 0,
+      languageIsDanish: false,
     };
   }
 

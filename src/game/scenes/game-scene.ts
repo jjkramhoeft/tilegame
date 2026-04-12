@@ -246,6 +246,7 @@ export class GameScene extends Phaser.Scene {
             gear: GEAR.NONE,
             weapon: WEAPON.NONE,
             lastDialogOptionSelected: 0,
+            languageIsDanish: false,
         };
         this.#player = new Player({
             scene: this,
