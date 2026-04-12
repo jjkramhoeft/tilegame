@@ -1685,6 +1685,25 @@
         "type": "audio",
         "key": "creditsMusic",
         "url": "music-awesome-god2.ogg"
+      },
+      {
+        "type": "audio",
+        "key": "steps",
+        "url": "shortfootsteps.wav"
+      },
+      {
+        "type": "audio",
+        "key": "spellnotes1",
+        "url": "shortspell1.wav"
+      },
+      {
+        "type": "spritesheet",
+        "key": "spell-music-11",
+        "textureURL": "spell-music-11.png",
+        "frameConfig": {
+          "frameWidth": 150,
+          "frameHeight": 150
+        }
       }
     ]
   }

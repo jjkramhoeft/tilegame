@@ -6,7 +6,6 @@ import { CharacterGameObject } from '../common/character-game-object';
 import { AnimationConfig } from '../../components/game-object/animation-component';
 import { ASSET_KEYS, PLAYER_ANIMATION_KEYS } from '../../common/assets';
 import {
-  PLAYER_ATTACK_DAMAGE,
   PLAYER_HURT_PUSH_BACK_SPEED,
   PLAYER_INVULNERABLE_AFTER_HIT_DURATION,
   PLAYER_SPEED,

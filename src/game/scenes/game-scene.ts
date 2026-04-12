@@ -12,6 +12,7 @@ import { CUSTOM_EVENTS, EVENT_BUS } from '../common/event-bus';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { GameObject2 } from '../common/types';
 import { DataManager } from '../common/data-manager';
+import { PLAYER_SPEED } from '../common/config';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
@@ -33,9 +34,10 @@ export class GameScene extends Phaser.Scene {
         isWaterUnlocked: false,
         isLavaUnlocked: false,
         isMountainUnlocked: false,
-        powerLevel: 5,
+        powerLevel: 1,
     };
-
+    #spellSound: Phaser.Sound.BaseSound;
+    #previousStateName: string | undefined;
 
     constructor() {
         super('GameScene');
@@ -71,7 +73,7 @@ export class GameScene extends Phaser.Scene {
 
         // Temp chests for testing ------------------------------------------------
         const chest1Tile = new Tile({
-            tilenumber: { x: firstTilePosition.x + 3, y: firstTilePosition.y },
+            tilenumber: { x: firstTilePosition.x + 6, y: firstTilePosition.y },
             biome: 1,
             chest: 1,
         });
@@ -88,7 +90,7 @@ export class GameScene extends Phaser.Scene {
         this.#chestJJKGroup.add(this.#chests[0]);
 
         const chest2Tile = new Tile({
-            tilenumber: { x: firstTilePosition.x + 3, y: firstTilePosition.y + 2 },
+            tilenumber: { x: firstTilePosition.x + 7, y: firstTilePosition.y + 3 },
             biome: 1,
             chest: 2,
         });
@@ -131,6 +133,9 @@ export class GameScene extends Phaser.Scene {
         this.#registerCustomEvents();
 
         this.scene.launch('UiScene');
+
+         this.#spellSound = this.sound.add('spellnotes1', { volume: 0.9 });
+         //this.#stepSound = this.sound.add('steps', { volume: 1.0 });
     }
 
     update() {
@@ -156,9 +161,38 @@ export class GameScene extends Phaser.Scene {
             }
         }
 
-        // Creating new tiles logic. (Temporary, placed here - while developing.)
-        if (this.#player.stateMachine.currentStateName === 'ATTACK_STATE') {
+        // Spell casting and Creating new tiles logic. (Temporary, placed here - while developing.)
+        if (this.#player.stateMachine.currentStateName === 'ATTACK_STATE' && 
+            this.#previousStateName !== 'ATTACK_STATE' &&
+            this.#spellSound.isPlaying === false) {
             console.log('Player casting/attacking');
+            this.#spellSound.play();
+
+            const lastDirections = this.#player.getLastMoveDirections();
+            let oldvx = 0;
+            let oldvy = 0;
+            for (const dir of lastDirections) {
+                switch (dir) {
+                    case 'UP': oldvy -= PLAYER_SPEED; break;
+                    case 'DOWN': oldvy += PLAYER_SPEED; break;
+                    case 'LEFT': oldvx -= PLAYER_SPEED; break; 
+                    case 'RIGHT': oldvx += PLAYER_SPEED; break;
+                }
+             }
+            const spell = this.add.sprite(this.player.x + oldvx / 10, this.player.y + oldvy / 10, 'spell-music-11').setScale(0.5).setOrigin(0.5, 0.5);
+            spell.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+            spell.play('spell-music-anim');
+            this.tweens.add({
+                targets: spell,
+                x: spell.x + oldvx ,
+                y: spell.y + oldvy ,
+                duration: 1500,
+                ease: 'Sine.easeOut',
+                onComplete: () => spell.destroy()
+            });
+            spell.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+                spell.destroy();
+            });
 
             const casterPosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y, true);
             const tilePosition = { x: casterPosition.x, y: casterPosition.y };
@@ -196,6 +230,8 @@ export class GameScene extends Phaser.Scene {
                 }
             }
         }
+
+        this.#previousStateName = this.#player.stateMachine.currentStateName;
     }
 
     #setupPlayer(): void {
@@ -203,8 +239,8 @@ export class GameScene extends Phaser.Scene {
             currentHealth: 6,
             maxHealth: 6,
             sex: SEX.MALE,
-            gear: GEAR.NONE,
-            weapon: WEAPON.NONE,
+            gear: GEAR.BARE,
+            weapon: WEAPON.DAGGER,
             lastDialogOptionSelected: 0,
         };
         this.#player = new Player({
@@ -214,8 +250,8 @@ export class GameScene extends Phaser.Scene {
             maxLife: 3,
             currentLife: 3,
             sex: SEX.MALE,
-            gear: GEAR.NONE,
-            weapon: WEAPON.NONE,
+            gear: GEAR.BARE,
+            weapon: WEAPON.DAGGER,
         });
 
     }

@@ -133,5 +133,7 @@ export class PreloadScene extends Phaser.Scene {
             });
         });        
     });
+
+    anims.create({ key: 'spell-music-anim', frames: anims.generateFrameNumbers('spell-music-11', { start: 0, end: 10 }), frameRate: 9, repeat: 0 });
   }
 }
