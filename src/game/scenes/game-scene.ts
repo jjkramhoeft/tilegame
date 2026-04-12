@@ -6,9 +6,8 @@ import { Wisp } from '../game-objects/enemies/wisp';
 import { Drow } from '../game-objects/enemies/boss/drow';
 import { Earth, EarthCastingConfig } from '../ground/earth';
 import { Tile } from '../ground/tile';
-import { SEX, WEAPON, GEAR, CHEST_STATE } from '../common/common';
+import { SEX, WEAPON, GEAR, CHEST_STATE, DIRECTION } from '../common/common';
 import { CUSTOM_EVENTS, EVENT_BUS } from '../common/event-bus';
-//import { Chest } from '../game-objects/objects/chest';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { GameObject2 } from '../common/types';
 import { DataManager } from '../common/data-manager';
@@ -111,7 +110,7 @@ export class GameScene extends Phaser.Scene {
             scene: this,
             position: { x: 32000 + 350, y: 32000 + 200 },
         });
-        //this.#spider.enableObject();
+        this.#spider.enableObject();
         this.#enemyGroup.add(this.#spider);
 
         this.#wisp = new Wisp({
@@ -276,6 +275,10 @@ export class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.#player, this.#chestJJKGroup, (player, gameObject) => {
             // add game object to players collision list
             this.#player.collidedWithGameObject(gameObject as GameObject2);
+        });
+
+         this.physics.add.overlap(this.#player, this.#enemyGroup!, () => {
+          this.#player.hit(DIRECTION.DOWN, 1);
         });
     }
 

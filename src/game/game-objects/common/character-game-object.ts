@@ -160,7 +160,7 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
       return;
     }
 
-    this._stateMachine.setState(CHARACTER_STATES.HURT_STATE, direction);
+    //this._stateMachine.setState(CHARACTER_STATES.HURT_STATE, direction);
   }
 
   
