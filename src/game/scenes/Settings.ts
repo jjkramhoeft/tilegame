@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { DataManager } from '../common/data-manager';
 
 const COLORS = {
     title: '#5eb1da',
@@ -15,11 +16,16 @@ const BG_OPTIONS = [
     { label: 'Sand', value: '#7a6940' },
     { label: 'Rose', value: '#5a2f42' }
 ];
+const LANGUAGE_OPTIONS = [
+    { label: 'Danish', isDanish: true },
+    { label: 'English', isDanish: false }
+];
 
 export class Settings extends Scene
 {
     private musicIndex = 1;
     private bgIndex = 2;
+    private languageIndex = 1;
 
     constructor ()
     {
@@ -43,6 +49,13 @@ export class Settings extends Scene
             if (index >= 0) {
                 this.bgIndex = index;
             }
+        }
+
+        const savedLanguage = this.registry.get('languageIsDanish');
+        if (typeof savedLanguage === 'boolean') {
+            this.languageIndex = savedLanguage ? 0 : 1;
+        } else {
+            this.languageIndex = DataManager.instance.data.languageIsDanish ? 0 : 1;
         }
 
         const centerX = this.cameras.main.centerX;
@@ -71,8 +84,18 @@ export class Settings extends Scene
             onNext: () => this.changeBackgroundColor(1)
         });
 
+        this.createPickerRow({
+            x: centerX,
+            y: 570,
+            label: 'Language',
+            getValueText: () => LANGUAGE_OPTIONS[this.languageIndex].label,
+            onPrevious: () => this.changeLanguage(-1),
+            onNext: () => this.changeLanguage(1)
+        });
+
         this.applyBackgroundColor();
         this.applyMusicVolume();
+        this.applyLanguage();
 
         const backText = this.add.text(900, 700, 'Back', {
             fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
@@ -145,6 +168,12 @@ export class Settings extends Scene
         this.applyBackgroundColor();
     }
 
+    private changeLanguage (direction: number): void
+    {
+        this.languageIndex = Phaser.Math.Wrap(this.languageIndex + direction, 0, LANGUAGE_OPTIONS.length);
+        this.applyLanguage();
+    }
+
     private applyMusicVolume (): void
     {
         const value = MUSIC_LEVELS[this.musicIndex];
@@ -157,5 +186,15 @@ export class Settings extends Scene
         const color = BG_OPTIONS[this.bgIndex].value;
         this.registry.set('settingsBgColor', color);
         this.cameras.main.setBackgroundColor(color);
+    }
+
+    private applyLanguage (): void
+    {
+        const languageIsDanish = LANGUAGE_OPTIONS[this.languageIndex].isDanish;
+        this.registry.set('languageIsDanish', languageIsDanish);
+        DataManager.instance.data = {
+            ...DataManager.instance.data,
+            languageIsDanish,
+        };
     }
 }
