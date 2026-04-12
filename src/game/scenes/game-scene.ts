@@ -239,14 +239,15 @@ export class GameScene extends Phaser.Scene {
     }
 
     #setupPlayer(): void {
+        const currentData = DataManager.instance.data;
         DataManager.instance.data = {
             currentHealth: 6,
             maxHealth: 6,
-            sex: SEX.MALE,
+            sex: currentData.sex ?? SEX.MALE,
             gear: GEAR.NONE,
             weapon: WEAPON.NONE,
             lastDialogOptionSelected: 0,
-            languageIsDanish: false,
+            languageIsDanish: currentData.languageIsDanish ?? false,
         };
         this.#player = new Player({
             scene: this,
@@ -254,7 +255,7 @@ export class GameScene extends Phaser.Scene {
             controls: this.#controls,
             maxLife: 3,
             currentLife: 3,
-            sex: SEX.MALE,
+            sex: currentData.sex ?? SEX.MALE,
             gear: GEAR.NONE,
             weapon: WEAPON.NONE,
         });

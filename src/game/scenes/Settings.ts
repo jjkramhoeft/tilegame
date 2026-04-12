@@ -20,12 +20,17 @@ const LANGUAGE_OPTIONS = [
     { label: 'Danish', isDanish: true },
     { label: 'English', isDanish: false }
 ];
+const PLAYER_OPTIONS = [
+    { label: 'Adam', sex: 'male' },
+    { label: 'Eve', sex: 'female' }
+];
 
 export class Settings extends Scene
 {
     private musicIndex = 1;
     private bgIndex = 2;
     private languageIndex = 1;
+    private playerIndex = 0;
 
     constructor ()
     {
@@ -56,6 +61,19 @@ export class Settings extends Scene
             this.languageIndex = savedLanguage ? 0 : 1;
         } else {
             this.languageIndex = DataManager.instance.data.languageIsDanish ? 0 : 1;
+        }
+
+        const savedPlayerSex = this.registry.get('playerSex');
+        if (typeof savedPlayerSex === 'string') {
+            const index = PLAYER_OPTIONS.findIndex((option) => option.sex === savedPlayerSex);
+            if (index >= 0) {
+                this.playerIndex = index;
+            }
+        } else {
+            const index = PLAYER_OPTIONS.findIndex((option) => option.sex === DataManager.instance.data.sex);
+            if (index >= 0) {
+                this.playerIndex = index;
+            }
         }
 
         const centerX = this.cameras.main.centerX;
@@ -93,9 +111,19 @@ export class Settings extends Scene
             onNext: () => this.changeLanguage(1)
         });
 
+        this.createPickerRow({
+            x: centerX,
+            y: 710,
+            label: 'Playing as',
+            getValueText: () => PLAYER_OPTIONS[this.playerIndex].label,
+            onPrevious: () => this.changePlayer(-1),
+            onNext: () => this.changePlayer(1)
+        });
+
         this.applyBackgroundColor();
         this.applyMusicVolume();
         this.applyLanguage();
+        this.applyPlayer();
 
         const backText = this.add.text(900, 700, 'Back', {
             fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
@@ -174,6 +202,12 @@ export class Settings extends Scene
         this.applyLanguage();
     }
 
+    private changePlayer (direction: number): void
+    {
+        this.playerIndex = Phaser.Math.Wrap(this.playerIndex + direction, 0, PLAYER_OPTIONS.length);
+        this.applyPlayer();
+    }
+
     private applyMusicVolume (): void
     {
         const value = MUSIC_LEVELS[this.musicIndex];
@@ -195,6 +229,16 @@ export class Settings extends Scene
         DataManager.instance.data = {
             ...DataManager.instance.data,
             languageIsDanish,
+        };
+    }
+
+    private applyPlayer (): void
+    {
+        const playerSex = PLAYER_OPTIONS[this.playerIndex].sex;
+        this.registry.set('playerSex', playerSex);
+        DataManager.instance.data = {
+            ...DataManager.instance.data,
+            sex: playerSex,
         };
     }
 }
