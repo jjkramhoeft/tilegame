@@ -39,30 +39,50 @@ export class Credits extends Scene
             stroke: COLORS.titleStroke, strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
+
+        // -------------------------------------------------------------------------------------------
         
-        this.add.text(200, 250, '...', {
-            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.title,
-            stroke: COLORS.titleStroke, strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
+        this.add.text(60, 230, 'Made for søndagsskolen i 2026, Inspiration: Genesis and C.S.Lewis', {
+            fontFamily: 'Arial Black', fontSize: 28, color: COLORS.title,
+            stroke: COLORS.titleStroke, strokeThickness: 6,
+            align: 'left',
+            wordWrap: { width: 800 },
+            lineSpacing: 4,
+        });
         
-        this.add.text(200, 300, '...', {
-            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.title,
-            stroke: COLORS.titleStroke, strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
+        this.add.text(60, 340, 'Beta Testers, Supporters and Special Thanks: William & Richard', {
+            fontFamily: 'Arial Black', fontSize: 28, color: COLORS.title,
+            stroke: COLORS.titleStroke, strokeThickness: 6,
+            align: 'left',
+            wordWrap: { width: 800 },
+            lineSpacing: 4,
+        });
         
-        this.add.text(200, 350, '...', {
-            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.title,
-            stroke: COLORS.titleStroke, strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
+        this.add.text(60, 460, 'Code help: Chat GPT & Grok', {
+            fontFamily: 'Arial Black', fontSize: 28, color: COLORS.title,
+            stroke: COLORS.titleStroke, strokeThickness: 6,
+            align: 'left',
+            wordWrap: { width: 600 },
+            lineSpacing: 4,
+        });
         
-        this.add.text(200, 400, '...', {
-            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.title,
-            stroke: COLORS.titleStroke, strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
+        this.add.text(60, 540, 'Phaser Tutorials: Scott Westover', {
+            fontFamily: 'Arial Black', fontSize: 28, color: COLORS.title,
+            stroke: COLORS.titleStroke, strokeThickness: 6,
+            align: 'left',
+            wordWrap: { width: 600 },
+            lineSpacing: 4,
+        });
+
+        this.add.text(60, 620, 'Graphics & Music: ComfyUI, AceStep, Flux_2-Turbo-LoRA', {
+            fontFamily: 'Arial Black', fontSize: 28, color: COLORS.title,
+            stroke: COLORS.titleStroke, strokeThickness: 6,
+            align: 'left',
+            wordWrap: { width: 600 },
+            lineSpacing: 4,
+        });
+
+        // -------------------------------------------------------------------------------------------
         
         const exit_text = this.add.text(900, 700, 'Back', {
             fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
