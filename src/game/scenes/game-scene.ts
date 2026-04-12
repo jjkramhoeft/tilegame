@@ -134,8 +134,8 @@ export class GameScene extends Phaser.Scene {
 
         this.scene.launch('UiScene');
 
-         this.#spellSound = this.sound.add('spellnotes1', { volume: 0.9 });
-         //this.#stepSound = this.sound.add('steps', { volume: 1.0 });
+        this.#spellSound = this.sound.add('spellnotes1', { volume: 0.9 });
+        //this.#stepSound = this.sound.add('steps', { volume: 1.0 });
     }
 
     update() {
@@ -162,11 +162,14 @@ export class GameScene extends Phaser.Scene {
         }
 
         // Spell casting and Creating new tiles logic. (Temporary, placed here - while developing.)
-        if (this.#player.stateMachine.currentStateName === 'ATTACK_STATE' && 
-            this.#previousStateName !== 'ATTACK_STATE' &&
-            this.#spellSound.isPlaying === false) {
-            console.log('Player casting/attacking');
-            this.#spellSound.play();
+        if (this.#player.stateMachine.currentStateName === 'ATTACK_STATE' &&
+            this.#previousStateName !== 'ATTACK_STATE'
+            // &&            this.#spellSound.isPlaying === false
+        ) {
+            //console.log('Player casting/attacking');
+            if (this.#spellSound.isPlaying === false) {
+                this.#spellSound.play();
+            }
 
             const lastDirections = this.#player.getLastMoveDirections();
             let oldvx = 0;
@@ -175,17 +178,17 @@ export class GameScene extends Phaser.Scene {
                 switch (dir) {
                     case 'UP': oldvy -= PLAYER_SPEED; break;
                     case 'DOWN': oldvy += PLAYER_SPEED; break;
-                    case 'LEFT': oldvx -= PLAYER_SPEED; break; 
+                    case 'LEFT': oldvx -= PLAYER_SPEED; break;
                     case 'RIGHT': oldvx += PLAYER_SPEED; break;
                 }
-             }
+            }
             const spell = this.add.sprite(this.player.x + oldvx / 10, this.player.y + oldvy / 10, 'spell-music-11').setScale(0.5).setOrigin(0.5, 0.5);
             spell.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
             spell.play('spell-music-anim');
             this.tweens.add({
                 targets: spell,
-                x: spell.x + oldvx ,
-                y: spell.y + oldvy ,
+                x: spell.x + oldvx,
+                y: spell.y + oldvy,
                 duration: 1500,
                 ease: 'Sine.easeOut',
                 onComplete: () => spell.destroy()
