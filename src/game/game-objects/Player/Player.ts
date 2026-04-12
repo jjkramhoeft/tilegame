@@ -133,7 +133,8 @@ export class Player extends CharacterGameObject {
         LEFT: PLAYER_ANIMATION_KEYS.ATTACK_LEFT,
         RIGHT: PLAYER_ANIMATION_KEYS.ATTACK_RIGHT,
       },
-      100
+      100,
+      true
     );
 
     // enable auto update functionality

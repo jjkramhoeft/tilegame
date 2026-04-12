@@ -12,7 +12,7 @@ import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { GameObject2 } from '../common/types';
 import { DataManager } from '../common/data-manager';
 import { PLAYER_SPEED } from '../common/config';
-import { ChestDialogInfo, writeChestDialogInfo } from './ui-scene';
+import { writeChestDialogInfo } from './ui-scene';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
@@ -107,28 +107,27 @@ export class GameScene extends Phaser.Scene {
         this.#chestJJKGroup.add(this.#chests[1]);
 
         // Temp enemies for testing ------------------------------------------------
-       
         this.#spider = new Spider({
             scene: this,
-            position: { x: 32000 + 350, y: 32000 + 200 },            
+            position: { x: 32000 + 350, y: 32000 + 200 },
         });
         this.#spider.enableObject();
         this.#enemyGroup.add(this.#spider);
- /*
+
         this.#wisp = new Wisp({
             scene: this,
             position: { x: 32000 + 200, y: 32000 + 250 },
         });
-        //this.#wisp.enableObject();
+        this.#wisp.enableObject();
         this.#enemyGroup.add(this.#wisp);
-
-        this.#drow = new Drow({
-            scene: this,
-            position: { x: 32000 + 250, y: 32000 + 300 },
-        });
-        //this.#drow.enableObject();
-        this.#enemyGroup.add(this.#drow);
-        */
+        /*
+               this.#drow = new Drow({
+                   scene: this,
+                   position: { x: 32000 + 250, y: 32000 + 300 },
+               });
+               //this.#drow.enableObject();
+               this.#enemyGroup.add(this.#drow);
+               */
 
         this.#registerColliders();
         this.#registerCustomEvents();
@@ -301,43 +300,31 @@ export class GameScene extends Phaser.Scene {
     #handleDialogClosed(): void {
         let d = DataManager.instance.data;
         if (d.lastDialogResultInfo) {
-            if (d.lastDialogOptionSelected === 0) {
-                // Option 1 selected
-                // Weapons
-                if(d.lastDialogResultInfo.option1WeaponToPlayer === WEAPON.NONE && d.lastDialogResultInfo.option1WeaponToLeave === GEAR.NONE){ 
-                    // Do nothing.
-                }
-                else {
+            if (d.lastDialogOptionSelected === 0) {// Top Option Selected, can be either weapon or gear.
+                // Weapons is in the top option
+                if (!(d.lastDialogResultInfo.option1WeaponToPlayer === WEAPON.NONE && d.lastDialogResultInfo.option1WeaponToLeave === WEAPON.NONE)) {
                     d.weapon = d.lastDialogResultInfo.option1WeaponToPlayer;
                     this.#chests[d.lastDialogResultInfo.chestNumber! - 1].contents.weapon = d.lastDialogResultInfo.option1WeaponToLeave;
                 }
-                // Gear
-                if(d.lastDialogResultInfo.option1GearToPlayer === GEAR.NONE && d.lastDialogResultInfo.option1GearToLeave === GEAR.NONE){
-                    // Do nothing.
-                }
-                else {
+                // Gear is in the top option
+                if (!(d.lastDialogResultInfo.option1GearToPlayer === GEAR.NONE && d.lastDialogResultInfo.option1GearToLeave === GEAR.NONE)) {
                     d.gear = d.lastDialogResultInfo.option1GearToPlayer;
                     this.#chests[d.lastDialogResultInfo.chestNumber! - 1].contents.gear = d.lastDialogResultInfo.option1GearToLeave;
                 }
-                DataManager.instance.data = d;
             }
             if (d.lastDialogOptionSelected === 1) {
-                // Option 2 selected 
-                if(d.lastDialogResultInfo.option2GearToPlayer === GEAR.NONE && d.lastDialogResultInfo.option2GearToLeave === GEAR.NONE){
-                    // Do nothing.
-                }
-                else {
+                // Option 2 selected kan only be gear
+                if (!(d.lastDialogResultInfo.option2GearToPlayer === GEAR.NONE && d.lastDialogResultInfo.option2GearToLeave === GEAR.NONE)) {
                     d.gear = d.lastDialogResultInfo.option2GearToPlayer;
                     this.#chests[d.lastDialogResultInfo.chestNumber! - 1].contents.gear = d.lastDialogResultInfo.option2GearToLeave;
                 }
-                DataManager.instance.data = d;
             }
         }
-        //this.scene.resume();
+        DataManager.instance.data = d;
     }
 
     #handleOpenChest(chest: ChestJJK): void {
-       
+
         const chestInfo = writeChestDialogInfo(chest);
         DataManager.instance.data = {
             ...DataManager.instance.data,

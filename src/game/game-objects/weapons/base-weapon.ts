@@ -1,3 +1,4 @@
+import { DataManager } from '../../common/data-manager';
 import { Direction } from '../../common/types';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
 
@@ -22,6 +23,7 @@ export abstract class BaseWeapon implements Weapon {
   protected _sprite: Phaser.GameObjects.Sprite;
   protected _attackAnimationConfig: WeaponAttackAnimationConfig;
   protected _baseDamage: number;
+  protected _isPlayerWeapon?: boolean;
   protected _sex?: string;
   protected _gear?: string;
   protected _weapon?: string;
@@ -31,6 +33,7 @@ export abstract class BaseWeapon implements Weapon {
     weaponComponent: WeaponComponent,
     animationConfig: WeaponAttackAnimationConfig,
     baseDamage: number,
+    isPlayerWeapon?: boolean,
     sex?: string,
     gear?: string,
     weapon?: string,
@@ -40,6 +43,7 @@ export abstract class BaseWeapon implements Weapon {
     this._attackAnimationConfig = animationConfig;
     this._baseDamage = baseDamage;
     this._attacking = false;
+    this._isPlayerWeapon = isPlayerWeapon;
     this._sex = sex;
     this._gear = gear;
     this._weapon = weapon;
@@ -55,7 +59,7 @@ export abstract class BaseWeapon implements Weapon {
 
   protected attack(direction: Direction): void {
     let attackAnimationKey = this._attackAnimationConfig[direction];
-    if(this._sex !== undefined && this._gear !== undefined && this._weapon !== undefined) {
+    if(this._isPlayerWeapon) {
       attackAnimationKey = this.getAttackAnimationKeyJJK(direction);
     }
     this._attacking = true;
@@ -90,7 +94,8 @@ export abstract class BaseWeapon implements Weapon {
   }
 
   private getAttackAnimationKeyJJK(direction: Direction): string  {
-    const animP = `${this._sex}-${this._gear}-${this._weapon}-`;
+    const d = DataManager.instance.data;
+    const animP = `${d.sex}-${d.gear}-${d.weapon}-`;
     switch (direction) {
       case 'DOWN': return animP + 'thrust-down';
       case 'UP': return animP + 'thrust-up';
