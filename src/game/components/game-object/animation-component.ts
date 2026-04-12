@@ -10,12 +10,15 @@ export class AnimationComponent extends BaseGameObjectComponent {
   declare protected gameObject2: Phaser.GameObjects.Sprite;
 
   #config: AnimationConfig;
-  #isPlayer: boolean = false;
+  #isPlayer: boolean;
 
-  constructor(gameObject2: GameObject2, config: AnimationConfig, isPlayer?: boolean) {
+  constructor(gameObject2: GameObject2, config: AnimationConfig, isPlayerJJK?: boolean) {
     super(gameObject2);
     this.#config = config;
-    this.#isPlayer = isPlayer === true;
+    this.#isPlayer = false;
+    if (isPlayerJJK) {
+      this.#isPlayer = true;
+    }
   }
 
   private getAnimationKeyJJK(characterAnimationKey: CharacterAnimation): string | undefined {
@@ -59,8 +62,7 @@ export class AnimationComponent extends BaseGameObjectComponent {
     }
 
     let key = this.#config[characterAnimationKey].key;
-    const d = DataManager.instance.data;
-    if (d.sex !== undefined && d.gear !== undefined && d.weapon !== undefined) {
+    if (this.#isPlayer) {
       key = this.getAnimationKeyJJK(characterAnimationKey) ?? key;
     }
 

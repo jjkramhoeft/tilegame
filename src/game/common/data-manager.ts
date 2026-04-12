@@ -1,4 +1,4 @@
-import { DialogResultInfo } from '../scenes/ui-scene';
+import { ChestDialogInfo } from '../scenes/ui-scene';
 import { PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
@@ -15,7 +15,7 @@ export type PlayerData = {
   gear: string;
   weapon: string;
   lastDialogOptionSelected: number;
-  lastDialogResultInfo?: DialogResultInfo;
+  lastDialogResultInfo?: ChestDialogInfo;
   languageIsDanish: boolean;
 };
 
@@ -28,7 +28,7 @@ export class DataManager {
     this.#data = {
       currentHealth: PLAYER_START_MAX_HEALTH,
       maxHealth: PLAYER_START_MAX_HEALTH,
-      sex: 'MALE',
+      sex: 'male',
       gear: '',
       weapon: '',
       lastDialogOptionSelected: 0,

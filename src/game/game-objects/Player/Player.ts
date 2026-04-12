@@ -30,9 +30,6 @@ export type PlayerConfig = {
   controls: InputComponent;
   maxLife: number;
   currentLife: number;
-  sex: string;
-  gear: string;
-  weapon: string;
 }
 
 export class Player extends CharacterGameObject {
@@ -107,10 +104,6 @@ export class Player extends CharacterGameObject {
       invulnerableAfterHitAnimationDuration: PLAYER_INVULNERABLE_AFTER_HIT_DURATION,
       maxLife: config.maxLife,
       currentLife: config.currentLife,
-      
-      sex: config.sex,
-      gear: config.gear,
-      weapon: config.weapon,
     });
 
     // add state machine
@@ -140,10 +133,7 @@ export class Player extends CharacterGameObject {
         LEFT: PLAYER_ANIMATION_KEYS.ATTACK_LEFT,
         RIGHT: PLAYER_ANIMATION_KEYS.ATTACK_RIGHT,
       },
-      100,
-      config.sex,
-      config.gear,
-      config.weapon
+      100
     );
 
     // enable auto update functionality

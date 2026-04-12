@@ -12,7 +12,7 @@ import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { GameObject2 } from '../common/types';
 import { DataManager } from '../common/data-manager';
 import { PLAYER_SPEED } from '../common/config';
-import { DialogResultInfo } from './ui-scene';
+import { ChestDialogInfo, writeChestDialogInfo } from './ui-scene';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
@@ -107,13 +107,14 @@ export class GameScene extends Phaser.Scene {
         this.#chestJJKGroup.add(this.#chests[1]);
 
         // Temp enemies for testing ------------------------------------------------
+       
         this.#spider = new Spider({
             scene: this,
-            position: { x: 32000 + 350, y: 32000 + 200 },
+            position: { x: 32000 + 350, y: 32000 + 200 },            
         });
-        //this.#spider.enableObject();
+        this.#spider.enableObject();
         this.#enemyGroup.add(this.#spider);
-
+ /*
         this.#wisp = new Wisp({
             scene: this,
             position: { x: 32000 + 200, y: 32000 + 250 },
@@ -127,7 +128,7 @@ export class GameScene extends Phaser.Scene {
         });
         //this.#drow.enableObject();
         this.#enemyGroup.add(this.#drow);
-
+        */
 
         this.#registerColliders();
         this.#registerCustomEvents();
@@ -254,10 +255,7 @@ export class GameScene extends Phaser.Scene {
             position: this.#playerStartPosition,
             controls: this.#controls,
             maxLife: 3,
-            currentLife: 3,
-            sex: currentData.sex ?? SEX.MALE,
-            gear: GEAR.NONE,
-            weapon: WEAPON.NONE,
+            currentLife: 3
         });
 
     }
@@ -339,106 +337,13 @@ export class GameScene extends Phaser.Scene {
     }
 
     #handleOpenChest(chest: ChestJJK): void {
-
-        let heading = 'You opened an empty chest.';
-        if (chest.contents.weapon !== WEAPON.NONE || chest.contents.gear !== GEAR.NONE) {
-            heading = `You opened a chest and found `;
-            switch (chest.contents.gear) {
-                case GEAR.BARE: heading += 'a piece of cloth'; break;
-                case GEAR.BASIC: heading += 'some simple clothing'; break;
-                case GEAR.ARMOR: heading += 'a shining armor'; break;
-            }
-            if (chest.contents.weapon !== WEAPON.NONE && chest.contents.gear !== GEAR.NONE) {
-                heading += ' and ';
-            }
-            switch (chest.contents.weapon) {
-                case WEAPON.DAGGER: heading += 'a dagger'; break;
-                case WEAPON.STAFF: heading += 'a staff'; break;
-                case WEAPON.SWORD: heading += 'a sword'; break;
-            }
-        }
-        let weaponHasOption = false;
-        let optionWeapon = '';
-        let leaveWeapon = 'leave your current ';
-        switch (DataManager.instance.data.weapon) {
-            case WEAPON.DAGGER: leaveWeapon += 'dagger'; break;
-            case WEAPON.STAFF: leaveWeapon += 'staff'; break;
-            case WEAPON.SWORD: leaveWeapon += 'sword'; break;
-        }
-        if (chest.contents.weapon !== WEAPON.NONE) {
-            weaponHasOption = true;
-            optionWeapon = 'Take ';
-            switch (chest.contents.weapon) {
-                case WEAPON.DAGGER: optionWeapon += 'the dagger'; break;
-                case WEAPON.STAFF: optionWeapon += 'the staff'; break;
-                case WEAPON.SWORD: optionWeapon += 'the sword'; break;
-            }
-            if (DataManager.instance.data.weapon !== WEAPON.NONE) {
-                optionWeapon += ' and ';
-            }
-        }
-        if (DataManager.instance.data.weapon !== WEAPON.NONE) {
-            optionWeapon += leaveWeapon;
-            weaponHasOption = true;
-        }
-        let gearHasOption = false;
-        let optionGear = '';
-        let leaveGear = 'leave your current ';
-        switch (DataManager.instance.data.gear) {
-            case GEAR.BARE: leaveGear += 'piece of cloth'; break;
-            case GEAR.BASIC: leaveGear += 'simple clothing'; break;
-            case GEAR.ARMOR: leaveGear += 'shining armor'; break;
-        }
-        if (chest.contents.gear !== GEAR.NONE) {
-            gearHasOption = true;
-            optionGear = 'Take';
-            switch (chest.contents.gear) {
-                case GEAR.BARE: optionGear += ' the piece of cloth'; break;
-                case GEAR.BASIC: optionGear += ' the simple clothing'; break;
-                case GEAR.ARMOR: optionGear += ' the shining armor'; break;
-            }
-            if (DataManager.instance.data.gear !== GEAR.NONE) {
-                optionGear += ' and ';
-            }
-        }
-        if (DataManager.instance.data.gear !== GEAR.NONE) {
-            optionGear += leaveGear;
-            gearHasOption = true;
-        }
-
-        let dri: DialogResultInfo = {
-            option1GearToPlayer: GEAR.NONE,
-            option1WeaponToPlayer: WEAPON.NONE,
-            option1GearToLeave: GEAR.NONE,
-            option1WeaponToLeave: WEAPON.NONE,
-            option2GearToPlayer: GEAR.NONE,
-            option2GearToLeave: GEAR.NONE,
-            chestNumber: chest.id,
+       
+        const chestInfo = writeChestDialogInfo(chest);
+        DataManager.instance.data = {
+            ...DataManager.instance.data,
+            lastDialogResultInfo: chestInfo,
         };
-        let message = `${heading}|Leave`;
-        if (gearHasOption && weaponHasOption) {
-            message = `${heading}|${optionWeapon}|${optionGear}|Leave`;
-            dri.option1WeaponToPlayer = chest.contents.weapon;
-            dri.option1WeaponToLeave = DataManager.instance.data.weapon;
-            dri.option2GearToPlayer = chest.contents.gear;
-            dri.option2GearToLeave = DataManager.instance.data.gear;
-        } else if (gearHasOption || weaponHasOption) {
-            if (gearHasOption) {
-                message = `${heading}|${optionGear}|Leave`;
-                dri.option1GearToPlayer = chest.contents.gear;
-                dri.option1GearToLeave = DataManager.instance.data.gear;
-            } else {
-                message = `${heading}|${optionWeapon}|Leave`;
-                dri.option1WeaponToPlayer = chest.contents.weapon;
-                dri.option1WeaponToLeave = DataManager.instance.data.weapon;
-            }
-        }
-        DataManager.instance.data.lastDialogResultInfo = dri;
-        let d = DataManager.instance.data;
-        d.lastDialogResultInfo = dri;
-        DataManager.instance.data =d;
-        EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_DIALOG, message);
-
+        EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_DIALOG, chestInfo.message);
     }
 
 }
