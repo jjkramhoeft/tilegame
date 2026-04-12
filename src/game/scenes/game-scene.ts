@@ -12,6 +12,7 @@ import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { GameObject2 } from '../common/types';
 import { DataManager } from '../common/data-manager';
 import { PLAYER_SPEED } from '../common/config';
+import { DialogResultInfo } from './ui-scene';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
@@ -72,7 +73,7 @@ export class GameScene extends Phaser.Scene {
 
         // Temp chests for testing ------------------------------------------------
         const chest1Tile = new Tile({
-            tilenumber: { x: firstTilePosition.x + 6, y: firstTilePosition.y },
+            tilenumber: { x: firstTilePosition.x + 2, y: firstTilePosition.y },
             biome: 1,
             chest: 1,
         });
@@ -89,7 +90,7 @@ export class GameScene extends Phaser.Scene {
         this.#chestJJKGroup.add(this.#chests[0]);
 
         const chest2Tile = new Tile({
-            tilenumber: { x: firstTilePosition.x + 7, y: firstTilePosition.y + 3 },
+            tilenumber: { x: firstTilePosition.x + 3, y: firstTilePosition.y + 3 },
             biome: 1,
             chest: 2,
         });
@@ -110,7 +111,7 @@ export class GameScene extends Phaser.Scene {
             scene: this,
             position: { x: 32000 + 350, y: 32000 + 200 },
         });
-        this.#spider.enableObject();
+        //this.#spider.enableObject();
         this.#enemyGroup.add(this.#spider);
 
         this.#wisp = new Wisp({
@@ -159,6 +160,7 @@ export class GameScene extends Phaser.Scene {
                 }
             }
         }
+
 
         // Spell casting and Creating new tiles logic. (Temporary, placed here - while developing.)
         if (this.#player.stateMachine.currentStateName === 'ATTACK_STATE' &&
@@ -241,8 +243,8 @@ export class GameScene extends Phaser.Scene {
             currentHealth: 6,
             maxHealth: 6,
             sex: SEX.MALE,
-            gear: GEAR.BARE,
-            weapon: WEAPON.DAGGER,
+            gear: GEAR.NONE,
+            weapon: WEAPON.NONE,
             lastDialogOptionSelected: 0,
         };
         this.#player = new Player({
@@ -252,8 +254,8 @@ export class GameScene extends Phaser.Scene {
             maxLife: 3,
             currentLife: 3,
             sex: SEX.MALE,
-            gear: GEAR.BARE,
-            weapon: WEAPON.DAGGER,
+            gear: GEAR.NONE,
+            weapon: WEAPON.NONE,
         });
 
     }
@@ -277,8 +279,8 @@ export class GameScene extends Phaser.Scene {
             this.#player.collidedWithGameObject(gameObject as GameObject2);
         });
 
-         this.physics.add.overlap(this.#player, this.#enemyGroup!, () => {
-          this.#player.hit(DIRECTION.DOWN, 1);
+        this.physics.add.overlap(this.#player, this.#enemyGroup!, () => {
+            this.#player.hit(DIRECTION.DOWN, 1);
         });
     }
 
@@ -297,11 +299,45 @@ export class GameScene extends Phaser.Scene {
     }
 
     #handleDialogClosed(): void {
-        let o = DataManager.instance.data.lastDialogOptionSelected;
+        let d = DataManager.instance.data;
+        if (d.lastDialogResultInfo) {
+            if (d.lastDialogOptionSelected === 0) {
+                // Option 1 selected
+                // Weapons
+                if(d.lastDialogResultInfo.option1WeaponToPlayer === WEAPON.NONE && d.lastDialogResultInfo.option1WeaponToLeave === GEAR.NONE){ 
+                    // Do nothing.
+                }
+                else {
+                    d.weapon = d.lastDialogResultInfo.option1WeaponToPlayer;
+                    this.#chests[d.lastDialogResultInfo.chestNumber! - 1].contents.weapon = d.lastDialogResultInfo.option1WeaponToLeave;
+                }
+                // Gear
+                if(d.lastDialogResultInfo.option1GearToPlayer === GEAR.NONE && d.lastDialogResultInfo.option1GearToLeave === GEAR.NONE){
+                    // Do nothing.
+                }
+                else {
+                    d.gear = d.lastDialogResultInfo.option1GearToPlayer;
+                    this.#chests[d.lastDialogResultInfo.chestNumber! - 1].contents.gear = d.lastDialogResultInfo.option1GearToLeave;
+                }
+                DataManager.instance.data = d;
+            }
+            if (d.lastDialogOptionSelected === 1) {
+                // Option 2 selected 
+                if(d.lastDialogResultInfo.option2GearToPlayer === GEAR.NONE && d.lastDialogResultInfo.option2GearToLeave === GEAR.NONE){
+                    // Do nothing.
+                }
+                else {
+                    d.gear = d.lastDialogResultInfo.option2GearToPlayer;
+                    this.#chests[d.lastDialogResultInfo.chestNumber! - 1].contents.gear = d.lastDialogResultInfo.option2GearToLeave;
+                }
+                DataManager.instance.data = d;
+            }
+        }
         //this.scene.resume();
     }
 
     #handleOpenChest(chest: ChestJJK): void {
+
         let heading = 'You opened an empty chest.';
         if (chest.contents.weapon !== WEAPON.NONE || chest.contents.gear !== GEAR.NONE) {
             heading = `You opened a chest and found `;
@@ -368,16 +404,37 @@ export class GameScene extends Phaser.Scene {
             gearHasOption = true;
         }
 
+        let dri: DialogResultInfo = {
+            option1GearToPlayer: GEAR.NONE,
+            option1WeaponToPlayer: WEAPON.NONE,
+            option1GearToLeave: GEAR.NONE,
+            option1WeaponToLeave: WEAPON.NONE,
+            option2GearToPlayer: GEAR.NONE,
+            option2GearToLeave: GEAR.NONE,
+            chestNumber: chest.id,
+        };
         let message = `${heading}|Leave`;
         if (gearHasOption && weaponHasOption) {
             message = `${heading}|${optionWeapon}|${optionGear}|Leave`;
+            dri.option1WeaponToPlayer = chest.contents.weapon;
+            dri.option1WeaponToLeave = DataManager.instance.data.weapon;
+            dri.option2GearToPlayer = chest.contents.gear;
+            dri.option2GearToLeave = DataManager.instance.data.gear;
         } else if (gearHasOption || weaponHasOption) {
             if (gearHasOption) {
                 message = `${heading}|${optionGear}|Leave`;
+                dri.option1GearToPlayer = chest.contents.gear;
+                dri.option1GearToLeave = DataManager.instance.data.gear;
             } else {
                 message = `${heading}|${optionWeapon}|Leave`;
+                dri.option1WeaponToPlayer = chest.contents.weapon;
+                dri.option1WeaponToLeave = DataManager.instance.data.weapon;
             }
         }
+        DataManager.instance.data.lastDialogResultInfo = dri;
+        let d = DataManager.instance.data;
+        d.lastDialogResultInfo = dri;
+        DataManager.instance.data =d;
         EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_DIALOG, message);
 
     }

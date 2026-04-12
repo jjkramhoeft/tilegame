@@ -77,7 +77,7 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     this._controlsComponent = new ControlsComponent(this, inputComponent);
     this._speedComponent = new SpeedComponent(this, speed);
     this._directionComponent = new DirectionComponent(this);
-    this._animationComponent = new AnimationComponent(this, animationConfig, sex, gear, weapon);
+    this._animationComponent = new AnimationComponent(this, animationConfig, isPlayer);
     this._invulnerableComponent = new InvulnerableComponent(
       this,
       isInvulnerable || false,

@@ -107,6 +107,7 @@ export class Player extends CharacterGameObject {
       invulnerableAfterHitAnimationDuration: PLAYER_INVULNERABLE_AFTER_HIT_DURATION,
       maxLife: config.maxLife,
       currentLife: config.currentLife,
+      
       sex: config.sex,
       gear: config.gear,
       weapon: config.weapon,

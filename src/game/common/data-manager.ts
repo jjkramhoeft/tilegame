@@ -1,4 +1,4 @@
-import { LEVEL_NAME } from './common';
+import { DialogResultInfo } from '../scenes/ui-scene';
 import { PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
@@ -7,7 +7,6 @@ import {
   PlayerHealthUpdated,
   PlayerHealthUpdateType,
 } from './event-bus';
-import { LevelName } from './types';
 
 export type PlayerData = {
   currentHealth: number;
@@ -16,6 +15,7 @@ export type PlayerData = {
   gear: string;
   weapon: string;
   lastDialogOptionSelected: number;
+  lastDialogResultInfo?: DialogResultInfo;
 };
 
 export class DataManager {

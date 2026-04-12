@@ -1,5 +1,6 @@
 import { CharacterAnimation, GameObject2 } from '../../common/types';
 import { BaseGameObjectComponent } from './base-game-object-component';
+import { DataManager } from '../../common/data-manager';
 
 export type AnimationConfig = {
   [key in CharacterAnimation]?: { key: string; repeat: number; ignoreIfPlaying: boolean };
@@ -9,23 +10,20 @@ export class AnimationComponent extends BaseGameObjectComponent {
   declare protected gameObject2: Phaser.GameObjects.Sprite;
 
   #config: AnimationConfig;
-  #sex?: string;
-  #gear?: string;
-  #weapon?: string;
+  #isPlayer: boolean = false;
 
-  constructor(gameObject2: GameObject2, config: AnimationConfig, sex?: string, gear?: string, weapon?: string) {
+  constructor(gameObject2: GameObject2, config: AnimationConfig, isPlayer?: boolean) {
     super(gameObject2);
     this.#config = config;
-    this.#sex = sex;
-    this.#gear = gear;
-    this.#weapon = weapon;
+    this.#isPlayer = isPlayer === true;
   }
 
   private getAnimationKeyJJK(characterAnimationKey: CharacterAnimation): string | undefined {
     if (characterAnimationKey === undefined) {
       return undefined;
     }
-    const animP = `${this.#sex}-${this.#gear}-${this.#weapon}-`;
+    const d = DataManager.instance.data;
+    const animP = `${d.sex}-${d.gear}-${d.weapon}-`;
     switch (characterAnimationKey) {
       case 'IDLE_DOWN': return animP + 'idle-down';
       case 'IDLE_UP': return animP + 'idle-up';
@@ -43,7 +41,7 @@ export class AnimationComponent extends BaseGameObjectComponent {
   }
 
   public getAnimationKey(characterAnimationKey: CharacterAnimation): string | undefined {
-    if (this.#sex !== undefined && this.#gear !== undefined && this.#weapon !== undefined) {
+    if (this.#isPlayer) {
       return this.getAnimationKeyJJK(characterAnimationKey);
     }
     if (this.#config[characterAnimationKey] === undefined) {
@@ -61,7 +59,8 @@ export class AnimationComponent extends BaseGameObjectComponent {
     }
 
     let key = this.#config[characterAnimationKey].key;
-    if (this.#sex !== undefined && this.#gear !== undefined && this.#weapon !== undefined) {
+    const d = DataManager.instance.data;
+    if (d.sex !== undefined && d.gear !== undefined && d.weapon !== undefined) {
       key = this.getAnimationKeyJJK(characterAnimationKey) ?? key;
     }
 

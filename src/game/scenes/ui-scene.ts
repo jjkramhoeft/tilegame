@@ -6,6 +6,16 @@ import { CUSTOM_EVENTS, EVENT_BUS, PLAYER_HEALTH_UPDATE_TYPE, PlayerHealthUpdate
 import { DEFAULT_UI_HEADING_STYLE, DEFAULT_UI_OPTION_STYLE } from '../common/common';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 
+export interface DialogResultInfo {
+  option1GearToPlayer: string,
+  option1WeaponToPlayer: string,
+  option1GearToLeave: string,
+  option1WeaponToLeave: string,
+  option2GearToPlayer: string,
+  option2GearToLeave: string,
+  chestNumber?: number;
+}
+
 export class UiScene extends Phaser.Scene {
   #hudContainer!: Phaser.GameObjects.Container;
   #hearts!: Phaser.GameObjects.Sprite[];
@@ -124,7 +134,7 @@ export class UiScene extends Phaser.Scene {
   }
 
   public showDialog(message: string): void {
-    this.#selectedMenuOptionIndex = 0;  
+    this.#selectedMenuOptionIndex = 0;
     this.#dialogContainer.visible = true;
     let messageParts = message.split('|');
     this.#dialogOptionCount = messageParts.length - 2;
@@ -162,6 +172,6 @@ export class UiScene extends Phaser.Scene {
   }
 
   public getSelectedDialogOption(): number {
-    return this.#selectedMenuOptionIndex; 
+    return this.#selectedMenuOptionIndex;
   }
 }
