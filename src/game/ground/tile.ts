@@ -1,4 +1,3 @@
-import * as Phaser from 'phaser';
 import { Position } from '../common/types';
 
 export type TileConfig = {

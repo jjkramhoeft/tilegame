@@ -1,4 +1,3 @@
-import * as Phaser from 'phaser';
 import { DIRECTION } from '../../common/common';
 import { Direction, GameObject2 } from '../../common/types';
 import { BaseGameObjectComponent } from './base-game-object-component';

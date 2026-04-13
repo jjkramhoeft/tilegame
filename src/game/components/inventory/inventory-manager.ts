@@ -1,4 +1,3 @@
-import * as Phaser from 'phaser';
 import { DUNGEON_ITEM } from '../../common/common';
 import { DungeonItem, LevelName } from '../../common/types';
 import { exhaustiveGuard } from '../../common/utils';

@@ -1,4 +1,3 @@
-import * as Phaser from 'phaser';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
 import { HeldGameObjectComponent } from '../../../game-object/held-game-object-component';
 import { ThrowableObjectComponent } from '../../../game-object/throwable-object-component';

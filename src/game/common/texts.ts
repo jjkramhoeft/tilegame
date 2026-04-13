@@ -1,4 +1,3 @@
-import * as Phaser from 'phaser';
 import { DataManager } from '../common/data-manager';
 
 export function getText(key: string): string {

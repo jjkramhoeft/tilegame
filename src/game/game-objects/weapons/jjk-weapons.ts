@@ -1,4 +1,3 @@
-import * as Phaser from 'phaser';
 import { BaseWeapon } from './base-weapon';
 import { DIRECTION } from '../../common/common';
 
