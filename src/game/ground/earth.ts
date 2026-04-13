@@ -1,7 +1,7 @@
+import * as Phaser from 'phaser';
 import { Tile } from './tile';
 import { Position, Direction } from '../common/types';
 import { BIOME } from '../common/common';
-import * as Phaser from 'phaser';
 import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles, DecideBiome, DicedeDecoration, DicedeBlockingAndFloating, DecideBorder } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';

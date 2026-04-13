@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { DIRECTION } from '../../../../common/common';
 import { exhaustiveGuard } from '../../../../common/utils';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';

@@ -1,3 +1,5 @@
+import * as Phaser from 'phaser';
+
 export const ASSET_PACK_KEYS = {
   MAIN: 'MAIN',
 } as const;

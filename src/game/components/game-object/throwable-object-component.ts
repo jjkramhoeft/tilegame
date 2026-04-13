@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { DIRECTION } from '../../common/common';
 import { THROW_ITEM_DELAY_BEFORE_CALLBACK, THROW_ITEM_SPEED } from '../../common/config';
 import { Direction, GameObject2 } from '../../common/types';

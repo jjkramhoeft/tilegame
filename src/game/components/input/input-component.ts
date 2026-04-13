@@ -1,3 +1,5 @@
+import * as Phaser from 'phaser';
+
 export class InputComponent {
   #up: boolean;
   #down: boolean;

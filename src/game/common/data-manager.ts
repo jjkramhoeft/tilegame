@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { ChestDialogInfo } from '../scenes/ui-scene';
 import { PLAYER_START_MAX_HEALTH } from './config';
 import {

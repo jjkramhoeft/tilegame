@@ -1,3 +1,5 @@
+import * as Phaser from 'phaser';
+
 export interface TileCollisionObject {
     x: number;
     y: number;

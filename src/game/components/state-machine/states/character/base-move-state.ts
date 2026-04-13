@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { DIRECTION } from '../../../../common/common';
 import { Direction } from '../../../../common/types';
 import { isArcadePhysicsBody } from '../../../../common/utils';

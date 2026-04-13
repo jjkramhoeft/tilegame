@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { GameObject2, InteractiveObjectType } from '../../common/types';
 import { BaseGameObjectComponent } from './base-game-object-component';
 

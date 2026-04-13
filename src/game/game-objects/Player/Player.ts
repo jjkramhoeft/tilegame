@@ -1,4 +1,3 @@
-
 import * as Phaser from 'phaser';
 import { GameObject2, Position } from '../../common/types';
 import { InputComponent } from '../../components/input/input-component';

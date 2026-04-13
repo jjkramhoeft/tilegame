@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { isArcadePhysicsBody } from '../../../../common/utils';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
 import { State, StateMachine } from '../../state-machine';

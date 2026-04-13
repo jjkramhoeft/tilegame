@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { BaseWeapon, WeaponAttackAnimationConfig } from './base-weapon';
 import { DIRECTION } from '../../common/common';
 import { WeaponComponent } from '../../components/game-object/weapon-component';

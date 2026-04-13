@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { ENABLE_LOGGING } from '../../common/config';
 
 export interface State {

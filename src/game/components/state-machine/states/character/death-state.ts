@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
 import { CHARACTER_ANIMATIONS } from '../../../../common/assets';
 import { BaseCharacterState } from './base-character-state';

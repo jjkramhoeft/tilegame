@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { DataManager } from '../../common/data-manager';
 import { Direction } from '../../common/types';
 import { WeaponComponent } from '../../components/game-object/weapon-component';

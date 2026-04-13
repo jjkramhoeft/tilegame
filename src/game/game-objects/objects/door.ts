@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { ASSET_KEYS, DOOR_FRAME_KEYS } from '../../common/assets';
 import { DIRECTION } from '../../common/common';
 import { ENABLE_DEBUG_ZONE_AREA } from '../../common/config';

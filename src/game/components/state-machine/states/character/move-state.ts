@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { INTERACTIVE_OBJECT_TYPE } from '../../../../common/common';
 import { CHARACTER_STATES } from './character-states';
 import { exhaustiveGuard } from '../../../../common/utils';

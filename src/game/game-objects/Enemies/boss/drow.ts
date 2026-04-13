@@ -99,9 +99,9 @@ export class Drow extends CharacterGameObject {
       new DeathState(this, () => {
         this.visible = true;
         flash(this, () => {
-          const fx = this.postFX.addWipe(0.1, 0, 1);
+          const wipe = this.filters!.internal.addWipe(0.1, 0, 1);
           this.scene.add.tween({
-            targets: fx,
+            targets: wipe,
             progress: 1,
             duration: ENEMY_BOSS_DROW_DEATH_ANIMATION_DURATION,
             onComplete: () => {

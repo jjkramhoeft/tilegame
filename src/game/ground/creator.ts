@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { Position, Direction } from '../common/types';
 import { EarthCastingConfig } from './earth';
 import { Tile } from './tile';

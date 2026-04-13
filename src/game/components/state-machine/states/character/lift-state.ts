@@ -4,7 +4,7 @@ import { CHARACTER_STATES } from './character-states';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
 import { isArcadePhysicsBody } from '../../../../common/utils';
 import { HeldGameObjectComponent } from '../../../game-object/held-game-object-component';
-import { GameObject } from '../../../../common/types';
+import { GameObject2 } from '../../../../common/types';
 import {
   LIFT_ITEM_ANIMATION_DELAY,
   LIFT_ITEM_ANIMATION_DURATION,
@@ -17,7 +17,7 @@ export class LiftState extends BaseCharacterState {
   }
 
   public onEnter(args: unknown[]): void {
-    const gameObjectBeingPickedUp = args[0] as GameObject;
+    const gameObjectBeingPickedUp = args[0] as GameObject2;
 
     // reset game object velocity
     this._resetObjectVelocity();
