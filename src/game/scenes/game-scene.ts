@@ -73,6 +73,7 @@ export class GameScene extends Phaser.Scene {
         });
 
         updateFallingLogic(this.#player, this.#earth);
+        
         this.#debugSpellcasting.update(this, this.#player, this.#earth);
     }
 

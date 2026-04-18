@@ -12,39 +12,52 @@ export function setupDebugChests(
 ): ChestJJK[] {
     const chests: ChestJJK[] = [];
 
-    const chest1Tile = new Tile({
-        tilenumber: { x: firstTilePosition.x + 2, y: firstTilePosition.y },
-        biome: 1,
-        chest: 1,
-    });
-    earth.AddTile(chest1Tile);
-    chests.push(new ChestJJK(scene, {
-        id: 1,
-        tilePosition: { x: chest1Tile.tileX, y: chest1Tile.tileY },
-        worldPosition: { x: chest1Tile.tileX * 64, y: chest1Tile.tileY * 64 + 64 },
-        contents: {
-            gear: GEAR.BASIC,
-            weapon: WEAPON.DAGGER,
-        }
-    }, CHEST_STATE.REVEALED));
-    chestGroup.add(chests[0]);
+    const debugTileOffsets: Position[] = [
+        { x: 0, y: -1 },
+        { x: -1, y: -2 }, { x: 0, y: -2 }, { x: 1, y: -2 },
+        { x: -2, y: -3 }, { x: -1, y: -3 }, { x: 0, y: -3 }, { x: 1, y: -3 }, { x: 2, y: -3 },
+        { x: 0, y: 1 },
+        { x: -1, y: 2 }, { x: 0, y: 2 }, { x: 1, y: 2 },
+        { x: -2, y: 3 }, { x: -1, y: 3 }, { x: 0, y: 3 }, { x: 1, y: 3 }, { x: 2, y: 3 },
+    ];
+    let chestGear: string = GEAR.NONE;
+    let chestWeapon: string = WEAPON.NONE;
 
-    const chest2Tile = new Tile({
-        tilenumber: { x: firstTilePosition.x + 3, y: firstTilePosition.y + 3 },
-        biome: 1,
-        chest: 2,
-    });
-    earth.AddTile(chest2Tile);
-    chests.push(new ChestJJK(scene, {
-        id: 2,
-        tilePosition: { x: chest2Tile.tileX, y: chest2Tile.tileY },
-        worldPosition: { x: chest2Tile.tileX * 64, y: chest2Tile.tileY * 64 + 64 },
-        contents: {
-            gear: GEAR.NONE,
-            weapon: WEAPON.STAFF,
+    debugTileOffsets.forEach((offset) => {
+        let debugChestNumber = undefined;
+        if (offset.y === -3) {
+            if (offset.x === -2) { debugChestNumber = 1; chestGear = GEAR.BARE }
+            if (offset.x === 0) { debugChestNumber = 2;  chestGear = GEAR.BASIC }
+            if (offset.x === 2) { debugChestNumber = 3;  chestGear = GEAR.ARMOR }
+        } else if (offset.y === 3) {
+            if (offset.x === -2) { debugChestNumber = 4;chestWeapon = WEAPON.DAGGER }
+            if (offset.x === 0) { debugChestNumber = 5; chestWeapon = WEAPON.STAFF}
+            if (offset.x === 2) { debugChestNumber = 6; chestWeapon = WEAPON.SWORD}
         }
-    }, CHEST_STATE.REVEALED));
-    chestGroup.add(chests[1]);
+
+
+        const tile = new Tile({
+            tilenumber: { x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y },
+            biome: 1,
+            chest: debugChestNumber,
+        });
+        earth.AddTile(tile);
+
+        if (debugChestNumber !== undefined) {
+            console.log(`Added chest ${debugChestNumber} at tile (${tile.tileX}, ${tile.tileY})`);
+
+            chests.push( new ChestJJK(scene, {
+                id: debugChestNumber,
+                tilePosition: { x: tile.tileX, y: tile.tileY },
+                worldPosition: { x: tile.tileX * 64, y: tile.tileY * 64 + 64 },
+                contents: {
+                    gear: chestGear,
+                    weapon: chestWeapon,
+                }
+            }, CHEST_STATE.REVEALED));
+            chestGroup.add(chests[debugChestNumber - 1]);
+        }
+    });
 
     return chests;
 }
