@@ -111,7 +111,7 @@ export class GameScene extends Phaser.Scene {
         );
 
         // register collisions between player and blocking game objects (doors, pots, chests, etc.)
-        this.physics.add.collider(this.#player, this.#chestJJKGroup, (player, gameObject) => {
+        this.physics.add.collider(this.#player, this.#chestJJKGroup, (/*player,*/ gameObject) => {
             // add game object to players collision list
             this.#player.collidedWithGameObject(gameObject as GameObject2);
         });
