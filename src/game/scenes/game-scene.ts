@@ -138,6 +138,7 @@ export class GameScene extends Phaser.Scene {
 
     #handleDialogClosed(): void {
         let d = DataManager.instance.data;
+        console.debug(`Dialog closed, Player: ${d.sex} ${d.gear} ${d.weapon}, last option selected: ${d.lastDialogOptionSelected}, dialog result info: ${JSON.stringify(d.lastDialogResultInfo)}`);
         if (d.lastDialogResultInfo) {
             if (d.lastDialogOptionSelected === 0) {// Top Option Selected, can be either weapon or gear.
                 // Weapons is in the top option

@@ -1,4 +1,4 @@
-export const ENABLE_LOGGING = true;
+export const ENABLE_LOGGING = false;
 export const ENABLE_DEBUG_ZONE_AREA = false;
 export const DEBUG_COLLISION_ALPHA = 0.1;
 
