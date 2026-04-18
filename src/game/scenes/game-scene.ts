@@ -37,6 +37,7 @@ export class GameScene extends Phaser.Scene {
         powerLevel: 1,
     };
     #spellSound: Phaser.Sound.BaseSound;
+    #stepSound: Phaser.Sound.BaseSound;
     #previousStateName: string | undefined;
 
     constructor() {
@@ -88,7 +89,6 @@ export class GameScene extends Phaser.Scene {
             }
         }, CHEST_STATE.REVEALED));
         this.#chestJJKGroup.add(this.#chests[0]);
-
         const chest2Tile = new Tile({
             tilenumber: { x: firstTilePosition.x + 3, y: firstTilePosition.y + 3 },
             biome: 1,
@@ -113,21 +113,12 @@ export class GameScene extends Phaser.Scene {
         });
         this.#spider.enableObject();
         this.#enemyGroup.add(this.#spider);
-
         this.#wisp = new Wisp({
             scene: this,
             position: { x: 32000 + 200, y: 32000 + 250 },
         });
         this.#wisp.enableObject();
         this.#enemyGroup.add(this.#wisp);
-        /*
-               this.#drow = new Drow({
-                   scene: this,
-                   position: { x: 32000 + 250, y: 32000 + 300 },
-               });
-               //this.#drow.enableObject();
-               this.#enemyGroup.add(this.#drow);
-               */
 
         this.#registerColliders();
         this.#registerCustomEvents();
@@ -135,7 +126,7 @@ export class GameScene extends Phaser.Scene {
         this.scene.launch('UiScene');
 
         this.#spellSound = this.sound.add('spellnotes1', { volume: 0.9 });
-        //this.#stepSound = this.sound.add('steps', { volume: 1.0 });
+        this.#stepSound = this.sound.add('steps', { volume: 1.0 });
     }
 
     update() {

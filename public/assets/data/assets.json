@@ -72,17 +72,6 @@
         "key": "DUNGEON_OBJECTS",
         "textureURL": "dungeon_objects.png",
         "atlasURL": "dungeon_objects.json"
-      },
-      {
-        "type": "image",
-        "key": "POT",
-        "url": "pot.png"
-      },
-      {
-        "type": "spritesheet",
-        "key": "POT_BREAK",
-        "url": "pot_break.png",
-        "frameConfig": { "frameWidth": 32, "frameHeight": 32 }
       }
     ]
   },

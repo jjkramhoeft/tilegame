@@ -10,7 +10,6 @@ import {
   TiledEnemyObject,
   TiledObjectProperty,
   TiledObjectWithProperties,
-  TiledPotObject,
   TiledRoomObject,
   TiledSwitchObject,
   TrapType,
@@ -222,26 +221,6 @@ export function isDoorType(doorType: string): doorType is DoorType {
 
 export function isTrapType(trapType: string): trapType is TrapType {
   return TRAP_TYPE[trapType] !== undefined;
-}
-
-/**
- * Finds all of the valid 'Pot' Tiled Objects on a given layer of a Tilemap.
- */
-export function getTiledPotObjectsFromMap(map: Phaser.Tilemaps.Tilemap, layerName: string): TiledPotObject[] {
-  const potObjects: TiledPotObject[] = [];
-
-  // loop through each object and validate object has properties for the object we are planning to build
-  const tiledObjects = getTiledObjectsFromLayer(map, layerName);
-  tiledObjects.forEach((tiledObject) => {
-    potObjects.push({
-      x: tiledObject.x,
-      y: tiledObject.y,
-      width: tiledObject.width,
-      height: tiledObject.height,
-    });
-  });
-
-  return potObjects;
 }
 
 /**

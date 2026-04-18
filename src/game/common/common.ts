@@ -16,7 +16,6 @@ export const CHEST_STATE = {
 
 export const INTERACTIVE_OBJECT_TYPE = {
   AUTO: 'AUTO',
-  PICKUP: 'PICKUP',
   OPEN: 'OPEN',
 } as const;
 

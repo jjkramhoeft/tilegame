@@ -1,6 +1,5 @@
 import { INTERACTIVE_OBJECT_TYPE } from '../../../../common/common';
 import { CHARACTER_STATES } from './character-states';
-import { exhaustiveGuard } from '../../../../common/utils';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
 import { CollidingObjectsComponent } from '../../../game-object/colliding-objects-component';
 import { InteractiveObjectComponent } from '../../../game-object/interactive-object-component';
@@ -59,12 +58,6 @@ export class MoveState extends BaseMoveState {
     }
     interactiveObjectComponent.interact();
 
-    // we can carry this item
-    if (interactiveObjectComponent.objectType === INTERACTIVE_OBJECT_TYPE.PICKUP) {
-      this._stateMachine.setState(CHARACTER_STATES.LIFT_STATE, collisionObject);
-      return true;
-    }
-
     // we can open this item
     if (interactiveObjectComponent.objectType === INTERACTIVE_OBJECT_TYPE.OPEN) {
       this._stateMachine.setState(CHARACTER_STATES.OPEN_CHEST_STATE, collisionObject);
@@ -75,7 +68,6 @@ export class MoveState extends BaseMoveState {
       return false;
     }
 
-    // we should never hit this code block
-    exhaustiveGuard(interactiveObjectComponent.objectType);
+    return false;
   }
 }

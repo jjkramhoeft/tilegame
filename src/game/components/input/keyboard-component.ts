@@ -29,7 +29,7 @@ export class KeyboardComponent extends InputComponent {
     this.#enterKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     // wasd as alternative to arrow keys for movement, R for cast spell/ability as alternative attack key
     // z = B, Attack
-    // x = A, Talk, Run, Lift/Throw, Push/Pull
+    // x = A, Talk, Run, Push/Pull
     // shift = Select, Open Save Menu
     // return/enter = Start, Open Inventory
   }

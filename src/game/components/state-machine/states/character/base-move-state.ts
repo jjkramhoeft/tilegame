@@ -6,9 +6,9 @@ import { InputComponent } from '../../../input/input-component';
 import { BaseCharacterState } from './base-character-state';
 
 export abstract class BaseMoveState extends BaseCharacterState {
-  protected _moveAnimationPrefix: 'WALK' | 'WALK_HOLD';
+  protected _moveAnimationPrefix: 'WALK';
 
-  constructor(stateName: string, gameObject: CharacterGameObject, moveAnimationPrefix: 'WALK' | 'WALK_HOLD') {
+  constructor(stateName: string, gameObject: CharacterGameObject, moveAnimationPrefix: 'WALK') {
     super(stateName, gameObject);
     this._moveAnimationPrefix = moveAnimationPrefix;
   }
