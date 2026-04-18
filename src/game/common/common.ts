@@ -84,7 +84,7 @@ export const  GEAR = {
   NONE :'nude',
   BARE :'bare',
   BASIC:'basic',
-  ARMOR :'armor '
+  ARMOR :'armor'
 }
 
 export const SEX = {

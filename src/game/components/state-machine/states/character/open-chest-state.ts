@@ -19,6 +19,9 @@ export class OpenChestState extends BaseCharacterState {
     // reset game object velocity
     this._resetObjectVelocity();
 
+    // open the chest visually
+    chest.open();
+
     // emit event data regarding chest
     EVENT_BUS.emit(CUSTOM_EVENTS.OPENED_CHEST, chest);
     // after showing message to player, transition to idle state

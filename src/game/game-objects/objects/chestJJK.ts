@@ -48,8 +48,10 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
       },
     );
 
-    // disable physics body and make game objects inactive/not visible
-    //this.disableObject();
+    // if chest is already revealed, enable it immediately
+    if (this.#state === CHEST_STATE.REVEALED) {
+      this.enableObject();
+    }
   }
 
   get id(): number {

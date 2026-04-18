@@ -20,14 +20,14 @@ export class MoveState extends BaseMoveState {
       return;
     }
 
-    // if no input is provided transition back to idle state
-    if (this.isNoInputMovement(controls)) {
-      this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
+    // if we interacted with an object and switched states, stop processing
+    if (this.#checkIfObjectWasInteractedWith(controls)) {
       return;
     }
 
-    // if we interacted with an object and switched states, stop processing
-    if (this.#checkIfObjectWasInteractedWith(controls)) {
+    // if no input is provided transition back to idle state
+    if (this.isNoInputMovement(controls)) {
+      this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
       return;
     }
 
@@ -56,13 +56,14 @@ export class MoveState extends BaseMoveState {
     if (!interactiveObjectComponent.canInteractWith()) {
       return false;
     }
-    interactiveObjectComponent.interact();
 
     // we can open this item
     if (interactiveObjectComponent.objectType === INTERACTIVE_OBJECT_TYPE.OPEN) {
       this._stateMachine.setState(CHARACTER_STATES.OPEN_CHEST_STATE, collisionObject);
       return true;
     }
+    
+    interactiveObjectComponent.interact();
 
     if (interactiveObjectComponent.objectType === INTERACTIVE_OBJECT_TYPE.AUTO) {
       return false;
