@@ -1,0 +1,21 @@
+import { Spider } from '../../game-objects/enemies/spider';
+import { Wisp } from '../../game-objects/enemies/wisp';
+
+export function spawnDebugEnemies(
+    scene: Phaser.Scene,
+    enemyGroup: Phaser.GameObjects.Group,
+): void {
+    const spider = new Spider({
+        scene: scene,
+        position: { x: 32000 + 350, y: 32000 + 200 },
+    });
+    spider.enableObject();
+    enemyGroup.add(spider);
+
+    const wisp = new Wisp({
+        scene: scene,
+        position: { x: 32000 + 200, y: 32000 + 250 },
+    });
+    wisp.enableObject();
+    enemyGroup.add(wisp);
+}

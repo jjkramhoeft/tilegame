@@ -1,44 +1,28 @@
 import * as Phaser from 'phaser';
 import { Player } from '../game-objects/player/player';
 import { KeyboardComponent } from '../components/input/keyboard-component';
-import { Spider } from '../game-objects/enemies/spider';
-import { Wisp } from '../game-objects/enemies/wisp';
-import { Drow } from '../game-objects/enemies/boss/drow';
-import { Earth, EarthCastingConfig } from '../ground/earth';
+import { Earth } from '../ground/earth';
 import { Tile } from '../ground/tile';
-import { SEX, WEAPON, GEAR, CHEST_STATE, DIRECTION } from '../common/common';
+import { SEX, WEAPON, GEAR, DIRECTION } from '../common/common';
 import { CUSTOM_EVENTS, EVENT_BUS } from '../common/event-bus';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { GameObject2 } from '../common/types';
 import { DataManager } from '../common/data-manager';
-import { PLAYER_SPEED } from '../common/config';
 import { writeChestDialogInfo } from './ui-scene';
+import { setupDebugChests } from './debug/debug-chests';
+import { spawnDebugEnemies } from './debug/debug-enemies';
+import { updateFallingLogic } from './debug/debug-falling';
+import { DebugSpellcasting } from './debug/debug-spellcasting';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
     #player!: Player;
-    #spider!: Spider;
-    #wisp!: Wisp;
-    #drow!: Drow;
     #enemyGroup?: Phaser.GameObjects.Group;
     #earth!: Earth;
     #playerStartPosition = { x: 32035, y: 32020 };
     #chests: ChestJJK[] = [];
     #chestJJKGroup!: Phaser.GameObjects.Group;
-    #playerCurrentMagic: EarthCastingConfig = {
-        isDesertUnlocked: false,
-        isGrassUnlocked: false,
-        isForestUnlocked: false,
-        isSwampUnlocked: false,
-        isCrystalUnlocked: false,
-        isWaterUnlocked: false,
-        isLavaUnlocked: false,
-        isMountainUnlocked: false,
-        powerLevel: 1,
-    };
-    #spellSound: Phaser.Sound.BaseSound;
-    #stepSound: Phaser.Sound.BaseSound;
-    #previousStateName: string | undefined;
+    #debugSpellcasting!: DebugSpellcasting;
 
     constructor() {
         super('GameScene');
@@ -72,61 +56,15 @@ export class GameScene extends Phaser.Scene {
         });
         this.#earth.AddTile(firstTile);
 
-        // Temp chests for testing ------------------------------------------------
-        const chest1Tile = new Tile({
-            tilenumber: { x: firstTilePosition.x + 2, y: firstTilePosition.y },
-            biome: 1,
-            chest: 1,
-        });
-        this.#earth.AddTile(chest1Tile);
-        this.#chests.push(new ChestJJK(this, {
-            id: 1,
-            tilePosition: { x: chest1Tile.tileX, y: chest1Tile.tileY },
-            worldPosition: { x: chest1Tile.tileX * 64, y: chest1Tile.tileY * 64 + 64 },
-            contents: {
-                gear: GEAR.BASIC,
-                weapon: WEAPON.DAGGER,
-            }
-        }, CHEST_STATE.REVEALED));
-        this.#chestJJKGroup.add(this.#chests[0]);
-        const chest2Tile = new Tile({
-            tilenumber: { x: firstTilePosition.x + 3, y: firstTilePosition.y + 3 },
-            biome: 1,
-            chest: 2,
-        });
-        this.#earth.AddTile(chest2Tile);
-        this.#chests.push(new ChestJJK(this, {
-            id: 2,
-            tilePosition: { x: chest2Tile.tileX, y: chest2Tile.tileY },
-            worldPosition: { x: chest2Tile.tileX * 64, y: chest2Tile.tileY * 64 + 64 },
-            contents: {
-                gear: GEAR.NONE,
-                weapon: WEAPON.STAFF,
-            }
-        }, CHEST_STATE.REVEALED));
-        this.#chestJJKGroup.add(this.#chests[1]);
-
-        // Temp enemies for testing ------------------------------------------------
-        this.#spider = new Spider({
-            scene: this,
-            position: { x: 32000 + 350, y: 32000 + 200 },
-        });
-        this.#spider.enableObject();
-        this.#enemyGroup.add(this.#spider);
-        this.#wisp = new Wisp({
-            scene: this,
-            position: { x: 32000 + 200, y: 32000 + 250 },
-        });
-        this.#wisp.enableObject();
-        this.#enemyGroup.add(this.#wisp);
+        this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
+        spawnDebugEnemies(this, this.#enemyGroup);
 
         this.#registerColliders();
         this.#registerCustomEvents();
 
         this.scene.launch('UiScene');
 
-        this.#spellSound = this.sound.add('spellnotes1', { volume: 0.9 });
-        this.#stepSound = this.sound.add('steps', { volume: 1.0 });
+        this.#debugSpellcasting = new DebugSpellcasting(this);
     }
 
     update() {
@@ -134,99 +72,8 @@ export class GameScene extends Phaser.Scene {
             enemy.update();
         });
 
-        // Creating falling logic. (Temporary, placed here - while developing.)
-        if (this.#player.stateMachine.currentStateName === 'MOVE_STATE') {
-            const playerTilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y, true);
-            const tileBelow = this.#earth.getTile(playerTilePosition.x, playerTilePosition.y);
-            if (playerTilePosition.atBorder === false) {
-                if (tileBelow === undefined) {
-                    this.#player.fall();
-                }
-            }
-            else if (tileBelow === undefined) {
-                //At tile border. Check if other tile also doesn't exist
-                const borderTile = this.#earth.getBorderTile(this.#player.x, this.#player.y);
-                if (borderTile === undefined && tileBelow === undefined) {
-                    this.#player.fall();
-                }
-            }
-        }
-
-
-        // Spell casting and Creating new tiles logic. (Temporary, placed here - while developing.)
-        if (this.#player.stateMachine.currentStateName === 'ATTACK_STATE' &&
-            this.#previousStateName !== 'ATTACK_STATE'
-            // &&            this.#spellSound.isPlaying === false
-        ) {
-            //console.log('Player casting/attacking');
-            if (this.#spellSound.isPlaying === false) {
-                this.#spellSound.play();
-            }
-
-            const lastDirections = this.#player.getLastMoveDirections();
-            let oldvx = 0;
-            let oldvy = 0;
-            for (const dir of lastDirections) {
-                switch (dir) {
-                    case 'UP': oldvy -= PLAYER_SPEED; break;
-                    case 'DOWN': oldvy += PLAYER_SPEED; break;
-                    case 'LEFT': oldvx -= PLAYER_SPEED; break;
-                    case 'RIGHT': oldvx += PLAYER_SPEED; break;
-                }
-            }
-            const spell = this.add.sprite(this.player.x + oldvx / 10, this.player.y + oldvy / 10, 'spell-music-11').setScale(0.5).setOrigin(0.5, 0.5);
-            spell.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
-            spell.play('spell-music-anim');
-            this.tweens.add({
-                targets: spell,
-                x: spell.x + oldvx,
-                y: spell.y + oldvy,
-                duration: 1500,
-                ease: 'Sine.easeOut',
-                onComplete: () => spell.destroy()
-            });
-            spell.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                spell.destroy();
-            });
-
-            const casterPosition = this.#earth.getTileXYFromScreenCoordinates(this.#player.x, this.#player.y, true);
-            const tilePosition = { x: casterPosition.x, y: casterPosition.y };
-            const directions = this.#player.getLastMoveDirections();
-            console.log(directions);
-            directions.forEach(dir => {
-                switch (dir) {
-                    case 'UP': tilePosition.y -= 1; break;
-                    case 'DOWN': tilePosition.y += 1; break;
-                    case 'LEFT': tilePosition.x -= 1; break;
-                    case 'RIGHT': tilePosition.x += 1; break;
-                }
-            });
-
-            const feedback = this.#earth.AddTiles(this.#playerCurrentMagic, casterPosition, tilePosition, directions);
-            if (feedback) {
-                if (feedback.rockTilesPlaced > 10) { this.#playerCurrentMagic.isDesertUnlocked = true; }
-                if (feedback.desertTilesPlaced > 10) { this.#playerCurrentMagic.isGrassUnlocked = true; }
-                if (feedback.grassTilesPlaced > 10) { this.#playerCurrentMagic.isForestUnlocked = true; }
-                if (feedback.forestTilesPlaced > 10) {
-                    this.#playerCurrentMagic.isSwampUnlocked = true;
-                    this.#playerCurrentMagic.isWaterUnlocked = true;
-                }
-                if (feedback.forestTilesPlaced > 20) {
-                    this.#playerCurrentMagic.isCrystalUnlocked = true;
-                }
-                if (feedback.forestTilesPlaced > 30) {
-                    this.#playerCurrentMagic.isLavaUnlocked = true;
-                    //this.#playerCurrentMagic.isMountainUnlocked = true;
-                }
-                const sum = feedback.rockTilesPlaced + feedback.desertTilesPlaced + feedback.grassTilesPlaced + feedback.forestTilesPlaced;
-                const x = Math.floor(sum / 20);
-                if (x > this.#playerCurrentMagic.powerLevel) {
-                    this.#playerCurrentMagic.powerLevel++;
-                }
-            }
-        }
-
-        this.#previousStateName = this.#player.stateMachine.currentStateName;
+        updateFallingLogic(this.#player, this.#earth);
+        this.#debugSpellcasting.update(this, this.#player, this.#earth);
     }
 
     #setupPlayer(): void {
