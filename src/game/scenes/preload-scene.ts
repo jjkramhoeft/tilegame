@@ -82,7 +82,6 @@ export class PreloadScene extends Phaser.Scene {
     const sexes =['male','female'];
     const gears = ['nude','bare','basic','armor'];
     const weapons = ['none','dagger','staff','sword'];
-
     // Create basic directional walk animations (8 frames per row)
     // Sprite sheet layout: row 0 = up, row 1 = left, row 2 = down, row 3 = right  
     sexes.forEach(sex => {
@@ -92,6 +91,10 @@ export class PreloadScene extends Phaser.Scene {
                 anims.create({ key: `${sex}-${gear}-${weapon}-walk-left`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-walk`, { start: 9, end: 17}), frameRate: 10, repeat: -1 });
                 anims.create({ key: `${sex}-${gear}-${weapon}-walk-down`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-walk`, { start: 18, end: 26 }), frameRate: 10, repeat: -1 });
                 anims.create({ key: `${sex}-${gear}-${weapon}-walk-right`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-walk`, { start: 27, end: 35 }), frameRate: 10, repeat: -1 });    
+                anims.create({ key: `${sex}-${gear}-${weapon}-swim-up`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-walk`, { start: 0, end: 8 }), frameRate: 10, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-swim-left`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-walk`, { start: 9, end: 17}), frameRate: 10, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-swim-down`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-walk`, { start: 18, end: 26 }), frameRate: 10, repeat: -1 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-swim-right`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-walk`, { start: 27, end: 35 }), frameRate: 10, repeat: -1 });    
             });
         });        
     });

@@ -13,6 +13,7 @@ import { writeChestDialogInfo } from './ui-scene';
 import { setupDebugChests } from './debug/debug-chests';
 import { spawnDebugEnemies } from './debug/debug-enemies';
 import { updateFallingLogic } from './debug/debug-falling';
+import { updateSwimmingLogic } from './debug/debug-swimming';
 import { DebugSpellcasting } from './debug/debug-spellcasting';
 
 export class GameScene extends Phaser.Scene {
@@ -74,6 +75,7 @@ export class GameScene extends Phaser.Scene {
         });
 
         updateFallingLogic(this.#player, this.#earth);
+        updateSwimmingLogic(this.#player, this.#earth);
 
         this.#debugSpellcasting.update(this, this.#player, this.#earth);
     }

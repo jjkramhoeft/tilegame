@@ -225,6 +225,10 @@ export const CHARACTER_ANIMATIONS = {
   DIE_LEFT: 'DIE_LEFT',
   DIE_RIGHT: 'DIE_RIGHT',
   FALL: 'FALL',
+  SWIM_DOWN: 'SWIM_DOWN',
+  SWIM_UP: 'SWIM_UP',
+  SWIM_LEFT: 'SWIM_LEFT',
+  SWIM_RIGHT: 'SWIM_RIGHT',
 } as const;
 
 export const CHEST_FRAME_KEYS = {

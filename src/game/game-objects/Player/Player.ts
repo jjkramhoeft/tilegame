@@ -21,6 +21,7 @@ import { WeaponComponent } from '../../components/game-object/weapon-component';
 import { CollidingObjectsComponent } from '../../components/game-object/colliding-objects-component';
 import { JjkWeapons } from '../weapons/jjk-weapons';
 import { FallingState } from '../../components/state-machine/states/character/falling-state';
+import { SwimMoveState } from '../../components/state-machine/states/character/swim-move-state';
 
 
 export type PlayerConfig = {
@@ -56,6 +57,10 @@ export class Player extends CharacterGameObject {
       DIE_LEFT: { key: 'male-nude-none-hurt-left', repeat: 0, ignoreIfPlaying: true },
       DIE_RIGHT: { key: 'male-nude-none-hurt-right', repeat: 0, ignoreIfPlaying: true },
       FALL: { key: 'male-nude-none-fall', repeat: 10, ignoreIfPlaying: true },
+      SWIM_DOWN: { key: 'male-nude-none-swim-down', repeat: -1, ignoreIfPlaying: true },
+      SWIM_UP: { key: 'male-nude-none-swim-up', repeat: -1, ignoreIfPlaying: true },
+      SWIM_LEFT: { key: 'male-nude-none-swim-left', repeat: -1, ignoreIfPlaying: true },
+      SWIM_RIGHT: { key: 'male-nude-none-swim-right', repeat: -1, ignoreIfPlaying: true },
     };
 
     super({
@@ -87,6 +92,7 @@ export class Player extends CharacterGameObject {
     this._stateMachine.addState(new OpenChestState(this));
     this._stateMachine.addState(new AttackState(this));
     this._stateMachine.addState(new FallingState(this));
+    this._stateMachine.addState(new SwimMoveState(this));
     this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
 
     // add components
@@ -134,6 +140,18 @@ export class Player extends CharacterGameObject {
   public fall(): void {
     this._stateMachine.setState(CHARACTER_STATES.FALLING_STATE);
   };
+
+  public swim(): void {
+    this._stateMachine.setState(CHARACTER_STATES.SWIM_STATE);
+  };
+
+  public stopSwimming(): void {
+    this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
+  };
+
+  get currentState(): string {
+    return this._stateMachine.currentStateName ?? 'XX-No_STATE-XX';
+  }
 
   public update(): void {
     super.update();

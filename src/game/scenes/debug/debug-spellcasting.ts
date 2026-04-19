@@ -10,10 +10,10 @@ export class DebugSpellcasting {
         isForestUnlocked: false,
         isSwampUnlocked: false,
         isCrystalUnlocked: false,
-        isWaterUnlocked: false,
+        isWaterUnlocked: true,
         isLavaUnlocked: false,
         isMountainUnlocked: false,
-        powerLevel: 1,
+        powerLevel: 5,
     };
     #spellSound: Phaser.Sound.BaseSound;
     #previousStateName: string | undefined;

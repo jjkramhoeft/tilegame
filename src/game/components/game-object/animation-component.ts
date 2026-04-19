@@ -37,6 +37,10 @@ export class AnimationComponent extends BaseGameObjectComponent {
       case 'WALK_UP': return animP + 'walk-up';
       case 'WALK_LEFT': return animP + 'walk-left';
       case 'WALK_RIGHT': return animP + 'walk-right';
+      case 'SWIM_DOWN': return animP + 'swim-down';
+      case 'SWIM_UP': return animP + 'swim-up';
+      case 'SWIM_LEFT': return animP + 'swim-left';
+      case 'SWIM_RIGHT': return animP + 'swim-right';
       case 'FALL': return animP + 'fall';
       case 'DIE_DOWN': return animP + 'die';
       case 'HURT_DOWN': return animP + 'hurt';
