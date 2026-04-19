@@ -7,8 +7,23 @@ import { InputComponent } from '../../../input/input-component';
 import { BaseMoveState } from './base-move-state';
 
 export class MoveState extends BaseMoveState {
+  #footstepSound: Phaser.Sound.BaseSound | undefined;
+
   constructor(gameObject: CharacterGameObject) {
     super(CHARACTER_STATES.MOVE_STATE, gameObject, 'WALK');
+  }
+
+  public onEnter(): void {
+    if (this._gameObject.isPlayer) {
+      this.#footstepSound = this._gameObject.scene.sound.add('steps', { loop: true });
+      this.#footstepSound.play();
+    }
+  }
+
+  public onExit(): void {
+    this.#footstepSound?.stop();
+    this.#footstepSound?.destroy();
+    this.#footstepSound = undefined;
   }
 
   public onUpdate(): void {

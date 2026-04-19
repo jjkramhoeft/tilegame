@@ -95,6 +95,10 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     return !this._isPlayer;
   }
 
+  get isPlayer(): boolean {
+    return this._isPlayer;
+  }
+
   get controls(): InputComponent {
     return this._controlsComponent.controls;
   }

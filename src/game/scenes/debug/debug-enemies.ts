@@ -5,6 +5,7 @@ export function spawnDebugEnemies(
     scene: Phaser.Scene,
     enemyGroup: Phaser.GameObjects.Group,
 ): void {
+    
     const spider = new Spider({
         scene: scene,
         position: { x: 32000 + 75, y: 32000 - 180 },
