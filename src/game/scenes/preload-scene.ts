@@ -21,9 +21,7 @@ export class PreloadScene extends Phaser.Scene {
     this.scene.start(SCENE_KEYS.INTRO);
   }
 
-  #createAnimations(): void {
-
-    
+  #createAnimations(): void {    
     const WATER_ANIM_KEY = 'water-flow';
     this.anims.create({
         key: WATER_ANIM_KEY,

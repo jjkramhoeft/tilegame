@@ -19,6 +19,18 @@ export function setupDebugChests(
         { x: -1, y: 2 }, { x: 0, y: 2 }, { x: 1, y: 2 },
         { x: -2, y: 3 }, { x: -1, y: 3 }, { x: 0, y: 3 }, { x: 1, y: 3 }, { x: 2, y: 3 },
     ];
+    const debugVoidBorderTileOffsets: Position[] = [
+        { x: -2, y: -4 }, { x: -1, y: -4 }, { x: 0, y: -4 }, { x: 1, y: -4 }, { x: 2, y: -4 }, 
+        { x: -3, y: -3 }, { x: 3, y: -3 },
+        { x: -2, y: -2 }, { x: 2, y: -2 },
+        { x: -1, y: -1 }, { x: 1, y: -1 },        
+        { x: -1, y: 0 },{ x: 1, y: 0 },        
+        { x: -1, y: 1 }, { x: 1, y: 1 },    
+        { x: -2, y: 2 }, { x: 2, y: 2 },    
+        { x: -3, y: 3 }, { x: 3, y: 3 },        
+        { x: -2, y: 4 }, { x: -1, y: 4 }, { x: 0, y: 4 }, { x: 1, y: 4 }, { x: 2, y: 4 }, 
+    ];
+
 
     debugTileOffsets.forEach((offset) => {
         let chestGear: string = GEAR.NONE;
@@ -41,6 +53,7 @@ export function setupDebugChests(
         });
         earth.AddTile(tile);
 
+        
         if (debugChestNumber !== undefined) {
             const chest = new ChestJJK(scene, {
                 id: debugChestNumber,
@@ -54,6 +67,14 @@ export function setupDebugChests(
             chests.push(chest);
             chestGroup.add(chest);
         }
+    });
+
+    debugVoidBorderTileOffsets.forEach((offset) => {
+        const tile = new Tile({
+            tilenumber: { x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y },
+            biome: 0,
+        });
+        earth.AddTile(tile);
     });
 
     return chests;

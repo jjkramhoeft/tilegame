@@ -176,13 +176,50 @@ export class Earth {
         while (numberOfPlacedTiles < creationConfig.powerLevel) {
             const target = allTagets.shift();
             if (target == undefined) {
-                return this.castingFeedback;
+                return this.castingFeedback;//ToDo: Consider placing blocking, decorations, or mobs. Especialy if no tile are placed (casting on existing tiles).
             }
-            const targetIsOccupied = this.getTile(target.x, target.y) !== undefined;
+            const targetTile = this.getTile(target.x, target.y);
+            let targetIsOccupied = targetTile !== undefined;
+            if(targetIsOccupied && targetTile?.biome === BIOME.VOID) {
+                targetIsOccupied=false;
+            }
             if (targetIsOccupied) {
                 continue;
             } else {
                 this.AddTile(this.CreateNewTile(creationConfig, target, creationConfig.powerLevel, casterTile));
+                let leftNeighbor = this.getTile(target.x - 1, target.y);
+                if(leftNeighbor===undefined ) {
+                    leftNeighbor = new Tile({
+                        tilenumber: { x: target.x - 1, y: target.y },
+                        biome: BIOME.VOID,
+                    });
+                    this.AddTile(leftNeighbor);
+                }
+                let rightNeighbor = this.getTile(target.x + 1, target.y);
+                if(rightNeighbor===undefined ) {
+                    rightNeighbor = new Tile({
+                        tilenumber: { x: target.x + 1, y: target.y },
+                        biome: BIOME.VOID,
+                    });
+                    this.AddTile(rightNeighbor);
+                }
+                let upNeighbor = this.getTile(target.x, target.y - 1);
+                if(upNeighbor===undefined ) {
+                    upNeighbor = new Tile({
+                        tilenumber: { x: target.x, y: target.y - 1 },
+                        biome: BIOME.VOID,
+                    });
+                    this.AddTile(upNeighbor);
+                }
+
+                let downNeighbor = this.getTile(target.x, target.y + 1);
+                if(downNeighbor===undefined ) {
+                    downNeighbor = new Tile({
+                        tilenumber: { x: target.x, y: target.y + 1 },
+                        biome: BIOME.VOID,
+                    });
+                    this.AddTile(downNeighbor);
+                }
                 numberOfPlacedTiles++;
             }
         }
@@ -349,13 +386,14 @@ export class Earth {
                         .play('crystal-flow');
                 }
             } else if (tile.biome === BIOME.VOID) {
-                const voidAnimationChance = 0.6;
-                if (Phaser.Math.RND.realInRange(0, 1) < voidAnimationChance) {
+                //const voidAnimationChance = 0.6;
+                //if (Phaser.Math.RND.realInRange(0, 1) < voidAnimationChance)
+                {
                     this.scene.add
                         .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
                         .setOrigin(0, 0)
                         .setDepth(-1)
-                        .play('void-flow');
+                        .play('void-border-flow');
                 }
             }
         }
