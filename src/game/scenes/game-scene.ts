@@ -6,6 +6,7 @@ import { Tile } from '../ground/tile';
 import { SEX, WEAPON, GEAR, DIRECTION } from '../common/common';
 import { CUSTOM_EVENTS, EVENT_BUS } from '../common/event-bus';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
+import { CharacterGameObject } from '../game-objects/common/character-game-object';
 import { GameObject2 } from '../common/types';
 import { DataManager } from '../common/data-manager';
 import { writeChestDialogInfo } from './ui-scene';
@@ -119,6 +120,12 @@ export class GameScene extends Phaser.Scene {
 
         this.physics.add.overlap(this.#player, this.#enemyGroup!, () => {
             this.#player.hit(DIRECTION.DOWN, 1);
+        });
+
+        // register overlap between player weapon and enemies
+        this.physics.add.overlap(this.#player.weaponBody, this.#enemyGroup!, (_weaponBody, enemy) => {
+            const enemyObj = enemy as CharacterGameObject;
+            enemyObj.hit(this.#player.direction, this.#player.weaponDamage);
         });
     }
 

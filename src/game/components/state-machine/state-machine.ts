@@ -6,6 +6,7 @@ export interface State {
   name: string;
   onEnter?: (args: unknown[]) => void;
   onUpdate?: () => void;
+  onExit?: () => void;
 }
 
 export class StateMachine {
@@ -76,6 +77,10 @@ export class StateMachine {
 
     this.#isChangingState = true;
     this.#log(methodName, `change from ${this.#currentState?.name ?? 'none'} to ${name}`);
+
+    if (this.#currentState?.onExit) {
+      this.#currentState.onExit();
+    }
 
     this.#currentState = this.#states.get(name) as State;
 

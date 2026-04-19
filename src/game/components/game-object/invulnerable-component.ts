@@ -12,11 +12,13 @@ export class InvulnerableComponent extends BaseGameObjectComponent {
   }
 
   get invulnerable(): boolean {
+    console.log(`Invulnerable get called. Current value: ${this.#invulnerable}`);
     return this.#invulnerable;
   }
 
   set invulnerable(val: boolean) {
     this.#invulnerable = val;
+    console.log(`Invulnerable set to ${val}.`);
   }
 
   get invulnerableAfterHitAnimationDuration(): number {

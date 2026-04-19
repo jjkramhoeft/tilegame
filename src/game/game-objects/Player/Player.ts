@@ -123,6 +123,14 @@ export class Player extends CharacterGameObject {
     return this.body as Phaser.Physics.Arcade.Body;
   }
 
+  get weaponBody(): Phaser.Physics.Arcade.Body {
+    return this.#weaponComponent.body;
+  }
+
+  get weaponDamage(): number {
+    return this.#weaponComponent.weaponDamage;
+  }
+
   public fall(): void {
     this._stateMachine.setState(CHARACTER_STATES.FALLING_STATE);
   };
