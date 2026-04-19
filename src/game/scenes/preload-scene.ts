@@ -54,7 +54,7 @@ export class PreloadScene extends Phaser.Scene {
     this.anims.create({
         key: VOID_BORDER_ANIM_KEY,
         frames: this.anims.generateFrameNumbers('tile-animated', { start: 32, end: 39 }),
-        frameRate: 8,
+        frameRate: 4,
         repeat: -1
     });
     
