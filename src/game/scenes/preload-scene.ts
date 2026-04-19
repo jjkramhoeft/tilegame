@@ -34,7 +34,7 @@ export class PreloadScene extends Phaser.Scene {
     const LAVA_ANIM_KEY = 'lava-flow';
     this.anims.create({
         key: LAVA_ANIM_KEY,
-        frames: this.anims.generateFrameNumbers('tile-animated', { start: 32, end: 39 }),
+        frames: this.anims.generateFrameNumbers('tile-animated', { start: 40, end: 47 }),
         frameRate: 8,
         repeat: -1
     });
@@ -49,6 +49,13 @@ export class PreloadScene extends Phaser.Scene {
     this.anims.create({
         key: VOID_ANIM_KEY,
         frames: this.anims.generateFrameNumbers('tile-animated', { start: 24, end: 31 }),
+        frameRate: 8,
+        repeat: -1
+    });
+    const VOID_BORDER_ANIM_KEY = 'void-border-flow';
+    this.anims.create({
+        key: VOID_BORDER_ANIM_KEY,
+        frames: this.anims.generateFrameNumbers('tile-animated', { start: 32, end: 39 }),
         frameRate: 8,
         repeat: -1
     });
