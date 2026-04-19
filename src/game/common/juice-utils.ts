@@ -17,7 +17,8 @@ export function flash(target: Phaser.GameObjects.Image | Phaser.GameObjects.Spri
       target.scene.time.addEvent({
         delay: 150,
         callback: () => {
-          target.setTint(0xffffff);
+          target.clearTint();
+          target.setTintMode(Phaser.TintModes.MULTIPLY);
           target.setAlpha(1);
           if (timeEvent.getOverallProgress() === 1 && callback) {
             callback();
