@@ -121,6 +121,7 @@ export class PreloadScene extends Phaser.Scene {
                 anims.create({ key: `${sex}-${gear}-${weapon}-idle-down`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 4, end: 5 }), frameRate: 2, repeat: -1 });
                 anims.create({ key: `${sex}-${gear}-${weapon}-idle-right`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-idle`, { start: 6, end: 7 }), frameRate: 2, repeat: -1 });    
                 anims.create({ key: `${sex}-${gear}-${weapon}-die`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-hurt`, { start: 0, end: 5 }), frameRate: 12, repeat: 0 });
+                anims.create({ key: `${sex}-${gear}-${weapon}-hurt`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-hurt`, { start: 0, end: 5 }), frameRate: 12, repeat: 0, yoyo: true });
                 anims.create({ key: `${sex}-${gear}-${weapon}-fall`, frames: anims.generateFrameNumbers(`${sex}-${gear}-${weapon}-fall`, { start: 0, end: 3 }), frameRate: 13, repeat: 10 });
             });
         });        
