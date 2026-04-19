@@ -24,7 +24,8 @@ export class DebugSpellcasting {
 
     update(scene: Phaser.Scene, player: Player, earth: Earth): void {
         if (player.stateMachine.currentStateName === 'ATTACK_STATE' &&
-            this.#previousStateName !== 'ATTACK_STATE'
+            this.#previousStateName !== 'ATTACK_STATE' &&
+            this.#previousStateName !== 'SWIM_STATE'
         ) {
             if (this.#spellSound.isPlaying === false) {
                 this.#spellSound.play();

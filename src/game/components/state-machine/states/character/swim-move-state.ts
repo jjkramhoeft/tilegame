@@ -24,12 +24,6 @@ export class SwimMoveState extends BaseMoveState {
   public onUpdate(): void {
     const controls = this._gameObject.controls;
 
-    // if attack key was pressed, attack with weapon
-    if (controls.isAttackKeyJustDown) {
-      this._stateMachine.setState(CHARACTER_STATES.ATTACK_STATE);
-      return;
-    }
-
     // if we interacted with an object and switched states, stop processing
     if (this.#checkIfObjectWasInteractedWith(controls)) {
       return;
