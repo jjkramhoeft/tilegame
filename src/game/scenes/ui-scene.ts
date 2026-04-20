@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
-import { ASSET_KEYS, HEART_ANIMATIONS, HEART_TEXTURE_FRAME } from '../common/assets';
+import { ASSET_KEYS, } from '../common/assets';
 import { DataManager } from '../common/data-manager';
 import { CUSTOM_EVENTS, EVENT_BUS, PLAYER_HEALTH_UPDATE_TYPE, PlayerHealthUpdated } from '../common/event-bus';
 import { DEFAULT_UI_HEADING_STYLE, DEFAULT_UI_OPTION_STYLE, WEAPON, GEAR } from '../common/common';
@@ -58,16 +58,16 @@ export class UiScene extends Phaser.Scene {
         x = 157 + 16 * (i - 10);
         y = 43;
       }
-      let frame: number = 3;//string = HEART_TEXTURE_FRAME.NONE;
+      let frame: number = 3;//none heart
       if (i < numberOfFullHearts) {
-        frame = 2;//HEART_TEXTURE_FRAME.FULL;
+        frame = 2;//full heart
       } else if (i < numberOfHearts) {
-        frame = 0;//HEART_TEXTURE_FRAME.EMPTY;
+        frame = 0;//empty heart
       }
       if (hasHalfHeart && i === numberOfFullHearts) {
-        frame = 2;//HEART_TEXTURE_FRAME.HALF;
+        frame = 2;//half heart
       }
-      this.#hearts.push(this.add.sprite(x, y, "hearts16"/*ASSET_KEYS.HUD_NUMBERS*/, frame).setOrigin(0));
+      this.#hearts.push(this.add.sprite(x, y, "hearts16", frame).setOrigin(0));
     }
     this.#hudContainer.add(this.#hearts);
 
@@ -120,9 +120,9 @@ export class UiScene extends Phaser.Scene {
     for (let i = 0; i < healthDifference; i += 1) {
       const heartIndex = Math.round(health / 2) - 1;
       const isHalfHeart = health % 2 === 1;
-      let animationName = "JJK_LOOSE_SECOND_HALF";//HEART_ANIMATIONS.LOSE_LAST_HALF;
+      let animationName = "JJK_LOOSE_SECOND_HALF";//last half of heart lost animation
       if (!isHalfHeart) {
-        animationName = "JJK_LOOSE_FIRST_HALF";//HEART_ANIMATIONS.LOSE_FIRST_HALF;
+        animationName = "JJK_LOOSE_FIRST_HALF";//first half of heart lost animation
       }
       await new Promise((resolve) => {
         this.#hearts[heartIndex].play(animationName);

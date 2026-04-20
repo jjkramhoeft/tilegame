@@ -24,7 +24,7 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
   #contents: ChestReward;
 
   constructor(scene: Phaser.Scene, config: ChestJJKConfig, chestState: ChestState) {
-    super(scene, config.worldPosition.x, config.worldPosition.y, 'containers', 0);
+    super(scene, config.worldPosition.x, config.worldPosition.y, 'containers', config.id * 2);
 
     // add object to scene and enable phaser physics
     scene.add.existing(this);
@@ -68,7 +68,7 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
     }
 
     this.#state = CHEST_STATE.OPEN;
-    this.setFrame(1);
+    this.setFrame(this.#id*2+1);
 
   }
 
@@ -78,7 +78,7 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
     }
 
     this.#state = CHEST_STATE.REVEALED;
-    this.setFrame(0);
+    this.setFrame(this.#id*2);
   }
 
   public disableObject(): void {
