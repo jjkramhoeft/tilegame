@@ -77,7 +77,9 @@ export class Earth {
             ASSET_KEYS.TILESET_BASE,
             ASSET_KEYS.TILESET_BASE,
             this.tileSize,
-            this.tileSize
+            this.tileSize,
+            2,
+            4
         );
         if (!tilesetBase) {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BASE}`);
@@ -392,7 +394,7 @@ export class Earth {
                     this.scene.add
                         .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
                         .setOrigin(0, 0)
-                        .setDepth(-1)
+                        .setDepth(-10)
                         .play('void-border-flow');
                 }
             }

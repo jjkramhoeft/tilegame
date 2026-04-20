@@ -80,6 +80,10 @@ export class GameScene extends Phaser.Scene {
         this.#debugSpellcasting.update(this, this.#player, this.#earth);
     }
 
+    public getBlockingGeometryGroup(): Phaser.GameObjects.Group {
+        return this.#earth.getBlockingGeometryGroup();
+    }
+
     #setupPlayer(): void {
         const currentData = DataManager.instance.data;
         DataManager.instance.data = {

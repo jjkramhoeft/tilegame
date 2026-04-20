@@ -1,6 +1,7 @@
 import { BaseCharacterState } from './base-character-state';
 import { CHARACTER_STATES } from './character-states';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
+import { GameScene } from '../../../../scenes/game-scene';
 
 export class FallingState extends BaseCharacterState {
   constructor(gameObject: CharacterGameObject) {
@@ -12,11 +13,9 @@ export class FallingState extends BaseCharacterState {
     this._gameObject.animationComponent.playAnimation(`FALL`, () => {
       this.#die();
     });
-    this._gameObject.depth = -100;
+    this._gameObject.depth = -9;
     this._gameObject.scene.cameras.main.stopFollow();
-
-    // reset game object velocity (for now  we try incooporating falling movement)
-    //this._resetObjectVelocity();
+    this._gameObject.removeCollidesWith(this._gameObject.GameScene.getBlockingGeometryGroup());
   }
 
   public onUpdate(): void {

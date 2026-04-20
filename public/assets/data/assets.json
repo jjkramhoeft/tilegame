@@ -1589,22 +1589,13 @@
       },
       {
         "type": "spritesheet",
-        "key": "tile-base",
-        "textureURL": "tile-base.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
         "key": "tile-border",
         "textureURL": "tile-border.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
         }
-      },
+      },      
       {
         "type": "spritesheet",
         "key": "tile-decoration",

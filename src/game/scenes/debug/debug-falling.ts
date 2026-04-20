@@ -1,3 +1,4 @@
+import { BIOME } from '../../common/common';
 import { Player } from '../../game-objects/player/player';
 import { Earth } from '../../ground/earth';
 
@@ -10,13 +11,14 @@ export function updateFallingLogic(player: Player, earth: Earth): void {
     const tileBelow = earth.getTile(playerTilePosition.x, playerTilePosition.y);
 
     if (playerTilePosition.atBorder === false) {
-        if (tileBelow === undefined) {
+        if (tileBelow === undefined || tileBelow.biome === BIOME.VOID) {
             player.fall();
         }
     }
-    else if (tileBelow === undefined) {
+    else if (tileBelow === undefined || tileBelow.biome === BIOME.VOID) {
         const borderTile = earth.getBorderTile(player.x, player.y);
-        if (borderTile === undefined && tileBelow === undefined) {
+        if ((borderTile === undefined || borderTile.biome === BIOME.VOID) && 
+            (tileBelow === undefined || tileBelow.biome === BIOME.VOID)) {
             player.fall();
         }
     }
