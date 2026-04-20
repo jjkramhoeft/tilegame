@@ -22,6 +22,24 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   #createAnimations(): void {    
+    this.anims.create({
+        key: "JJK_LOOSE_FULL_HEART",
+        frames: this.anims.generateFrameNumbers('hearts16', { start: 4, end: 7 }),
+        frameRate: 8,
+        repeat: 2
+    });this.anims.create({
+        key: "JJK_LOOSE_FIRST_HALF",
+        frames: this.anims.generateFrameNumbers('hearts16', { start: 8, end: 11 }),
+        frameRate: 8,
+        repeat: 2
+    });
+    this.anims.create({
+        key: "JJK_LOOSE_SECOND_HALF",
+        frames: this.anims.generateFrameNumbers('hearts16', { start: 12, end: 15 }),
+        frameRate: 8,
+        repeat: 2
+    });
+
     const WATER_ANIM_KEY = 'water-flow';
     this.anims.create({
         key: WATER_ANIM_KEY,

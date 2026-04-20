@@ -52,22 +52,22 @@ export class UiScene extends Phaser.Scene {
     const numberOfFullHearts = Math.floor(DataManager.instance.data.currentHealth / 2);
     const hasHalfHeart = DataManager.instance.data.currentHealth % 2 === 1;
     for (let i = 0; i < 20; i += 1) {
-      let x = 157 + 8 * i;
+      let x = 157 + 16 * i;
       let y = 25;
       if (i >= 10) {
-        x = 157 + 8 * (i - 10);
-        y = 33;
+        x = 157 + 16 * (i - 10);
+        y = 43;
       }
-      let frame: string = HEART_TEXTURE_FRAME.NONE;
+      let frame: number = 3;//string = HEART_TEXTURE_FRAME.NONE;
       if (i < numberOfFullHearts) {
-        frame = HEART_TEXTURE_FRAME.FULL;
+        frame = 2;//HEART_TEXTURE_FRAME.FULL;
       } else if (i < numberOfHearts) {
-        frame = HEART_TEXTURE_FRAME.EMPTY;
+        frame = 0;//HEART_TEXTURE_FRAME.EMPTY;
       }
       if (hasHalfHeart && i === numberOfFullHearts) {
-        frame = HEART_TEXTURE_FRAME.HALF;
+        frame = 2;//HEART_TEXTURE_FRAME.HALF;
       }
-      this.#hearts.push(this.add.sprite(x, y, ASSET_KEYS.HUD_NUMBERS, frame).setOrigin(0));
+      this.#hearts.push(this.add.sprite(x, y, "hearts16"/*ASSET_KEYS.HUD_NUMBERS*/, frame).setOrigin(0));
     }
     this.#hudContainer.add(this.#hearts);
 
@@ -120,9 +120,9 @@ export class UiScene extends Phaser.Scene {
     for (let i = 0; i < healthDifference; i += 1) {
       const heartIndex = Math.round(health / 2) - 1;
       const isHalfHeart = health % 2 === 1;
-      let animationName = HEART_ANIMATIONS.LOSE_LAST_HALF;
+      let animationName = "JJK_LOOSE_SECOND_HALF";//HEART_ANIMATIONS.LOSE_LAST_HALF;
       if (!isHalfHeart) {
-        animationName = HEART_ANIMATIONS.LOSE_FIRST_HALF;
+        animationName = "JJK_LOOSE_FIRST_HALF";//HEART_ANIMATIONS.LOSE_FIRST_HALF;
       }
       await new Promise((resolve) => {
         this.#hearts[heartIndex].play(animationName);

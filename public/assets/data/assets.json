@@ -1651,6 +1651,15 @@
         }
       },
       {
+        "type": "spritesheet",
+        "key": "hearts16",
+        "textureURL": "hearts16.png",
+        "frameConfig": {
+          "frameWidth": 16,
+          "frameHeight": 16
+        }
+      },
+      {
         "type": "image",
         "key": "background",
         "url": "bg-garden-genesis.png"
