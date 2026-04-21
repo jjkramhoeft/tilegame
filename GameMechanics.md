@@ -69,6 +69,19 @@ The tile map consist of six layers
 8 lava
 9 mountain
 
+### Depth of layers in map in game-scene
+From lowest to highest
+- -10 Void Layer
+- -9 Player in falling state
+- -8 Biom Layer
+- -7 Border Layer
+- -6 Decoration Layer
+- -1 Water, Lava and Crystal Layer
+- 0 Blocking Layer
+- worldY + 64 BlockingSprite
+
+- 9999999 Floating layer
+
 ## Game UI Dialog
 
 - Heading: A chest with a dagger and some basic cloth

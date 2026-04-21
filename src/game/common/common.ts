@@ -80,6 +80,20 @@ export const enum BIOME {
   MOUNTAIN = 9,
 }
 
+// Rendering dept for the tiles and objects. Higher value means rendered on top of lower value. Negative values are for tiles, positive values are for objects.
+export const FLOATING_DEPTH = 9999999;
+// BLOCKING_OBJECT_DEPTH MIN:1 MAX:9999998 (depending on y-axis value)
+export const BLOCKING_TILE_DEPTH = 0;
+export const DECORATION_DEPTH = -10;
+export const CRYSTAL_GLIMTS_DEPTH = -12;
+export const WATER_DEPTH = -14;
+export const LAVA_DEPTH = -16;
+export const BORDER_DEPTH = -18;
+export const BASE_DEPTH = -20;
+export const VOID_ANIM_DEPTH = -30;
+export const PLAYER_FALLING_STATE_DEPTH = -40;
+export const VOID_SOLID_DEPTH = -50;
+
 export const  GEAR = {
   NONE :'nude',
   BARE :'bare',

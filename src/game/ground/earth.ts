@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { Tile } from './tile';
 import { Position, Direction } from '../common/types';
-import { BIOME } from '../common/common';
+import { BASE_DEPTH, BIOME, BLOCKING_TILE_DEPTH, BORDER_DEPTH, CRYSTAL_GLIMTS_DEPTH, DECORATION_DEPTH, FLOATING_DEPTH, LAVA_DEPTH, VOID_ANIM_DEPTH, VOID_SOLID_DEPTH, WATER_DEPTH } from '../common/common';
 import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles, DecideBiome, DicedeDecoration, DicedeBlockingAndFloating, DecideBorder } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
@@ -34,6 +34,7 @@ export class Earth {
     protected allTiles: Map<string, Tile> = new Map<string, Tile>();
     protected scene: Phaser.Scene;
     protected tilemap!: Phaser.Tilemaps.Tilemap;
+    protected voidLayer!: Phaser.Tilemaps.TilemapLayer;
     protected biomeLayer!: Phaser.Tilemaps.TilemapLayer;
     protected borderLayer!: Phaser.Tilemaps.TilemapLayer;
     protected decorationLayer!: Phaser.Tilemaps.TilemapLayer;
@@ -72,6 +73,26 @@ export class Earth {
             console.error('Failed to create biome layer');
             return;
         }
+        // Set up void layer.
+        const tilesetVoid = this.tilemap.addTilesetImage(
+            ASSET_KEYS.TILESET_BASE,
+            ASSET_KEYS.TILESET_BASE,
+            this.tileSize,
+            this.tileSize,
+            2,
+            4
+        );
+        if (!tilesetVoid) {
+            throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BASE}`);
+        }
+        const voidLayer = this.tilemap.createBlankLayer('void', tilesetVoid);
+        if (!voidLayer) {
+            console.error('Failed to create void tile layer');
+            return;
+        }
+        voidLayer.setDepth(VOID_SOLID_DEPTH);
+        this.voidLayer = voidLayer;
+
         // Set up base biome layer.
         const tilesetBase = this.tilemap.addTilesetImage(
             ASSET_KEYS.TILESET_BASE,
@@ -89,7 +110,7 @@ export class Earth {
             console.error('Failed to create biome tile layer');
             return;
         }
-        biomeLayer.setDepth(-10);
+        biomeLayer.setDepth(BASE_DEPTH);
         this.biomeLayer = biomeLayer;
 
         // Set up border layer.
@@ -107,7 +128,7 @@ export class Earth {
             console.error('Failed to create border layer');
             return;
         }
-        borderLayer.setDepth(-8);
+        borderLayer.setDepth(BORDER_DEPTH);
         this.borderLayer = borderLayer;
 
         // Set up decoration layer.
@@ -125,7 +146,7 @@ export class Earth {
             console.error('Failed to create decoration layer');
             return;
         }
-        decorationLayer.setDepth(-7);
+        decorationLayer.setDepth(DECORATION_DEPTH);
         this.decorationLayer = decorationLayer;
 
         // Set up blocking layer.
@@ -145,7 +166,7 @@ export class Earth {
             console.error('Failed to create blocking tile layer');
             return;
         }
-        blockingLayer.setDepth(0);
+        blockingLayer.setDepth(BLOCKING_TILE_DEPTH);
         blockingLayer.setVisible(false);
         this.blockingLayer = blockingLayer;
         this.blockingGeometryGroup = this.scene.physics.add.staticGroup();
@@ -165,7 +186,7 @@ export class Earth {
             console.error('Failed to create floating tile layer');
             return;
         }
-        floatingLayer.setDepth(9999999);
+        floatingLayer.setDepth(FLOATING_DEPTH);
         this.floatingLayer = floatingLayer;
 
         this.isInitialized = true;
@@ -182,15 +203,15 @@ export class Earth {
             }
             const targetTile = this.getTile(target.x, target.y);
             let targetIsOccupied = targetTile !== undefined;
-            if(targetIsOccupied && targetTile?.biome === BIOME.VOID) {
-                targetIsOccupied=false;
+            if (targetIsOccupied && targetTile?.biome === BIOME.VOID) {
+                targetIsOccupied = false;
             }
             if (targetIsOccupied) {
                 continue;
             } else {
                 this.AddTile(this.CreateNewTile(creationConfig, target, creationConfig.powerLevel, casterTile));
                 let leftNeighbor = this.getTile(target.x - 1, target.y);
-                if(leftNeighbor===undefined ) {
+                if (leftNeighbor === undefined) {
                     leftNeighbor = new Tile({
                         tilenumber: { x: target.x - 1, y: target.y },
                         biome: BIOME.VOID,
@@ -198,7 +219,7 @@ export class Earth {
                     this.AddTile(leftNeighbor);
                 }
                 let rightNeighbor = this.getTile(target.x + 1, target.y);
-                if(rightNeighbor===undefined ) {
+                if (rightNeighbor === undefined) {
                     rightNeighbor = new Tile({
                         tilenumber: { x: target.x + 1, y: target.y },
                         biome: BIOME.VOID,
@@ -206,7 +227,7 @@ export class Earth {
                     this.AddTile(rightNeighbor);
                 }
                 let upNeighbor = this.getTile(target.x, target.y - 1);
-                if(upNeighbor===undefined ) {
+                if (upNeighbor === undefined) {
                     upNeighbor = new Tile({
                         tilenumber: { x: target.x, y: target.y - 1 },
                         biome: BIOME.VOID,
@@ -215,7 +236,7 @@ export class Earth {
                 }
 
                 let downNeighbor = this.getTile(target.x, target.y + 1);
-                if(downNeighbor===undefined ) {
+                if (downNeighbor === undefined) {
                     downNeighbor = new Tile({
                         tilenumber: { x: target.x, y: target.y + 1 },
                         biome: BIOME.VOID,
@@ -365,18 +386,23 @@ export class Earth {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
             if (ENABLE_LOGGING) { console.log(`Placing biome tile with index ${tile.biome} at (${tile.tileX}, ${tile.tileY})`); }
-            this.biomeLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
+            if (tile.biome === BIOME.VOID) {
+                this.voidLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
+            }
+            else {
+                this.biomeLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
+            }
             if (tile.biome === BIOME.WATER) {
                 this.scene.add
                     .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
                     .setOrigin(0, 0)
-                    .setDepth(-1)
+                    .setDepth(WATER_DEPTH)
                     .play('water-flow');
             } else if (tile.biome === BIOME.LAVA) {
                 this.scene.add
                     .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
                     .setOrigin(0, 0)
-                    .setDepth(-1)
+                    .setDepth(LAVA_DEPTH)
                     .play('lava-flow');
             } else if (tile.biome === BIOME.CRYSTAL) {
                 const crystalAnimationChance = 0.7;
@@ -384,7 +410,7 @@ export class Earth {
                     this.scene.add
                         .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
                         .setOrigin(0, 0)
-                        .setDepth(-1)
+                        .setDepth(CRYSTAL_GLIMTS_DEPTH)
                         .play('crystal-flow');
                 }
             } else if (tile.biome === BIOME.VOID) {
@@ -394,7 +420,7 @@ export class Earth {
                     this.scene.add
                         .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
                         .setOrigin(0, 0)
-                        .setDepth(-10)
+                        .setDepth(VOID_ANIM_DEPTH)
                         .play('void-border-flow');
                 }
             }

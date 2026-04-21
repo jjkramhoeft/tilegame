@@ -25,6 +25,9 @@ export class GameScene extends Phaser.Scene {
     #chests: ChestJJK[] = [];
     #chestJJKGroup!: Phaser.GameObjects.Group;
     #debugSpellcasting!: DebugSpellcasting;
+    #playerMapCollider!: Phaser.Physics.Arcade.Collider;
+    #playerChestCollider!: Phaser.Physics.Arcade.Collider;
+    #playerMobCollider!: Phaser.Physics.Arcade.Collider;
 
     constructor() {
         super('GameScene');
@@ -84,6 +87,12 @@ export class GameScene extends Phaser.Scene {
         return this.#earth.getBlockingGeometryGroup();
     }
 
+    public removePlayerColliders(): void {
+        this.physics.world.removeCollider(this.#playerMapCollider);
+        this.physics.world.removeCollider(this.#playerChestCollider);
+        this.physics.world.removeCollider(this.#playerMobCollider);
+    }
+
     #setupPlayer(): void {
         const currentData = DataManager.instance.data;
         DataManager.instance.data = {
@@ -112,19 +121,19 @@ export class GameScene extends Phaser.Scene {
 
     #registerColliders(): void {
         // collision between player and map 
-        this.physics.add.collider(this.#player, this.#earth.getBlockingGeometryGroup()
+        this.#playerMapCollider = this.physics.add.collider(this.#player, this.#earth.getBlockingGeometryGroup()
             /*  , (_player, geometry) => {
                     console.log('Player collided with blocking tile index:', (geometry as Phaser.GameObjects.Zone).getData('tileIndex'));
             }*/
         );
 
         // register collisions between player and blocking game objects (doors, pots, chests, etc.)
-        this.physics.add.collider(this.#player, this.#chestJJKGroup, (_player, chest) => {
+        this.#playerChestCollider = this.physics.add.collider(this.#player, this.#chestJJKGroup, (_player, chest) => {
             // add game object to players collision list
             this.#player.collidedWithGameObject(chest as GameObject2);
         });
 
-        this.physics.add.overlap(this.#player, this.#enemyGroup!, () => {
+        this.#playerMobCollider = this.physics.add.overlap(this.#player, this.#enemyGroup!, () => {
             this.#player.hit(DIRECTION.DOWN, 1);
         });
 
