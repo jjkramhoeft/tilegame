@@ -11,13 +11,6 @@ const COLORS = {
 };
 
 const MUSIC_LEVELS = [0, 0.05, 0.1, 0.25, 0.5, 0.75, 1];
-const BG_OPTIONS = [
-    { label: 'Forest', value: '#233d2a' },
-    { label: 'Lake', value: '#1f3e56' },
-    { label: 'Night', value: '#171718' },
-    { label: 'Sand', value: '#7a6940' },
-    { label: 'Rose', value: '#5a2f42' }
-];
 const LANGUAGE_OPTIONS = [
     { label: 'Danish', isDanish: true },
     { label: 'English', isDanish: false }
@@ -34,7 +27,6 @@ const DEBUG_OPTIONS = [
 export class Settings extends Scene
 {
     private musicIndex = 1;
-    private bgIndex = 2;
     private languageIndex = 1;
     private playerIndex = 0;
     private debugIndex = 0;
@@ -47,19 +39,11 @@ export class Settings extends Scene
     create ()
     {
         const savedMusicVolume = this.registry.get('musicVolume');
-        const savedBgColor = this.registry.get('settingsBgColor');
 
         if (typeof savedMusicVolume === 'number') {
             const index = MUSIC_LEVELS.findIndex((v) => v === savedMusicVolume);
             if (index >= 0) {
                 this.musicIndex = index;
-            }
-        }
-
-        if (typeof savedBgColor === 'string') {
-            const index = BG_OPTIONS.findIndex((option) => option.value === savedBgColor);
-            if (index >= 0) {
-                this.bgIndex = index;
             }
         }
 
@@ -108,15 +92,6 @@ export class Settings extends Scene
         this.createPickerRow({
             x: centerX,
             y: 250,
-            label: 'Background Color',
-            getValueText: () => BG_OPTIONS[this.bgIndex].label,
-            onPrevious: () => this.changeBackgroundColor(-1),
-            onNext: () => this.changeBackgroundColor(1)
-        });
-
-        this.createPickerRow({
-            x: centerX,
-            y: 300,
             label: 'Language',
             getValueText: () => LANGUAGE_OPTIONS[this.languageIndex].label,
             onPrevious: () => this.changeLanguage(-1),
@@ -125,7 +100,7 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 350,
+            y: 300,
             label: 'Playing as',
             getValueText: () => PLAYER_OPTIONS[this.playerIndex].label,
             onPrevious: () => this.changePlayer(-1),
@@ -134,14 +109,13 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 400,
-            label: 'Physics Debug',
+            y: 350,
+            label: 'Debug',
             getValueText: () => DEBUG_OPTIONS[this.debugIndex].label,
             onPrevious: () => this.changeDebug(-1),
             onNext: () => this.changeDebug(1)
         });
 
-        this.applyBackgroundColor();
         this.applyMusicVolume();
         this.applyLanguage();
         this.applyPlayer();
@@ -214,12 +188,6 @@ export class Settings extends Scene
         this.applyMusicVolume();
     }
 
-    private changeBackgroundColor (direction: number): void
-    {
-        this.bgIndex = Phaser.Math.Wrap(this.bgIndex + direction, 0, BG_OPTIONS.length);
-        this.applyBackgroundColor();
-    }
-
     private changeLanguage (direction: number): void
     {
         this.languageIndex = Phaser.Math.Wrap(this.languageIndex + direction, 0, LANGUAGE_OPTIONS.length);
@@ -237,13 +205,6 @@ export class Settings extends Scene
         const value = MUSIC_LEVELS[this.musicIndex];
         this.registry.set('musicVolume', value);
         this.sound.volume = value;
-    }
-
-    private applyBackgroundColor (): void
-    {
-        const color = BG_OPTIONS[this.bgIndex].value;
-        this.registry.set('settingsBgColor', color);
-        this.cameras.main.setBackgroundColor(color);
     }
 
     private applyLanguage (): void
@@ -289,5 +250,9 @@ export class Settings extends Scene
                 world.debugGraphic.clear();
             }
         }
+        DataManager.instance.data = {
+            ...DataManager.instance.data,
+            isDebugMode: enabled,
+        };
     }
 }

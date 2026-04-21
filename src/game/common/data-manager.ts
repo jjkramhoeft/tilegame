@@ -17,6 +17,7 @@ export type PlayerData = {
   lastDialogOptionSelected: number;
   lastDialogResultInfo?: ChestDialogInfo;
   languageIsDanish: boolean;
+  isDebugMode: boolean;
 };
 
 export class DataManager {
@@ -33,6 +34,7 @@ export class DataManager {
       weapon: '',
       lastDialogOptionSelected: 0,
       languageIsDanish: false,
+      isDebugMode: false,
     };
   }
 
