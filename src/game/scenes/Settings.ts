@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { DataManager } from '../common/data-manager';
+import { setEnableLogging } from '../common/config';
 
 const COLORS = {
     title: '#5eb1da',
@@ -10,13 +11,6 @@ const COLORS = {
 };
 
 const MUSIC_LEVELS = [0, 0.05, 0.1, 0.25, 0.5, 0.75, 1];
-const BG_OPTIONS = [
-    { label: 'Forest', value: '#233d2a' },
-    { label: 'Lake', value: '#1f3e56' },
-    { label: 'Night', value: '#171718' },
-    { label: 'Sand', value: '#7a6940' },
-    { label: 'Rose', value: '#5a2f42' }
-];
 const LANGUAGE_OPTIONS = [
     { label: 'Danish', isDanish: true },
     { label: 'English', isDanish: false }
@@ -25,13 +19,17 @@ const PLAYER_OPTIONS = [
     { label: 'Adam', sex: 'male' },
     { label: 'Eve', sex: 'female' }
 ];
+const DEBUG_OPTIONS = [
+    { label: 'Off', value: false },
+    { label: 'On', value: true }
+];
 
 export class Settings extends Scene
 {
     private musicIndex = 1;
-    private bgIndex = 2;
     private languageIndex = 1;
     private playerIndex = 0;
+    private debugIndex = 0;
 
     constructor ()
     {
@@ -41,19 +39,11 @@ export class Settings extends Scene
     create ()
     {
         const savedMusicVolume = this.registry.get('musicVolume');
-        const savedBgColor = this.registry.get('settingsBgColor');
 
         if (typeof savedMusicVolume === 'number') {
             const index = MUSIC_LEVELS.findIndex((v) => v === savedMusicVolume);
             if (index >= 0) {
                 this.musicIndex = index;
-            }
-        }
-
-        if (typeof savedBgColor === 'string') {
-            const index = BG_OPTIONS.findIndex((option) => option.value === savedBgColor);
-            if (index >= 0) {
-                this.bgIndex = index;
             }
         }
 
@@ -77,9 +67,14 @@ export class Settings extends Scene
             }
         }
 
+        const savedDebug = this.registry.get('physicsDebug');
+        if (typeof savedDebug === 'boolean') {
+            this.debugIndex = savedDebug ? 1 : 0;
+        }
+
         const centerX = this.cameras.main.centerX;
 
-        this.add.text(centerX, 100, 'Settings', {
+        this.add.text(centerX, 80, 'Settings', {
             fontFamily: 'Arial Black', fontSize: 48, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 8,
             align: 'center'
@@ -87,7 +82,7 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 290,
+            y: 200,
             label: 'Music Volume',
             getValueText: () => `${Math.round(MUSIC_LEVELS[this.musicIndex] * 100)}%`,
             onPrevious: () => this.changeMusicVolume(-1),
@@ -96,16 +91,7 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 400,
-            label: 'Background Color',
-            getValueText: () => BG_OPTIONS[this.bgIndex].label,
-            onPrevious: () => this.changeBackgroundColor(-1),
-            onNext: () => this.changeBackgroundColor(1)
-        });
-
-        this.createPickerRow({
-            x: centerX,
-            y: 510,
+            y: 250,
             label: 'Language',
             getValueText: () => LANGUAGE_OPTIONS[this.languageIndex].label,
             onPrevious: () => this.changeLanguage(-1),
@@ -114,17 +100,26 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 620,
+            y: 300,
             label: 'Playing as',
             getValueText: () => PLAYER_OPTIONS[this.playerIndex].label,
             onPrevious: () => this.changePlayer(-1),
             onNext: () => this.changePlayer(1)
         });
 
-        this.applyBackgroundColor();
+        this.createPickerRow({
+            x: centerX,
+            y: 350,
+            label: 'Debug',
+            getValueText: () => DEBUG_OPTIONS[this.debugIndex].label,
+            onPrevious: () => this.changeDebug(-1),
+            onNext: () => this.changeDebug(1)
+        });
+
         this.applyMusicVolume();
         this.applyLanguage();
         this.applyPlayer();
+        this.applyDebug();
 
         const backText = this.add.text(900, 700, 'Back', {
             fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
@@ -193,12 +188,6 @@ export class Settings extends Scene
         this.applyMusicVolume();
     }
 
-    private changeBackgroundColor (direction: number): void
-    {
-        this.bgIndex = Phaser.Math.Wrap(this.bgIndex + direction, 0, BG_OPTIONS.length);
-        this.applyBackgroundColor();
-    }
-
     private changeLanguage (direction: number): void
     {
         this.languageIndex = Phaser.Math.Wrap(this.languageIndex + direction, 0, LANGUAGE_OPTIONS.length);
@@ -218,13 +207,6 @@ export class Settings extends Scene
         this.sound.volume = value;
     }
 
-    private applyBackgroundColor (): void
-    {
-        const color = BG_OPTIONS[this.bgIndex].value;
-        this.registry.set('settingsBgColor', color);
-        this.cameras.main.setBackgroundColor(color);
-    }
-
     private applyLanguage (): void
     {
         const languageIsDanish = LANGUAGE_OPTIONS[this.languageIndex].isDanish;
@@ -242,6 +224,35 @@ export class Settings extends Scene
         DataManager.instance.data = {
             ...DataManager.instance.data,
             sex: playerSex,
+        };
+    }
+
+    private changeDebug (direction: number): void
+    {
+        this.debugIndex = Phaser.Math.Wrap(this.debugIndex + direction, 0, DEBUG_OPTIONS.length);
+        this.applyDebug();
+    }
+
+    private applyDebug (): void
+    {
+        const enabled = DEBUG_OPTIONS[this.debugIndex].value;
+        this.registry.set('physicsDebug', enabled);
+        setEnableLogging(enabled);
+
+        const gameScene = this.scene.get('GameScene');
+        if (gameScene?.physics?.world) {
+            const world = gameScene.physics.world;
+            if (enabled && !world.debugGraphic) {
+                world.createDebugGraphic();
+            }
+            world.drawDebug = enabled;
+            if (!enabled && world.debugGraphic) {
+                world.debugGraphic.clear();
+            }
+        }
+        DataManager.instance.data = {
+            ...DataManager.instance.data,
+            isDebugMode: enabled,
         };
     }
 }

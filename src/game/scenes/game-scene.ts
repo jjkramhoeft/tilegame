@@ -61,8 +61,10 @@ export class GameScene extends Phaser.Scene {
         });
         this.#earth.AddTile(firstTile);
 
-        this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
-        spawnDebugEnemies(this, this.#enemyGroup);
+        if (DataManager.instance.data.isDebugMode) {
+            this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
+            spawnDebugEnemies(this, this.#enemyGroup);
+        }
 
         this.#registerColliders();
         this.#registerCustomEvents();
@@ -103,6 +105,7 @@ export class GameScene extends Phaser.Scene {
             weapon: WEAPON.NONE,
             lastDialogOptionSelected: 0,
             languageIsDanish: currentData.languageIsDanish ?? false,
+            isDebugMode: currentData.isDebugMode ?? false,
         };
         this.#player = new Player({
             scene: this,

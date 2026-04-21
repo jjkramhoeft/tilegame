@@ -1,8 +1,8 @@
 import { PreloadScene } from './scenes/preload-scene';
 import { Intro } from './scenes/Intro';
 import { GameScene } from './scenes/game-scene';
-import { Credits } from './scenes/Credits';
-import { Settings } from './scenes/Settings';
+import { Credits } from './scenes/credits';
+import { Settings } from './scenes/settings';
 import { AUTO, Game, Scale,Types } from 'phaser';
 import { UiScene } from './scenes/ui-scene';
 
@@ -31,7 +31,7 @@ const config: Types.Core.GameConfig = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0, x: 0 },
-            debug: true,
+            debug: false,
             debugShowBody: true,
             debugShowStaticBody: true,
         },

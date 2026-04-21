@@ -2,8 +2,10 @@ import * as Phaser from 'phaser';
 import { Player } from '../../game-objects/player/player';
 import { Earth, EarthCastingConfig } from '../../ground/earth';
 import { PLAYER_SPEED } from '../../common/config';
+import { DataManager } from '../../common/data-manager';
 
 export class DebugSpellcasting {
+
     #playerCurrentMagic: EarthCastingConfig = {
         isDesertUnlocked: false,
         isGrassUnlocked: false,
@@ -13,13 +15,18 @@ export class DebugSpellcasting {
         isWaterUnlocked: true,
         isLavaUnlocked: false,
         isMountainUnlocked: false,
-        powerLevel: 5,
+        powerLevel: 1,
     };
+
     #spellSound: Phaser.Sound.BaseSound;
     #previousStateName: string | undefined;
 
     constructor(scene: Phaser.Scene) {
         this.#spellSound = scene.sound.add('spellnotes1', { volume: 0.9 });
+        if (DataManager.instance.data.isDebugMode) {
+            this.#playerCurrentMagic.isWaterUnlocked = true;
+            this.#playerCurrentMagic.powerLevel = 5;
+        }
     }
 
     update(scene: Phaser.Scene, player: Player, earth: Earth): void {
