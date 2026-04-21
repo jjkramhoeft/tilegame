@@ -25,6 +25,10 @@ const PLAYER_OPTIONS = [
     { label: 'Adam', sex: 'male' },
     { label: 'Eve', sex: 'female' }
 ];
+const DEBUG_OPTIONS = [
+    { label: 'Off', value: false },
+    { label: 'On', value: true }
+];
 
 export class Settings extends Scene
 {
@@ -32,6 +36,7 @@ export class Settings extends Scene
     private bgIndex = 2;
     private languageIndex = 1;
     private playerIndex = 0;
+    private debugIndex = 0;
 
     constructor ()
     {
@@ -77,9 +82,14 @@ export class Settings extends Scene
             }
         }
 
+        const savedDebug = this.registry.get('physicsDebug');
+        if (typeof savedDebug === 'boolean') {
+            this.debugIndex = savedDebug ? 1 : 0;
+        }
+
         const centerX = this.cameras.main.centerX;
 
-        this.add.text(centerX, 100, 'Settings', {
+        this.add.text(centerX, 80, 'Settings', {
             fontFamily: 'Arial Black', fontSize: 48, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 8,
             align: 'center'
@@ -87,7 +97,7 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 290,
+            y: 200,
             label: 'Music Volume',
             getValueText: () => `${Math.round(MUSIC_LEVELS[this.musicIndex] * 100)}%`,
             onPrevious: () => this.changeMusicVolume(-1),
@@ -96,7 +106,7 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 400,
+            y: 250,
             label: 'Background Color',
             getValueText: () => BG_OPTIONS[this.bgIndex].label,
             onPrevious: () => this.changeBackgroundColor(-1),
@@ -105,7 +115,7 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 510,
+            y: 300,
             label: 'Language',
             getValueText: () => LANGUAGE_OPTIONS[this.languageIndex].label,
             onPrevious: () => this.changeLanguage(-1),
@@ -114,17 +124,27 @@ export class Settings extends Scene
 
         this.createPickerRow({
             x: centerX,
-            y: 620,
+            y: 350,
             label: 'Playing as',
             getValueText: () => PLAYER_OPTIONS[this.playerIndex].label,
             onPrevious: () => this.changePlayer(-1),
             onNext: () => this.changePlayer(1)
         });
 
+        this.createPickerRow({
+            x: centerX,
+            y: 400,
+            label: 'Physics Debug',
+            getValueText: () => DEBUG_OPTIONS[this.debugIndex].label,
+            onPrevious: () => this.changeDebug(-1),
+            onNext: () => this.changeDebug(1)
+        });
+
         this.applyBackgroundColor();
         this.applyMusicVolume();
         this.applyLanguage();
         this.applyPlayer();
+        this.applyDebug();
 
         const backText = this.add.text(900, 700, 'Back', {
             fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
@@ -243,5 +263,29 @@ export class Settings extends Scene
             ...DataManager.instance.data,
             sex: playerSex,
         };
+    }
+
+    private changeDebug (direction: number): void
+    {
+        this.debugIndex = Phaser.Math.Wrap(this.debugIndex + direction, 0, DEBUG_OPTIONS.length);
+        this.applyDebug();
+    }
+
+    private applyDebug (): void
+    {
+        const enabled = DEBUG_OPTIONS[this.debugIndex].value;
+        this.registry.set('physicsDebug', enabled);
+
+        const gameScene = this.scene.get('GameScene');
+        if (gameScene?.physics?.world) {
+            const world = gameScene.physics.world;
+            if (enabled && !world.debugGraphic) {
+                world.createDebugGraphic();
+            }
+            world.drawDebug = enabled;
+            if (!enabled && world.debugGraphic) {
+                world.debugGraphic.clear();
+            }
+        }
     }
 }
