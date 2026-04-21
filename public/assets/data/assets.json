@@ -11,6 +11,17 @@
     ]
   },
   {
+    "path": "assets/fonts",
+    "files": [
+      {
+        "type": "font",
+        "key": "FONT_PIXEL_SERIF_16PX",
+        "url": "PixelSerif_16px_v02.ttf",
+        "format": "truetype"
+      }
+    ]
+  },
+  {
     "path": "assets/images/hud",
     "files": [
       {
@@ -38,7 +49,10 @@
         "type": "spritesheet",
         "key": "UI_ICONS",
         "url": "icons.png",
-        "frameConfig": { "frameWidth": 16, "frameHeight": 16 }
+        "frameConfig": {
+          "frameWidth": 16,
+          "frameHeight": 16
+        }
       }
     ]
   },
@@ -55,7 +69,10 @@
         "type": "spritesheet",
         "key": "DAGGER",
         "url": "dagger.png",
-        "frameConfig": { "frameWidth": 16, "frameHeight": 16 }
+        "frameConfig": {
+          "frameWidth": 16,
+          "frameHeight": 16
+        }
       }
     ]
   },
@@ -94,7 +111,10 @@
         "type": "spritesheet",
         "key": "ENEMY_DEATH",
         "url": "enemy_death.png",
-        "frameConfig": { "frameWidth": 16, "frameHeight": 16 }
+        "frameConfig": {
+          "frameWidth": 16,
+          "frameHeight": 16
+        }
       },
       {
         "type": "aseprite",
@@ -1595,7 +1615,7 @@
           "frameWidth": 64,
           "frameHeight": 64
         }
-      },      
+      },
       {
         "type": "spritesheet",
         "key": "tile-decoration",

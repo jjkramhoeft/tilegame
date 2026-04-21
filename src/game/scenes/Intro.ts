@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
+import { ASSET_KEYS } from '../common/assets';
 
 const COLORS = {
     title: '#5eb1da',
@@ -35,13 +36,13 @@ export class Intro extends Scene {
         this.introMusic.play();
 
         this.add.text(512, 415, 'Den 1. Have - Gartnerens Lærling', {
-            fontFamily: 'Arial Black', fontSize: 38, color: COLORS.title,
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
 
         this.exit_text = this.add.text(915, 700, 'Exit', {
-            fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
             align: 'center'
         });
@@ -52,10 +53,9 @@ export class Intro extends Scene {
             this.scene.stop('Intro');
         });
 
-        const credits_text = this.add.text(850, 650, 'Credits', {
-            fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
+        const credits_text = this.add.text(862, 650, 'Credits', {
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
-            align: 'center'
         });
         credits_text.setOrigin(0);
         credits_text.setInteractive({ useHandCursor: true });
@@ -64,10 +64,9 @@ export class Intro extends Scene {
             this.scene.start('Credits');
         });
 
-        const settings_text = this.add.text(827, 600, 'Settings', {
-            fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
+        const settings_text = this.add.text(845, 600, 'Settings', {
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
-            align: 'center'
         });
         settings_text.setOrigin(0);
         settings_text.setInteractive({ useHandCursor: true });
@@ -77,9 +76,8 @@ export class Intro extends Scene {
         });
 
         this.exit_text = this.add.text(20, 700, 'New Game', {
-            fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
-            align: 'center'
         });
         this.exit_text.setOrigin(0);
         this.exit_text.setInteractive({ useHandCursor: true });

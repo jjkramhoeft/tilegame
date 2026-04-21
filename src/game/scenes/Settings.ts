@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { DataManager } from '../common/data-manager';
 import { setEnableLogging } from '../common/config';
+import { ASSET_KEYS } from '../common/assets';
 
 const COLORS = {
     title: '#5eb1da',
@@ -38,6 +39,8 @@ export class Settings extends Scene
 
     create ()
     {
+        this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'credit-bg');
+
         const savedMusicVolume = this.registry.get('musicVolume');
 
         if (typeof savedMusicVolume === 'number') {
@@ -75,7 +78,7 @@ export class Settings extends Scene
         const centerX = this.cameras.main.centerX;
 
         this.add.text(centerX, 80, 'Settings', {
-            fontFamily: 'Arial Black', fontSize: 48, color: COLORS.title,
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 56, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
@@ -122,9 +125,8 @@ export class Settings extends Scene
         this.applyDebug();
 
         const backText = this.add.text(900, 700, 'Back', {
-            fontFamily: 'Arial Black', fontSize: 38, color: COLORS.uiText,
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
-            align: 'center'
         });
         backText.setOrigin(0);
         backText.setInteractive({ useHandCursor: true });
@@ -145,27 +147,23 @@ export class Settings extends Scene
         let x1= 80;
         let x2=700;
         this.add.text(x1, config.y -25 , config.label, {
-            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.uiText,
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 5,
-            align: 'left'
         }).setOrigin(0);
 
         const previousText = this.add.text(x2 - 170, config.y, '<', {
-            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.uiText,
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 5,
-            align: 'center'
         }).setOrigin(0.5);
 
         const valueText = this.add.text(x2-50, config.y, config.getValueText(), {
-            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.title,
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 5,
-            align: 'center'
         }).setOrigin(0.5);
 
         const nextText = this.add.text(x2 + 170-100, config.y, '>', {
-            fontFamily: 'Arial Black', fontSize: 32, color: COLORS.uiText,
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 5,
-            align: 'center'
         }).setOrigin(0.5);
 
         previousText.setInteractive({ useHandCursor: true });

@@ -33,27 +33,27 @@ export const DUNGEON_ITEM = {
 
 export const DEFAULT_UI_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
   align: 'center',
-  fontFamily: ASSET_KEYS.FONT_PRESS_START_2P,
-  fontSize: 14,
+  fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX,
+  fontSize: 22,
   wordWrap: { width: 600 },
   color: '#FFFFFF',
 };
 
 export const DEFAULT_UI_HEADING_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
   align: 'center',
-  fontFamily: ASSET_KEYS.FONT_PRESS_START_2P,
-  fontSize: 14,
+  fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX,
+  fontSize: 22,
   wordWrap: { width: 480 },
   lineSpacing: 4,
   color: '#FFFFFF',
 };
 
 export const DEFAULT_UI_OPTION_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
-  align: 'center',
-  fontFamily: ASSET_KEYS.FONT_PRESS_START_2P,
-  fontSize: 14,
-  wordWrap: { width: 600 },
-  lineSpacing: 4,
+  align: 'right',
+  fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX,
+  fontSize: 22,
+  wordWrap: { width: 540 },
+  lineSpacing: 2,
   color: '#FFFFFF',
 };
 
