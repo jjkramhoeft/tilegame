@@ -1,4 +1,5 @@
-export const ENABLE_LOGGING = false;
+export let ENABLE_LOGGING = false;
+export function setEnableLogging(value: boolean) { ENABLE_LOGGING = value; }
 export const ENABLE_DEBUG_ZONE_AREA = false;
 export const DEBUG_COLLISION_ALPHA = 0.1;
 

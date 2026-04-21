@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { DataManager } from '../common/data-manager';
+import { setEnableLogging } from '../common/config';
 
 const COLORS = {
     title: '#5eb1da',
@@ -275,6 +276,7 @@ export class Settings extends Scene
     {
         const enabled = DEBUG_OPTIONS[this.debugIndex].value;
         this.registry.set('physicsDebug', enabled);
+        setEnableLogging(enabled);
 
         const gameScene = this.scene.get('GameScene');
         if (gameScene?.physics?.world) {
