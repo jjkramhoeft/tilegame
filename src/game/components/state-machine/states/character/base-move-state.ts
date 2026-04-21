@@ -38,6 +38,7 @@ export abstract class BaseMoveState extends BaseCharacterState {
     }
 
     const isHorizontally = controls.isLeftDown || controls.isRightDown;
+    let isVertically = false;
 
     // vertical movement
     if (controls.isUpDown) {
@@ -46,20 +47,26 @@ export abstract class BaseMoveState extends BaseCharacterState {
         this.updateDirection(DIRECTION.UP);
       }
       directions.push(DIRECTION.UP);
+      isVertically = true;
     } else if (controls.isDownDown) {
       this.updateVelocity(false, 1);
       if (!isHorizontally) {
         this.updateDirection(DIRECTION.DOWN);
       }
       directions.push(DIRECTION.DOWN);
+      isVertically = true;
     } else {
       this.updateVelocity(false, 0);
     }
 
     this.normalizeVelocity();
-    
-    if(directions.length > 0) {
+
+    if (directions.length > 0) {
       this._gameObject.setLastMoveDirections(directions);
+    }
+
+    if (isVertically) {
+      this._gameObject.depth = this._gameObject.y;
     }
   }
 
