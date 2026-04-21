@@ -1,7 +1,8 @@
 export let ENABLE_LOGGING = false;
 export function setEnableLogging(value: boolean) { ENABLE_LOGGING = value; }
-export const ENABLE_DEBUG_ZONE_AREA = false;
-export const DEBUG_COLLISION_ALPHA = 0.1;
+
+//export const ENABLE_DEBUG_ZONE_AREA = false;
+//export const DEBUG_COLLISION_ALPHA = 0.1;
 
 export const PLAYER_SPEED = 90;
 export const PLAYER_INVULNERABLE_AFTER_HIT_DURATION = 1000;
