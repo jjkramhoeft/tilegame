@@ -21,6 +21,12 @@ export interface ChestDialogInfo {
 export class UiScene extends Phaser.Scene {
   #hudContainer!: Phaser.GameObjects.Container;
   #hearts!: Phaser.GameObjects.Sprite[];
+  #saveDialogContainer!: Phaser.GameObjects.Container;
+  #saveDialogContainerOption1!: Phaser.GameObjects.Text;//Escape - back to main menu
+  #saveDialogContainerOption2!: Phaser.GameObjects.Text;//Save
+  #saveDialogContainerOption3!: Phaser.GameObjects.Text;//Continue playing
+  #saveDialogCursorGameObject!: Phaser.GameObjects.Image;
+
   #dialogContainer!: Phaser.GameObjects.Container;
   #dialogContainerText!: Phaser.GameObjects.Text;
   #dialogContainerOption1!: Phaser.GameObjects.Text;
@@ -30,6 +36,10 @@ export class UiScene extends Phaser.Scene {
   #cursorGameObject!: Phaser.GameObjects.Image;
   #controls!: KeyboardComponent;
   #selectedMenuOptionIndex!: number;
+  #selectedSaveOptionIndex!: number;
+
+  #chestDialogIsOpen!: boolean;
+  #saveDialogIsOpen!: boolean;
 
   constructor() {
     super({
@@ -41,6 +51,9 @@ export class UiScene extends Phaser.Scene {
     if (!this.input.keyboard) {
       return;
     }
+
+    this.#chestDialogIsOpen = false;
+    this.#saveDialogIsOpen = false;
 
     // create main hud
     this.#hudContainer = this.add.container(0, 0, []);
@@ -93,8 +106,29 @@ export class UiScene extends Phaser.Scene {
 
     this.#dialogContainer.visible = false;
 
+    // Escape Dialog --------------------------------------------------
+    // Frame
+    this.#saveDialogContainer = this.add.container(205, 480, [this.add.image(0, 0, ASSET_KEYS.UI_DIALOG, 0).setOrigin(0).setDisplaySize(610, 250)]);
+    // Option 1
+    this.#saveDialogContainerOption1 = this.add.text(165, 85, 'Back to Main Menu', DEFAULT_UI_OPTION_STYLE).setOrigin(0);
+    this.#saveDialogContainer.add(this.#saveDialogContainerOption1);
+    // Option 2
+    this.#saveDialogContainerOption2 = this.add.text(165, 125, 'Save', DEFAULT_UI_OPTION_STYLE).setOrigin(0);
+    this.#saveDialogContainer.add(this.#saveDialogContainerOption2);
+    // Option 3
+    this.#saveDialogContainerOption3 = this.add.text(165, 165, 'Continue Playing', DEFAULT_UI_OPTION_STYLE).setOrigin(0);
+    this.#saveDialogContainer.add(this.#saveDialogContainerOption3);
+    // SaveCursor
+    this.#saveDialogCursorGameObject = this.add.image(145, 85, ASSET_KEYS.UI_CURSOR, 0).setOrigin(0).setDisplaySize(16, 16);
+    this.#saveDialogContainer.add(this.#saveDialogCursorGameObject);
+
+    this.#saveDialogContainer.visible = false;
+
+    // -----------------------------------------------------------------
+
     this.#controls = new KeyboardComponent(this.input.keyboard);
     this.#selectedMenuOptionIndex = 0;
+    this.#selectedSaveOptionIndex = 0;
 
 
     // register event listeners
@@ -135,7 +169,9 @@ export class UiScene extends Phaser.Scene {
   }
 
   public showDialog(message: string): void {
+    this.#chestDialogIsOpen = true;
     this.#selectedMenuOptionIndex = 0;
+    this.#selectedSaveOptionIndex = 0;
     this.#dialogContainer.visible = true;
     let messageParts = message.split('|');
     this.#dialogOptionCount = messageParts.length - 2;
@@ -146,30 +182,71 @@ export class UiScene extends Phaser.Scene {
   }
 
   public update(): void {
-    if (this.#controls.isEnterKeyJustDown) {
-      let d = DataManager.instance.data;
-      d.lastDialogOptionSelected = this.#selectedMenuOptionIndex;
-      DataManager.instance.data = d;
-      this.#dialogContainer.visible = false;
-      EVENT_BUS.emit(CUSTOM_EVENTS.DIALOG_CLOSED);
+
+    if (this.#controls.isEscapeKeyJustDown) {
+      console.debug('Escape key just down, opening escape and save dialog');
+      this.#saveDialogContainer.visible = true;
+      this.#saveDialogIsOpen = true;
       return;
     }
 
+    if (this.#controls.isEnterKeyJustDown) {
+      if (this.#chestDialogIsOpen) {
+        let d = DataManager.instance.data;
+        d.lastDialogOptionSelected = this.#selectedMenuOptionIndex;
+        DataManager.instance.data = d;
+        this.#dialogContainer.visible = false;
+        EVENT_BUS.emit(CUSTOM_EVENTS.DIALOG_CLOSED);
+        this.#chestDialogIsOpen = false;
+        return;
+      } else if (this.#saveDialogIsOpen) {
+        if (this.#selectedSaveOptionIndex === 0) {
+          // back to main menu
+          this.scene.stop(SCENE_KEYS.GAME_SCENE);
+          this.scene.start(SCENE_KEYS.INTRO);
+        } else if (this.#selectedSaveOptionIndex === 1) {
+          // save game
+        } else if (this.#selectedSaveOptionIndex === 2) {
+          // continue playing
+          this.#saveDialogContainer.visible = false;
+          this.#saveDialogIsOpen = false;
+        }
+      }
+    }
+
     if (this.#controls.isUpJustDown) {
-      this.#selectedMenuOptionIndex -= 1;
-      if (this.#selectedMenuOptionIndex < 0) {
-        this.#selectedMenuOptionIndex = 0;
+      if (this.#chestDialogIsOpen) {
+        this.#selectedMenuOptionIndex -= 1;
+        if (this.#selectedMenuOptionIndex < 0) {
+          this.#selectedMenuOptionIndex = 0;
+        }
+      } else if (this.#saveDialogIsOpen) {
+        this.#selectedSaveOptionIndex -= 1;
+        if (this.#selectedSaveOptionIndex < 0) {
+          this.#selectedSaveOptionIndex = 0;
+        }
       }
     } else if (this.#controls.isDownJustDown) {
-      this.#selectedMenuOptionIndex += 1;
-      if (this.#selectedMenuOptionIndex > this.#dialogOptionCount) {
-        this.#selectedMenuOptionIndex = this.#dialogOptionCount;
+      if (this.#chestDialogIsOpen) {
+        this.#selectedMenuOptionIndex += 1;
+        if (this.#selectedMenuOptionIndex > this.#dialogOptionCount) {
+          this.#selectedMenuOptionIndex = this.#dialogOptionCount;
+        }
+      } else if (this.#saveDialogIsOpen) {
+        this.#selectedSaveOptionIndex += 1;
+        if (this.#selectedSaveOptionIndex > 2) {
+          this.#selectedSaveOptionIndex = 2;
+        }
       }
     } else {
       return;
     }
 
-    this.#cursorGameObject.setY(85 + this.#selectedMenuOptionIndex * 40);
+    if (this.#chestDialogIsOpen) {
+      this.#cursorGameObject.setY(85 + this.#selectedMenuOptionIndex * 40);
+    } else if (this.#saveDialogIsOpen) {
+      this.#saveDialogCursorGameObject.setY(85 + this.#selectedSaveOptionIndex * 40);
+    }
   }
 
   public getSelectedDialogOption(): number {
