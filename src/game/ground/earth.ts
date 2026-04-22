@@ -91,6 +91,8 @@ export class Earth {
             return;
         }
         voidLayer.setDepth(VOID_SOLID_DEPTH);
+        // Mark void tiles as colliding so Arcade physics can overlap against the layer.
+        voidLayer.setCollision(BIOME.VOID);
         this.voidLayer = voidLayer;
 
         // Set up base biome layer.
@@ -310,7 +312,6 @@ export class Earth {
         return neighborTiles;
     }
 
-
     private get4NeighborBiomes(tilePosition: Position): number[] {
         const neighborBiomes: number[] = [];
         let neighborUp = this.getTile(tilePosition.x, tilePosition.y - 1);
@@ -380,7 +381,6 @@ export class Earth {
 
         return neighborBiomes;
     }
-
 
     public AddTile(tile: Tile) {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
@@ -502,6 +502,11 @@ export class Earth {
     // Used by game-scene when setting up collision between player and map 
     public getBlockingGeometryGroup(): Phaser.Physics.Arcade.StaticGroup {
         return this.blockingGeometryGroup;
+    }
+
+    // Used by game-scene when setting up overlap between enemies and void tiles
+    public getVoidLayer(): Phaser.Tilemaps.TilemapLayer {
+        return this.voidLayer;
     }
 
     private key(x: number, y: number): string {

@@ -63,7 +63,8 @@ export class GameScene extends Phaser.Scene {
 
         if (DataManager.instance.data.isDebugMode) {
             this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
-            spawnDebugEnemies(this, this.#enemyGroup);
+
+            spawnDebugEnemies(this, this.#enemyGroup, this.#earth, firstTilePosition);
         }
 
         this.#registerColliders();
@@ -123,19 +124,16 @@ export class GameScene extends Phaser.Scene {
     }
 
     #registerColliders(): void {
-        // collision between player and map 
-        this.#playerMapCollider = this.physics.add.collider(this.#player, this.#earth.getBlockingGeometryGroup()
-            /*  , (_player, geometry) => {
-                    console.log('Player collided with blocking tile index:', (geometry as Phaser.GameObjects.Zone).getData('tileIndex'));
-            }*/
-        );
+        // collision between player and blocking map geometry (treetrunks, stones, etc.)
+        this.#playerMapCollider = this.physics.add.collider(this.#player, this.#earth.getBlockingGeometryGroup());
 
-        // register collisions between player and blocking game objects (doors, pots, chests, etc.)
+        // register collisions between player and JJKChest game objects
         this.#playerChestCollider = this.physics.add.collider(this.#player, this.#chestJJKGroup, (_player, chest) => {
-            // add game object to players collision list
+            // add chest game object to players collision list
             this.#player.collidedWithGameObject(chest as GameObject2);
         });
 
+        // register collisions between enemies and the player.
         this.#playerMobCollider = this.physics.add.overlap(this.#player, this.#enemyGroup!, () => {
             this.#player.hit(DIRECTION.DOWN, 1);
         });
@@ -144,6 +142,11 @@ export class GameScene extends Phaser.Scene {
         this.physics.add.overlap(this.#player.weaponBody, this.#enemyGroup!, (_weaponBody, enemy) => {
             const enemyObj = enemy as CharacterGameObject;
             enemyObj.hit(this.#player.direction, this.#player.weaponDamage);
+        });
+
+        // register overlap enemies and void tiles from map, so enemies can avoid falling into void.
+        this.physics.add.collider(this.#enemyGroup!, this.#earth.getVoidLayer(), (enemy, _voidTile) => {
+            //const enemyObj = enemy as CharacterGameObject; enemyObj.hit(DIRECTION.DOWN, 999); currently enemies do not take damage from bumping into the void.
         });
     }
 
