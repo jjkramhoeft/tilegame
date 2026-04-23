@@ -2,6 +2,7 @@ import { BIOME } from '../../common/common';
 import { Position } from '../../common/types';
 import { Spider } from '../../game-objects/enemies/spider';
 import { Lamb } from '../../game-objects/enemies/lamb';
+import { Chicken } from '../../game-objects/enemies/chicken';
 import { Earth } from '../../ground/earth';
 import { Tile } from '../../ground/tile';
 //import { Wisp } from '../../game-objects/enemies/wisp';
@@ -18,7 +19,7 @@ export function spawnDebugEnemies(
         scene: scene,
         position: { x: 32000 + 75, y: 32000 - 180 },
     });
-    //spider.enableObject();
+    spider.enableObject();
     enemyGroup.add(spider);
 
 
@@ -26,7 +27,7 @@ export function spawnDebugEnemies(
         scene: scene,
         position: { x: 32000 - 50, y: 32000 + 220 },
     });
-    //spider2.enableObject();
+    spider2.enableObject();
     enemyGroup.add(spider2);
     
     // A third spider, added on a empty tile away from chests and the player.
@@ -40,7 +41,7 @@ export function spawnDebugEnemies(
         scene: scene,
         position: { x: 32000 + 230, y: 32000+20 },
     });
-    //spider3.enableObject();
+    spider3.enableObject();
     enemyGroup.add(spider3);
 
     // A lamb, added on a empty tile away from chests and the player.
@@ -54,6 +55,19 @@ export function spawnDebugEnemies(
     });
     lamb.enableObject();
     critterGroup.add(lamb);
+
+    // A Chicken, added on a empty tile away from chests and the player.
+    earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 5), y: (firstTilePosition.y-2) }, biome: BIOME.ROCK }));
+    earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 6), y: (firstTilePosition.y-2) }, biome: BIOME.VOID }));
+    earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 4), y: (firstTilePosition.y-2) }, biome: BIOME.VOID }));
+    earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 5), y: (firstTilePosition.y-3) }, biome: BIOME.VOID }));
+    earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 5), y: (firstTilePosition.y-1) }, biome: BIOME.VOID }));
+    const chicken = new Chicken({
+        scene: scene,
+        position: { x: 32000 + 350, y: 32000 - 90 },
+    });
+    chicken.enableObject();
+    critterGroup.add(chicken);
 
     /*
     const wisp = new Wisp({
