@@ -20,6 +20,7 @@ export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
     #player!: Player;
     #enemyGroup?: Phaser.GameObjects.Group;
+    #critterGroup?: Phaser.GameObjects.Group;
     #earth!: Earth;
     #playerStartPosition = { x: 32035, y: 32020 };
     #chests: ChestJJK[] = [];
@@ -53,6 +54,7 @@ export class GameScene extends Phaser.Scene {
         this.#setupCamera();
 
         this.#enemyGroup = this.add.group();
+        this.#critterGroup = this.add.group();
 
         const firstTilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#playerStartPosition.x, this.#playerStartPosition.y, true);
         const firstTile = new Tile({
@@ -64,7 +66,7 @@ export class GameScene extends Phaser.Scene {
         if (DataManager.instance.data.isDebugMode) {
             this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
 
-            spawnDebugEnemies(this, this.#enemyGroup, this.#earth, firstTilePosition);
+            spawnDebugEnemies(this, this.#enemyGroup, this.#critterGroup, this.#earth, firstTilePosition);
         }
 
         this.#registerColliders();
@@ -78,6 +80,9 @@ export class GameScene extends Phaser.Scene {
     update() {
         this.#enemyGroup?.getChildren().forEach((enemy) => {
             enemy.update();
+        });
+        this.#critterGroup?.getChildren().forEach((critter) => {
+            critter.update();
         });
 
         updateFallingLogic(this.#player, this.#earth);
@@ -144,10 +149,19 @@ export class GameScene extends Phaser.Scene {
             enemyObj.hit(this.#player.direction, this.#player.weaponDamage);
         });
 
+        // critters (passive mobs) can be hit by the player's weapon but do not damage the player on contact.
+        this.physics.add.overlap(this.#player.weaponBody, this.#critterGroup!, (_weaponBody, critter) => {
+            const critterObj = critter as CharacterGameObject;
+            critterObj.hit(this.#player.direction, this.#player.weaponDamage);
+        });
+
         // register overlap enemies and void tiles from map, so enemies can avoid falling into void.
         this.physics.add.collider(this.#enemyGroup!, this.#earth.getVoidLayer(), (enemy, _voidTile) => {
             //const enemyObj = enemy as CharacterGameObject; enemyObj.hit(DIRECTION.DOWN, 999); currently enemies do not take damage from bumping into the void.
         });
+
+        // critters also avoid falling into void tiles.
+        this.physics.add.collider(this.#critterGroup!, this.#earth.getVoidLayer());
     }
 
     #registerCustomEvents(): void {

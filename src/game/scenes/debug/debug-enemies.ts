@@ -9,6 +9,7 @@ import { Tile } from '../../ground/tile';
 export function spawnDebugEnemies(
     scene: Phaser.Scene,
     enemyGroup: Phaser.GameObjects.Group,
+    critterGroup: Phaser.GameObjects.Group,
     earth: Earth,
     firstTilePosition: Position,
 ): void {
@@ -52,7 +53,7 @@ export function spawnDebugEnemies(
         position: { x: 32000 + 380, y: 32000 +40 },
     });
     lamb.enableObject();
-    enemyGroup.add(lamb);
+    critterGroup.add(lamb);
 
     /*
     const wisp = new Wisp({
