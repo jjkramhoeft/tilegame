@@ -163,9 +163,9 @@ export class PreloadScene extends Phaser.Scene {
         anims.create({ key: 'lamb-walk-left', frames: anims.generateFrameNumbers('Lamb', { start: 12, end: 17 }), frameRate: 10, repeat: -1 });
         anims.create({ key: 'lamb-walk-down', frames: anims.generateFrameNumbers('Lamb', { start: 0, end: 5 }), frameRate: 10, repeat: -1 });
         anims.create({ key: 'lamb-walk-right', frames: anims.generateFrameNumbers('Lamb', { start: 18, end: 23 }), frameRate: 10, repeat: -1 });
-        anims.create({ key: 'lamb-idle-up', frames: anims.generateFrameNumbers('Lamb', { start: 6, end: 9 }), frameRate: 8, repeat: -1 });
-        anims.create({ key: 'lamb-idle-left', frames: anims.generateFrameNumbers('Lamb', { start: 12, end: 15 }), frameRate: 8, repeat: -1 });
-        anims.create({ key: 'lamb-idle-down', frames: anims.generateFrameNumbers('Lamb', { start: 0, end: 3 }), frameRate: 8, repeat: -1 });
-        anims.create({ key: 'lamb-idle-right', frames: anims.generateFrameNumbers('Lamb', { start: 18, end: 21 }), frameRate: 8, repeat: -1 });
+        anims.create({ key: 'lamb-idle-up', frames: anims.generateFrameNumbers('Lamb', { start: 6, end: 9 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: 'lamb-idle-left', frames: anims.generateFrameNumbers('Lamb', { start: 12, end: 15 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: 'lamb-idle-down', frames: anims.generateFrameNumbers('Lamb', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: 'lamb-idle-right', frames: anims.generateFrameNumbers('Lamb', { start: 18, end: 21 }), frameRate: 6, repeat: -1 });
     }
 }
