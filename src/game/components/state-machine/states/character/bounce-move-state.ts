@@ -3,7 +3,13 @@ import { BaseCharacterState } from './base-character-state';
 import { CHARACTER_STATES } from './character-states';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
 
+// How long (ms) the character keeps bouncing before randomly switching to BOUNCE_IDLE_STATE.
+const BOUNCE_MOVE_DURATION_MIN = 1500;
+const BOUNCE_MOVE_DURATION_MAX = 3500;
+
 export class BounceMoveState extends BaseCharacterState {
+  #idleTimer?: Phaser.Time.TimerEvent;
+
   constructor(gameObject: CharacterGameObject) {
     super(CHARACTER_STATES.BOUNCE_MOVE_STATE, gameObject);
   }
@@ -33,5 +39,19 @@ export class BounceMoveState extends BaseCharacterState {
       this._gameObject.setVelocity(speed * -1, 0);
     }
     this._gameObject.setBounce(1);
+
+    // after a random period of time, switch to bounce-idle so the character pauses to rest
+    const delay = Phaser.Math.Between(BOUNCE_MOVE_DURATION_MIN, BOUNCE_MOVE_DURATION_MAX);
+    this.#idleTimer = this._gameObject.scene.time.delayedCall(delay, () => {
+      this.#idleTimer = undefined;
+      this._stateMachine.setState(CHARACTER_STATES.BOUNCE_IDLE_STATE);
+    });
+  }
+
+  public onExit(): void {
+    if (this.#idleTimer !== undefined) {
+      this.#idleTimer.remove(false);
+      this.#idleTimer = undefined;
+    }
   }
 }

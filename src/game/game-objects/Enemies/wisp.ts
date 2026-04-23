@@ -13,6 +13,7 @@ import { AnimationConfig } from '../../components/game-object/animation-componen
 import { ASSET_KEYS, WISP_ANIMATION_KEYS } from '../../common/assets';
 import { CharacterGameObject } from '../common/character-game-object';
 import { BounceMoveState } from '../../components/state-machine/states/character/bounce-move-state';
+import { BounceIdleState } from '../../components/state-machine/states/character/bounce-idle-state';
 
 export type WispConfig = {
   scene: Phaser.Scene;
@@ -46,6 +47,7 @@ export class Wisp extends CharacterGameObject {
 
     // add state machine
     this._stateMachine.addState(new BounceMoveState(this));
+    this._stateMachine.addState(new BounceIdleState(this));
     this._stateMachine.setState(CHARACTER_STATES.BOUNCE_MOVE_STATE);
 
     // custom animation for movement

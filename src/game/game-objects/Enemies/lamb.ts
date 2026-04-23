@@ -4,6 +4,7 @@ import { InputComponent } from '../../components/input/input-component';
 import { CHARACTER_STATES } from '../../components/state-machine/states/character/character-states';
 import { IdleState } from '../../components/state-machine/states/character/idle-state';
 import { BounceMoveState } from '../../components/state-machine/states/character/bounce-move-state';
+import { BounceIdleState } from '../../components/state-machine/states/character/bounce-idle-state';
 import {
   ENEMY_LAMB_HURT_PUSH_BACK_SPEED,
   ENEMY_LAMB_MAX_HEALTH,
@@ -63,6 +64,7 @@ export class Lamb extends CharacterGameObject {
     // add state machine
     this._stateMachine.addState(new IdleState(this));
     this._stateMachine.addState(new BounceMoveState(this));
+    this._stateMachine.addState(new BounceIdleState(this));
     this._stateMachine.addState(new HurtState(this, ENEMY_LAMB_HURT_PUSH_BACK_SPEED));
     this._stateMachine.addState(new DeathState(this));
     this._stateMachine.setState(CHARACTER_STATES.BOUNCE_MOVE_STATE);

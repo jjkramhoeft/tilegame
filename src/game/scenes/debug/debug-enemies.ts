@@ -18,7 +18,7 @@ export function spawnDebugEnemies(
         scene: scene,
         position: { x: 32000 + 75, y: 32000 - 180 },
     });
-    spider.enableObject();
+    //spider.enableObject();
     enemyGroup.add(spider);
 
 
@@ -26,7 +26,7 @@ export function spawnDebugEnemies(
         scene: scene,
         position: { x: 32000 - 50, y: 32000 + 220 },
     });
-    spider2.enableObject();
+    //spider2.enableObject();
     enemyGroup.add(spider2);
     
     // A third spider, added on a empty tile away from chests and the player.
@@ -40,7 +40,7 @@ export function spawnDebugEnemies(
         scene: scene,
         position: { x: 32000 + 230, y: 32000+20 },
     });
-    spider3.enableObject();
+    //spider3.enableObject();
     enemyGroup.add(spider3);
 
     // A lamb, added on a empty tile away from chests and the player.
