@@ -16,25 +16,9 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('tile-base', 'assets/tile-base.png');
     }
 
-
-
-
     public create(): void {
 
-       /*
-
-        // Add the tileset with your 64×64 tiles + padding
-        const tileset = map.addTilesetImage(
-            'tile-border',  // name from Tiled (or whatever you want)
-            'tile-border',               // key of the image you loaded
-            64,                       // tileWidth
-            64,                       // tileHeight
-            2,                        // tileMargin  ← border around whole sheet
-            4                         // tileSpacing ← gap between tiles
-        );
-        */
         this.#createAnimations();
-
 
         this.scene.start(SCENE_KEYS.INTRO);
     }
@@ -172,5 +156,16 @@ export class PreloadScene extends Phaser.Scene {
         });
 
         anims.create({ key: 'spell-music-anim', frames: anims.generateFrameNumbers('spell-music-11', { start: 0, end: 10 }), frameRate: 9, repeat: 0 });
+
+        //Critter animations (currently only Lamb)
+        //Lamb sprite sheet layout: row 0 = down, row 1 = up, row 2 = left, row 3 = right. Each row has 6 frames for walking, followed by rows with 4 frames for idle.
+        anims.create({ key: 'lamb-walk-up', frames: anims.generateFrameNumbers('Lamb', { start: 6, end: 11 }), frameRate: 10, repeat: -1 });
+        anims.create({ key: 'lamb-walk-left', frames: anims.generateFrameNumbers('Lamb', { start: 12, end: 17 }), frameRate: 10, repeat: -1 });
+        anims.create({ key: 'lamb-walk-down', frames: anims.generateFrameNumbers('Lamb', { start: 0, end: 5 }), frameRate: 10, repeat: -1 });
+        anims.create({ key: 'lamb-walk-right', frames: anims.generateFrameNumbers('Lamb', { start: 18, end: 23 }), frameRate: 10, repeat: -1 });
+        anims.create({ key: 'lamb-idle-up', frames: anims.generateFrameNumbers('Lamb', { start: 6, end: 9 }), frameRate: 8, repeat: -1 });
+        anims.create({ key: 'lamb-idle-left', frames: anims.generateFrameNumbers('Lamb', { start: 12, end: 15 }), frameRate: 8, repeat: -1 });
+        anims.create({ key: 'lamb-idle-down', frames: anims.generateFrameNumbers('Lamb', { start: 0, end: 3 }), frameRate: 8, repeat: -1 });
+        anims.create({ key: 'lamb-idle-right', frames: anims.generateFrameNumbers('Lamb', { start: 18, end: 21 }), frameRate: 8, repeat: -1 });
     }
 }

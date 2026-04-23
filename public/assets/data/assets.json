@@ -1671,6 +1671,15 @@
         }
       },
       {
+        "type": "spritesheet",
+        "key": "Lamb",
+        "textureURL": "Lamb.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 32
+        }
+      },
+      {
         "type": "image",
         "key": "background",
         "url": "bg-garden-genesis.png"
