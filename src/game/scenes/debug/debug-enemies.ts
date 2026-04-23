@@ -50,7 +50,7 @@ export function spawnDebugEnemies(
     earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 5), y: (firstTilePosition.y+1) }, biome: BIOME.VOID }));
     const lamb = new Lamb({
         scene: scene,
-        position: { x: 32000 + 380, y: 32000 +40 },
+        position: { x: 32000 + 350, y: 32000 +40 },
     });
     lamb.enableObject();
     critterGroup.add(lamb);
