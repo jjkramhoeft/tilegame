@@ -8,6 +8,7 @@ export const ASSET_KEYS = {
   WISP: 'WISP',
   DROW: 'DROW',
   LAMB: 'Lamb',
+  CHICKEN: 'Chicken',
   DAGGER: 'DAGGER',
   DUNGEON_1_BACKGROUND: 'DUNGEON_1_BACKGROUND',
   DUNGEON_1_FOREGROUND: 'DUNGEON_1_FOREGROUND',
@@ -218,6 +219,17 @@ export const LAMB_ANIMATION_KEYS = {
   IDLE_UP: 'lamb-idle-up',
   IDLE_LEFT: 'lamb-idle-left',
   IDLE_RIGHT: 'lamb-idle-right',
+} as const;
+
+export const CHICKEN_ANIMATION_KEYS = {
+  WALK_DOWN: 'chicken-walk-down',
+  WALK_UP: 'chicken-walk-up',
+  WALK_LEFT: 'chicken-walk-left',
+  WALK_RIGHT: 'chicken-walk-right',
+  IDLE_DOWN: 'chicken-idle-down',
+  IDLE_UP: 'chicken-idle-up',
+  IDLE_LEFT: 'chicken-idle-left',
+  IDLE_RIGHT: 'chicken-idle-right',
 } as const;
 
 export const CHARACTER_ANIMATIONS = {
