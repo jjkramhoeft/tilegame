@@ -1724,6 +1724,11 @@
         "url": "shortspell1.wav"
       },
       {
+        "type": "audio",
+        "key": "levelup",
+        "url": "levelup.mp3"
+      },
+      {
         "type": "spritesheet",
         "key": "spell-music-11",
         "textureURL": "spell-music-11.png",

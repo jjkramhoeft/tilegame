@@ -12,17 +12,19 @@ export class DebugSpellcasting {
         isForestUnlocked: false,
         isSwampUnlocked: false,
         isCrystalUnlocked: false,
-        isWaterUnlocked: true,
+        isWaterUnlocked: false,
         isLavaUnlocked: false,
         isMountainUnlocked: false,
         powerLevel: 1,
     };
 
     #spellSound: Phaser.Sound.BaseSound;
+    #levelUpSound: Phaser.Sound.BaseSound;
     #previousStateName: string | undefined;
 
     constructor(scene: Phaser.Scene) {
         this.#spellSound = scene.sound.add('spellnotes1', { volume: 0.9 });
+        this.#levelUpSound = scene.sound.add('levelup', { volume: 0.9 });
         if (DataManager.instance.data.isDebugMode) {
             this.#playerCurrentMagic.isWaterUnlocked = true;
             this.#playerCurrentMagic.powerLevel = 5;
@@ -93,9 +95,12 @@ export class DebugSpellcasting {
                     this.#playerCurrentMagic.isLavaUnlocked = true;
                 }
                 const sum = feedback.rockTilesPlaced + feedback.desertTilesPlaced + feedback.grassTilesPlaced + feedback.forestTilesPlaced;
-                const x = Math.floor(sum / 20);
+                const x = Math.floor(sum / 5);
                 if (x > this.#playerCurrentMagic.powerLevel) {
                     this.#playerCurrentMagic.powerLevel++;
+                    if (this.#levelUpSound.isPlaying === false) {
+                        this.#levelUpSound.play();
+                    }
                 }
             }
         }

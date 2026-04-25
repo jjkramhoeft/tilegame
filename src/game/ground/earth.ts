@@ -28,7 +28,6 @@ export type CastingFeedback = {
     blocksPlaced: number;
 };
 
-
 export class Earth {
 
     protected allTiles: Map<string, Tile> = new Map<string, Tile>();
