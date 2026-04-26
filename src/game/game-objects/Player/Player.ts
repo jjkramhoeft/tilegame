@@ -121,8 +121,8 @@ export class Player extends CharacterGameObject {
       this,
     );
 
-    this.body?.setSize(this.body.width * 0.43, this.body.height * 0.7, true);
-    this.body?.setOffset(this.body.offset.x + 1, this.body.offset.y + 8);
+    this.body?.setSize(this.body.width * 0.43, this.body.height * 0.45, true);
+    this.body?.setOffset(this.body.offset.x + 1, this.body.offset.y + 14);
   }
 
   get physicsBody(): Phaser.Physics.Arcade.Body {
