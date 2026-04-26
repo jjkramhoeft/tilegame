@@ -83,14 +83,14 @@ export function getBlockingBoxesData(t: Phaser.Tilemaps.Tileset): Map<number, Ti
     blockingData.set(54, { x: 29, y: 11, width: 12, height: 17 });
     blockingData.set(55, { x: 16, y: 14, width: 28, height: 18 });//
 
-    blockingData.set(56, { x: 16, y: 12, width: 32, height: 16 });//
-    blockingData.set(57, { x: 16, y: 5, width: 32, height: 13 });
-    blockingData.set(58, { x: 16, y: 5, width: 32, height: 11 });//
+    blockingData.set(56, { x: 16, y: 12, width: 32, height: 20 });//
+    blockingData.set(57, { x: 16, y: 5, width: 32, height: 23 });
+    blockingData.set(58, { x: 16, y: 5, width: 32, height: 23 });//
     //crystal
     blockingData.set(59, { x: 16, y: 16, width: 32, height: 32 });
     blockingData.set(60, { x: 14, y: 18, width: 22, height: 22 });
-    blockingData.set(61, { x: 16, y: 16, width: 32, height: 32 });
-    blockingData.set(62, { x: 34, y: 22, width: 16, height: 30 });//
+    blockingData.set(61, { x: 14, y: 18, width: 32, height: 22 });
+    blockingData.set(62, { x: 34, y: 27, width: 16, height: 25 });//
     blockingData.set(63, { x: 13, y: 18, width: 23, height: 20 });
 
     blockingData.set(64, { x: 16, y: 16, width: 32, height: 32 });
