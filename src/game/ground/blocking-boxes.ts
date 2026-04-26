@@ -18,13 +18,13 @@ export function getBlockingBoxesData(t: Phaser.Tilemaps.Tileset): Map<number, Ti
 
     const blockingData: Map<number, TileCollisionObject> = new Map<number, TileCollisionObject>();
     //rocks
-    blockingData.set(0, { x: 10, y: 5, width: 48, height: 52 });//
-    blockingData.set(1, { x: 8, y: 6, width: 48, height: 50 });
-    blockingData.set(2, { x: 9, y: 8, width: 48, height: 52 });//
-    blockingData.set(3, { x: 7, y: 14, width: 53, height: 42 });//
-    blockingData.set(4, { x: 4, y: 9, width: 48, height: 52 });
-    blockingData.set(5, { x: 8, y: 6, width: 48, height: 52 });
-    blockingData.set(6, { x: 8, y: 9, width: 52, height: 47 });
+    blockingData.set(0, { x: 10, y: 15, width: 48, height: 42 });//
+    blockingData.set(1, { x: 8, y: 16, width: 48, height: 39 });
+    blockingData.set(2, { x: 9, y: 16, width: 48, height: 44 });//
+    blockingData.set(3, { x: 7, y: 19, width: 53, height: 36 });//
+    blockingData.set(4, { x: 4, y: 14, width: 48, height: 46 });
+    blockingData.set(5, { x: 8, y: 16, width: 48, height: 40 });
+    blockingData.set(6, { x: 8, y: 14, width: 52, height: 40 });
     blockingData.set(7, { x: 32, y: 30, width: 14, height: 11 });
 
     blockingData.set(8, { x: 20, y: 28, width: 42, height: 34 });
