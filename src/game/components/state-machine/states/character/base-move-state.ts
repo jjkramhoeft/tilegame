@@ -66,7 +66,7 @@ export abstract class BaseMoveState extends BaseCharacterState {
     }
 
     if (isVertically) {
-      this._gameObject.depth = this._gameObject.y+15;
+      this._gameObject.depth = this._gameObject.y+20;
     }
   }
 
