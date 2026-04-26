@@ -90,16 +90,16 @@ export function getBlockingBoxesData(t: Phaser.Tilemaps.Tileset): Map<number, Ti
     blockingData.set(59, { x: 16, y: 16, width: 32, height: 32 });
     blockingData.set(60, { x: 14, y: 18, width: 22, height: 22 });
     blockingData.set(61, { x: 14, y: 18, width: 32, height: 22 });
-    blockingData.set(62, { x: 34, y: 27, width: 16, height: 25 });//
+    blockingData.set(62, { x: 34, y: 29, width: 16, height: 23 });//
     blockingData.set(63, { x: 13, y: 18, width: 23, height: 20 });
 
     blockingData.set(64, { x: 16, y: 16, width: 32, height: 32 });
     blockingData.set(65, { x: 16, y: 16, width: 32, height: 32 });
-    blockingData.set(66, { x: 16, y: 16, width: 32, height: 32 });
-    blockingData.set(67, { x: 11, y: 24, width: 41, height: 32 });//
+    blockingData.set(66, { x: 10, y: 14, width: 32, height: 32 });
+    blockingData.set(67, { x: 11, y: 22, width: 41, height: 32 });//
     blockingData.set(68, { x: 16, y: 18, width: 32, height: 33 });//
-    blockingData.set(69, { x: 8, y: 25, width: 48, height: 30 });
-    blockingData.set(70, { x: 16, y: 16, width: 32, height: 32 });
+    blockingData.set(69, { x: 8, y: 23, width: 48, height: 30 });
+    blockingData.set(70, { x: 16, y: 18, width: 32, height: 30 });
     blockingData.set(71, { x: 12, y: 21, width: 44, height: 32 });//
 
     blockingData.set(72, { x: 16, y: 16, width: 32, height: 32 });
