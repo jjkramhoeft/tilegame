@@ -67,7 +67,7 @@ export class GameScene extends Phaser.Scene {
         if (DataManager.instance.data.isDebugMode) {
             this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
             setupDebugBlocking(this, this.#earth, firstTilePosition);
-            spawnDebugEnemies(this, this.#enemyGroup, this.#critterGroup, this.#earth, firstTilePosition);
+            //spawnDebugEnemies(this, this.#enemyGroup, this.#critterGroup, this.#earth, firstTilePosition);
         }
 
         this.#registerColliders();
