@@ -29,14 +29,14 @@ export function getBlockingBoxesData(t: Phaser.Tilemaps.Tileset): Map<number, Ti
 
     blockingData.set(8, { x: 20, y: 28, width: 42, height: 34 });
     blockingData.set(9, { x: 16, y: 16, width: 38, height: 32 });
-    blockingData.set(10, { x: 14, y: 14, width: 40, height: 36 });
-    blockingData.set(11, { x: 14, y: 14, width: 40, height: 36 });
+    blockingData.set(10, { x: 14, y: 18, width: 39, height: 32 });
+    blockingData.set(11, { x: 14, y: 16, width: 40, height: 32 });
     blockingData.set(12, { x: 32, y: 33, width: 24, height: 21 });//
-    blockingData.set(13, { x: 10, y: 9, width: 40, height: 50 });
-    blockingData.set(14, { x: 12, y: 10, width: 33, height: 37 });//
+    blockingData.set(13, { x: 10, y: 19, width: 38, height: 38 });
+    blockingData.set(14, { x: 12, y: 12, width: 33, height: 35 });//
     blockingData.set(15, { x: 22, y: 10, width: 38, height: 30 });
 
-    blockingData.set(16, { x: 20, y: 15, width: 33, height: 30 });
+    blockingData.set(16, { x: 20, y: 21, width: 33, height: 24 });
     blockingData.set(17, { x: 17, y: 26, width: 29, height: 23 });
     blockingData.set(18, { x: 9, y: 8, width: 19, height: 16 });
     blockingData.set(19, { x: 16, y: 16, width: 13, height: 16 });
@@ -46,8 +46,8 @@ export function getBlockingBoxesData(t: Phaser.Tilemaps.Tileset): Map<number, Ti
     blockingData.set(22, { x: 14, y: 22, width: 32, height: 32 });
     blockingData.set(23, { x: 16, y: 21, width: 32, height: 32 });
 
-    blockingData.set(24, { x: 15, y: 132, width: 30, height: 27 });//
-    blockingData.set(25, { x: 19, y: 43, width: 32, height: 16 });//
+    blockingData.set(24, { x: 15, y: 38, width: 30, height: 16 });//
+    blockingData.set(25, { x: 19, y: 38, width: 32, height: 16 });//
     blockingData.set(26, { x: 16, y: 21, width: 22, height: 20 });//
     blockingData.set(27, { x: 27, y: 32, width: 22, height: 20 });//
     blockingData.set(28, { x: 12, y: 20, width: 14, height: 29 });//
