@@ -15,6 +15,7 @@ import { spawnDebugEnemies } from './debug/debug-enemies';
 import { updateFallingLogic } from './debug/debug-falling';
 import { updateSwimmingLogic } from './debug/debug-swimming';
 import { DebugSpellcasting } from './debug/debug-spellcasting';
+import { setupDebugBlocking } from './debug/debug-blocking';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
@@ -65,7 +66,7 @@ export class GameScene extends Phaser.Scene {
 
         if (DataManager.instance.data.isDebugMode) {
             this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
-
+            setupDebugBlocking(this, this.#earth, firstTilePosition);
             spawnDebugEnemies(this, this.#enemyGroup, this.#critterGroup, this.#earth, firstTilePosition);
         }
 

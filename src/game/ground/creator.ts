@@ -395,8 +395,10 @@ export function DicedeDecoration(biome: number, countOfNeighborDecorations: numb
 
 export function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorations: number, casterGotDecoration: boolean,
     powerLevel: number, decoration: number, countOfNeighborBolcking: number): [number, number] {
-    let blocking = -1;
-    let floating = -1;
+
+        let blocking = -1;
+        let floating = -1;
+    return [blocking, floating];
     switch (biome) {
         case BIOME.ROCK:
             const minRockBlockingIndex = 0;
