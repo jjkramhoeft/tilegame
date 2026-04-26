@@ -67,10 +67,10 @@ export function getBlockingBoxesData(t: Phaser.Tilemaps.Tileset): Map<number, Ti
     blockingData.set(40, { x: 5, y: 10, width: 43, height: 38 });//
     blockingData.set(41, { x: 18, y: 6, width: 36, height: 20 });//
     blockingData.set(42, { x: 10, y: 13, width: 37, height: 22 });//
-    blockingData.set(43, { x: 16, y: 1, width: 32, height: 30 });//
-    blockingData.set(44, { x: 19, y: 6, width: 30, height: 23 });//
-    blockingData.set(45, { x: 16, y: 10, width: 32, height: 21 });
-    blockingData.set(46, { x: 16, y: 10, width: 32, height: 21 });
+    blockingData.set(43, { x: 16, y: 4, width: 32, height: 30 });//
+    blockingData.set(44, { x: 19, y: 6, width: 30, height: 24 });//
+    blockingData.set(45, { x: 16, y: 10, width: 32, height: 23 });
+    blockingData.set(46, { x: 16, y: 10, width: 32, height: 23 });
     //swamp
     blockingData.set(47, { x: 28, y: 30, width: 16, height: 14 });//
 
