@@ -42,6 +42,42 @@ export class PreloadScene extends Phaser.Scene {
             repeat: 2
         });
 
+        this.anims.create({
+            key: "JJK_LOOSE_FULL_POWER",
+            frames: this.anims.generateFrameNumbers('power16', { start: 4, end: 7 }),
+            frameRate: 8,
+            repeat: 2
+        }); this.anims.create({
+            key: "JJK_LOOSE_FIRST_HALF_POWER",
+            frames: this.anims.generateFrameNumbers('power16', { start: 8, end: 11 }),
+            frameRate: 8,
+            repeat: 2
+        });
+        this.anims.create({
+            key: "JJK_LOOSE_SECOND_HALF_POWER",
+            frames: this.anims.generateFrameNumbers('power16', { start: 12, end: 15 }),
+            frameRate: 8,
+            repeat: 2
+        });
+
+        this.anims.create({
+            key: "JJK_LOOSE_FULL_PROGRESS",
+            frames: this.anims.generateFrameNumbers('progress16', { start: 4, end: 7 }),
+            frameRate: 8,
+            repeat: 2
+        }); this.anims.create({
+            key: "JJK_LOOSE_FIRST_HALF_PROGRESS",
+            frames: this.anims.generateFrameNumbers('progress16', { start: 8, end: 11 }),
+            frameRate: 8,
+            repeat: 2
+        });
+        this.anims.create({
+            key: "JJK_LOOSE_SECOND_HALF_PROGRESS",
+            frames: this.anims.generateFrameNumbers('progress16', { start: 12, end: 15 }),
+            frameRate: 8,
+            repeat: 2
+        });
+
         const WATER_ANIM_KEY = 'water-flow';
         this.anims.create({
             key: WATER_ANIM_KEY,

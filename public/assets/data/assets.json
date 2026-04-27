@@ -1672,6 +1672,24 @@
       },
       {
         "type": "spritesheet",
+        "key": "power16",
+        "textureURL": "power16.png",
+        "frameConfig": {
+          "frameWidth": 16,
+          "frameHeight": 16
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "progress16",
+        "textureURL": "progress16.png",
+        "frameConfig": {
+          "frameWidth": 16,
+          "frameHeight": 16
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "Lamb",
         "textureURL": "Lamb.png",
         "frameConfig": {
