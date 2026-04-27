@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
 import { ASSET_KEYS, } from '../common/assets';
 import { DataManager } from '../common/data-manager';
-import { CUSTOM_EVENTS, EVENT_BUS, PLAYER_HEALTH_UPDATE_TYPE, PlayerHealthUpdated } from '../common/event-bus';
+import { CUSTOM_EVENTS, EVENT_BUS, PLAYER_UPDATE_TYPE, PlayerHealthUpdated } from '../common/event-bus';
 import { DEFAULT_UI_HEADING_STYLE, DEFAULT_UI_OPTION_STYLE, WEAPON, GEAR } from '../common/common';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
@@ -21,6 +21,8 @@ export interface ChestDialogInfo {
 export class UiScene extends Phaser.Scene {
   #hudContainer!: Phaser.GameObjects.Container;
   #hearts!: Phaser.GameObjects.Sprite[];
+  #power!: Phaser.GameObjects.Sprite[];
+  #progress!: Phaser.GameObjects.Sprite[];
   #saveDialogContainer!: Phaser.GameObjects.Container;
   #saveDialogContainerOption1!: Phaser.GameObjects.Text;//Escape - back to main menu
   #saveDialogContainerOption2!: Phaser.GameObjects.Text;//Save
@@ -58,17 +60,21 @@ export class UiScene extends Phaser.Scene {
     // create main hud
     this.#hudContainer = this.add.container(0, 0, []);
     this.#hearts = [];
+    this.#power = [];
+    this.#progress = [];
 
+    let dH = 50;
+    let dPow = 400;
+    let dPr = 800;
     // Health -----------------------------------------------
-
     const numberOfHearts = Math.floor(DataManager.instance.data.maxHealth / 2);
     const numberOfFullHearts = Math.floor(DataManager.instance.data.currentHealth / 2);
     const hasHalfHeart = DataManager.instance.data.currentHealth % 2 === 1;
     for (let i = 0; i < 20; i += 1) {
-      let x = 157 + 16 * i;
+      let x = dH + 16 * i;
       let y = 25;
       if (i >= 10) {
-        x = 157 + 16 * (i - 10);
+        x = dH + 16 * (i - 10);
         y = 43;
       }
       let frame: number = 3;//none heart
@@ -83,6 +89,54 @@ export class UiScene extends Phaser.Scene {
       this.#hearts.push(this.add.sprite(x, y, "hearts16", frame).setOrigin(0));
     }
     this.#hudContainer.add(this.#hearts);
+
+    // Power --------------------------------------------------
+    const numberOfPower = Math.floor(DataManager.instance.data.maxPower / 2);
+    const numberOfFullPower = Math.floor(DataManager.instance.data.currentPower / 2);
+    const hasHalfPower = DataManager.instance.data.currentPower % 2 === 1;
+    for (let i = 0; i < 20; i += 1) {
+      let x = dPow + 16 * i;
+      let y = 25;
+      if (i >= 10) {
+        x = dPow + 16 * (i - 10);
+        y = 43;
+      }
+      let frame: number = 3;//none power
+      if (i < numberOfFullPower) {
+        frame = 2;//full power
+      } else if (i < numberOfPower) {
+        frame = 0;//empty power
+      }
+      if (hasHalfPower && i === numberOfFullPower) {
+        frame = 2;//half power
+      }
+      this.#power.push(this.add.sprite(x, y, "power16", frame).setOrigin(0));
+    }
+    this.#hudContainer.add(this.#power);
+
+    // Progress --------------------------------------------------
+    const numberOfProgress = Math.floor(DataManager.instance.data.maxProgress / 2);
+    const numberOfFullProgress = Math.floor(DataManager.instance.data.currentProgress / 2);
+    const hasHalfProgress = DataManager.instance.data.currentProgress % 2 === 1;
+    for (let i = 0; i < 20; i += 1) {
+      let x = dPr + 16 * i;
+      let y = 25;
+      if (i >= 10) {
+        x = dPr + 16 * (i - 10);
+        y = 43;
+      }
+      let frame: number = 3;//none progress
+      if (i < numberOfFullProgress) {
+        frame = 2;//full progress
+      } else if (i < numberOfProgress) {
+        frame = 0;//empty progress
+      }
+      if (hasHalfProgress && i === numberOfFullProgress) {
+        frame = 2;//half progress
+      }
+      this.#progress.push(this.add.sprite(x, y, "progress16", frame).setOrigin(0));
+    }
+    this.#hudContainer.add(this.#progress);
 
     // Dialog --------------------------------------------------
     // Frame
@@ -142,7 +196,7 @@ export class UiScene extends Phaser.Scene {
   }
 
   public async updateHealthInHud(data: PlayerHealthUpdated): Promise<void> {
-    if (data.type === PLAYER_HEALTH_UPDATE_TYPE.INCREASE) {
+    if (data.type === PLAYER_UPDATE_TYPE.INCREASE) {
       // if player has increased their health, picking up hearts, new heart container, fairy, etc.,
       // need to update their health here
       return;

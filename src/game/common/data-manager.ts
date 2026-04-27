@@ -3,14 +3,20 @@ import { PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
   EVENT_BUS,
-  PLAYER_HEALTH_UPDATE_TYPE,
+  PLAYER_UPDATE_TYPE,
   PlayerHealthUpdated,
-  PlayerHealthUpdateType,
+  PlayerPowerUpdated,
+  PlayerProgressUpdated,
+  PlayerUpdateType,
 } from './event-bus';
 
 export type PlayerData = {
   currentHealth: number;
   maxHealth: number;
+  currentPower: number;
+  maxPower: number;
+  currentProgress: number;
+  maxProgress: number;
   sex: string;
   gear: string;
   weapon: string;
@@ -29,6 +35,10 @@ export class DataManager {
     this.#data = {
       currentHealth: PLAYER_START_MAX_HEALTH,
       maxHealth: PLAYER_START_MAX_HEALTH,
+      currentPower: 1,
+      maxPower: 1,
+      currentProgress: 0,
+      maxProgress: 0,
       sex: 'male',
       gear: '',
       weapon: '',
@@ -61,9 +71,9 @@ export class DataManager {
     if (health === this.#data.currentHealth) {
       return;
     }
-    let healthUpdateType: PlayerHealthUpdateType = PLAYER_HEALTH_UPDATE_TYPE.DECREASE;
+    let healthUpdateType: PlayerUpdateType = PLAYER_UPDATE_TYPE.DECREASE;
     if (health > this.#data.currentHealth) {
-      healthUpdateType = PLAYER_HEALTH_UPDATE_TYPE.INCREASE;
+      healthUpdateType = PLAYER_UPDATE_TYPE.INCREASE;
     }
     const dataToPass: PlayerHealthUpdated = {
       previousHealth: this.#data.currentHealth,
@@ -72,5 +82,39 @@ export class DataManager {
     };
     EVENT_BUS.emit(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, dataToPass);
     this.#data.currentHealth = health;
+  }
+
+  public updatePlayerCurrentPower(power: number): void {
+    if (power === this.#data.currentPower) {
+      return;
+    }
+    let powerUpdateType: PlayerUpdateType = PLAYER_UPDATE_TYPE.DECREASE;
+    if (power > this.#data.currentPower) {
+      powerUpdateType = PLAYER_UPDATE_TYPE.INCREASE;
+    }
+    const dataToPass: PlayerPowerUpdated = {
+      previousPower: this.#data.currentPower,
+      currentPower: power,
+      type: powerUpdateType,
+    };
+    EVENT_BUS.emit(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, dataToPass);
+    this.#data.currentPower = power;
+  }
+
+  public updatePlayerCurrentProgress(progress: number): void {
+    if (progress === this.#data.currentProgress) {
+      return;
+    }
+    let progressUpdateType: PlayerUpdateType = PLAYER_UPDATE_TYPE.DECREASE;
+    if (progress > this.#data.currentProgress) {
+      progressUpdateType = PLAYER_UPDATE_TYPE.INCREASE;
+    }
+    const dataToPass: PlayerProgressUpdated = {
+      previousProgress: this.#data.currentProgress,
+      currentProgress: progress,
+      type: progressUpdateType,
+    };
+    EVENT_BUS.emit(CUSTOM_EVENTS.PLAYER_PROGRESS_UPDATED, dataToPass);
+    this.#data.currentProgress = progress;
   }
 }
