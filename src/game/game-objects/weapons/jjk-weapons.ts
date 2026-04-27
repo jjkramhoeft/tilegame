@@ -1,8 +1,34 @@
-import { BaseWeapon } from './base-weapon';
+import * as Phaser from 'phaser';
+import { BaseWeapon, WeaponAttackAnimationConfig } from './base-weapon';
 import { DIRECTION, WEAPON } from '../../common/common';
 import { DataManager } from '../../common/data-manager';
+import { WeaponComponent } from '../../components/game-object/weapon-component';
+
+// The sword thrust spritesheet uses 128x128 frames while every other player
+// animation uses 64x64. When the larger frame is displayed the player's
+// physics body (positioned via sprite.x - displayOriginX + offset) shifts by
+// (128-64)/2 = 32px up-and-left. We compensate by adjusting the player body
+// offset whenever a sword-thrust animation is playing.
+const SWORD_THRUST_FRAME_OFFSET = 32;
 
 export class JjkWeapons extends BaseWeapon {
+  private _swordOffsetApplied = false;
+  private _animStartListenerInstalled = false;
+
+  constructor(
+    sprite: Phaser.GameObjects.Sprite,
+    weaponComponent: WeaponComponent,
+    animationConfig: WeaponAttackAnimationConfig,
+    baseDamage: number,
+    isPlayerWeapon?: boolean,
+    sex?: string,
+    gear?: string,
+    weapon?: string,
+  ) {
+    super(sprite, weaponComponent, animationConfig, baseDamage, isPlayerWeapon, sex, gear, weapon);
+    this._installAnimationListener();
+  }
+
   public attackUp(): void {
     if(DataManager.instance.data.weapon === WEAPON.SWORD) {
       this._weaponComponent.body.setSize(35, 22);
@@ -69,5 +95,44 @@ export class JjkWeapons extends BaseWeapon {
       this._weaponComponent.body.position.set(this._sprite.x - 26, this._sprite.y - 2);
     }
     this.attack(DIRECTION.LEFT);
+  }
+
+  /**
+   * Watch the player sprite for animation changes. Whenever a sword-thrust
+   * animation (which uses 128x128 frames instead of the standard 64x64)
+   * starts, shift the player body offset to keep the physics body anchored
+   * to the same visual point. Whenever any other animation starts, restore
+   * the original offset.
+   */
+  private _installAnimationListener(): void {
+    if (this._animStartListenerInstalled) {
+      return;
+    }
+    this._animStartListenerInstalled = true;
+
+    this._sprite.on(
+      Phaser.Animations.Events.ANIMATION_START,
+      (animation: Phaser.Animations.Animation) => {
+        const isSwordThrust = animation.key.includes('-sword-thrust-');
+        if (isSwordThrust) {
+          this._setSwordOffset(true);
+        } else {
+          this._setSwordOffset(false);
+        }
+      },
+    );
+  }
+
+  private _setSwordOffset(apply: boolean): void {
+    if (apply === this._swordOffsetApplied) {
+      return;
+    }
+    const body = (this._sprite as Phaser.Physics.Arcade.Sprite).body as Phaser.Physics.Arcade.Body | null;
+    if (!body) {
+      return;
+    }
+    const delta = apply ? SWORD_THRUST_FRAME_OFFSET : -SWORD_THRUST_FRAME_OFFSET;
+    body.setOffset(body.offset.x + delta, body.offset.y + delta);
+    this._swordOffsetApplied = apply;
   }
 }
