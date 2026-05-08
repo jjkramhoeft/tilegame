@@ -126,6 +126,8 @@ The game starts with the play standing on a lone single tile. With magic level o
 
 The number and type of tile that the play has created are tracked
 
+### Biome Unlock Order
+
 0) Void
 1) Rock. Chest 1 (Bare outfit)
 2) Desert. Chest 4 (Dagger weapon)
@@ -136,3 +138,5 @@ The number and type of tile that the play has created are tracked
 7) Swamp. Chest 6 (Sword weapon)
 8) Crystal. Chest 3 (Armor outfit)
 9) Lava. Burning - will dammage player
+
+First when a biome is unlocked only plain basetiles with borderlayer can be added as new tiles. After 10 tiles are placed, new placed tiles can also include decorations.
