@@ -59,7 +59,7 @@ The tile map consist of six layers
 ## Biomes
 
 - Void / ´none´
-- Rock
+- Rock. Start biome
 - Desert
 - grass
 - forest
@@ -124,6 +124,13 @@ consist of the fowwing ellements
 The game starts with the play standing on a lone single tile. With magic level one, and no weapon and no cloth
 
 The number and type of tile that the play has created are tracked
+
+For each of the six biomes (Rock, Desert, Grass, Forest, Swamp and Crystal) the progression follows this pattern:
+First only plain basetiles (with borderlayer) can be added, then after 10 of those are placed, Decorations are unlocked for that biome, Then after 10 tiles with decoration have been placed blocking is unlocked together with a chest, Then after 10 tiles with blocking Animals are unlocked.
+
+Void, Water, Mountains and Lava have no progression but all hinders movement in some way.
+
+Power level progress with the total count of tiles placed: 0-49 = level 1, 50-149 = level 2, 150-299 = level 3, 300-499 = level 4, 500-749 = level 5, 750- = level 6
 
 ### Biome Unlock Order
 

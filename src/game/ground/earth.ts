@@ -3,29 +3,73 @@ import { Tile } from './tile';
 import { Position, Direction } from '../common/types';
 import { BASE_DEPTH, BIOME, BLOCKING_TILE_DEPTH, BORDER_DEPTH, CRYSTAL_GLIMTS_DEPTH, DECORATION_DEPTH, FLOATING_DEPTH, LAVA_DEPTH, VOID_ANIM_DEPTH, VOID_SOLID_DEPTH, WATER_DEPTH } from '../common/common';
 import { ASSET_KEYS } from '../common/assets';
-import { findTargetTiles, DecideBiome, DicedeDecoration, DicedeBlockingAndFloating, DecideBorder } from './creator';
+import { findTargetTiles, DecideBiome, DecideDecoration, DecideBlockingAndFloating, DecideBorder } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
 import { ENABLE_LOGGING } from '../common/config';
 
 export type EarthCastingConfig = {
+    // Void and rock are unlocked from the start.
+    isRockDecorationUnlocked: boolean;
+    isRockBlockingUnlocked: boolean;
+    isChest1Placable: boolean;
+    // Desert
     isDesertUnlocked: boolean;
+    isDesertDecorationUnlocked: boolean;
+    isDesertBlockingUnlocked: boolean;
+    isChest2Placable: boolean;
+    // Grass
     isGrassUnlocked: boolean;
+    isGrassDecorationUnlocked: boolean;
+    isGrassBlockingUnlocked: boolean;
+    isChest3Placable: boolean;
+    //Forest
     isForestUnlocked: boolean;
-    isWaterUnlocked: boolean;
+    isForestDecorationUnlocked: boolean;
+    isForestBlockingUnlocked: boolean;
+    isChest4Placable: boolean;
+    // Swamp
     isSwampUnlocked: boolean;
+    isSwampDecorationUnlocked: boolean;
+    isSwampBlockingUnlocked: boolean;
+    isChest5Placable: boolean;
+    // Crystal
     isCrystalUnlocked: boolean;
+    isCrystalDecorationUnlocked: boolean;
+    isCrystalBlockingUnlocked: boolean;
+    isChest6Placable: boolean;
+    // Water
+    isWaterUnlocked: boolean;
+    // Lava
     isLavaUnlocked: boolean;
+    // Mountain
     isMountainUnlocked: boolean;
+    // Current player power level
     powerLevel: number;
 };
 
 export type CastingFeedback = {
     rockTilesPlaced: number;
+    rockDecorationsPlaced: number;
+    rockBlockingPlaced: number;
     desertTilesPlaced: number;
+    desertDecorationsPlaced: number;
+    desertBlockingPlaced: number;
     grassTilesPlaced: number;
+    grassDecorationsPlaced: number;
+    grassBlockingPlaced: number;
     forestTilesPlaced: number;
-    detailsPlaced: number;
-    blocksPlaced: number;
+    forestDecorationsPlaced: number;
+    forestBlockingPlaced: number;
+    swampTilesPlaced: number;
+    swampDecorationsPlaced: number;
+    swampBlockingPlaced: number;
+    crystalTilesPlaced: number;
+    crystalDecorationsPlaced: number;
+    crystalBlockingPlaced: number;
+    waterTilesPlaced: number;
+    lavaTilesPlaced: number;
+    mountainTilesPlaced: number;
+    chestNumberPlaced?: number;
 };
 
 export class Earth {
@@ -44,11 +88,27 @@ export class Earth {
     private blockingData: Map<number, TileCollisionObject> = new Map<number, TileCollisionObject>();
     private castingFeedback: CastingFeedback = {
         rockTilesPlaced: 0,
+        rockDecorationsPlaced: 0,
+        rockBlockingPlaced: 0,
         desertTilesPlaced: 0,
+        desertDecorationsPlaced: 0,
+        desertBlockingPlaced: 0,
         grassTilesPlaced: 0,
+        grassDecorationsPlaced: 0,
+        grassBlockingPlaced: 0,
         forestTilesPlaced: 0,
-        detailsPlaced: 0,
-        blocksPlaced: 0,
+        forestDecorationsPlaced: 0,
+        forestBlockingPlaced: 0,
+        swampTilesPlaced: 0,
+        swampDecorationsPlaced: 0,
+        swampBlockingPlaced: 0,
+        crystalTilesPlaced: 0,
+        crystalDecorationsPlaced: 0,
+        crystalBlockingPlaced: 0,
+        waterTilesPlaced: 0,
+        lavaTilesPlaced: 0,
+        mountainTilesPlaced: 0,
+        chestNumberPlaced: undefined,
     };
     private tileSize = 64;
 
@@ -260,25 +320,81 @@ export class Earth {
         const countOfNeighborDecorations = neighborTiles.filter(n => n.decoration >= 0).length;
         const countOfNeighborBolcking = neighborTiles.filter(n => n.blocking >= 0).length;
         const casterGotDecoration = casterTile?.decoration !== undefined && casterTile.decoration >= 0;
-        const decoration: number = DicedeDecoration(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel);
-        const [blocking, floating] = DicedeBlockingAndFloating(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel, decoration, countOfNeighborBolcking);
+        let decoration: number = -1;
+        if ((creationConfig.isGrassDecorationUnlocked && biome === BIOME.GRASS) ||
+            (creationConfig.isRockDecorationUnlocked && biome === BIOME.ROCK) ||
+            (creationConfig.isDesertDecorationUnlocked && biome === BIOME.DESERT) ||
+            (creationConfig.isForestDecorationUnlocked && biome === BIOME.FOREST) ||
+            (creationConfig.isSwampDecorationUnlocked && biome === BIOME.SWAMP) ||
+            (creationConfig.isCrystalDecorationUnlocked && biome === BIOME.CRYSTAL)) {
+            decoration = DecideDecoration(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel);
+        }
+        let blocking = -1;
+        let floating = -1;
+        if ((creationConfig.isGrassBlockingUnlocked && biome === BIOME.GRASS) ||
+            (creationConfig.isRockBlockingUnlocked && biome === BIOME.ROCK) ||
+            (creationConfig.isDesertBlockingUnlocked && biome === BIOME.DESERT) ||
+            (creationConfig.isForestBlockingUnlocked && biome === BIOME.FOREST) ||
+            (creationConfig.isSwampBlockingUnlocked && biome === BIOME.SWAMP) ||
+            (creationConfig.isCrystalBlockingUnlocked && biome === BIOME.CRYSTAL)) {
+            [blocking, floating] = DecideBlockingAndFloating(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel, decoration, countOfNeighborBolcking);
+        }
 
         if (biome === BIOME.ROCK) {
             this.castingFeedback.rockTilesPlaced++;
+            if (decoration >= 0) {
+                this.castingFeedback.rockDecorationsPlaced++;
+            }
+            if (blocking >= 0) {
+                this.castingFeedback.rockBlockingPlaced++;
+            }
         } else if (biome === BIOME.DESERT) {
             this.castingFeedback.desertTilesPlaced++;
+            if (decoration >= 0) {
+                this.castingFeedback.desertDecorationsPlaced++;
+            }
+            if (blocking >= 0) {
+                this.castingFeedback.desertBlockingPlaced++;
+            }
         } else if (biome === BIOME.GRASS) {
             this.castingFeedback.grassTilesPlaced++;
+            if (decoration >= 0) {
+                this.castingFeedback.grassDecorationsPlaced++;
+            }
+            if (blocking >= 0) {
+                this.castingFeedback.grassBlockingPlaced++;
+            }
         } else if (biome === BIOME.FOREST) {
             this.castingFeedback.forestTilesPlaced++;
+            if (decoration >= 0) {
+                this.castingFeedback.forestDecorationsPlaced++;
+            }
+            if (blocking >= 0) {
+                this.castingFeedback.forestBlockingPlaced++;
+            }
+        } else if (biome === BIOME.SWAMP) {
+            this.castingFeedback.swampTilesPlaced++;
+            if (decoration >= 0) {
+                this.castingFeedback.swampDecorationsPlaced++;
+            }
+            if (blocking >= 0) {
+                this.castingFeedback.swampBlockingPlaced++;
+            }
+        } else if (biome === BIOME.CRYSTAL) {
+            this.castingFeedback.crystalTilesPlaced++;
+            if (decoration >= 0) {
+                this.castingFeedback.crystalDecorationsPlaced++;
+            }
+            if (blocking >= 0) {
+                this.castingFeedback.crystalBlockingPlaced++;
+            }
+        } else if (biome === BIOME.WATER) {
+            this.castingFeedback.waterTilesPlaced++;
+        } else if (biome === BIOME.LAVA) {
+            this.castingFeedback.lavaTilesPlaced++;
+        } else if (biome === BIOME.MOUNTAIN) {
+            this.castingFeedback.mountainTilesPlaced++;
         }
-        if (decoration >= 0) {
-            this.castingFeedback.detailsPlaced++;
-        }
-        if (blocking >= 0) {
-            this.castingFeedback.blocksPlaced++;
-        }
-
 
         return new Tile({
             tilenumber: tilePosition,

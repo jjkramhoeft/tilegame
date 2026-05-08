@@ -318,7 +318,7 @@ export function DecideBiome(creationConfig: EarthCastingConfig, casterBiome: num
     return BIOME.ROCK;
 }
 
-export function DicedeDecoration(biome: number, countOfNeighborDecorations: number, casterGotDecoration: boolean, powerLevel: number): number {
+export function DecideDecoration(biome: number, countOfNeighborDecorations: number, casterGotDecoration: boolean, powerLevel: number): number {
     let decoration = -1;
     switch (biome) {
         case BIOME.ROCK: // rock
@@ -393,7 +393,7 @@ export function DicedeDecoration(biome: number, countOfNeighborDecorations: numb
     return decoration;
 }
 
-export function DicedeBlockingAndFloating(biome: number, countOfNeighborDecorations: number, casterGotDecoration: boolean,
+export function DecideBlockingAndFloating(biome: number, countOfNeighborDecorations: number, casterGotDecoration: boolean,
     powerLevel: number, decoration: number, countOfNeighborBolcking: number): [number, number] {
 
         let blocking = -1;
