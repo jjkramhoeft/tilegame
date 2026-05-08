@@ -107,6 +107,10 @@ export class GameScene extends Phaser.Scene {
         DataManager.instance.data = {
             currentHealth: 6,
             maxHealth: 6,
+            currentPower: 1,
+            maxPower: 1,
+            currentProgress: 0,
+            maxProgress: 0,
             sex: currentData.sex ?? SEX.MALE,
             gear: GEAR.NONE,
             weapon: WEAPON.NONE,
