@@ -326,17 +326,19 @@ export class Earth {
             (creationConfig.isDesertDecorationUnlocked && biome === BIOME.DESERT) ||
             (creationConfig.isForestDecorationUnlocked && biome === BIOME.FOREST) ||
             (creationConfig.isSwampDecorationUnlocked && biome === BIOME.SWAMP) ||
-            (creationConfig.isCrystalDecorationUnlocked && biome === BIOME.CRYSTAL)) {
+            (creationConfig.isCrystalDecorationUnlocked && biome === BIOME.CRYSTAL)) 
+        {
             decoration = DecideDecoration(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel);
         }
         let blocking = -1;
         let floating = -1;
-        if ((creationConfig.isGrassBlockingUnlocked && biome === BIOME.GRASS) ||
+        if((creationConfig.isGrassBlockingUnlocked && biome === BIOME.GRASS) ||
             (creationConfig.isRockBlockingUnlocked && biome === BIOME.ROCK) ||
             (creationConfig.isDesertBlockingUnlocked && biome === BIOME.DESERT) ||
             (creationConfig.isForestBlockingUnlocked && biome === BIOME.FOREST) ||
             (creationConfig.isSwampBlockingUnlocked && biome === BIOME.SWAMP) ||
-            (creationConfig.isCrystalBlockingUnlocked && biome === BIOME.CRYSTAL)) {
+            (creationConfig.isCrystalBlockingUnlocked && biome === BIOME.CRYSTAL)) 
+        {
             [blocking, floating] = DecideBlockingAndFloating(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel, decoration, countOfNeighborBolcking);
         }
 

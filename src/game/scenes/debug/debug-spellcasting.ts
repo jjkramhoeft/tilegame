@@ -7,11 +7,29 @@ import { DataManager } from '../../common/data-manager';
 export class DebugSpellcasting {
 
     #playerCurrentMagic: EarthCastingConfig = {
+        isRockDecorationUnlocked: false,
+        isRockBlockingUnlocked: false,
+        isChest1Placable: false,
         isDesertUnlocked: false,
+        isDesertDecorationUnlocked: false,
+        isDesertBlockingUnlocked: false,
+        isChest2Placable: false,
         isGrassUnlocked: false,
+        isGrassDecorationUnlocked: false,
+        isGrassBlockingUnlocked: false,
+        isChest3Placable: false,
         isForestUnlocked: false,
+        isForestDecorationUnlocked: false,
+        isForestBlockingUnlocked: false,
+        isChest4Placable: false,
         isSwampUnlocked: false,
+        isSwampDecorationUnlocked: false,
+        isSwampBlockingUnlocked: false,
+        isChest5Placable: false,
         isCrystalUnlocked: false,
+        isCrystalDecorationUnlocked: false,
+        isCrystalBlockingUnlocked: false,
+        isChest6Placable: false,
         isWaterUnlocked: false,
         isLavaUnlocked: false,
         isMountainUnlocked: false,
@@ -25,6 +43,7 @@ export class DebugSpellcasting {
     constructor(scene: Phaser.Scene) {
         this.#spellSound = scene.sound.add('spellnotes1', { volume: 0.9 });
         this.#levelUpSound = scene.sound.add('levelup', { volume: 0.9 });
+        //If debug mode is on then ease progression to save test time.
         if (DataManager.instance.data.isDebugMode) {
             this.#playerCurrentMagic.isWaterUnlocked = true;
             this.#playerCurrentMagic.powerLevel = 5;
@@ -81,23 +100,99 @@ export class DebugSpellcasting {
 
             const feedback = earth.AddTiles(this.#playerCurrentMagic, casterPosition, tilePosition, directions);
             if (feedback) {
-                if (feedback.rockTilesPlaced > 10) { this.#playerCurrentMagic.isDesertUnlocked = true; }
-                if (feedback.desertTilesPlaced > 10) { this.#playerCurrentMagic.isGrassUnlocked = true; }
-                if (feedback.grassTilesPlaced > 10) { this.#playerCurrentMagic.isForestUnlocked = true; }
-                if (feedback.forestTilesPlaced > 10) {
-                    this.#playerCurrentMagic.isSwampUnlocked = true;
-                    this.#playerCurrentMagic.isWaterUnlocked = true;
+                if (feedback.rockTilesPlaced > 10 && this.#playerCurrentMagic.isRockDecorationUnlocked === false) { this.#playerCurrentMagic.isRockDecorationUnlocked = true; }
+                if (feedback.rockDecorationsPlaced > 10 && this.#playerCurrentMagic.isRockBlockingUnlocked === false) { 
+                    this.#playerCurrentMagic.isRockBlockingUnlocked = true; 
+                    //ToDo enable chest 1 if not already enabled or placed
+                    if(this.#playerCurrentMagic.isDesertUnlocked === false) {
+                        this.#playerCurrentMagic.isDesertUnlocked = true;
+                    }
                 }
-                if (feedback.forestTilesPlaced > 20) {
-                    this.#playerCurrentMagic.isCrystalUnlocked = true;
+                if (this.#playerCurrentMagic.isDesertUnlocked) {
+                    if (feedback.desertTilesPlaced > 10 && this.#playerCurrentMagic.isDesertDecorationUnlocked === false) { this.#playerCurrentMagic.isDesertDecorationUnlocked = true; }
+                    if (feedback.desertDecorationsPlaced > 10 && this.#playerCurrentMagic.isDesertBlockingUnlocked === false) { 
+                        this.#playerCurrentMagic.isDesertBlockingUnlocked = true; 
+                        //ToDo enable chest 2 if not already enabled or placed
+                        if(this.#playerCurrentMagic.isGrassUnlocked === false) {
+                            this.#playerCurrentMagic.isGrassUnlocked = true;
+                        }
+                        if(this.#playerCurrentMagic.isWaterUnlocked === false) {
+                            this.#playerCurrentMagic.isWaterUnlocked = true;
+                        }
+                    }
                 }
-                if (feedback.forestTilesPlaced > 30) {
-                    this.#playerCurrentMagic.isLavaUnlocked = true;
+                if (this.#playerCurrentMagic.isGrassUnlocked) {
+                    if (feedback.grassTilesPlaced > 10 && this.#playerCurrentMagic.isGrassDecorationUnlocked === false) { this.#playerCurrentMagic.isGrassDecorationUnlocked = true; }
+                    if (feedback.grassDecorationsPlaced > 10 && this.#playerCurrentMagic.isGrassBlockingUnlocked === false) { 
+                        this.#playerCurrentMagic.isGrassBlockingUnlocked = true; 
+                        //ToDo enable chest 3 if not already enabled or placed
+                        if(this.#playerCurrentMagic.isForestUnlocked === false) {
+                            this.#playerCurrentMagic.isForestUnlocked = true;
+                        }
+                    }
                 }
-                const sum = feedback.rockTilesPlaced + feedback.desertTilesPlaced + feedback.grassTilesPlaced + feedback.forestTilesPlaced;
-                const x = Math.floor(sum / 5);
-                if (x > this.#playerCurrentMagic.powerLevel) {
+                if (this.#playerCurrentMagic.isForestUnlocked) {
+                    if (feedback.forestTilesPlaced > 10 && this.#playerCurrentMagic.isForestDecorationUnlocked === false) { this.#playerCurrentMagic.isForestDecorationUnlocked = true; }
+                    if (feedback.forestDecorationsPlaced > 10 && this.#playerCurrentMagic.isForestBlockingUnlocked === false) { 
+                        this.#playerCurrentMagic.isForestBlockingUnlocked = true; 
+                        //ToDo enable chest 4 if not already enabled or placed
+                        if(this.#playerCurrentMagic.isSwampUnlocked === false) {
+                            this.#playerCurrentMagic.isSwampUnlocked = true;
+                        }
+                        if(this.#playerCurrentMagic.isMountainUnlocked === false) {
+                            this.#playerCurrentMagic.isMountainUnlocked = true;
+                        }
+                    }
+                }
+                if (this.#playerCurrentMagic.isSwampUnlocked) {
+                    if (feedback.swampTilesPlaced > 10 && this.#playerCurrentMagic.isSwampDecorationUnlocked === false) { this.#playerCurrentMagic.isSwampDecorationUnlocked = true; }
+                    if (feedback.swampDecorationsPlaced > 10 && this.#playerCurrentMagic.isSwampBlockingUnlocked === false) { 
+                        this.#playerCurrentMagic.isSwampBlockingUnlocked = true; 
+                        //ToDo enable chest 5 if not already enabled or placed
+                        if(this.#playerCurrentMagic.isCrystalUnlocked === false) {
+                            this.#playerCurrentMagic.isCrystalUnlocked = true;
+                        }
+                    }
+                }
+                if (this.#playerCurrentMagic.isCrystalUnlocked) {
+                    if (feedback.crystalTilesPlaced > 10 && this.#playerCurrentMagic.isCrystalDecorationUnlocked === false) { this.#playerCurrentMagic.isCrystalDecorationUnlocked = true; }
+                    if (feedback.crystalDecorationsPlaced > 10 && this.#playerCurrentMagic.isCrystalBlockingUnlocked === false) {   
+                        this.#playerCurrentMagic.isCrystalBlockingUnlocked = true; 
+                        //ToDo enable chest 6 if not already enabled or placed
+                        if(this.#playerCurrentMagic.isLavaUnlocked === false) {
+                            this.#playerCurrentMagic.isLavaUnlocked = true;
+                        }
+                    }
+                }
+
+                const sum = feedback.rockTilesPlaced +
+                    feedback.desertTilesPlaced +
+                    feedback.grassTilesPlaced +
+                    feedback.forestTilesPlaced +
+                    feedback.swampTilesPlaced +
+                    feedback.crystalTilesPlaced +
+                    feedback.lavaTilesPlaced +
+                    feedback.waterTilesPlaced +
+                    feedback.mountainTilesPlaced;
+                let levelPowerUp: boolean = false;
+                let debugDivider:number = 1;
+                if (DataManager.instance.data.isDebugMode) {
+                    debugDivider = 10;
+                }
+                if (this.#playerCurrentMagic.powerLevel === 1 && sum >= 50 / debugDivider) {
+                    levelPowerUp = true;
+                } else if (this.#playerCurrentMagic.powerLevel === 2 && sum >= 150 / debugDivider) {
+                    levelPowerUp = true;
+                } else if (this.#playerCurrentMagic.powerLevel === 3 && sum >= 300 / debugDivider) {
+                    levelPowerUp = true;
+                } else if (this.#playerCurrentMagic.powerLevel === 4 && sum >= 500 / debugDivider) {
+                    levelPowerUp = true;
+                }else if (this.#playerCurrentMagic.powerLevel === 5 && sum >= 750 / debugDivider) {
+                    levelPowerUp = true;
+                }
+                if(levelPowerUp) {
                     this.#playerCurrentMagic.powerLevel++;
+                    //ToDo: Update UI
                     if (this.#levelUpSound.isPlaying === false) {
                         this.#levelUpSound.play();
                     }
