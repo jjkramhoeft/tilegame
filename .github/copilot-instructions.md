@@ -1,0 +1,36 @@
+IMPORTANT: Try to preserve the original code and the logic of the original code as much as possible.
+
+## Project Overview
+
+This is a Phaser TypeScript top-down RPG where the player dynamically builds the map while playing. Full game design is documented in `GameMechanics.md`.
+
+### Tile Map
+
+The map has six layers (bottom to top): Void, Base (biome), Border, Decoration, Blocking, Floating. Depth constants used in code:
+- `VOID_SOLID_DEPTH` = -50, `PLAYER_FALLING_STATE_DEPTH` = -40, `VOID_ANIM_DEPTH` = -30
+- `BASE_DEPTH` = -20, `BORDER_DEPTH` = -18, `LAVA_DEPTH` = -16, `WATER_DEPTH` = -14, `CRYSTAL_GLIMTS_DEPTH` = -12
+- `DECORATION_DEPTH` = -10, `BLOCKING_TILE_DEPTH` = 0, `FLOATING_DEPTH` = 9999999
+- Blocking sprites are placed at `worldY +64`and the players dept at changed with worldY to create the illusion of depth.
+
+### Game Progression
+
+- Player starts on a single tile with magic level 1, no weapon, no outfit.
+- Biomes unlock as the player places tiles. Chests unlock weapons (Dagger, Staff, Sword) and outfits (Bare, Basic, Armor).
+- Water biome: player can swim but cannot attack or use magic.
+- Lava biome: damages the player.
+- Mountain biome: impassable.
+
+### Biomes (unlock order)
+
+Void → Rock → Desert → Water → Grass → Forest → Mountain → Swamp → Crystal → Lava
+
+### Characters
+
+- **Player**: 8-direction movement, 4-direction facing. Animations: Idle, Walk, Attack/Cast, Swim, Die/Fall. Weapons: None → Dagger → Staff → Sword. Outfits: None → Bare → Basic → Armor.
+- **Enemies**: Spider, Wisp, Lamb, Chicken and Drow. Idle/Walk/Attack/Die animations. Require pathfinding.
+- All characters have  blob shadows, are blocked by the Blocking layer, and fall from void/empty tiles.
+
+### UI
+
+- Hearts (health), Magic Level indicator, Animal progression indicator.
+- Chest dialog, Save/Exit dialog, Story dialog (not yet implemented).

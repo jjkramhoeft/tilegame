@@ -32,30 +32,29 @@ The tile map consist of six layers
 - Two starter options: Male or female (Adam or Eve)
 - Four Weapon progressions: None, Dagger, Staff, Sword
 - Four Outfit progressions: None, Bare, Basic, Armor
-- Cast blob shadow
-- Blocked by blocking layer
+- Cast blob shadow (in cluede in sprite)
+- Blocked by blocking layer and Mountain layer
 - Falls from void or empty tiles
+- Swims in water layer
 
 ### Animals
 
-- Can move in eight direction
+- Can move in four or eight direction
 - Can Face in four direction
 - Animated: Idle, Walking, Die/Fall
-- Options: Cow, Sheep, Pig
-- Cast blob shadow
-- Blocked by blocking layer
-- Falls from void or empty tiles
+- Options: Cow, Sheep/Lamb, Chicken, Pig
+- Cast blob shadow (in cluede in sprite)
+- Blocked by blocking layer, void layer, water layer and mountain layer
 
 ### Enemies
 
-- Can move in eight direction
+- Can move in four or eight direction
 - Can Face in four direction
 - Animated: Idle, Walking, Attack/Cast, Die/Fall
-- Options: Gosht, Lizard, Skeleton
-- Cast blob shadow
-- Blocked by blocking layer
-- Falls from void or empty tiles
-- Needs path finding
+- Options: Spider, Snake, Gosht, Lizard, Skeleton, Wisp, Drow
+- Cast blob shadow (in cluede in sprite)
+- Blocked by blocking layer, void layer, water layer and mountain layer
+- Needs path finding and some simple chase mechanics 
 
 ## Biomes
 
