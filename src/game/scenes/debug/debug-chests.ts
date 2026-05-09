@@ -67,6 +67,7 @@ export function setupDebugChests(
             chests.push(chest);
             chestGroup.add(chest);
         }
+            
     });
 
     debugVoidBorderTileOffsets.forEach((offset) => {

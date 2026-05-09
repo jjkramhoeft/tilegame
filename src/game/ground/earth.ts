@@ -6,6 +6,7 @@ import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles, DecideBiome, DecideDecoration, DecideBlockingAndFloating, DecideBorder } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
 import { ENABLE_LOGGING } from '../common/config';
+import { ChestJJK } from '../game-objects/objects/chestJJK';
 
 export type EarthCastingConfig = {
     // Void and rock are unlocked from the start.
@@ -321,24 +322,22 @@ export class Earth {
         const countOfNeighborBolcking = neighborTiles.filter(n => n.blocking >= 0).length;
         const casterGotDecoration = casterTile?.decoration !== undefined && casterTile.decoration >= 0;
         let decoration: number = -1;
-        if ((creationConfig.isGrassDecorationUnlocked && biome === BIOME.GRASS) ||
-            (creationConfig.isRockDecorationUnlocked && biome === BIOME.ROCK) ||
+        if ((creationConfig.isRockDecorationUnlocked && biome === BIOME.ROCK) ||
             (creationConfig.isDesertDecorationUnlocked && biome === BIOME.DESERT) ||
+            (creationConfig.isGrassDecorationUnlocked && biome === BIOME.GRASS) ||
             (creationConfig.isForestDecorationUnlocked && biome === BIOME.FOREST) ||
             (creationConfig.isSwampDecorationUnlocked && biome === BIOME.SWAMP) ||
-            (creationConfig.isCrystalDecorationUnlocked && biome === BIOME.CRYSTAL)) 
-        {
+            (creationConfig.isCrystalDecorationUnlocked && biome === BIOME.CRYSTAL)) {
             decoration = DecideDecoration(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel);
         }
         let blocking = -1;
         let floating = -1;
-        if((creationConfig.isGrassBlockingUnlocked && biome === BIOME.GRASS) ||
-            (creationConfig.isRockBlockingUnlocked && biome === BIOME.ROCK) ||
+        if ((creationConfig.isRockBlockingUnlocked && biome === BIOME.ROCK) ||
             (creationConfig.isDesertBlockingUnlocked && biome === BIOME.DESERT) ||
+            (creationConfig.isGrassBlockingUnlocked && biome === BIOME.GRASS) ||
             (creationConfig.isForestBlockingUnlocked && biome === BIOME.FOREST) ||
             (creationConfig.isSwampBlockingUnlocked && biome === BIOME.SWAMP) ||
-            (creationConfig.isCrystalBlockingUnlocked && biome === BIOME.CRYSTAL)) 
-        {
+            (creationConfig.isCrystalBlockingUnlocked && biome === BIOME.CRYSTAL)) {
             [blocking, floating] = DecideBlockingAndFloating(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel, decoration, countOfNeighborBolcking);
         }
 
@@ -399,13 +398,13 @@ export class Earth {
         }
 
         //Chest temp
-        if(biome===BIOME.ROCK && 0<decoration) {
+        if (biome === BIOME.ROCK && 0 < decoration) {
             return new Tile({
                 tilenumber: tilePosition,
                 biome: biome,
                 border: border,
                 decoration: decoration,
-                blocking: 0,
+                blocking: -1,
                 floating: floating,
                 chest: 1,
             });
@@ -586,6 +585,9 @@ export class Earth {
             }
             if (ENABLE_LOGGING) { console.log(`Placing floating tile with index ${tile.floating} at (${tile.tileX}, ${tile.tileY})`); }
             this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY - 1);
+        }
+        if (tile.chest !== undefined) {
+            //ToDo call addChestFunction
         }
     }
 
