@@ -393,12 +393,17 @@ export function DecideDecoration(biome: number, countOfNeighborDecorations: numb
     return decoration;
 }
 
-export function DecideBlockingAndFloating(biome: number, countOfNeighborDecorations: number, casterGotDecoration: boolean,
-    powerLevel: number, decoration: number, countOfNeighborBolcking: number): [number, number] {
+export function DecideBlockingAndFloating(
+    biome: number, 
+    countOfNeighborDecorations: number, 
+    casterGotDecoration: boolean,
+    powerLevel: number, 
+    decoration: number, 
+    countOfNeighborBlocking: number
+): [number, number] {
 
         let blocking = -1;
         let floating = -1;
-    return [blocking, floating];
     switch (biome) {
         case BIOME.ROCK:
             const minRockBlockingIndex = 0;
@@ -406,7 +411,7 @@ export function DecideBlockingAndFloating(biome: number, countOfNeighborDecorati
             let rockBlockingChance = 0.1;
             if (casterGotDecoration) { rockBlockingChance += 0.05; }
             rockBlockingChance += countOfNeighborDecorations * 0.1;
-            rockBlockingChance -= countOfNeighborBolcking * 0.1;
+            rockBlockingChance -= countOfNeighborBlocking * 0.1;
             rockBlockingChance += powerLevel * 0.05;
             if(decoration === -1) {rockBlockingChance += 0.01;} 
             if (Phaser.Math.RND.realInRange(0, 1) < rockBlockingChance) {
@@ -419,21 +424,21 @@ export function DecideBlockingAndFloating(biome: number, countOfNeighborDecorati
             let desertBlockingChance = 0.01;
             if (casterGotDecoration) { desertBlockingChance += 0.01; }
             desertBlockingChance += countOfNeighborDecorations * 0.01;
-            desertBlockingChance += countOfNeighborBolcking * 0.02;
+            desertBlockingChance += countOfNeighborBlocking * 0.02;
             desertBlockingChance += powerLevel * 0.01;
             if (Phaser.Math.RND.realInRange(0, 1) < desertBlockingChance) {
                 blocking = Phaser.Math.RND.integerInRange(minDesertBlockingIndex, maxDesertBlockingIndex);
             }
             break;
         case BIOME.GRASS:
-            break;
+            break;// Grass currently has no blockings.
         case BIOME.FOREST: // forest            
             const minForestBlockingIndex = 20;
             const maxForestBlockingIndex = 46;
             let forestBlockingChance = 0.25;
             if (casterGotDecoration) { forestBlockingChance += 0.20; }
             forestBlockingChance += countOfNeighborDecorations * 0.05;
-            forestBlockingChance -= countOfNeighborBolcking * 0.10;
+            forestBlockingChance -= countOfNeighborBlocking * 0.10;
             forestBlockingChance += powerLevel * 0.05;
             if (Phaser.Math.RND.realInRange(0, 1) < forestBlockingChance) {
                 blocking = Phaser.Math.RND.integerInRange(minForestBlockingIndex, maxForestBlockingIndex);
@@ -443,14 +448,14 @@ export function DecideBlockingAndFloating(biome: number, countOfNeighborDecorati
             }
             break;
         case BIOME.WATER:
-            break;
+            break; // Water has no blockings.
         case BIOME.SWAMP: // swamp            
             const minSwampBlockingIndex = 47;
             const maxSwampBlockingIndex = 58;
             let swampBlockingChance = 0.112;
             if (casterGotDecoration) { swampBlockingChance += 0.05; }
             swampBlockingChance += countOfNeighborDecorations * 0.01;
-            swampBlockingChance -= countOfNeighborBolcking * 0.02;
+            swampBlockingChance -= countOfNeighborBlocking * 0.02;
             swampBlockingChance += powerLevel * 0.02;
             if (Phaser.Math.RND.realInRange(0, 1) < swampBlockingChance) {
                 blocking = Phaser.Math.RND.integerInRange(minSwampBlockingIndex, maxSwampBlockingIndex);
@@ -471,7 +476,7 @@ export function DecideBlockingAndFloating(biome: number, countOfNeighborDecorati
             }
             break;
         case BIOME.LAVA:
-            break;
+            break; // Lava has no blockings.
         case BIOME.MOUNTAIN:
             break; // Mountains is missing in sprite sheet.
     }

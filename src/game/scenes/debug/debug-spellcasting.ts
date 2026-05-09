@@ -246,6 +246,8 @@ export class DebugSpellcasting {
                     }
                 }
             }
+            //ToDo: Place animal if ?
+            
         }
 
         this.#previousStateName = player.stateMachine.currentStateName;
