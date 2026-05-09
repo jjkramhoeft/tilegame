@@ -6,9 +6,8 @@ import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles, DecideBiome, DecideDecoration, DecideBlockingAndFloating, DecideBorder } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
 import { CHEST_CHANCE, ENABLE_LOGGING } from '../common/config';
-//import { ChestJJK } from '../game-objects/objects/chestJJK';
-import { addChest } from '../scenes/debug/debug-chests';
-import { GameScene } from '../scenes/game-scene';
+
+export type ChestPlacementHandler = (position: Position, chestNumber: number) => void;
 
 export type EarthCastingConfig = {
     // Void and rock are unlocked from the start.
@@ -95,34 +94,12 @@ export class Earth {
     protected blockingGeometryGroup!: Phaser.Physics.Arcade.StaticGroup;
     private isInitialized = false;
     private blockingData: Map<number, TileCollisionObject> = new Map<number, TileCollisionObject>();
-    private castingFeedback: CastingFeedback = {
-        rockTilesPlaced: 0,
-        rockDecorationsPlaced: 0,
-        rockBlockingPlaced: 0,
-        desertTilesPlaced: 0,
-        desertDecorationsPlaced: 0,
-        desertBlockingPlaced: 0,
-        grassTilesPlaced: 0,
-        grassDecorationsPlaced: 0,
-        grassBlockingPlaced: 0,
-        forestTilesPlaced: 0,
-        forestDecorationsPlaced: 0,
-        forestBlockingPlaced: 0,
-        swampTilesPlaced: 0,
-        swampDecorationsPlaced: 0,
-        swampBlockingPlaced: 0,
-        crystalTilesPlaced: 0,
-        crystalDecorationsPlaced: 0,
-        crystalBlockingPlaced: 0,
-        waterTilesPlaced: 0,
-        lavaTilesPlaced: 0,
-        mountainTilesPlaced: 0,
-        chestNumberPlaced: undefined,
-    };
     private tileSize = 64;
+    private placeChest?: ChestPlacementHandler;
 
-    constructor(scene: Phaser.Scene) {
+    constructor(scene: Phaser.Scene, placeChest?: ChestPlacementHandler) {
         this.scene = scene;
+        this.placeChest = placeChest;
         this.allTiles = new Map<string, Tile>();
     }
 
@@ -263,8 +240,8 @@ export class Earth {
     }
 
     public AddTiles(creationConfig: EarthCastingConfig, casterPosition: Position, primeTargetPosition: Position, directions: Direction[]): CastingFeedback {
+        const castingFeedback = this.createCastingFeedback();
         let numberOfPlacedTiles = 0;
-        let numberOfPlacedBlockings = 0;
         let casterTile = this.getTile(casterPosition.x, casterPosition.y);
         let allTargets = findTargetTiles(primeTargetPosition, directions, creationConfig.powerLevel);
 
@@ -275,114 +252,38 @@ export class Earth {
                 break;
             }
             const targetTile = this.getTile(target.x, target.y);
-            let targetIsOccupied = targetTile !== undefined;
-            if (targetIsOccupied && targetTile?.biome === BIOME.VOID) {
-                targetIsOccupied = false;
-            }
-            if (targetIsOccupied) {
+            if (!this.canPlaceNewTile(targetTile)) {
                 continue;
-            } else {
-                this.AddTile(this.CreateNewTile(creationConfig, target, creationConfig.powerLevel, casterTile));
-                let leftNeighbor = this.getTile(target.x - 1, target.y);
-                if (leftNeighbor === undefined) {
-                    leftNeighbor = new Tile({
-                        tilenumber: { x: target.x - 1, y: target.y },
-                        biome: BIOME.VOID,
-                    });
-                    this.AddTile(leftNeighbor);
-                }
-                let rightNeighbor = this.getTile(target.x + 1, target.y);
-                if (rightNeighbor === undefined) {
-                    rightNeighbor = new Tile({
-                        tilenumber: { x: target.x + 1, y: target.y },
-                        biome: BIOME.VOID,
-                    });
-                    this.AddTile(rightNeighbor);
-                }
-                let upNeighbor = this.getTile(target.x, target.y - 1);
-                if (upNeighbor === undefined) {
-                    upNeighbor = new Tile({
-                        tilenumber: { x: target.x, y: target.y - 1 },
-                        biome: BIOME.VOID,
-                    });
-                    this.AddTile(upNeighbor);
-                }
-
-                let downNeighbor = this.getTile(target.x, target.y + 1);
-                if (downNeighbor === undefined) {
-                    downNeighbor = new Tile({
-                        tilenumber: { x: target.x, y: target.y + 1 },
-                        biome: BIOME.VOID,
-                    });
-                    this.AddTile(downNeighbor);
-                }
-                numberOfPlacedTiles++;
             }
+
+            this.AddTile(this.CreateNewTile(creationConfig, target, creationConfig.powerLevel, casterTile, castingFeedback));
+            this.addMissingVoidNeighbors(target);
+            numberOfPlacedTiles++;
         }
 
         if (numberOfPlacedTiles === 0) {
             //Placing blocking on existing tiles.
             allTargets = findTargetTiles(primeTargetPosition, directions, creationConfig.powerLevel);
+            let numberOfPlacedBlockings = 0;
             while (numberOfPlacedBlockings * 2 < creationConfig.powerLevel) {
                 const target = allTargets.shift();
                 if (target == undefined) {
-                    return this.castingFeedback;
+                    return castingFeedback;
                 }
                 const targetTile = this.getTile(target.x, target.y);
-                let targetIsOccupied = targetTile !== undefined;
-                if (targetIsOccupied && targetTile?.biome === BIOME.VOID) {
-                    targetIsOccupied = false;
+                if (targetTile === undefined || !this.canPlaceBlockingOnExistingTile(creationConfig, casterTile, targetTile)) {
+                    continue;
                 }
-                if (targetIsOccupied && // target must be an existing tile
-                    (targetTile?.blocking === undefined || targetTile.blocking < 0) && // target must not allready have blocking
-                    casterTile?.biome === targetTile?.biome // target must have the same biome as the caster tile.
-                ) {
-                    let validTargetForBlocking = false;
-                    switch (targetTile?.biome) {
-                        case BIOME.ROCK: if (creationConfig.isRockBlockingUnlocked) { validTargetForBlocking = true; } break;
-                        case BIOME.DESERT: if (creationConfig.isDesertBlockingUnlocked) { validTargetForBlocking = true; } break;
-                        case BIOME.GRASS: if (creationConfig.isGrassBlockingUnlocked) { validTargetForBlocking = true; } break;
-                        case BIOME.FOREST: if (creationConfig.isForestBlockingUnlocked) { validTargetForBlocking = true; } break;
-                        case BIOME.SWAMP: if (creationConfig.isSwampBlockingUnlocked) { validTargetForBlocking = true; } break;
-                        case BIOME.CRYSTAL: if (creationConfig.isCrystalBlockingUnlocked) { validTargetForBlocking = true; } break;
-                    }
-                    if (validTargetForBlocking && targetTile?.biome !== undefined) {
-                        // found candidate for blocking placement
-                        let blocking = -1;
-                        let floating = -1;
 
-                        const neighborTiles = this.get4NeighborTiles(target);
-                        //const neighborBiomes = this.get4NeighborBiomes(target);
-                        const countOfNeighborDecorations = neighborTiles.filter(n => n.decoration >= 0).length;
-                        const casterGotDecoration = casterTile?.decoration !== undefined && casterTile.decoration >= 0;
-                        const countOfNeighborBlocking = neighborTiles.filter(n => n.blocking >= 0).length;
-                        [blocking, floating] = DecideBlockingAndFloating(
-                            targetTile.biome,
-                            countOfNeighborDecorations,
-                            casterGotDecoration,
-                            creationConfig.powerLevel,
-                            targetTile.decoration,
-                            countOfNeighborBlocking);
-                        if (blocking >= 0) {
-                            const updatedTile = new Tile({
-                                tilenumber: { x: target.x, y: target.y },
-                                biome: targetTile?.biome ?? BIOME.VOID,
-                                border: targetTile?.border ?? -1,
-                                decoration: targetTile?.decoration ?? -1,
-                                blocking: blocking,
-                                floating: floating,
-                            });
-                            this.AddTile(updatedTile);
-                            numberOfPlacedBlockings++;
-                        }
-                    }
+                if (this.tryPlaceBlockingOnExistingTile(creationConfig, casterTile, targetTile, castingFeedback)) {
+                    numberOfPlacedBlockings++;
                 }
             }
         }
-        return this.castingFeedback;
+        return castingFeedback;
     }
 
-    private CreateNewTile(creationConfig: EarthCastingConfig, tilePosition: Position, powerLevel: number, casterTile: Tile | undefined): Tile {
+    private CreateNewTile(creationConfig: EarthCastingConfig, tilePosition: Position, powerLevel: number, casterTile: Tile | undefined, castingFeedback: CastingFeedback): Tile {
 
         const casterBiome = casterTile?.biome ?? BIOME.ROCK;
         const neighborTiles = this.get4NeighborTiles(tilePosition);
@@ -401,73 +302,37 @@ export class Earth {
             decoration = DecideDecoration(biome, countOfNeighborDecorations, casterGotDecoration, powerLevel);
         }
         let floating = -1;
-        if (biome === BIOME.ROCK) {
-            this.castingFeedback.rockTilesPlaced++;
-            if (decoration >= 0) {
-                this.castingFeedback.rockDecorationsPlaced++;
-            }
-        } else if (biome === BIOME.DESERT) {
-            this.castingFeedback.desertTilesPlaced++;
-            if (decoration >= 0) {
-                this.castingFeedback.desertDecorationsPlaced++;
-            }
-        } else if (biome === BIOME.GRASS) {
-            this.castingFeedback.grassTilesPlaced++;
-            if (decoration >= 0) {
-                this.castingFeedback.grassDecorationsPlaced++;
-            }
-        } else if (biome === BIOME.FOREST) {
-            this.castingFeedback.forestTilesPlaced++;
-            if (decoration >= 0) {
-                this.castingFeedback.forestDecorationsPlaced++;
-            }
-        } else if (biome === BIOME.SWAMP) {
-            this.castingFeedback.swampTilesPlaced++;
-            if (decoration >= 0) {
-                this.castingFeedback.swampDecorationsPlaced++;
-            }
-        } else if (biome === BIOME.CRYSTAL) {
-            this.castingFeedback.crystalTilesPlaced++;
-            if (decoration >= 0) {
-                this.castingFeedback.crystalDecorationsPlaced++;
-            }
-        } else if (biome === BIOME.WATER) {
-            this.castingFeedback.waterTilesPlaced++;
-        } else if (biome === BIOME.LAVA) {
-            this.castingFeedback.lavaTilesPlaced++;
-        } else if (biome === BIOME.MOUNTAIN) {
-            this.castingFeedback.mountainTilesPlaced++;
-        }
+        this.addBiomePlacementFeedback(castingFeedback, biome, decoration);
 
         //Test if chests should be placed
         if (biome === BIOME.ROCK && 0 < decoration && creationConfig.isChest1Placable) {
             if (Math.random() < CHEST_CHANCE) {
-                this.castingFeedback.chestNumberPlaced = 1;
+                castingFeedback.chestNumberPlaced = 1;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 1, });
             }
         } else if (biome === BIOME.DESERT && 0 < decoration && creationConfig.isChest2Placable) {
             if (Math.random() < CHEST_CHANCE) {
-                this.castingFeedback.chestNumberPlaced = 2;
+                castingFeedback.chestNumberPlaced = 2;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 2, });
             }
         } else if (biome === BIOME.GRASS && 0 < decoration && creationConfig.isChest3Placable) {
             if (Math.random() < CHEST_CHANCE) {
-                this.castingFeedback.chestNumberPlaced = 3;
+                castingFeedback.chestNumberPlaced = 3;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 3, });
             }
         } else if (biome === BIOME.FOREST && 0 < decoration && creationConfig.isChest4Placable) {
             if (Math.random() < CHEST_CHANCE) {
-                this.castingFeedback.chestNumberPlaced = 4;
+                castingFeedback.chestNumberPlaced = 4;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 4, });
             }
         } else if (biome === BIOME.SWAMP && 0 < decoration && creationConfig.isChest5Placable) {
             if (Math.random() < CHEST_CHANCE) {
-                this.castingFeedback.chestNumberPlaced = 5;
+                castingFeedback.chestNumberPlaced = 5;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 5, });
             }
         } else if (biome === BIOME.CRYSTAL && 0 < decoration && creationConfig.isChest6Placable) {
             if (Math.random() < CHEST_CHANCE) {
-                this.castingFeedback.chestNumberPlaced = 6;
+                castingFeedback.chestNumberPlaced = 6;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 6, });
             }
         }
@@ -480,6 +345,150 @@ export class Earth {
             blocking: -1,
             floating: floating,
         });
+    }
+
+    private createCastingFeedback(): CastingFeedback {
+        return {
+            rockTilesPlaced: 0,
+            rockDecorationsPlaced: 0,
+            rockBlockingPlaced: 0,
+            desertTilesPlaced: 0,
+            desertDecorationsPlaced: 0,
+            desertBlockingPlaced: 0,
+            grassTilesPlaced: 0,
+            grassDecorationsPlaced: 0,
+            grassBlockingPlaced: 0,
+            forestTilesPlaced: 0,
+            forestDecorationsPlaced: 0,
+            forestBlockingPlaced: 0,
+            swampTilesPlaced: 0,
+            swampDecorationsPlaced: 0,
+            swampBlockingPlaced: 0,
+            crystalTilesPlaced: 0,
+            crystalDecorationsPlaced: 0,
+            crystalBlockingPlaced: 0,
+            waterTilesPlaced: 0,
+            lavaTilesPlaced: 0,
+            mountainTilesPlaced: 0,
+            chestNumberPlaced: undefined,
+        };
+    }
+
+    private canPlaceNewTile(targetTile: Tile | undefined): boolean {
+        return targetTile === undefined || targetTile.biome === BIOME.VOID;
+    }
+
+    private addMissingVoidNeighbors(tilePosition: Position): void {
+        const neighborPositions: Position[] = [
+            { x: tilePosition.x - 1, y: tilePosition.y },
+            { x: tilePosition.x + 1, y: tilePosition.y },
+            { x: tilePosition.x, y: tilePosition.y - 1 },
+            { x: tilePosition.x, y: tilePosition.y + 1 },
+        ];
+
+        for (const neighborPosition of neighborPositions) {
+            if (this.getTile(neighborPosition.x, neighborPosition.y) !== undefined) {
+                continue;
+            }
+
+            this.AddTile(new Tile({
+                tilenumber: neighborPosition,
+                biome: BIOME.VOID,
+            }));
+        }
+    }
+
+    private canPlaceBlockingOnExistingTile(creationConfig: EarthCastingConfig, casterTile: Tile | undefined, targetTile: Tile): boolean {
+        return targetTile.biome !== BIOME.VOID &&
+            targetTile.blocking < 0 &&
+            casterTile?.biome === targetTile.biome &&
+            this.isBlockingUnlockedForBiome(creationConfig, targetTile.biome);
+    }
+
+    private isBlockingUnlockedForBiome(creationConfig: EarthCastingConfig, biome: number): boolean {
+        switch (biome) {
+            case BIOME.ROCK: return creationConfig.isRockBlockingUnlocked;
+            case BIOME.DESERT: return creationConfig.isDesertBlockingUnlocked;
+            case BIOME.GRASS: return creationConfig.isGrassBlockingUnlocked;
+            case BIOME.FOREST: return creationConfig.isForestBlockingUnlocked;
+            case BIOME.SWAMP: return creationConfig.isSwampBlockingUnlocked;
+            case BIOME.CRYSTAL: return creationConfig.isCrystalBlockingUnlocked;
+            default: return false;
+        }
+    }
+
+    private tryPlaceBlockingOnExistingTile(creationConfig: EarthCastingConfig, casterTile: Tile | undefined, targetTile: Tile, castingFeedback: CastingFeedback): boolean {
+        const neighborTiles = this.get4NeighborTiles({ x: targetTile.tileX, y: targetTile.tileY });
+        const countOfNeighborDecorations = neighborTiles.filter(n => n.decoration >= 0).length;
+        const casterGotDecoration = casterTile?.decoration !== undefined && casterTile.decoration >= 0;
+        const countOfNeighborBlocking = neighborTiles.filter(n => n.blocking >= 0).length;
+        const [blocking, floating] = DecideBlockingAndFloating(
+            targetTile.biome,
+            countOfNeighborDecorations,
+            casterGotDecoration,
+            creationConfig.powerLevel,
+            targetTile.decoration,
+            countOfNeighborBlocking);
+
+        if (blocking < 0) {
+            return false;
+        }
+
+        const updatedTile = new Tile({
+            tilenumber: { x: targetTile.tileX, y: targetTile.tileY },
+            biome: targetTile.biome,
+            border: targetTile.border,
+            decoration: targetTile.decoration,
+            blocking: blocking,
+            floating: floating,
+        });
+        this.AddTile(updatedTile);
+        this.addBlockingPlacementFeedback(castingFeedback, targetTile.biome);
+        return true;
+    }
+
+    private addBiomePlacementFeedback(castingFeedback: CastingFeedback, biome: number, decoration: number): void {
+        if (biome === BIOME.ROCK) {
+            castingFeedback.rockTilesPlaced++;
+            if (decoration >= 0) { castingFeedback.rockDecorationsPlaced++; }
+        } else if (biome === BIOME.DESERT) {
+            castingFeedback.desertTilesPlaced++;
+            if (decoration >= 0) { castingFeedback.desertDecorationsPlaced++; }
+        } else if (biome === BIOME.GRASS) {
+            castingFeedback.grassTilesPlaced++;
+            if (decoration >= 0) { castingFeedback.grassDecorationsPlaced++; }
+        } else if (biome === BIOME.FOREST) {
+            castingFeedback.forestTilesPlaced++;
+            if (decoration >= 0) { castingFeedback.forestDecorationsPlaced++; }
+        } else if (biome === BIOME.SWAMP) {
+            castingFeedback.swampTilesPlaced++;
+            if (decoration >= 0) { castingFeedback.swampDecorationsPlaced++; }
+        } else if (biome === BIOME.CRYSTAL) {
+            castingFeedback.crystalTilesPlaced++;
+            if (decoration >= 0) { castingFeedback.crystalDecorationsPlaced++; }
+        } else if (biome === BIOME.WATER) {
+            castingFeedback.waterTilesPlaced++;
+        } else if (biome === BIOME.LAVA) {
+            castingFeedback.lavaTilesPlaced++;
+        } else if (biome === BIOME.MOUNTAIN) {
+            castingFeedback.mountainTilesPlaced++;
+        }
+    }
+
+    private addBlockingPlacementFeedback(castingFeedback: CastingFeedback, biome: number): void {
+        if (biome === BIOME.ROCK) {
+            castingFeedback.rockBlockingPlaced++;
+        } else if (biome === BIOME.DESERT) {
+            castingFeedback.desertBlockingPlaced++;
+        } else if (biome === BIOME.GRASS) {
+            castingFeedback.grassBlockingPlaced++;
+        } else if (biome === BIOME.FOREST) {
+            castingFeedback.forestBlockingPlaced++;
+        } else if (biome === BIOME.SWAMP) {
+            castingFeedback.swampBlockingPlaced++;
+        } else if (biome === BIOME.CRYSTAL) {
+            castingFeedback.crystalBlockingPlaced++;
+        }
     }
 
     private get4NeighborTiles(tilePosition: Position): Tile[] {
@@ -650,8 +659,7 @@ export class Earth {
             this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY - 1);
         }
         if (0 < tile.chest) {
-            const gameScene = this.scene as GameScene;
-            addChest({ x: tile.tileX, y: tile.tileY }, gameScene, gameScene.getChestArray(), gameScene.getChestGroup(), tile.chest);
+            this.placeChest?.({ x: tile.tileX, y: tile.tileY }, tile.chest);
         }
     }
 

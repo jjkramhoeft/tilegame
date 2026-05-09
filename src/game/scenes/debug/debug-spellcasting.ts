@@ -149,6 +149,7 @@ export class DebugSpellcasting {
     #spellSound: Phaser.Sound.BaseSound;
     #levelUpSound: Phaser.Sound.BaseSound;
     #previousStateName: string | undefined;
+    #castingFeedbackTotals: CastingFeedback = this.createEmptyCastingFeedback();
 
     constructor(scene: Phaser.Scene) {
         this.#spellSound = scene.sound.add('spellnotes1', { volume: 0.9 });
@@ -243,9 +244,61 @@ export class DebugSpellcasting {
 
     private applyCastingFeedback(feedback: CastingFeedback): void {
         this.applyChestPlacement(feedback.chestNumberPlaced);
-        this.applyBiomeProgression(feedback);
-        this.applyPowerLevelProgression(feedback);
+        this.addCastingFeedbackToTotals(feedback);
+        this.applyBiomeProgression(this.#castingFeedbackTotals);
+        this.applyPowerLevelProgression(this.#castingFeedbackTotals);
         //ToDo: Place animal if ?
+    }
+
+    private createEmptyCastingFeedback(): CastingFeedback {
+        return {
+            rockTilesPlaced: 0,
+            rockDecorationsPlaced: 0,
+            rockBlockingPlaced: 0,
+            desertTilesPlaced: 0,
+            desertDecorationsPlaced: 0,
+            desertBlockingPlaced: 0,
+            grassTilesPlaced: 0,
+            grassDecorationsPlaced: 0,
+            grassBlockingPlaced: 0,
+            forestTilesPlaced: 0,
+            forestDecorationsPlaced: 0,
+            forestBlockingPlaced: 0,
+            swampTilesPlaced: 0,
+            swampDecorationsPlaced: 0,
+            swampBlockingPlaced: 0,
+            crystalTilesPlaced: 0,
+            crystalDecorationsPlaced: 0,
+            crystalBlockingPlaced: 0,
+            waterTilesPlaced: 0,
+            lavaTilesPlaced: 0,
+            mountainTilesPlaced: 0,
+            chestNumberPlaced: undefined,
+        };
+    }
+
+    private addCastingFeedbackToTotals(feedback: CastingFeedback): void {
+        this.#castingFeedbackTotals.rockTilesPlaced += feedback.rockTilesPlaced;
+        this.#castingFeedbackTotals.rockDecorationsPlaced += feedback.rockDecorationsPlaced;
+        this.#castingFeedbackTotals.rockBlockingPlaced += feedback.rockBlockingPlaced;
+        this.#castingFeedbackTotals.desertTilesPlaced += feedback.desertTilesPlaced;
+        this.#castingFeedbackTotals.desertDecorationsPlaced += feedback.desertDecorationsPlaced;
+        this.#castingFeedbackTotals.desertBlockingPlaced += feedback.desertBlockingPlaced;
+        this.#castingFeedbackTotals.grassTilesPlaced += feedback.grassTilesPlaced;
+        this.#castingFeedbackTotals.grassDecorationsPlaced += feedback.grassDecorationsPlaced;
+        this.#castingFeedbackTotals.grassBlockingPlaced += feedback.grassBlockingPlaced;
+        this.#castingFeedbackTotals.forestTilesPlaced += feedback.forestTilesPlaced;
+        this.#castingFeedbackTotals.forestDecorationsPlaced += feedback.forestDecorationsPlaced;
+        this.#castingFeedbackTotals.forestBlockingPlaced += feedback.forestBlockingPlaced;
+        this.#castingFeedbackTotals.swampTilesPlaced += feedback.swampTilesPlaced;
+        this.#castingFeedbackTotals.swampDecorationsPlaced += feedback.swampDecorationsPlaced;
+        this.#castingFeedbackTotals.swampBlockingPlaced += feedback.swampBlockingPlaced;
+        this.#castingFeedbackTotals.crystalTilesPlaced += feedback.crystalTilesPlaced;
+        this.#castingFeedbackTotals.crystalDecorationsPlaced += feedback.crystalDecorationsPlaced;
+        this.#castingFeedbackTotals.crystalBlockingPlaced += feedback.crystalBlockingPlaced;
+        this.#castingFeedbackTotals.waterTilesPlaced += feedback.waterTilesPlaced;
+        this.#castingFeedbackTotals.lavaTilesPlaced += feedback.lavaTilesPlaced;
+        this.#castingFeedbackTotals.mountainTilesPlaced += feedback.mountainTilesPlaced;
     }
 
     private applyChestPlacement(chestNumberPlaced: number | undefined): void {

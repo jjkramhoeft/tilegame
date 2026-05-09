@@ -10,7 +10,7 @@ import { CharacterGameObject } from '../game-objects/common/character-game-objec
 import { GameObject2 } from '../common/types';
 import { DataManager } from '../common/data-manager';
 import { writeChestDialogInfo } from './ui-scene';
-import { setupDebugChests } from './debug/debug-chests';
+import { addChest, setupDebugChests } from './debug/debug-chests';
 import { spawnDebugEnemies } from './debug/debug-enemies';
 import { updateFallingLogic } from './debug/debug-falling';
 import { updateSwimmingLogic } from './debug/debug-swimming';
@@ -46,10 +46,12 @@ export class GameScene extends Phaser.Scene {
         }
         this.#controls = new KeyboardComponent(this.input.keyboard);
 
-        this.#earth = new Earth(this);
-        this.#earth.createMap(1000, 1000);
-
         this.#chestJJKGroup = this.add.group([]);
+
+        this.#earth = new Earth(this, (position, chestNumber) => {
+            addChest(position, this, this.#chests, this.#chestJJKGroup, chestNumber);
+        });
+        this.#earth.createMap(1000, 1000);
 
         this.#setupPlayer();
         this.#setupCamera();
