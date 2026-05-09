@@ -55,6 +55,14 @@ export class GameScene extends Phaser.Scene {
     }
 
     create() {
+        this.#resetSceneState();
+
+        console.debug('[GameScene] create start', {
+            isDebugMode: DataManager.instance.data.isDebugMode,
+            uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE),
+            uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE),
+        });
+
         if (!this.input.keyboard) {
             console.warn('Phaser keyboard plugin is not setup properly.');
             return;
@@ -76,12 +84,32 @@ export class GameScene extends Phaser.Scene {
         this.#registerCustomEvents();
 
         this.scene.launch(SCENE_KEYS.UI_SCENE);
+        console.debug('[GameScene] UI scene launched', {
+            uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE),
+            uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE),
+        });
+
         if (DataManager.instance.data.isDebugMode) {
-            this.#startGameplay();
+            console.debug('[GameScene] debug mode detected, bypassing progression help');
+            this.#startDebugGameplay();
             return;
         }
 
+        console.debug('[GameScene] regular mode, showing intro progression help');
         this.#showIntroHelp();
+    }
+
+    #resetSceneState(): void {
+        this.#enemyGroup = undefined;
+        this.#critterGroup = undefined;
+        this.#chests = [];
+        this.#isGameplayReady = false;
+        this.#isIntroPending = false;
+        this.#introShown = false;
+        this.#controlsHelpShown = false;
+        this.#followUpShown = false;
+        this.#hasPlayerMoved = false;
+        this.#gameOverShown = false;
     }
 
     update() {
@@ -202,6 +230,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     #registerCustomEvents(): void {
+        console.debug('[GameScene] registering custom events');
+
         EVENT_BUS.on(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
         //EVENT_BUS.on(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
         EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
@@ -210,18 +240,27 @@ export class GameScene extends Phaser.Scene {
         EVENT_BUS.on(CUSTOM_EVENTS.TILES_PLACED, this.#handleTilesPlaced, this);
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            console.debug('[GameScene] shutdown cleanup');
             EVENT_BUS.off(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
             //EVENT_BUS.off(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
             EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
             EVENT_BUS.off(CUSTOM_EVENTS.DIALOG_CLOSED, this.#handleDialogClosed, this);
             EVENT_BUS.off(CUSTOM_EVENTS.PROGRESSION_HELP_CLOSED, this.#handleProgressionHelpClosed, this);
             EVENT_BUS.off(CUSTOM_EVENTS.TILES_PLACED, this.#handleTilesPlaced, this);
+            this.scene.stop(SCENE_KEYS.UI_SCENE);
         });
     }
 
     #showIntroHelp(): void {
+        console.debug('[GameScene] showIntroHelp', {
+            isDebugMode: DataManager.instance.data.isDebugMode,
+            introShown: this.#introShown,
+            isIntroPending: this.#isIntroPending,
+            isGameplayReady: this.#isGameplayReady,
+        });
+
         if (DataManager.instance.data.isDebugMode) {
-            this.#startGameplay();
+            this.#startDebugGameplay();
             return;
         }
 
@@ -234,14 +273,33 @@ export class GameScene extends Phaser.Scene {
         this.#showProgressionHelp({ textKey: 'ui.progression.intro' });
     }
 
+    #startDebugGameplay(): void {
+        console.debug('[GameScene] startDebugGameplay', {
+            wasIntroPending: this.#isIntroPending,
+            isGameplayReady: this.#isGameplayReady,
+        });
+
+        this.#isIntroPending = false;
+        this.#startGameplay();
+    }
+
     #startGameplay(): void {
+        console.debug('[GameScene] startGameplay requested', {
+            isGameplayReady: this.#isGameplayReady,
+            isDebugMode: DataManager.instance.data.isDebugMode,
+            isIntroPending: this.#isIntroPending,
+        });
+
         if (this.#isGameplayReady) {
+            console.debug('[GameScene] startGameplay ignored because gameplay is already ready');
             return;
         }
 
         const firstTilePosition = this.#placeStartingTile();
+        console.debug('[GameScene] starting tile placed', firstTilePosition);
 
         if (DataManager.instance.data.isDebugMode) {
+            console.debug('[GameScene] setting up debug chests, blocking, and enemies');
             this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
             setupDebugBlocking(this, this.#earth, firstTilePosition);
             spawnDebugEnemies(this, this.#enemyGroup!, this.#critterGroup!, this.#earth, firstTilePosition);
@@ -251,6 +309,11 @@ export class GameScene extends Phaser.Scene {
         this.#debugSpellcasting = new DebugSpellcasting(this, this.#critterGroup!);
         this.#isGameplayReady = true;
         this.#controls.isMovementLocked = false;
+        console.debug('[GameScene] gameplay ready', {
+            isGameplayReady: this.#isGameplayReady,
+            movementLocked: this.#controls.isMovementLocked,
+        });
+
         this.#startControlsHelpTimer();
     }
 
@@ -280,6 +343,13 @@ export class GameScene extends Phaser.Scene {
     }
 
     #handleProgressionHelpClosed(data: ProgressionHelpClosed): void {
+        console.debug('[GameScene] progression help closed received', {
+            closeAction: data.closeAction,
+            isIntroPending: this.#isIntroPending,
+            isGameplayReady: this.#isGameplayReady,
+            isDebugMode: DataManager.instance.data.isDebugMode,
+        });
+
         if (this.#isIntroPending) {
             this.#isIntroPending = false;
             this.#startGameplay();
@@ -328,12 +398,20 @@ export class GameScene extends Phaser.Scene {
     }
 
     #showProgressionHelp(payload: ProgressionHelpPayload): void {
+        console.debug('[GameScene] showProgressionHelp requested', {
+            payload,
+            isDebugMode: DataManager.instance.data.isDebugMode,
+            movementLocked: this.#controls.isMovementLocked,
+        });
+
         if (DataManager.instance.data.isDebugMode) {
+            console.debug('[GameScene] showProgressionHelp skipped in debug mode');
             return;
         }
 
         this.#controls.isMovementLocked = true;
         this.time.delayedCall(0, () => {
+            console.debug('[GameScene] emitting SHOW_PROGRESSION_HELP', payload);
             EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, payload);
         });
     }

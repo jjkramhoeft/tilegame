@@ -84,6 +84,8 @@ export class Intro extends Scene {
         this.exit_text.setInteractive({ useHandCursor: true });
         this.exit_text.on('pointerdown', () => {
             this.introMusic?.stop();
+            this.scene.stop(SCENE_KEYS.UI_SCENE);
+            this.scene.stop(SCENE_KEYS.GAME_SCENE);
             this.scene.start(SCENE_KEYS.GAME_SCENE);
         });
 

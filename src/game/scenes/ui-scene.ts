@@ -97,7 +97,15 @@ export class UiScene extends Phaser.Scene {
   }
 
   public create(): void {
+    this.#resetSceneState();
+
+    console.debug('[UiScene] create start', {
+      isDebugMode: DataManager.instance.data.isDebugMode,
+      initialMode: this.#getUiModeName(),
+    });
+
     if (!this.input.keyboard) {
+      console.warn('[UiScene] keyboard plugin is not setup properly');
       return;
     }
 
@@ -117,12 +125,26 @@ export class UiScene extends Phaser.Scene {
     EVENT_BUS.on(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, this.showProgressionHelp, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      console.debug('[UiScene] shutdown cleanup', {
+        mode: this.#getUiModeName(),
+        progressionHelpVisible: this.#progressionHelpContainer?.visible,
+        saveDialogVisible: this.#saveDialogContainer?.visible,
+        dialogVisible: this.#dialogContainer?.visible,
+      });
+
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_PROGRESS_UPDATED, this.updateProgressInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.SHOW_DIALOG, this.showDialog, this);
       EVENT_BUS.off(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, this.showProgressionHelp, this);
     });
+  }
+
+  #resetSceneState(): void {
+    this.#progressionHelpCloseAction = 'close';
+    this.#selectedMenuOptionIndex = 0;
+    this.#selectedSaveOptionIndex = 0;
+    this.#uiMode = UiMode.HudOnly;
   }
 
   public async updateHealthInHud(data: PlayerHealthUpdated): Promise<void> {
@@ -174,12 +196,24 @@ export class UiScene extends Phaser.Scene {
   }
 
   public showProgressionHelp(payload: ProgressionHelpPayload): void {
+    console.debug('[UiScene] showProgressionHelp', {
+      payload,
+      previousMode: this.#getUiModeName(),
+      progressionHelpVisible: this.#progressionHelpContainer.visible,
+      saveDialogVisible: this.#saveDialogContainer.visible,
+      dialogVisible: this.#dialogContainer.visible,
+    });
+
     this.#uiMode = UiMode.ProgressionHelpDialog;
     this.#progressionHelpCloseAction = payload.closeAction ?? 'close';
     this.#saveDialogContainer.visible = false;
     this.#dialogContainer.visible = false;
     this.#progressionHelpText.setText(getText(payload.textKey));
     this.#progressionHelpContainer.visible = true;
+    console.debug('[UiScene] progression help visible', {
+      mode: this.#getUiModeName(),
+      closeAction: this.#progressionHelpCloseAction,
+    });
   }
 
   public update(): void {
@@ -370,6 +404,13 @@ export class UiScene extends Phaser.Scene {
   }
 
   #confirmSelectedOption(): void {
+    console.debug('[UiScene] confirm selected option', {
+      mode: this.#getUiModeName(),
+      selectedMenuOptionIndex: this.#selectedMenuOptionIndex,
+      selectedSaveOptionIndex: this.#selectedSaveOptionIndex,
+      progressionHelpCloseAction: this.#progressionHelpCloseAction,
+    });
+
     if (this.#uiMode === UiMode.ChestDialog) {
       const playerData = DataManager.instance.data;
       playerData.lastDialogOptionSelected = this.#selectedMenuOptionIndex;
@@ -384,6 +425,8 @@ export class UiScene extends Phaser.Scene {
       if (this.#selectedSaveOptionIndex === 0) {
         this.scene.stop(SCENE_KEYS.GAME_SCENE);
         this.scene.start(SCENE_KEYS.INTRO);
+        this.scene.stop(SCENE_KEYS.UI_SCENE);
+        return;
       } else if (this.#selectedSaveOptionIndex === 2) {
         this.#saveDialogContainer.visible = false;
         this.#uiMode = UiMode.HudOnly;
@@ -393,10 +436,20 @@ export class UiScene extends Phaser.Scene {
     if (this.#uiMode === UiMode.ProgressionHelpDialog) {
       const closeAction = this.#progressionHelpCloseAction;
       const closedPayload: ProgressionHelpClosed = { closeAction };
+      console.debug('[UiScene] closing progression help', closedPayload);
       this.#progressionHelpContainer.visible = false;
       this.#progressionHelpCloseAction = 'close';
       this.#uiMode = UiMode.HudOnly;
       EVENT_BUS.emit(CUSTOM_EVENTS.PROGRESSION_HELP_CLOSED, closedPayload);
+    }
+  }
+
+  #getUiModeName(): string {
+    switch (this.#uiMode) {
+      case UiMode.HudOnly: return 'HudOnly';
+      case UiMode.ChestDialog: return 'ChestDialog';
+      case UiMode.SaveDialog: return 'SaveDialog';
+      case UiMode.ProgressionHelpDialog: return 'ProgressionHelpDialog';
     }
   }
 
