@@ -13,6 +13,7 @@ import {
 import { DEFAULT_UI_HEADING_STYLE, DEFAULT_UI_OPTION_STYLE } from '../common/common';
 import type { DialogPayload } from '../common/chest-dialog';
 import { KeyboardComponent } from '../components/input/keyboard-component';
+import { getText } from '../common/texts';
 
 const HUD_ICON_SIZE = 16;
 const HUD_ROW_LENGTH = 10;
@@ -280,7 +281,11 @@ export class UiScene extends Phaser.Scene {
     this.#saveDialogContainer = this.add.container(DIALOG_X, SAVE_DIALOG_Y, [
       this.add.image(0, 0, ASSET_KEYS.UI_DIALOG, 0).setOrigin(0).setDisplaySize(DIALOG_WIDTH, DIALOG_HEIGHT),
     ]);
-    ['Back to Main Menu', 'Save', 'Continue Playing'].forEach((text, index) => {
+    [
+      getText('ui.save.backToMainMenu'),
+      getText('ui.save.save'),
+      getText('ui.save.continuePlaying'),
+    ].forEach((text, index) => {
       const option = this.add.text(
         SAVE_DIALOG_OPTION_X,
         DIALOG_FIRST_OPTION_Y + index * DIALOG_OPTION_SPACING,

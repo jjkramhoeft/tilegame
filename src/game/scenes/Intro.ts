@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
 import { ASSET_KEYS } from '../common/assets';
+import { getText } from '../common/texts';
 
 const COLORS = {
     title: '#5eb1da',
@@ -35,13 +36,13 @@ export class Intro extends Scene {
         });
         this.introMusic.play();
 
-        this.add.text(512, 415, 'Den 1. Have - Gartnerens Lærling', {
+        this.add.text(512, 415, getText('intro.title'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
 
-        this.exit_text = this.add.text(915, 700, 'Exit', {
+        this.exit_text = this.add.text(915, 700, getText('intro.exit'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
             align: 'center'
@@ -53,7 +54,7 @@ export class Intro extends Scene {
             this.scene.stop('Intro');
         });
 
-        const credits_text = this.add.text(862, 650, 'Credits', {
+        const credits_text = this.add.text(862, 650, getText('intro.credits'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
         });
@@ -64,7 +65,7 @@ export class Intro extends Scene {
             this.scene.start('Credits');
         });
 
-        const settings_text = this.add.text(845, 600, 'Settings', {
+        const settings_text = this.add.text(845, 600, getText('intro.settings'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
         });
@@ -75,7 +76,7 @@ export class Intro extends Scene {
             this.scene.start('Settings');
         });
 
-        this.exit_text = this.add.text(20, 700, 'New Game', {
+        this.exit_text = this.add.text(20, 700, getText('intro.newGame'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
         });

@@ -3,6 +3,7 @@ import { Scene } from 'phaser';
 import { DataManager } from '../common/data-manager';
 import { setEnableLogging } from '../common/config';
 import { ASSET_KEYS } from '../common/assets';
+import { getText, type TextKey } from '../common/texts';
 
 const COLORS = {
     title: '#5eb1da',
@@ -13,17 +14,22 @@ const COLORS = {
 
 const MUSIC_LEVELS = [0, 0.05, 0.1, 0.25, 0.5, 0.75, 1];
 const LANGUAGE_OPTIONS = [
-    { label: 'Danish', isDanish: true },
-    { label: 'English', isDanish: false }
+    { textKey: 'settings.language.danish', isDanish: true },
+    { textKey: 'settings.language.english', isDanish: false }
 ];
 const PLAYER_OPTIONS = [
     { label: 'Adam', sex: 'male' },
     { label: 'Eve', sex: 'female' }
 ];
 const DEBUG_OPTIONS = [
-    { label: 'Off', value: false },
-    { label: 'On', value: true }
+    { textKey: 'settings.debug.off', value: false },
+    { textKey: 'settings.debug.on', value: true }
 ];
+
+type LocalizedTextObject = {
+    text: Phaser.GameObjects.Text;
+    getValue: () => string;
+};
 
 export class Settings extends Scene
 {
@@ -31,6 +37,7 @@ export class Settings extends Scene
     private languageIndex = 1;
     private playerIndex = 0;
     private debugIndex = 0;
+    private localizedTextObjects: LocalizedTextObject[] = [];
 
     constructor ()
     {
@@ -39,6 +46,7 @@ export class Settings extends Scene
 
     create ()
     {
+        this.localizedTextObjects = [];
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'credit-bg');
 
         const savedMusicVolume = this.registry.get('musicVolume');
@@ -77,16 +85,17 @@ export class Settings extends Scene
 
         const centerX = this.cameras.main.centerX;
 
-        this.add.text(centerX, 80, 'Settings', {
+        const titleText = this.add.text(centerX, 80, getText('settings.title'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 56, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
+        this.trackLocalizedText(titleText, () => getText('settings.title'));
 
         this.createPickerRow({
             x: centerX,
             y: 200,
-            label: 'Music Volume',
+            getLabelText: () => getText('settings.musicVolume'),
             getValueText: () => `${Math.round(MUSIC_LEVELS[this.musicIndex] * 100)}%`,
             onPrevious: () => this.changeMusicVolume(-1),
             onNext: () => this.changeMusicVolume(1)
@@ -95,8 +104,8 @@ export class Settings extends Scene
         this.createPickerRow({
             x: centerX,
             y: 250,
-            label: 'Language',
-            getValueText: () => LANGUAGE_OPTIONS[this.languageIndex].label,
+            getLabelText: () => getText('settings.language'),
+            getValueText: () => getText(LANGUAGE_OPTIONS[this.languageIndex].textKey as TextKey),
             onPrevious: () => this.changeLanguage(-1),
             onNext: () => this.changeLanguage(1)
         });
@@ -104,7 +113,7 @@ export class Settings extends Scene
         this.createPickerRow({
             x: centerX,
             y: 300,
-            label: 'Playing as',
+            getLabelText: () => getText('settings.playingAs'),
             getValueText: () => PLAYER_OPTIONS[this.playerIndex].label,
             onPrevious: () => this.changePlayer(-1),
             onNext: () => this.changePlayer(1)
@@ -113,8 +122,8 @@ export class Settings extends Scene
         this.createPickerRow({
             x: centerX,
             y: 350,
-            label: 'Debug',
-            getValueText: () => DEBUG_OPTIONS[this.debugIndex].label,
+            getLabelText: () => getText('settings.debug'),
+            getValueText: () => getText(DEBUG_OPTIONS[this.debugIndex].textKey as TextKey),
             onPrevious: () => this.changeDebug(-1),
             onNext: () => this.changeDebug(1)
         });
@@ -124,10 +133,11 @@ export class Settings extends Scene
         this.applyPlayer();
         this.applyDebug();
 
-        const backText = this.add.text(900, 700, 'Back', {
+        const backText = this.add.text(900, 700, getText('settings.back'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
         });
+        this.trackLocalizedText(backText, () => getText('settings.back'));
         backText.setOrigin(0);
         backText.setInteractive({ useHandCursor: true });
         backText.on('pointerdown', () => {
@@ -138,7 +148,7 @@ export class Settings extends Scene
     private createPickerRow (config: {
         x: number;
         y: number;
-        label: string;
+        getLabelText: () => string;
         getValueText: () => string;
         onPrevious: () => void;
         onNext: () => void;
@@ -146,10 +156,11 @@ export class Settings extends Scene
     {
         let x1= 80;
         let x2=700;
-        this.add.text(x1, config.y -25 , config.label, {
+        const labelText = this.add.text(x1, config.y -25 , config.getLabelText(), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 5,
         }).setOrigin(0);
+        this.trackLocalizedText(labelText, config.getLabelText);
 
         const previousText = this.add.text(x2 - 170, config.y, '<', {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.uiText,
@@ -160,6 +171,7 @@ export class Settings extends Scene
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 5,
         }).setOrigin(0.5);
+        this.trackLocalizedText(valueText, config.getValueText);
 
         const nextText = this.add.text(x2 + 170-100, config.y, '>', {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.uiText,
@@ -190,6 +202,19 @@ export class Settings extends Scene
     {
         this.languageIndex = Phaser.Math.Wrap(this.languageIndex + direction, 0, LANGUAGE_OPTIONS.length);
         this.applyLanguage();
+        this.refreshLocalizedTexts();
+    }
+
+    private trackLocalizedText (text: Phaser.GameObjects.Text, getValue: () => string): void
+    {
+        this.localizedTextObjects.push({ text, getValue });
+    }
+
+    private refreshLocalizedTexts (): void
+    {
+        this.localizedTextObjects.forEach(({ text, getValue }) => {
+            text.setText(getValue());
+        });
     }
 
     private changePlayer (direction: number): void

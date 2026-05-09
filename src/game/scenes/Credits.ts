@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { ASSET_KEYS } from '../common/assets';
+import { getText } from '../common/texts';
 
 const COLORS = {
     title: '#5eb1da',
@@ -35,14 +36,14 @@ export class Credits extends Scene
         this.add.image(centerX, centerY, 'credit-bg');
         this.add.image(centerX+180, 120, 'logo').setDepth(100);
 
-        this.add.text(200, 150, 'Credits', {
+        this.add.text(200, 150, getText('credits.title'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 58, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 8,
         }).setOrigin(0.5).setDepth(100);
 
         // -------------------------------------------------------------------------------------------
         
-        this.add.text(60, 230, 'Made for søndagsskolen i 2026, Inspiration: Genesis and C.S.Lewis', {
+        this.add.text(60, 230, getText('credits.madeFor'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 6,
             align: 'left',
@@ -50,7 +51,7 @@ export class Credits extends Scene
             lineSpacing: 4,
         });
         
-        this.add.text(60, 340, 'Beta Testers, Supporters and Special Thanks:\nWilliam F. Eriksen & Richard D. Eriksen', {
+        this.add.text(60, 340, getText('credits.thanks'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 6,
             align: 'left',
@@ -58,7 +59,7 @@ export class Credits extends Scene
             lineSpacing: 4,
         });
         
-        this.add.text(60, 460, 'Code help: GitHub Copilot, Chat GPT & Grok', {
+        this.add.text(60, 460, getText('credits.codeHelp'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 6,
             align: 'left',
@@ -66,7 +67,7 @@ export class Credits extends Scene
             lineSpacing: 4,
         });
         
-        this.add.text(60, 540, 'Phaser Tutorials: Scott Westover', {
+        this.add.text(60, 540, getText('credits.tutorials'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 6,
             align: 'left',
@@ -74,7 +75,7 @@ export class Credits extends Scene
             lineSpacing: 4,
         });
 
-        this.add.text(60, 620, 'Graphics & Music: ComfyUI, AceStep, Flux_2-Turbo-LoRA', {
+        this.add.text(60, 620, getText('credits.graphicsMusic'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 6,
             align: 'left',
@@ -84,7 +85,7 @@ export class Credits extends Scene
 
         // -------------------------------------------------------------------------------------------
         
-        const exit_text = this.add.text(900, 700, 'Back', {
+        const exit_text = this.add.text(900, 700, getText('credits.back'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 42, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
             align: 'center'
