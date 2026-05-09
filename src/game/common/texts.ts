@@ -194,7 +194,7 @@ const TEXTS = {
     },
     'gear.armor.current': {
         en: 'shining armor',
-        da: 'skinnende rustning',
+        da: 'skinnende rustningssæt',
     },
     //Weapons from chests
     'weapon.dagger.found': {
@@ -219,7 +219,7 @@ const TEXTS = {
     },
     'weapon.sword.option': {
         en: 'the sword',
-        da: 'sværdet',
+        da: 'sablen',
     },
     'weapon.dagger.current': {
         en: 'dagger',
@@ -231,7 +231,7 @@ const TEXTS = {
     },
     'weapon.sword.current': {
         en: 'sword',
-        da: 'sværd',
+        da: 'sabel',
     },
 } as const;
 
