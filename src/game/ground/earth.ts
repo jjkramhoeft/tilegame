@@ -398,6 +398,18 @@ export class Earth {
             this.castingFeedback.mountainTilesPlaced++;
         }
 
+        //Chest temp
+        if(biome===BIOME.ROCK && 0<decoration) {
+            return new Tile({
+                tilenumber: tilePosition,
+                biome: biome,
+                border: border,
+                decoration: decoration,
+                blocking: 0,
+                floating: floating,
+                chest: 1,
+            });
+        }
         return new Tile({
             tilenumber: tilePosition,
             biome: biome,

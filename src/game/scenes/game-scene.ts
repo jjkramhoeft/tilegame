@@ -67,7 +67,7 @@ export class GameScene extends Phaser.Scene {
         if (DataManager.instance.data.isDebugMode) {
             this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
             setupDebugBlocking(this, this.#earth, firstTilePosition);
-            //spawnDebugEnemies(this, this.#enemyGroup, this.#critterGroup, this.#earth, firstTilePosition);
+            spawnDebugEnemies(this, this.#enemyGroup, this.#critterGroup, this.#earth, firstTilePosition);
         }
 
         this.#registerColliders();
@@ -161,7 +161,7 @@ export class GameScene extends Phaser.Scene {
         });
 
         // register overlap enemies and void tiles from map, so enemies can avoid falling into void.
-        this.physics.add.collider(this.#enemyGroup!, this.#earth.getVoidLayer(), (enemy, _voidTile) => {
+        this.physics.add.collider(this.#enemyGroup!, this.#earth.getVoidLayer(), (_enemy, _voidTile) => {
             //const enemyObj = enemy as CharacterGameObject; enemyObj.hit(DIRECTION.DOWN, 999); currently enemies do not take damage from bumping into the void.
         });
 

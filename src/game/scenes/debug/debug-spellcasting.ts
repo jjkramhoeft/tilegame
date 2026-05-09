@@ -88,7 +88,6 @@ export class DebugSpellcasting {
             const casterPosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
             const tilePosition = { x: casterPosition.x, y: casterPosition.y };
             const directions = player.getLastMoveDirections();
-            console.log(directions);
             directions.forEach(dir => {
                 switch (dir) {
                     case 'UP': tilePosition.y -= 1; break;
@@ -98,7 +97,9 @@ export class DebugSpellcasting {
                 }
             });
 
+            console.log('Casting spell magic:', this.#playerCurrentMagic);
             const feedback = earth.AddTiles(this.#playerCurrentMagic, casterPosition, tilePosition, directions);
+            console.log('Casting spell feedback:', feedback);
             if (feedback) {
                 if (feedback.rockTilesPlaced > 10 && this.#playerCurrentMagic.isRockDecorationUnlocked === false) { this.#playerCurrentMagic.isRockDecorationUnlocked = true; }
                 if (feedback.rockDecorationsPlaced > 10 && this.#playerCurrentMagic.isRockBlockingUnlocked === false) { 
