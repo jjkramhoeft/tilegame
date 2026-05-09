@@ -16,7 +16,7 @@ const TEXTS = {
     },
     'intro.credits': {
         en: 'Credits',
-        da: 'Credits',
+        da: 'Krediteringer',
     },
     'intro.settings': {
         en: 'Settings',
@@ -33,7 +33,7 @@ const TEXTS = {
     },
     'settings.musicVolume': {
         en: 'Music Volume',
-        da: 'Musikstyrke',
+        da: 'Musik lydniveau',
     },
     'settings.language': {
         en: 'Language',
@@ -70,7 +70,7 @@ const TEXTS = {
 
     'credits.title': {
         en: 'Credits',
-        da: 'Credits',
+        da: 'Krediteringer',
     },
     'credits.madeFor': {
         en: 'Made for Sunday school in 2026, inspiration: Genesis and C.S. Lewis',

@@ -133,12 +133,12 @@ export class Settings extends Scene
         this.applyPlayer();
         this.applyDebug();
 
-        const backText = this.add.text(900, 700, getText('settings.back'), {
+        const backText = this.add.text(980, 750, getText('settings.back'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
         });
         this.trackLocalizedText(backText, () => getText('settings.back'));
-        backText.setOrigin(0);
+        backText.setOrigin(1);
         backText.setInteractive({ useHandCursor: true });
         backText.on('pointerdown', () => {
             this.scene.start('Intro');

@@ -85,12 +85,11 @@ export class Credits extends Scene
 
         // -------------------------------------------------------------------------------------------
         
-        const exit_text = this.add.text(900, 700, getText('credits.back'), {
+        const exit_text = this.add.text(980, 750, getText('credits.back'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 42, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
-            align: 'center'
         });
-        exit_text.setOrigin(0);
+        exit_text.setOrigin(1);
         exit_text.setInteractive({ useHandCursor: true });
         exit_text.on('pointerdown', () => {
             this.creditsMusic?.stop();

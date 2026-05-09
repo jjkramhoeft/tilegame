@@ -42,34 +42,34 @@ export class Intro extends Scene {
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
 
-        this.exit_text = this.add.text(915, 700, getText('intro.exit'), {
+        this.exit_text = this.add.text(980, 750, getText('intro.exit'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
             align: 'center'
         });
-        this.exit_text.setOrigin(0);
+        this.exit_text.setOrigin(1);
         this.exit_text.setInteractive({ useHandCursor: true });
         this.exit_text.on('pointerdown', () => {
             this.introMusic?.stop();
             this.scene.stop('Intro');
         });
 
-        const credits_text = this.add.text(862, 650, getText('intro.credits'), {
+        const credits_text = this.add.text(980, 700, getText('intro.credits'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
         });
-        credits_text.setOrigin(0);
+        credits_text.setOrigin(1);
         credits_text.setInteractive({ useHandCursor: true });
         credits_text.on('pointerdown', () => {
             this.introMusic?.stop();
             this.scene.start('Credits');
         });
 
-        const settings_text = this.add.text(845, 600, getText('intro.settings'), {
+        const settings_text = this.add.text(980, 650, getText('intro.settings'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
         });
-        settings_text.setOrigin(0);
+        settings_text.setOrigin(1);
         settings_text.setInteractive({ useHandCursor: true });
         settings_text.on('pointerdown', () => {
             this.introMusic?.stop();
