@@ -1,6 +1,8 @@
 import { BaseCharacterState } from './base-character-state';
 import { CHARACTER_STATES } from './character-states';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
+import { isArcadePhysicsBody } from '../../../../common/utils';
+import { IDLE_SLOWDOWN_FACTOR, IDLE_STOP_SPEED } from '../../../../common/config';
 
 export class IdleState extends BaseCharacterState {
   constructor(gameObject: CharacterGameObject) {
@@ -30,9 +32,24 @@ export class IdleState extends BaseCharacterState {
 
     // if no other input is provided, do nothing
     if (!controls.isDownDown && !controls.isUpDown && !controls.isLeftDown && !controls.isRightDown) {
+      this.#slowVelocity();
       return;
     }
 
     this._stateMachine.setState(CHARACTER_STATES.MOVE_STATE);
+  }
+
+  #slowVelocity(): void {
+    if (!isArcadePhysicsBody(this._gameObject.body)) {
+      return;
+    }
+
+    const velocity = this._gameObject.body.velocity;
+    if (velocity.length() <= IDLE_STOP_SPEED) {
+      velocity.set(0, 0);
+      return;
+    }
+
+    velocity.scale(IDLE_SLOWDOWN_FACTOR);
   }
 }

@@ -37,6 +37,7 @@ export class GameScene extends Phaser.Scene {
     #playerMapCollider!: Phaser.Physics.Arcade.Collider;
     #playerChestCollider!: Phaser.Physics.Arcade.Collider;
     #playerMobCollider!: Phaser.Physics.Arcade.Collider;
+    #playerCritterCollider!: Phaser.Physics.Arcade.Collider;
     #isGameplayReady = false;
     #isIntroPending = false;
     #introShown = false;
@@ -121,6 +122,7 @@ export class GameScene extends Phaser.Scene {
         this.physics.world.removeCollider(this.#playerMapCollider);
         this.physics.world.removeCollider(this.#playerChestCollider);
         this.physics.world.removeCollider(this.#playerMobCollider);
+        this.physics.world.removeCollider(this.#playerCritterCollider);
     }
 
     #setupPlayer(): void {
@@ -170,6 +172,9 @@ export class GameScene extends Phaser.Scene {
         this.#playerMobCollider = this.physics.add.overlap(this.#player, this.#enemyGroup!, () => {
             this.#player.hit(DIRECTION.DOWN, 1);
         });
+
+        // critters (passive animals) collide with the player and bounce away without damaging the player.
+        this.#playerCritterCollider = this.physics.add.collider(this.#player, this.#critterGroup!);
 
         // register overlap between player weapon and enemies
         this.physics.add.overlap(this.#player.weaponBody, this.#enemyGroup!, (_weaponBody, enemy) => {
