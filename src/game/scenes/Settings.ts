@@ -18,8 +18,8 @@ const LANGUAGE_OPTIONS = [
     { textKey: 'settings.language.english', isDanish: false }
 ];
 const PLAYER_OPTIONS = [
-    { label: 'Adam', sex: 'male' },
-    { label: 'Eve', sex: 'female' }
+    { textKey: 'settings.player.adam', sex: 'male' },
+    { textKey: 'settings.player.eve', sex: 'female' }
 ];
 const DEBUG_OPTIONS = [
     { textKey: 'settings.debug.off', value: false },
@@ -114,7 +114,7 @@ export class Settings extends Scene
             x: centerX,
             y: 300,
             getLabelText: () => getText('settings.playingAs'),
-            getValueText: () => PLAYER_OPTIONS[this.playerIndex].label,
+            getValueText: () => getText(PLAYER_OPTIONS[this.playerIndex].textKey as TextKey),
             onPrevious: () => this.changePlayer(-1),
             onNext: () => this.changePlayer(1)
         });

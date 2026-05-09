@@ -43,6 +43,14 @@ const TEXTS = {
         en: 'Playing as',
         da: 'Spil som',
     },
+    'settings.player.adam': {
+        en: 'Adam',
+        da: 'Adam',
+    },
+    'settings.player.eve': {
+        en: 'Eve',
+        da: 'Eva',
+    },
     'settings.debug': {
         en: 'Debug',
         da: 'Debug',
