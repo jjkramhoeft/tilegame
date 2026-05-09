@@ -96,6 +96,10 @@ export class GameScene extends Phaser.Scene {
         return this.#chestJJKGroup;
     }
 
+    public getChestArray(): ChestJJK[] {
+        return this.#chests;
+    }
+
     public getBlockingGeometryGroup(): Phaser.GameObjects.Group {
         return this.#earth.getBlockingGeometryGroup();
     }

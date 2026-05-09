@@ -5,8 +5,8 @@ import { BASE_DEPTH, BIOME, BLOCKING_TILE_DEPTH, BORDER_DEPTH, CRYSTAL_GLIMTS_DE
 import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles, DecideBiome, DecideDecoration, DecideBlockingAndFloating, DecideBorder } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
-import { ENABLE_LOGGING } from '../common/config';
-import { ChestJJK } from '../game-objects/objects/chestJJK';
+import { CHEST_CHANCE, ENABLE_LOGGING } from '../common/config';
+//import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { addChest } from '../scenes/debug/debug-chests';
 import { GameScene } from '../scenes/game-scene';
 
@@ -15,31 +15,37 @@ export type EarthCastingConfig = {
     isRockDecorationUnlocked: boolean;
     isRockBlockingUnlocked: boolean;
     isChest1Placable: boolean;
+    isChest1Placed: boolean;
     // Desert
     isDesertUnlocked: boolean;
     isDesertDecorationUnlocked: boolean;
     isDesertBlockingUnlocked: boolean;
     isChest2Placable: boolean;
+    isChest2Placed: boolean;
     // Grass
     isGrassUnlocked: boolean;
     isGrassDecorationUnlocked: boolean;
     isGrassBlockingUnlocked: boolean;
     isChest3Placable: boolean;
+    isChest3Placed: boolean;
     //Forest
     isForestUnlocked: boolean;
     isForestDecorationUnlocked: boolean;
     isForestBlockingUnlocked: boolean;
     isChest4Placable: boolean;
+    isChest4Placed: boolean;
     // Swamp
     isSwampUnlocked: boolean;
     isSwampDecorationUnlocked: boolean;
     isSwampBlockingUnlocked: boolean;
     isChest5Placable: boolean;
+    isChest5Placed: boolean;
     // Crystal
     isCrystalUnlocked: boolean;
     isCrystalDecorationUnlocked: boolean;
     isCrystalBlockingUnlocked: boolean;
     isChest6Placable: boolean;
+    isChest6Placed: boolean;
     // Water
     isWaterUnlocked: boolean;
     // Lava
@@ -72,7 +78,7 @@ export type CastingFeedback = {
     waterTilesPlaced: number;
     lavaTilesPlaced: number;
     mountainTilesPlaced: number;
-    chestNumberPlaced?: number;
+    chestNumberPlaced: number | undefined;
 };
 
 export class Earth {
@@ -399,18 +405,39 @@ export class Earth {
             this.castingFeedback.mountainTilesPlaced++;
         }
 
-        //Chest temp
-        if (biome === BIOME.ROCK && 0 < decoration) {
-            return new Tile({
-                tilenumber: tilePosition,
-                biome: biome,
-                border: border,
-                decoration: decoration,
-                blocking: -1,
-                floating: floating,
-                chest: 1,
-            });
+        //Test if chests should be placed
+        if (biome === BIOME.ROCK && 0 < decoration && creationConfig.isChest1Placable) {
+            if (Math.random() < CHEST_CHANCE) {
+                this.castingFeedback.chestNumberPlaced = 1;
+                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 1, });
+            }
+        } else if (biome === BIOME.DESERT && 0 < decoration && creationConfig.isChest2Placable) {
+            if (Math.random() < CHEST_CHANCE) {
+                this.castingFeedback.chestNumberPlaced = 2;
+                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 2, });
+            }
+        } else if (biome === BIOME.GRASS && 0 < decoration && creationConfig.isChest3Placable) {
+            if (Math.random() < CHEST_CHANCE) {
+                this.castingFeedback.chestNumberPlaced = 3;
+                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 3, });
+            }
+        } else if (biome === BIOME.FOREST && 0 < decoration && creationConfig.isChest4Placable) {
+            if (Math.random() < CHEST_CHANCE) {
+                this.castingFeedback.chestNumberPlaced = 4;
+                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 4, });
+            }
+        } else if (biome === BIOME.SWAMP && 0 < decoration && creationConfig.isChest5Placable) {
+            if (Math.random() < CHEST_CHANCE) {
+                this.castingFeedback.chestNumberPlaced = 5;
+                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 5, });
+            }
+        } else if (biome === BIOME.CRYSTAL && 0 < decoration && creationConfig.isChest6Placable) {
+            if (Math.random() < CHEST_CHANCE) {
+                this.castingFeedback.chestNumberPlaced = 6;
+                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 6, });
+            }
         }
+        // Return regular tile if no chest should be placed.
         return new Tile({
             tilenumber: tilePosition,
             biome: biome,

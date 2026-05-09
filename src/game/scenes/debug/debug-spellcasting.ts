@@ -11,26 +11,32 @@ export class DebugSpellcasting {
         isRockDecorationUnlocked: false,
         isRockBlockingUnlocked: false,
         isChest1Placable: false,
+        isChest1Placed: false,
         isDesertUnlocked: false,
         isDesertDecorationUnlocked: false,
         isDesertBlockingUnlocked: false,
         isChest2Placable: false,
+        isChest2Placed: false,
         isGrassUnlocked: false,
         isGrassDecorationUnlocked: false,
         isGrassBlockingUnlocked: false,
         isChest3Placable: false,
+        isChest3Placed: false,
         isForestUnlocked: false,
         isForestDecorationUnlocked: false,
         isForestBlockingUnlocked: false,
         isChest4Placable: false,
+        isChest4Placed: false,
         isSwampUnlocked: false,
         isSwampDecorationUnlocked: false,
         isSwampBlockingUnlocked: false,
         isChest5Placable: false,
+        isChest5Placed: false,
         isCrystalUnlocked: false,
         isCrystalDecorationUnlocked: false,
         isCrystalBlockingUnlocked: false,
         isChest6Placable: false,
+        isChest6Placed: false,
         isWaterUnlocked: false,
         isLavaUnlocked: false,
         isMountainUnlocked: false,
@@ -103,12 +109,27 @@ export class DebugSpellcasting {
             console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
             //Adjust progression if needed.
             if (feedback) {
+                if (feedback.chestNumberPlaced !== undefined && feedback.chestNumberPlaced > 0) {
+                    //ToDo play chest sound (this.#chestSound.isPlaying === false) { this.#chestSound.play(); }
+                    switch (feedback.chestNumberPlaced) {
+                        case 1: this.#playerCurrentMagic.isChest1Placed = true; this.#playerCurrentMagic.isChest1Placable = false; break;
+                        case 2: this.#playerCurrentMagic.isChest2Placed = true; this.#playerCurrentMagic.isChest2Placable = false; break;
+                        case 3: this.#playerCurrentMagic.isChest3Placed = true; this.#playerCurrentMagic.isChest3Placable = false; break;
+                        case 4: this.#playerCurrentMagic.isChest4Placed = true; this.#playerCurrentMagic.isChest4Placable = false; break;
+                        case 5: this.#playerCurrentMagic.isChest5Placed = true; this.#playerCurrentMagic.isChest5Placable = false; break;
+                        case 6: this.#playerCurrentMagic.isChest6Placed = true; this.#playerCurrentMagic.isChest6Placable = false; break;
+                    }
+                }
                 if (feedback.rockTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isRockDecorationUnlocked === false) {
                     this.#playerCurrentMagic.isRockDecorationUnlocked = true;
                 }
                 if (feedback.rockDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isRockBlockingUnlocked === false) {
                     this.#playerCurrentMagic.isRockBlockingUnlocked = true;
-                    //ToDo enable chest 1 if not already enabled or placed
+                    //Enable chest 1. 
+                    if (this.#playerCurrentMagic.isChest1Placable === false && this.#playerCurrentMagic.isChest1Placed === false) {
+                        this.#playerCurrentMagic.isChest1Placable = true;
+                    }
+                    //Unlock desert tiles.
                     if (this.#playerCurrentMagic.isDesertUnlocked === false) {
                         this.#playerCurrentMagic.isDesertUnlocked = true;
                     }
@@ -117,10 +138,15 @@ export class DebugSpellcasting {
                     if (feedback.desertTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isDesertDecorationUnlocked === false) { this.#playerCurrentMagic.isDesertDecorationUnlocked = true; }
                     if (feedback.desertDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isDesertBlockingUnlocked === false) {
                         this.#playerCurrentMagic.isDesertBlockingUnlocked = true;
-                        //ToDo enable chest 2 if not already enabled or placed
+                        //Enable chest 2.
+                        if (this.#playerCurrentMagic.isChest2Placable === false && this.#playerCurrentMagic.isChest2Placed === false) {
+                            this.#playerCurrentMagic.isChest2Placable = true;
+                        }
+                        //Unlock grass tiles
                         if (this.#playerCurrentMagic.isGrassUnlocked === false) {
                             this.#playerCurrentMagic.isGrassUnlocked = true;
                         }
+                        //Unlock water tiles
                         if (this.#playerCurrentMagic.isWaterUnlocked === false) {
                             this.#playerCurrentMagic.isWaterUnlocked = true;
                         }
@@ -130,7 +156,11 @@ export class DebugSpellcasting {
                     if (feedback.grassTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isGrassDecorationUnlocked === false) { this.#playerCurrentMagic.isGrassDecorationUnlocked = true; }
                     if (feedback.grassDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isGrassBlockingUnlocked === false) {
                         this.#playerCurrentMagic.isGrassBlockingUnlocked = true;
-                        //ToDo enable chest 3 if not already enabled or placed
+                        //Enable chest 3. 
+                        if (this.#playerCurrentMagic.isChest3Placable === false && this.#playerCurrentMagic.isChest3Placed === false) {
+                            this.#playerCurrentMagic.isChest3Placable = true;
+                        }
+                        //unlock forest tiles.
                         if (this.#playerCurrentMagic.isForestUnlocked === false) {
                             this.#playerCurrentMagic.isForestUnlocked = true;
                         }
@@ -140,10 +170,15 @@ export class DebugSpellcasting {
                     if (feedback.forestTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isForestDecorationUnlocked === false) { this.#playerCurrentMagic.isForestDecorationUnlocked = true; }
                     if (feedback.forestDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isForestBlockingUnlocked === false) {
                         this.#playerCurrentMagic.isForestBlockingUnlocked = true;
-                        //ToDo enable chest 4 if not already enabled or placed
+                        //Enable chest 4. 
+                        if (this.#playerCurrentMagic.isChest4Placable === false && this.#playerCurrentMagic.isChest4Placed === false) {
+                            this.#playerCurrentMagic.isChest4Placable = true;
+                        }
+                        //Unlock swamp tiles.
                         if (this.#playerCurrentMagic.isSwampUnlocked === false) {
                             this.#playerCurrentMagic.isSwampUnlocked = true;
                         }
+                        //Unlock mountain tiles.
                         if (this.#playerCurrentMagic.isMountainUnlocked === false) {
                             this.#playerCurrentMagic.isMountainUnlocked = true;
                         }
@@ -153,7 +188,11 @@ export class DebugSpellcasting {
                     if (feedback.swampTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isSwampDecorationUnlocked === false) { this.#playerCurrentMagic.isSwampDecorationUnlocked = true; }
                     if (feedback.swampDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isSwampBlockingUnlocked === false) {
                         this.#playerCurrentMagic.isSwampBlockingUnlocked = true;
-                        //ToDo enable chest 5 if not already enabled or placed
+                        //Enable chest 5.
+                        if (this.#playerCurrentMagic.isChest5Placable === false && this.#playerCurrentMagic.isChest5Placed === false) {
+                            this.#playerCurrentMagic.isChest5Placable = true;
+                        }
+                        //Unlock crystal tiles.
                         if (this.#playerCurrentMagic.isCrystalUnlocked === false) {
                             this.#playerCurrentMagic.isCrystalUnlocked = true;
                         }
@@ -163,7 +202,11 @@ export class DebugSpellcasting {
                     if (feedback.crystalTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isCrystalDecorationUnlocked === false) { this.#playerCurrentMagic.isCrystalDecorationUnlocked = true; }
                     if (feedback.crystalDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isCrystalBlockingUnlocked === false) {
                         this.#playerCurrentMagic.isCrystalBlockingUnlocked = true;
-                        //ToDo enable chest 6 if not already enabled or placed
+                        //Enable chest 6. 
+                        if (this.#playerCurrentMagic.isChest6Placable === false && this.#playerCurrentMagic.isChest6Placed === false) {
+                            this.#playerCurrentMagic.isChest6Placable = true;
+                        }
+                        //Unlock lava tiles.
                         if (this.#playerCurrentMagic.isLavaUnlocked === false) {
                             this.#playerCurrentMagic.isLavaUnlocked = true;
                         }
