@@ -241,6 +241,9 @@ export class DebugSpellcasting {
         this.applyBiomeProgression(this.#castingFeedbackTotals);
         this.applyPowerLevelProgression(this.#castingFeedbackTotals);
         //ToDo: Place animal if ?
+        if(this.#castingFeedbackTotals.rockBlockingPlaced>5){
+                console.log('Spawn an animal!');
+        }
     }
 
     private createEmptyCastingFeedback(): CastingFeedback {
@@ -311,23 +314,28 @@ export class DebugSpellcasting {
 
     private applyBiomeProgression(feedback: CastingFeedback): void {
         for (const progression of BIOME_PROGRESSIONS) {
+            // Skip biomes that are still locked; rock has no unlock flag and is always active.
             if (progression.unlockedKey !== undefined && !this.getMagicFlag(progression.unlockedKey)) {
                 continue;
             }
 
+            // Tile placement unlocks decorations for the current biome.
             if (feedback[progression.tilesPlacedKey] > TILES_BEFORE_DECORATION_UNLOCK) {
                 this.setMagicFlag(progression.decorationUnlockedKey, true);
             }
 
+            // Decoration placement is the gate for blocking tiles, chests, and the next biome unlocks.
             if (feedback[progression.decorationsPlacedKey] <= TILES_BEFORE_BLOCKING_UNLOCK || this.getMagicFlag(progression.blockingUnlockedKey)) {
                 continue;
             }
 
             this.setMagicFlag(progression.blockingUnlockedKey, true);
+            // Let the player place the biome chest once blocking is unlocked, unless it already exists.
             if (!this.getMagicFlag(progression.chestPlacedKey)) {
                 this.setMagicFlag(progression.chestPlacableKey, true);
             }
 
+            // Opening blocking progression also reveals the biome branches that follow it.
             for (const unlockKey of progression.unlockOnBlockingKeys) {
                 this.setMagicFlag(unlockKey, true);
             }
