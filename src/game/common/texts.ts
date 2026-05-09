@@ -118,6 +118,27 @@ const TEXTS = {
         en: 'Continue Playing',
         da: 'Spil videre',
     },
+    //Progression Help UI
+    'ui.progression.continue': {
+        en: 'Continue',
+        da: 'Fortsæt',
+    },
+    'ui.progression.intro': {
+        en: 'In the beginning the earth was void and empty...',
+        da: 'I begyndelsen var jorden øde og tom...',
+    },
+    'ui.progression.controlsHelp': {
+        en: 'Movement: w, a, s and d -keys, hit/cast: z, interact: x',
+        da: 'Bevægelse: w, a, s og d-taster, slå/kast: z, interager: x',
+    },
+    'ui.progression.followUp': {
+        en: 'Take care of the earth and animales...',
+        da: 'Pas på jorden og dyrene...',
+    },
+    'ui.progression.gameOver': {
+        en: 'Game Over',
+        da: 'Spillet er slut',
+    },
     //Chest Dialog
     'chest.empty': {
         en: 'You opened an empty chest.',

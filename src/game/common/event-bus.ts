@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import type { TextKey } from './texts';
 
 export const EVENT_BUS = new Phaser.Events.EventEmitter();
 
@@ -11,6 +12,9 @@ export const CUSTOM_EVENTS = {
   PLAYER_PROGRESS_UPDATED: 'PLAYER_PROGRESS_UPDATED',
   SHOW_DIALOG: 'SHOW_DIALOG',
   DIALOG_CLOSED: 'DIALOG_CLOSED',
+  SHOW_PROGRESSION_HELP: 'SHOW_PROGRESSION_HELP',
+  PROGRESSION_HELP_CLOSED: 'PROGRESSION_HELP_CLOSED',
+  TILES_PLACED: 'TILES_PLACED',
   BOSS_DEFEATED: 'BOSS_DEFEATED',
 } as const;
 
@@ -37,4 +41,19 @@ export type PlayerProgressUpdated = {
   currentProgress: number;
   previousProgress: number;
   type: PlayerUpdateType;
+};
+
+export type ProgressionHelpCloseAction = 'close' | 'mainMenu' | 'restart';
+
+export type ProgressionHelpPayload = {
+  textKey: TextKey;
+  closeAction?: ProgressionHelpCloseAction;
+};
+
+export type ProgressionHelpClosed = {
+  closeAction: ProgressionHelpCloseAction;
+};
+
+export type TilesPlacedUpdated = {
+  totalPlacedTiles: number;
 };

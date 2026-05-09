@@ -6,6 +6,9 @@ import {
   CUSTOM_EVENTS,
   EVENT_BUS,
   PLAYER_UPDATE_TYPE,
+  type ProgressionHelpCloseAction,
+  type ProgressionHelpClosed,
+  type ProgressionHelpPayload,
   type PlayerHealthUpdated,
   type PlayerPowerUpdated,
   type PlayerProgressUpdated,
@@ -38,7 +41,12 @@ const DIALOG_OPTION_X = 65;
 const SAVE_DIALOG_OPTION_X = 165;
 const DIALOG_CURSOR_X = 45;
 const SAVE_DIALOG_CURSOR_X = 145;
+const PROGRESSION_HELP_OPTION_X = 185;
+const PROGRESSION_HELP_CURSOR_X = 165;
 const DIALOG_FIRST_OPTION_Y = 85;
+const PROGRESSION_HELP_MESSAGE_X = 75;
+const PROGRESSION_HELP_MESSAGE_Y = 45;
+const PROGRESSION_HELP_OPTION_Y = 180;
 const DIALOG_OPTION_SPACING = 40;
 const DIALOG_CURSOR_SIZE = 16;
 const SAVE_DIALOG_OPTION_COUNT = 3;
@@ -55,6 +63,7 @@ const enum UiMode {
   HudOnly,
   ChestDialog,
   SaveDialog,
+  ProgressionHelpDialog,
 }
 
 export class UiScene extends Phaser.Scene {
@@ -65,6 +74,10 @@ export class UiScene extends Phaser.Scene {
 
   #saveDialogContainer!: Phaser.GameObjects.Container;
   #saveDialogCursorGameObject!: Phaser.GameObjects.Image;
+
+  #progressionHelpContainer!: Phaser.GameObjects.Container;
+  #progressionHelpText!: Phaser.GameObjects.Text;
+  #progressionHelpCloseAction: ProgressionHelpCloseAction = 'close';
 
   #dialogContainer!: Phaser.GameObjects.Container;
   #dialogContainerText!: Phaser.GameObjects.Text;
@@ -91,6 +104,7 @@ export class UiScene extends Phaser.Scene {
     this.#createHud();
     this.#createDialog();
     this.#createSaveDialog();
+    this.#createProgressionHelpDialog();
 
     this.#controls = new KeyboardComponent(this.input.keyboard);
     this.#selectedMenuOptionIndex = 0;
@@ -100,12 +114,14 @@ export class UiScene extends Phaser.Scene {
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_PROGRESS_UPDATED, this.updateProgressInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.SHOW_DIALOG, this.showDialog, this);
+    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, this.showProgressionHelp, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_PROGRESS_UPDATED, this.updateProgressInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.SHOW_DIALOG, this.showDialog, this);
+      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, this.showProgressionHelp, this);
     });
   }
 
@@ -157,9 +173,20 @@ export class UiScene extends Phaser.Scene {
     this.#updateDialogCursor();
   }
 
+  public showProgressionHelp(payload: ProgressionHelpPayload): void {
+    this.#uiMode = UiMode.ProgressionHelpDialog;
+    this.#progressionHelpCloseAction = payload.closeAction ?? 'close';
+    this.#saveDialogContainer.visible = false;
+    this.#dialogContainer.visible = false;
+    this.#progressionHelpText.setText(getText(payload.textKey));
+    this.#progressionHelpContainer.visible = true;
+  }
+
   public update(): void {
     if (this.#controls.isEscapeKeyJustDown) {
-      this.#openSaveDialog();
+      if (this.#uiMode === UiMode.HudOnly) {
+        this.#openSaveDialog();
+      }
       return;
     }
 
@@ -304,6 +331,33 @@ export class UiScene extends Phaser.Scene {
     this.#saveDialogContainer.visible = false;
   }
 
+  #createProgressionHelpDialog(): void {
+    this.#progressionHelpContainer = this.add.container(DIALOG_X, DIALOG_Y, [
+      this.add.image(0, 0, ASSET_KEYS.UI_DIALOG, 0).setOrigin(0).setDisplaySize(DIALOG_WIDTH, DIALOG_HEIGHT),
+    ]);
+    this.#progressionHelpText = this.add.text(
+      PROGRESSION_HELP_MESSAGE_X,
+      PROGRESSION_HELP_MESSAGE_Y,
+      '',
+      DEFAULT_UI_HEADING_STYLE,
+    ).setOrigin(0);
+    this.#progressionHelpContainer.add(this.#progressionHelpText);
+
+    const continueOption = this.add.text(
+      PROGRESSION_HELP_OPTION_X,
+      PROGRESSION_HELP_OPTION_Y,
+      getText('ui.progression.continue'),
+      DEFAULT_UI_OPTION_STYLE,
+    ).setOrigin(0);
+    this.#progressionHelpContainer.add(continueOption);
+
+    const cursor = this.add.image(PROGRESSION_HELP_CURSOR_X, PROGRESSION_HELP_OPTION_Y, ASSET_KEYS.UI_CURSOR, 0)
+      .setOrigin(0)
+      .setDisplaySize(DIALOG_CURSOR_SIZE, DIALOG_CURSOR_SIZE);
+    this.#progressionHelpContainer.add(cursor);
+    this.#progressionHelpContainer.visible = false;
+  }
+
   #openSaveDialog(): void {
     if (this.#uiMode === UiMode.ChestDialog) {
       return;
@@ -334,6 +388,15 @@ export class UiScene extends Phaser.Scene {
         this.#saveDialogContainer.visible = false;
         this.#uiMode = UiMode.HudOnly;
       }
+    }
+
+    if (this.#uiMode === UiMode.ProgressionHelpDialog) {
+      const closeAction = this.#progressionHelpCloseAction;
+      const closedPayload: ProgressionHelpClosed = { closeAction };
+      this.#progressionHelpContainer.visible = false;
+      this.#progressionHelpCloseAction = 'close';
+      this.#uiMode = UiMode.HudOnly;
+      EVENT_BUS.emit(CUSTOM_EVENTS.PROGRESSION_HELP_CLOSED, closedPayload);
     }
   }
 

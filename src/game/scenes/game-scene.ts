@@ -4,10 +4,16 @@ import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Earth } from '../ground/earth';
 import { Tile } from '../ground/tile';
 import { SEX, WEAPON, GEAR, DIRECTION } from '../common/common';
-import { CUSTOM_EVENTS, EVENT_BUS } from '../common/event-bus';
+import {
+    CUSTOM_EVENTS,
+    EVENT_BUS,
+    type ProgressionHelpClosed,
+    type ProgressionHelpPayload,
+    type TilesPlacedUpdated,
+} from '../common/event-bus';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
-import { GameObject2 } from '../common/types';
+import { GameObject2, Position } from '../common/types';
 import { DataManager } from '../common/data-manager';
 import { writeChestDialogInfo } from '../common/chest-dialog';
 import { addChest, setupDebugChests } from './debug/debug-chests';
@@ -16,6 +22,7 @@ import { updateFallingLogic } from './debug/debug-falling';
 import { updateSwimmingLogic } from './debug/debug-swimming';
 import { DebugSpellcasting } from './debug/debug-spellcasting';
 import { setupDebugBlocking } from './debug/debug-blocking';
+import { SCENE_KEYS } from './scene-keys';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
@@ -30,6 +37,13 @@ export class GameScene extends Phaser.Scene {
     #playerMapCollider!: Phaser.Physics.Arcade.Collider;
     #playerChestCollider!: Phaser.Physics.Arcade.Collider;
     #playerMobCollider!: Phaser.Physics.Arcade.Collider;
+    #isGameplayReady = false;
+    #isIntroPending = false;
+    #introShown = false;
+    #controlsHelpShown = false;
+    #followUpShown = false;
+    #hasPlayerMoved = false;
+    #gameOverShown = false;
 
     constructor() {
         super('GameScene');
@@ -58,29 +72,21 @@ export class GameScene extends Phaser.Scene {
 
         this.#enemyGroup = this.add.group();
         this.#critterGroup = this.add.group();
-
-        const firstTilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#playerStartPosition.x, this.#playerStartPosition.y, true);
-        const firstTile = new Tile({
-            tilenumber: firstTilePosition,
-            biome: 1,
-        });
-        this.#earth.AddTile(firstTile);
-
-        if (DataManager.instance.data.isDebugMode) {
-            this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
-            setupDebugBlocking(this, this.#earth, firstTilePosition);
-            spawnDebugEnemies(this, this.#enemyGroup, this.#critterGroup, this.#earth, firstTilePosition);
-        }
-
-        this.#registerColliders();
         this.#registerCustomEvents();
 
-        this.scene.launch('UiScene');
-
-        this.#debugSpellcasting = new DebugSpellcasting(this, this.#critterGroup);
+        this.scene.launch(SCENE_KEYS.UI_SCENE);
+        this.#showIntroHelp();
     }
 
     update() {
+        if (!this.#isGameplayReady) {
+            return;
+        }
+
+        if (!this.#hasPlayerMoved && this.#isMovementInputDown()) {
+            this.#hasPlayerMoved = true;
+        }
+
         this.#enemyGroup?.getChildren().forEach((enemy) => {
             enemy.update();
         });
@@ -135,6 +141,7 @@ export class GameScene extends Phaser.Scene {
             maxLife: 3,
             currentLife: 3
         });
+        this.#controls.isMovementLocked = true;
 
     }
 
@@ -182,15 +189,125 @@ export class GameScene extends Phaser.Scene {
     #registerCustomEvents(): void {
         EVENT_BUS.on(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
         //EVENT_BUS.on(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
-        //EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
+        EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
         EVENT_BUS.on(CUSTOM_EVENTS.DIALOG_CLOSED, this.#handleDialogClosed, this);
+        EVENT_BUS.on(CUSTOM_EVENTS.PROGRESSION_HELP_CLOSED, this.#handleProgressionHelpClosed, this);
+        EVENT_BUS.on(CUSTOM_EVENTS.TILES_PLACED, this.#handleTilesPlaced, this);
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
             EVENT_BUS.off(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
             //EVENT_BUS.off(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
-            //EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
+            EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
             EVENT_BUS.off(CUSTOM_EVENTS.DIALOG_CLOSED, this.#handleDialogClosed, this);
+            EVENT_BUS.off(CUSTOM_EVENTS.PROGRESSION_HELP_CLOSED, this.#handleProgressionHelpClosed, this);
+            EVENT_BUS.off(CUSTOM_EVENTS.TILES_PLACED, this.#handleTilesPlaced, this);
         });
+    }
+
+    #showIntroHelp(): void {
+        if (this.#introShown) {
+            return;
+        }
+
+        this.#introShown = true;
+        this.#isIntroPending = true;
+        this.#showProgressionHelp({ textKey: 'ui.progression.intro' });
+    }
+
+    #startGameplay(): void {
+        if (this.#isGameplayReady) {
+            return;
+        }
+
+        const firstTilePosition = this.#placeStartingTile();
+
+        if (DataManager.instance.data.isDebugMode) {
+            this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
+            setupDebugBlocking(this, this.#earth, firstTilePosition);
+            spawnDebugEnemies(this, this.#enemyGroup!, this.#critterGroup!, this.#earth, firstTilePosition);
+        }
+
+        this.#registerColliders();
+        this.#debugSpellcasting = new DebugSpellcasting(this, this.#critterGroup!);
+        this.#isGameplayReady = true;
+        this.#controls.isMovementLocked = false;
+        this.#startControlsHelpTimer();
+    }
+
+    #placeStartingTile(): Position {
+        const firstTilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#playerStartPosition.x, this.#playerStartPosition.y, true);
+        const firstTile = new Tile({
+            tilenumber: firstTilePosition,
+            biome: 1,
+        });
+        this.#earth.AddTile(firstTile);
+        return firstTilePosition;
+    }
+
+    #startControlsHelpTimer(): void {
+        this.time.delayedCall(15000, () => {
+            if (this.#hasPlayerMoved || this.#controlsHelpShown || this.#gameOverShown) {
+                return;
+            }
+
+            this.#controlsHelpShown = true;
+            this.#showProgressionHelp({ textKey: 'ui.progression.controlsHelp' });
+        });
+    }
+
+    #handleProgressionHelpClosed(data: ProgressionHelpClosed): void {
+        if (this.#isIntroPending) {
+            this.#isIntroPending = false;
+            this.#startGameplay();
+            return;
+        }
+
+        if (data.closeAction === 'mainMenu') {
+            this.scene.stop(SCENE_KEYS.UI_SCENE);
+            this.scene.start(SCENE_KEYS.INTRO);
+            return;
+        }
+
+        if (data.closeAction === 'restart') {
+            this.scene.stop(SCENE_KEYS.UI_SCENE);
+            this.scene.restart();
+            return;
+        }
+
+        if (this.#isGameplayReady && !this.#gameOverShown) {
+            this.#controls.isMovementLocked = false;
+        }
+    }
+
+    #handleTilesPlaced(data: TilesPlacedUpdated): void {
+        if (this.#followUpShown || data.totalPlacedTiles < 4) {
+            return;
+        }
+
+        this.#followUpShown = true;
+        this.#showProgressionHelp({ textKey: 'ui.progression.followUp' });
+    }
+
+    #handlePlayerDefeatedEvent(): void {
+        if (this.#gameOverShown) {
+            return;
+        }
+
+        this.#gameOverShown = true;
+        this.time.delayedCall(5000, () => {
+            this.#showProgressionHelp({ textKey: 'ui.progression.gameOver', closeAction: 'mainMenu' });
+        });
+    }
+
+    #showProgressionHelp(payload: ProgressionHelpPayload): void {
+        this.#controls.isMovementLocked = true;
+        this.time.delayedCall(0, () => {
+            EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, payload);
+        });
+    }
+
+    #isMovementInputDown(): boolean {
+        return this.#controls.isUpDown || this.#controls.isDownDown || this.#controls.isLeftDown || this.#controls.isRightDown;
     }
 
     #handleDialogClosed(): void {

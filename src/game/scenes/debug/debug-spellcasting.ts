@@ -6,6 +6,7 @@ import { Direction, Position } from '../../common/types';
 import { BIOME } from '../../common/common';
 import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK, TILES_BEFORE_ANIMAL_UNLOCK } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
+import { CUSTOM_EVENTS, EVENT_BUS, type TilesPlacedUpdated } from '../../common/event-bus';
 
 type MagicFlagKey = {
     [Key in keyof EarthCastingConfig]: EarthCastingConfig[Key] extends boolean ? Key : never;
@@ -304,6 +305,14 @@ export class DebugSpellcasting {
         this.addCastingFeedbackToTotals(feedback);
         this.applyBiomeProgression(this.#castingFeedbackTotals);
         this.applyPowerLevelProgression(this.#castingFeedbackTotals);
+        this.emitTilesPlaced();
+    }
+
+    private emitTilesPlaced(): void {
+        const payload: TilesPlacedUpdated = {
+            totalPlacedTiles: this.getPlacedTileCount(this.#castingFeedbackTotals),
+        };
+        EVENT_BUS.emit(CUSTOM_EVENTS.TILES_PLACED, payload);
     }
 
     private createEmptyCastingFeedback(): CastingFeedback {
