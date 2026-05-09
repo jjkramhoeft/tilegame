@@ -33,7 +33,7 @@ export class DeathState extends BaseCharacterState {
   #triggerDefeatedEvent(): void {
     this._gameObject.disableObject();
     if (this._gameObject.isEnemy) {
-      DataManager.instance.decreaseLivingEnemyCount();
+      DataManager.instance.decreaseLivingCreatureCount();
       EVENT_BUS.emit(CUSTOM_EVENTS.ENEMY_DESTROYED);
     } else {
       EVENT_BUS.emit(CUSTOM_EVENTS.PLAYER_DEFEATED);

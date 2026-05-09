@@ -22,7 +22,7 @@ export function spawnDebugEnemies(
     });
     spider.enableObject();
     enemyGroup.add(spider);
-    DataManager.instance.increaseLivingEnemyCount();
+    DataManager.instance.increaseLivingCreatureCount();
 
 
     const spider2 = new Spider({
@@ -31,7 +31,7 @@ export function spawnDebugEnemies(
     });
     spider2.enableObject();
     enemyGroup.add(spider2);
-    DataManager.instance.increaseLivingEnemyCount();
+    DataManager.instance.increaseLivingCreatureCount();
     
     // A third spider, added on a empty tile away from chests and the player.
     earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 3), y: (firstTilePosition.y) }, biome: BIOME.ROCK }));
@@ -46,7 +46,7 @@ export function spawnDebugEnemies(
     });
     spider3.enableObject();
     enemyGroup.add(spider3);
-    DataManager.instance.increaseLivingEnemyCount();
+    DataManager.instance.increaseLivingCreatureCount();
 
     // A lamb, added on a empty tile away from chests and the player.
     earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 5), y: (firstTilePosition.y) }, biome: BIOME.ROCK }));
@@ -59,7 +59,7 @@ export function spawnDebugEnemies(
     });
     lamb.enableObject();
     critterGroup.add(lamb);
-    DataManager.instance.increaseLivingEnemyCount();
+    DataManager.instance.increaseLivingCreatureCount();
 
     // A Chicken, added on a empty tile away from chests and the player.
     earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 5), y: (firstTilePosition.y-2) }, biome: BIOME.ROCK }));
@@ -73,7 +73,7 @@ export function spawnDebugEnemies(
     });
     chicken.enableObject();
     critterGroup.add(chicken);
-    DataManager.instance.increaseLivingEnemyCount();
+    DataManager.instance.increaseLivingCreatureCount();
 
     /*
     const wisp = new Wisp({
@@ -82,6 +82,6 @@ export function spawnDebugEnemies(
     });
     wisp.enableObject();
     enemyGroup.add(wisp);
-    DataManager.instance.increaseLivingEnemyCount();
+    DataManager.instance.increaseLivingCreatureCount();
     */
 }

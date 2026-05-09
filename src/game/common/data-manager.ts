@@ -4,6 +4,7 @@ import {
   CUSTOM_EVENTS,
   EVENT_BUS,
   PLAYER_UPDATE_TYPE,
+  LivingCreaturesUpdated,
   PlayerHealthUpdated,
   PlayerPowerUpdated,
   PlayerProgressUpdated,
@@ -18,6 +19,7 @@ export type PlayerData = {
   currentProgress: number;
   maxProgress: number;
   currentLivingCreatures: number;
+  maxLivingCreaturesThisGame: number;
   sex: string;
   gear: string;
   weapon: string;
@@ -41,6 +43,7 @@ export class DataManager {
       currentProgress: 0,
       maxProgress: 0,
       currentLivingCreatures: 0,
+      maxLivingCreaturesThisGame: 0,
       sex: 'male',
       gear: '',
       weapon: '',
@@ -69,16 +72,41 @@ export class DataManager {
     this.#data.currentHealth = PLAYER_START_MAX_HEALTH;
   }
 
-  public resetLivingEnemyCount(): void {
-    this.#data.currentLivingCreatures = 0;
+  public resetLivingCreatureCount(): void {
+    this.#updateLivingCreatureCount(0, 0);
   }
 
-  public increaseLivingEnemyCount(): void {
-    this.#data.currentLivingCreatures += 1;
+  public increaseLivingCreatureCount(): void {
+    const currentLivingCreatures = this.#data.currentLivingCreatures + 1;
+    this.#updateLivingCreatureCount(
+      currentLivingCreatures,
+      Math.max(this.#data.maxLivingCreaturesThisGame, currentLivingCreatures),
+    );
   }
 
-  public decreaseLivingEnemyCount(): void {
-    this.#data.currentLivingCreatures = Math.max(0, this.#data.currentLivingCreatures - 1);
+  public decreaseLivingCreatureCount(): void {
+    this.#updateLivingCreatureCount(
+      Math.max(0, this.#data.currentLivingCreatures - 1),
+      this.#data.maxLivingCreaturesThisGame,
+    );
+  }
+
+  #updateLivingCreatureCount(currentLivingCreatures: number, maxLivingCreaturesThisGame: number): void {
+    if (
+      currentLivingCreatures === this.#data.currentLivingCreatures &&
+      maxLivingCreaturesThisGame === this.#data.maxLivingCreaturesThisGame
+    ) {
+      return;
+    }
+
+    const dataToPass: LivingCreaturesUpdated = {
+      previousLivingCreatures: this.#data.currentLivingCreatures,
+      currentLivingCreatures,
+      maxLivingCreaturesThisGame,
+    };
+    EVENT_BUS.emit(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, dataToPass);
+    this.#data.currentLivingCreatures = currentLivingCreatures;
+    this.#data.maxLivingCreaturesThisGame = maxLivingCreaturesThisGame;
   }
 
   public updatePlayerCurrentHealth(health: number): void {

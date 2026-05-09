@@ -247,7 +247,7 @@ export class DebugSpellcasting {
                 });
                 lamb.enableObject();
                 this.#critterGroup.add(lamb);
-                DataManager.instance.increaseLivingEnemyCount();
+                DataManager.instance.increaseLivingCreatureCount();
                 break;
             }
             case 1: {
@@ -258,7 +258,7 @@ export class DebugSpellcasting {
                 });
                 chicken.enableObject();
                 this.#critterGroup.add(chicken);
-                DataManager.instance.increaseLivingEnemyCount();
+                DataManager.instance.increaseLivingCreatureCount();
                 break;
             }
             case 2: {
@@ -269,7 +269,7 @@ export class DebugSpellcasting {
                 });
                 spider.enableObject();
                 this.#enemyGroup.add(spider);
-                DataManager.instance.increaseLivingEnemyCount();
+                DataManager.instance.increaseLivingCreatureCount();
                 break;
             }
         }

@@ -10,6 +10,7 @@ export const CUSTOM_EVENTS = {
   PLAYER_HEALTH_UPDATED: 'PLAYER_HEALTH_UPDATED',
   PLAYER_POWER_UPDATED: 'PLAYER_POWER_UPDATED',
   PLAYER_PROGRESS_UPDATED: 'PLAYER_PROGRESS_UPDATED',
+  LIVING_CREATURES_UPDATED: 'LIVING_CREATURES_UPDATED',
   SHOW_DIALOG: 'SHOW_DIALOG',
   DIALOG_CLOSED: 'DIALOG_CLOSED',
   SHOW_PROGRESSION_HELP: 'SHOW_PROGRESSION_HELP',
@@ -41,6 +42,12 @@ export type PlayerProgressUpdated = {
   currentProgress: number;
   previousProgress: number;
   type: PlayerUpdateType;
+};
+
+export type LivingCreaturesUpdated = {
+  currentLivingCreatures: number;
+  maxLivingCreaturesThisGame: number;
+  previousLivingCreatures: number;
 };
 
 export type ProgressionHelpCloseAction = 'close' | 'mainMenu' | 'restart';

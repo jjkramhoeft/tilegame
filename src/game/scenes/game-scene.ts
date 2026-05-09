@@ -165,6 +165,7 @@ export class GameScene extends Phaser.Scene {
             currentProgress: 0,
             maxProgress: 0,
             currentLivingCreatures: 0,
+            maxLivingCreaturesThisGame: 0,
             sex: currentData.sex ?? SEX.MALE,
             gear: GEAR.NONE,
             weapon: WEAPON.NONE,

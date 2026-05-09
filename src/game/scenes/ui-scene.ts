@@ -6,6 +6,7 @@ import {
   CUSTOM_EVENTS,
   EVENT_BUS,
   PLAYER_UPDATE_TYPE,
+  type LivingCreaturesUpdated,
   type ProgressionHelpCloseAction,
   type ProgressionHelpClosed,
   type ProgressionHelpPayload,
@@ -120,7 +121,7 @@ export class UiScene extends Phaser.Scene {
 
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
-    EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_PROGRESS_UPDATED, this.updateProgressInHud, this);
+    EVENT_BUS.on(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, this.updateLivingCreaturesInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.SHOW_DIALOG, this.showDialog, this);
     EVENT_BUS.on(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, this.showProgressionHelp, this);
 
@@ -134,7 +135,7 @@ export class UiScene extends Phaser.Scene {
 
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
-      EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_PROGRESS_UPDATED, this.updateProgressInHud, this);
+      EVENT_BUS.off(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, this.updateLivingCreaturesInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.SHOW_DIALOG, this.showDialog, this);
       EVENT_BUS.off(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, this.showProgressionHelp, this);
     });
@@ -179,6 +180,10 @@ export class UiScene extends Phaser.Scene {
 
   public updateProgressInHud(data: PlayerProgressUpdated): void {
     this.#syncMeter(this.#progress, DataManager.instance.data.maxProgress, data.currentProgress);
+  }
+
+  public updateLivingCreaturesInHud(data: LivingCreaturesUpdated): void {
+    this.#syncLivingCreaturesMeter(data.currentLivingCreatures, data.maxLivingCreaturesThisGame);
   }
 
   public showDialog(dialog: DialogPayload): void {
@@ -261,8 +266,8 @@ export class UiScene extends Phaser.Scene {
       horizontalSpacing: 2,
     });
     this.#progress = this.#createMeter({
-      currentValue: playerData.currentProgress,
-      maxValue: playerData.maxProgress,
+      currentValue: this.#getLivingCreaturesMeterValue(playerData.currentLivingCreatures),
+      maxValue: this.#getLivingCreaturesMeterValue(playerData.maxLivingCreaturesThisGame),
       startX: HUD_PROGRESS_X,
       textureKey: 'progress16',
     });
@@ -286,6 +291,18 @@ export class UiScene extends Phaser.Scene {
     meter.forEach((sprite, index) => {
       sprite.setFrame(this.#getMeterFrame(index, maxValue, currentValue));
     });
+  }
+
+  #syncLivingCreaturesMeter(currentLivingCreatures: number, maxLivingCreaturesThisGame: number): void {
+    this.#syncMeter(
+      this.#progress,
+      this.#getLivingCreaturesMeterValue(maxLivingCreaturesThisGame),
+      this.#getLivingCreaturesMeterValue(currentLivingCreatures),
+    );
+  }
+
+  #getLivingCreaturesMeterValue(currentLivingCreatures: number): number {
+    return Math.min(currentLivingCreatures, HUD_METER_SPRITE_COUNT) * 2;
   }
 
   #getMeterFrame(index: number, maxValue: number, currentValue: number): number {
