@@ -6,6 +6,7 @@ export type LanguageCode = 'en' | 'da';
 type TextParams = Record<string, string | number>;
 
 const TEXTS = {
+    //Intro Scene
     'intro.title': {
         en: "The 1st Garden - The Gardener's Apprentice",
         da: 'Den 1. Have - Gartnerens Lærling',
@@ -26,7 +27,7 @@ const TEXTS = {
         en: 'New Game',
         da: 'Nyt spil',
     },
-
+    //Setting Scene
     'settings.title': {
         en: 'Settings',
         da: 'Indstillinger',
@@ -75,7 +76,7 @@ const TEXTS = {
         en: 'On',
         da: 'Til',
     },
-
+    //Credit Scene
     'credits.title': {
         en: 'Credits',
         da: 'Krediteringer',
@@ -104,7 +105,7 @@ const TEXTS = {
         en: 'Back',
         da: 'Tilbage',
     },
-
+    //Save UI
     'ui.save.backToMainMenu': {
         en: 'Back to Main Menu',
         da: 'Tilbage til hovedmenuen',
@@ -117,18 +118,18 @@ const TEXTS = {
         en: 'Continue Playing',
         da: 'Spil videre',
     },
-
+    //Chest Dialog
     'chest.empty': {
         en: 'You opened an empty chest.',
         da: 'Du åbnede en tom kiste.',
     },
     'chest.found': {
         en: 'You opened a chest and found {items}.',
-        da: 'Du åbnede en kiste og fandt {items}.',
+        da: 'Du åbner en kiste og finder {items}.',
     },
     'chest.leave': {
         en: 'Leave',
-        da: 'Lad ligge',
+        da: 'Luk kisten',
     },
     'chest.foundJoin': {
         en: ' and ',
@@ -158,10 +159,10 @@ const TEXTS = {
         en: 'Leave your current {currentItem}',
         da: 'Læg dit nuværende {currentItem}',
     },
-
+    //Gear from chests
     'gear.bare.found': {
         en: 'a piece of cloth',
-        da: 'et stykke klæde',
+        da: 'et stykke stof',
     },
     'gear.basic.found': {
         en: 'some simple clothing',
@@ -173,7 +174,7 @@ const TEXTS = {
     },
     'gear.bare.option': {
         en: 'the piece of cloth',
-        da: 'stykket klæde',
+        da: 'stykket stof',
     },
     'gear.basic.option': {
         en: 'the simple clothing',
@@ -185,7 +186,7 @@ const TEXTS = {
     },
     'gear.bare.current': {
         en: 'piece of cloth',
-        da: 'stykke klæde',
+        da: 'stykke stof',
     },
     'gear.basic.current': {
         en: 'simple clothing',
@@ -195,7 +196,7 @@ const TEXTS = {
         en: 'shining armor',
         da: 'skinnende rustning',
     },
-
+    //Weapons from chests
     'weapon.dagger.found': {
         en: 'a dagger',
         da: 'en dolk',
