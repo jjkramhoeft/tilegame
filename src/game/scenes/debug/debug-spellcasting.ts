@@ -174,7 +174,7 @@ export class DebugSpellcasting {
         this.#levelUpSound = scene.sound.add('levelup', { volume: 0.9 });
         //If debug mode is on then ease progression to save test time.
         if (DataManager.instance.data.isDebugMode) {
-            this.#playerCurrentMagic.isWaterUnlocked = true;
+            this.#playerCurrentMagic.isLavaUnlocked = true;
             this.#playerCurrentMagic.powerLevel = 5;
             DataManager.instance.updatePlayerCurrentPower(this.#playerCurrentMagic.powerLevel);
         }

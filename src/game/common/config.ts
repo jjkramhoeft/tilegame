@@ -6,6 +6,7 @@ export const PLAYER_INVULNERABLE_AFTER_HIT_DURATION = 1000;
 export const PLAYER_HURT_PUSH_BACK_SPEED = 50;
 export const PLAYER_START_MAX_HEALTH = 6;
 export const PLAYER_ATTACK_DAMAGE = 1;
+export const PLAYER_LAVA_DAMAGE = 1;
 export const IDLE_SLOWDOWN_FACTOR = 0.9;
 export const IDLE_STOP_SPEED = 5;
 
