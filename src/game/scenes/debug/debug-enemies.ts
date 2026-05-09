@@ -5,6 +5,7 @@ import { Lamb } from '../../game-objects/enemies/lamb';
 import { Chicken } from '../../game-objects/enemies/chicken';
 import { Earth } from '../../ground/earth';
 import { Tile } from '../../ground/tile';
+import { DataManager } from '../../common/data-manager';
 //import { Wisp } from '../../game-objects/enemies/wisp';
 
 export function spawnDebugEnemies(
@@ -21,6 +22,7 @@ export function spawnDebugEnemies(
     });
     spider.enableObject();
     enemyGroup.add(spider);
+    DataManager.instance.increaseLivingEnemyCount();
 
 
     const spider2 = new Spider({
@@ -29,6 +31,7 @@ export function spawnDebugEnemies(
     });
     spider2.enableObject();
     enemyGroup.add(spider2);
+    DataManager.instance.increaseLivingEnemyCount();
     
     // A third spider, added on a empty tile away from chests and the player.
     earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 3), y: (firstTilePosition.y) }, biome: BIOME.ROCK }));
@@ -43,6 +46,7 @@ export function spawnDebugEnemies(
     });
     spider3.enableObject();
     enemyGroup.add(spider3);
+    DataManager.instance.increaseLivingEnemyCount();
 
     // A lamb, added on a empty tile away from chests and the player.
     earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 5), y: (firstTilePosition.y) }, biome: BIOME.ROCK }));
@@ -55,6 +59,7 @@ export function spawnDebugEnemies(
     });
     lamb.enableObject();
     critterGroup.add(lamb);
+    DataManager.instance.increaseLivingEnemyCount();
 
     // A Chicken, added on a empty tile away from chests and the player.
     earth.AddTile(new Tile({ tilenumber: { x: (firstTilePosition.x + 5), y: (firstTilePosition.y-2) }, biome: BIOME.ROCK }));
@@ -68,6 +73,7 @@ export function spawnDebugEnemies(
     });
     chicken.enableObject();
     critterGroup.add(chicken);
+    DataManager.instance.increaseLivingEnemyCount();
 
     /*
     const wisp = new Wisp({
@@ -76,5 +82,6 @@ export function spawnDebugEnemies(
     });
     wisp.enableObject();
     enemyGroup.add(wisp);
+    DataManager.instance.increaseLivingEnemyCount();
     */
 }

@@ -17,6 +17,7 @@ export type PlayerData = {
   maxPower: number;
   currentProgress: number;
   maxProgress: number;
+  currentLivingCreatures: number;
   sex: string;
   gear: string;
   weapon: string;
@@ -39,6 +40,7 @@ export class DataManager {
       maxPower: 1,
       currentProgress: 0,
       maxProgress: 0,
+      currentLivingCreatures: 0,
       sex: 'male',
       gear: '',
       weapon: '',
@@ -65,6 +67,18 @@ export class DataManager {
 
   public resetPlayerHealthToMin(): void {
     this.#data.currentHealth = PLAYER_START_MAX_HEALTH;
+  }
+
+  public resetLivingEnemyCount(): void {
+    this.#data.currentLivingCreatures = 0;
+  }
+
+  public increaseLivingEnemyCount(): void {
+    this.#data.currentLivingCreatures += 1;
+  }
+
+  public decreaseLivingEnemyCount(): void {
+    this.#data.currentLivingCreatures = Math.max(0, this.#data.currentLivingCreatures - 1);
   }
 
   public updatePlayerCurrentHealth(health: number): void {
