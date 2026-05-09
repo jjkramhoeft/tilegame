@@ -88,10 +88,7 @@ export class DataManager {
     if (power === this.#data.currentPower) {
       return;
     }
-    let powerUpdateType: PlayerUpdateType = PLAYER_UPDATE_TYPE.DECREASE;
-    if (power > this.#data.currentPower) {
-      powerUpdateType = PLAYER_UPDATE_TYPE.INCREASE;
-    }
+    let powerUpdateType: PlayerUpdateType = PLAYER_UPDATE_TYPE.INCREASE;
     const dataToPass: PlayerPowerUpdated = {
       previousPower: this.#data.currentPower,
       currentPower: power,

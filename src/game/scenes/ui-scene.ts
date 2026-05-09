@@ -48,6 +48,7 @@ type HudMeterConfig = {
   maxValue: number;
   startX: number;
   textureKey: string;
+  horizontalSpacing?: number;
 };
 
 const enum UiMode {
@@ -135,7 +136,7 @@ export class UiScene extends Phaser.Scene {
   }
 
   public updatePowerInHud(data: PlayerPowerUpdated): void {
-    this.#syncMeter(this.#power, DataManager.instance.data.maxPower, data.currentPower);
+    this.#syncMeter(this.#power, DataManager.instance.data.maxPower, data.currentPower+1);
   }
 
   public updateProgressInHud(data: PlayerProgressUpdated): void {
@@ -196,6 +197,7 @@ export class UiScene extends Phaser.Scene {
       maxValue: playerData.maxPower,
       startX: HUD_POWER_X,
       textureKey: 'power16',
+      horizontalSpacing: 2,
     });
     this.#progress = this.#createMeter({
       currentValue: playerData.currentProgress,
@@ -212,7 +214,7 @@ export class UiScene extends Phaser.Scene {
   #createMeter(config: HudMeterConfig): Phaser.GameObjects.Sprite[] {
     const meter: Phaser.GameObjects.Sprite[] = [];
     for (let index = 0; index < HUD_METER_SPRITE_COUNT; index += 1) {
-      const position = this.#getMeterSpritePosition(config.startX, index);
+      const position = this.#getMeterSpritePosition(config.startX, index, config.horizontalSpacing);
       const frame = this.#getMeterFrame(index, config.maxValue, config.currentValue);
       meter.push(this.add.sprite(position.x, position.y, config.textureKey, frame).setOrigin(0));
     }
@@ -242,11 +244,11 @@ export class UiScene extends Phaser.Scene {
     return HUD_NONE_FRAME;
   }
 
-  #getMeterSpritePosition(startX: number, index: number): { x: number; y: number } {
+  #getMeterSpritePosition(startX: number, index: number, horizontalSpacing: number = 0): { x: number; y: number } {
     const column = index % HUD_ROW_LENGTH;
     const row = Math.floor(index / HUD_ROW_LENGTH);
     return {
-      x: startX + HUD_ICON_SIZE * column,
+      x: startX + (HUD_ICON_SIZE + horizontalSpacing) * column,
       y: row === 0 ? HUD_FIRST_ROW_Y : HUD_SECOND_ROW_Y,
     };
   }

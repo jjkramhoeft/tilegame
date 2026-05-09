@@ -37,6 +37,8 @@ const LEVEL_UP_TILE_THRESHOLDS: Record<number, number> = {
     5: 750,
 };
 
+const MAX_POWER_LEVEL = 1;
+
 const CHEST_PROGRESS_FLAGS: Record<number, { placedKey: MagicFlagKey; placableKey: MagicFlagKey }> = {
     1: { placedKey: 'isChest1Placed', placableKey: 'isChest1Placable' },
     2: { placedKey: 'isChest2Placed', placableKey: 'isChest2Placable' },
@@ -158,6 +160,7 @@ export class DebugSpellcasting {
         if (DataManager.instance.data.isDebugMode) {
             this.#playerCurrentMagic.isWaterUnlocked = true;
             this.#playerCurrentMagic.powerLevel = 5;
+            DataManager.instance.updatePlayerCurrentPower(this.#playerCurrentMagic.powerLevel);
         }
     }
 
@@ -350,7 +353,7 @@ export class DebugSpellcasting {
         }
 
         this.#playerCurrentMagic.powerLevel++;
-        //ToDo: Update UI
+        DataManager.instance.updatePlayerCurrentPower(this.#playerCurrentMagic.powerLevel);
         if (this.#levelUpSound.isPlaying === false) {
             this.#levelUpSound.play();
         }
