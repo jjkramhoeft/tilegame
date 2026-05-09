@@ -1,9 +1,112 @@
 import * as Phaser from 'phaser';
 import { Player } from '../../game-objects/player/player';
-import { Earth, EarthCastingConfig } from '../../ground/earth';
-import { PLAYER_SPEED } from '../../common/config';
+import { CastingFeedback, Earth, EarthCastingConfig } from '../../ground/earth';
+import { Direction, Position } from '../../common/types';
+import { PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
-import { TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK } from '../../common/config';
+
+type MagicFlagKey = {
+    [Key in keyof EarthCastingConfig]: EarthCastingConfig[Key] extends boolean ? Key : never;
+}[keyof EarthCastingConfig];
+
+type FeedbackCountKey = {
+    [Key in keyof CastingFeedback]: CastingFeedback[Key] extends number ? Key : never;
+}[keyof CastingFeedback];
+
+type CastVector = {
+    x: number;
+    y: number;
+};
+
+type BiomeProgressionRule = {
+    unlockedKey?: MagicFlagKey;
+    tilesPlacedKey: FeedbackCountKey;
+    decorationUnlockedKey: MagicFlagKey;
+    decorationsPlacedKey: FeedbackCountKey;
+    blockingUnlockedKey: MagicFlagKey;
+    chestPlacableKey: MagicFlagKey;
+    chestPlacedKey: MagicFlagKey;
+    unlockOnBlockingKeys: MagicFlagKey[];
+};
+
+const LEVEL_UP_TILE_THRESHOLDS: Record<number, number> = {
+    1: 50,
+    2: 150,
+    3: 300,
+    4: 500,
+    5: 750,
+};
+
+const CHEST_PROGRESS_FLAGS: Record<number, { placedKey: MagicFlagKey; placableKey: MagicFlagKey }> = {
+    1: { placedKey: 'isChest1Placed', placableKey: 'isChest1Placable' },
+    2: { placedKey: 'isChest2Placed', placableKey: 'isChest2Placable' },
+    3: { placedKey: 'isChest3Placed', placableKey: 'isChest3Placable' },
+    4: { placedKey: 'isChest4Placed', placableKey: 'isChest4Placable' },
+    5: { placedKey: 'isChest5Placed', placableKey: 'isChest5Placable' },
+    6: { placedKey: 'isChest6Placed', placableKey: 'isChest6Placable' },
+};
+
+const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
+    {
+        tilesPlacedKey: 'rockTilesPlaced',
+        decorationUnlockedKey: 'isRockDecorationUnlocked',
+        decorationsPlacedKey: 'rockDecorationsPlaced',
+        blockingUnlockedKey: 'isRockBlockingUnlocked',
+        chestPlacableKey: 'isChest1Placable',
+        chestPlacedKey: 'isChest1Placed',
+        unlockOnBlockingKeys: ['isDesertUnlocked'],
+    },
+    {
+        unlockedKey: 'isDesertUnlocked',
+        tilesPlacedKey: 'desertTilesPlaced',
+        decorationUnlockedKey: 'isDesertDecorationUnlocked',
+        decorationsPlacedKey: 'desertDecorationsPlaced',
+        blockingUnlockedKey: 'isDesertBlockingUnlocked',
+        chestPlacableKey: 'isChest2Placable',
+        chestPlacedKey: 'isChest2Placed',
+        unlockOnBlockingKeys: ['isGrassUnlocked', 'isWaterUnlocked'],
+    },
+    {
+        unlockedKey: 'isGrassUnlocked',
+        tilesPlacedKey: 'grassTilesPlaced',
+        decorationUnlockedKey: 'isGrassDecorationUnlocked',
+        decorationsPlacedKey: 'grassDecorationsPlaced',
+        blockingUnlockedKey: 'isGrassBlockingUnlocked',
+        chestPlacableKey: 'isChest3Placable',
+        chestPlacedKey: 'isChest3Placed',
+        unlockOnBlockingKeys: ['isForestUnlocked'],
+    },
+    {
+        unlockedKey: 'isForestUnlocked',
+        tilesPlacedKey: 'forestTilesPlaced',
+        decorationUnlockedKey: 'isForestDecorationUnlocked',
+        decorationsPlacedKey: 'forestDecorationsPlaced',
+        blockingUnlockedKey: 'isForestBlockingUnlocked',
+        chestPlacableKey: 'isChest4Placable',
+        chestPlacedKey: 'isChest4Placed',
+        unlockOnBlockingKeys: ['isSwampUnlocked', 'isMountainUnlocked'],
+    },
+    {
+        unlockedKey: 'isSwampUnlocked',
+        tilesPlacedKey: 'swampTilesPlaced',
+        decorationUnlockedKey: 'isSwampDecorationUnlocked',
+        decorationsPlacedKey: 'swampDecorationsPlaced',
+        blockingUnlockedKey: 'isSwampBlockingUnlocked',
+        chestPlacableKey: 'isChest5Placable',
+        chestPlacedKey: 'isChest5Placed',
+        unlockOnBlockingKeys: ['isCrystalUnlocked'],
+    },
+    {
+        unlockedKey: 'isCrystalUnlocked',
+        tilesPlacedKey: 'crystalTilesPlaced',
+        decorationUnlockedKey: 'isCrystalDecorationUnlocked',
+        decorationsPlacedKey: 'crystalDecorationsPlaced',
+        blockingUnlockedKey: 'isCrystalBlockingUnlocked',
+        chestPlacableKey: 'isChest6Placable',
+        chestPlacedKey: 'isChest6Placed',
+        unlockOnBlockingKeys: ['isLavaUnlocked'],
+    },
+];
 
 export class DebugSpellcasting {
 
@@ -58,198 +161,165 @@ export class DebugSpellcasting {
     }
 
     update(scene: Phaser.Scene, player: Player, earth: Earth): void {
-        if (player.stateMachine.currentStateName === 'ATTACK_STATE' &&
-            this.#previousStateName !== 'ATTACK_STATE' &&
-            this.#previousStateName !== 'SWIM_STATE'
-        ) {
-            if (this.#spellSound.isPlaying === false) {
-                this.#spellSound.play();
-            }
-
-            const lastDirections = player.getLastMoveDirections();
-            let oldvx = 0;
-            let oldvy = 0;
-            for (const dir of lastDirections) {
-                switch (dir) {
-                    case 'UP': oldvy -= PLAYER_SPEED; break;
-                    case 'DOWN': oldvy += PLAYER_SPEED; break;
-                    case 'LEFT': oldvx -= PLAYER_SPEED; break;
-                    case 'RIGHT': oldvx += PLAYER_SPEED; break;
-                }
-            }
-            const spell = scene.add.sprite(player.x + oldvx / 10, player.y + oldvy / 10, 'spell-music-11').setScale(0.5).setOrigin(0.5, 0.5);
-            spell.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
-            spell.play('spell-music-anim');
-            scene.tweens.add({
-                targets: spell,
-                x: spell.x + oldvx,
-                y: spell.y + oldvy,
-                duration: 1500,
-                ease: 'Sine.easeOut',
-                onComplete: () => spell.destroy()
-            });
-            spell.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                spell.destroy();
-            });
-
-            const casterPosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
-            const tilePosition = { x: casterPosition.x, y: casterPosition.y };
-            const directions = player.getLastMoveDirections();
-            directions.forEach(dir => {
-                switch (dir) {
-                    case 'UP': tilePosition.y -= 1; break;
-                    case 'DOWN': tilePosition.y += 1; break;
-                    case 'LEFT': tilePosition.x -= 1; break;
-                    case 'RIGHT': tilePosition.x += 1; break;
-                }
-            });
-
-            console.log('Casting spell magic:', JSON.stringify(this.#playerCurrentMagic, null, 2));
-            const feedback = earth.AddTiles(this.#playerCurrentMagic, casterPosition, tilePosition, directions);
-            console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
-            //Adjust progression if needed.
-            if (feedback) {
-                if (feedback.chestNumberPlaced !== undefined && feedback.chestNumberPlaced > 0) {
-                    //ToDo play chest sound (this.#chestSound.isPlaying === false) { this.#chestSound.play(); }
-                    switch (feedback.chestNumberPlaced) {
-                        case 1: this.#playerCurrentMagic.isChest1Placed = true; this.#playerCurrentMagic.isChest1Placable = false; break;
-                        case 2: this.#playerCurrentMagic.isChest2Placed = true; this.#playerCurrentMagic.isChest2Placable = false; break;
-                        case 3: this.#playerCurrentMagic.isChest3Placed = true; this.#playerCurrentMagic.isChest3Placable = false; break;
-                        case 4: this.#playerCurrentMagic.isChest4Placed = true; this.#playerCurrentMagic.isChest4Placable = false; break;
-                        case 5: this.#playerCurrentMagic.isChest5Placed = true; this.#playerCurrentMagic.isChest5Placable = false; break;
-                        case 6: this.#playerCurrentMagic.isChest6Placed = true; this.#playerCurrentMagic.isChest6Placable = false; break;
-                    }
-                }
-                if (feedback.rockTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isRockDecorationUnlocked === false) {
-                    this.#playerCurrentMagic.isRockDecorationUnlocked = true;
-                }
-                if (feedback.rockDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isRockBlockingUnlocked === false) {
-                    this.#playerCurrentMagic.isRockBlockingUnlocked = true;
-                    //Enable chest 1. 
-                    if (this.#playerCurrentMagic.isChest1Placable === false && this.#playerCurrentMagic.isChest1Placed === false) {
-                        this.#playerCurrentMagic.isChest1Placable = true;
-                    }
-                    //Unlock desert tiles.
-                    if (this.#playerCurrentMagic.isDesertUnlocked === false) {
-                        this.#playerCurrentMagic.isDesertUnlocked = true;
-                    }
-                }
-                if (this.#playerCurrentMagic.isDesertUnlocked) {
-                    if (feedback.desertTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isDesertDecorationUnlocked === false) { this.#playerCurrentMagic.isDesertDecorationUnlocked = true; }
-                    if (feedback.desertDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isDesertBlockingUnlocked === false) {
-                        this.#playerCurrentMagic.isDesertBlockingUnlocked = true;
-                        //Enable chest 2.
-                        if (this.#playerCurrentMagic.isChest2Placable === false && this.#playerCurrentMagic.isChest2Placed === false) {
-                            this.#playerCurrentMagic.isChest2Placable = true;
-                        }
-                        //Unlock grass tiles
-                        if (this.#playerCurrentMagic.isGrassUnlocked === false) {
-                            this.#playerCurrentMagic.isGrassUnlocked = true;
-                        }
-                        //Unlock water tiles
-                        if (this.#playerCurrentMagic.isWaterUnlocked === false) {
-                            this.#playerCurrentMagic.isWaterUnlocked = true;
-                        }
-                    }
-                }
-                if (this.#playerCurrentMagic.isGrassUnlocked) {
-                    if (feedback.grassTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isGrassDecorationUnlocked === false) { this.#playerCurrentMagic.isGrassDecorationUnlocked = true; }
-                    if (feedback.grassDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isGrassBlockingUnlocked === false) {
-                        this.#playerCurrentMagic.isGrassBlockingUnlocked = true;
-                        //Enable chest 3. 
-                        if (this.#playerCurrentMagic.isChest3Placable === false && this.#playerCurrentMagic.isChest3Placed === false) {
-                            this.#playerCurrentMagic.isChest3Placable = true;
-                        }
-                        //unlock forest tiles.
-                        if (this.#playerCurrentMagic.isForestUnlocked === false) {
-                            this.#playerCurrentMagic.isForestUnlocked = true;
-                        }
-                    }
-                }
-                if (this.#playerCurrentMagic.isForestUnlocked) {
-                    if (feedback.forestTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isForestDecorationUnlocked === false) { this.#playerCurrentMagic.isForestDecorationUnlocked = true; }
-                    if (feedback.forestDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isForestBlockingUnlocked === false) {
-                        this.#playerCurrentMagic.isForestBlockingUnlocked = true;
-                        //Enable chest 4. 
-                        if (this.#playerCurrentMagic.isChest4Placable === false && this.#playerCurrentMagic.isChest4Placed === false) {
-                            this.#playerCurrentMagic.isChest4Placable = true;
-                        }
-                        //Unlock swamp tiles.
-                        if (this.#playerCurrentMagic.isSwampUnlocked === false) {
-                            this.#playerCurrentMagic.isSwampUnlocked = true;
-                        }
-                        //Unlock mountain tiles.
-                        if (this.#playerCurrentMagic.isMountainUnlocked === false) {
-                            this.#playerCurrentMagic.isMountainUnlocked = true;
-                        }
-                    }
-                }
-                if (this.#playerCurrentMagic.isSwampUnlocked) {
-                    if (feedback.swampTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isSwampDecorationUnlocked === false) { this.#playerCurrentMagic.isSwampDecorationUnlocked = true; }
-                    if (feedback.swampDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isSwampBlockingUnlocked === false) {
-                        this.#playerCurrentMagic.isSwampBlockingUnlocked = true;
-                        //Enable chest 5.
-                        if (this.#playerCurrentMagic.isChest5Placable === false && this.#playerCurrentMagic.isChest5Placed === false) {
-                            this.#playerCurrentMagic.isChest5Placable = true;
-                        }
-                        //Unlock crystal tiles.
-                        if (this.#playerCurrentMagic.isCrystalUnlocked === false) {
-                            this.#playerCurrentMagic.isCrystalUnlocked = true;
-                        }
-                    }
-                }
-                if (this.#playerCurrentMagic.isCrystalUnlocked) {
-                    if (feedback.crystalTilesPlaced > TILES_BEFORE_DECORATION_UNLOCK && this.#playerCurrentMagic.isCrystalDecorationUnlocked === false) { this.#playerCurrentMagic.isCrystalDecorationUnlocked = true; }
-                    if (feedback.crystalDecorationsPlaced > TILES_BEFORE_BLOCKING_UNLOCK && this.#playerCurrentMagic.isCrystalBlockingUnlocked === false) {
-                        this.#playerCurrentMagic.isCrystalBlockingUnlocked = true;
-                        //Enable chest 6. 
-                        if (this.#playerCurrentMagic.isChest6Placable === false && this.#playerCurrentMagic.isChest6Placed === false) {
-                            this.#playerCurrentMagic.isChest6Placable = true;
-                        }
-                        //Unlock lava tiles.
-                        if (this.#playerCurrentMagic.isLavaUnlocked === false) {
-                            this.#playerCurrentMagic.isLavaUnlocked = true;
-                        }
-                    }
-                }
-
-                const sum = feedback.rockTilesPlaced +
-                    feedback.desertTilesPlaced +
-                    feedback.grassTilesPlaced +
-                    feedback.forestTilesPlaced +
-                    feedback.swampTilesPlaced +
-                    feedback.crystalTilesPlaced +
-                    feedback.lavaTilesPlaced +
-                    feedback.waterTilesPlaced +
-                    feedback.mountainTilesPlaced;
-                let levelPowerUp: boolean = false;
-                let debugDivider: number = 1;
-                if (DataManager.instance.data.isDebugMode) {
-                    debugDivider = 10;
-                }
-                if (this.#playerCurrentMagic.powerLevel === 1 && sum >= 50 / debugDivider) {
-                    levelPowerUp = true;
-                } else if (this.#playerCurrentMagic.powerLevel === 2 && sum >= 150 / debugDivider) {
-                    levelPowerUp = true;
-                } else if (this.#playerCurrentMagic.powerLevel === 3 && sum >= 300 / debugDivider) {
-                    levelPowerUp = true;
-                } else if (this.#playerCurrentMagic.powerLevel === 4 && sum >= 500 / debugDivider) {
-                    levelPowerUp = true;
-                } else if (this.#playerCurrentMagic.powerLevel === 5 && sum >= 750 / debugDivider) {
-                    levelPowerUp = true;
-                }
-                if (levelPowerUp) {
-                    this.#playerCurrentMagic.powerLevel++;
-                    //ToDo: Update UI
-                    if (this.#levelUpSound.isPlaying === false) {
-                        this.#levelUpSound.play();
-                    }
-                }
-            }
-            //ToDo: Place animal if ?
-            
+        const currentStateName = player.stateMachine.currentStateName;
+        if (this.shouldCast(currentStateName)) {
+            this.cast(scene, player, earth);
         }
 
-        this.#previousStateName = player.stateMachine.currentStateName;
+        this.#previousStateName = currentStateName;
+    }
+
+    private shouldCast(currentStateName: string | undefined): boolean {
+        return currentStateName === 'ATTACK_STATE' &&
+            this.#previousStateName !== 'ATTACK_STATE' &&
+            this.#previousStateName !== 'SWIM_STATE';
+    }
+
+    private cast(scene: Phaser.Scene, player: Player, earth: Earth): void {
+        if (this.#spellSound.isPlaying === false) {
+            this.#spellSound.play();
+        }
+
+        const directions = player.getLastMoveDirections();
+        const travelVector = this.getCastTravelVector(directions);
+        this.playSpellEffect(scene, player, travelVector);
+
+        const casterPosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
+        const targetPosition = this.getTargetPosition(casterPosition, directions);
+
+        console.log('Casting spell magic:', JSON.stringify(this.#playerCurrentMagic, null, 2));
+        const feedback = earth.AddTiles(this.#playerCurrentMagic, casterPosition, targetPosition, directions);
+        console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
+
+        this.applyCastingFeedback(feedback);
+    }
+
+    private getCastTravelVector(directions: Direction[]): CastVector {
+        const travelVector: CastVector = { x: 0, y: 0 };
+        for (const direction of directions) {
+            switch (direction) {
+                case 'UP': travelVector.y -= PLAYER_SPEED; break;
+                case 'DOWN': travelVector.y += PLAYER_SPEED; break;
+                case 'LEFT': travelVector.x -= PLAYER_SPEED; break;
+                case 'RIGHT': travelVector.x += PLAYER_SPEED; break;
+            }
+        }
+        return travelVector;
+    }
+
+    private playSpellEffect(scene: Phaser.Scene, player: Player, travelVector: CastVector): void {
+        const spell = scene.add
+            .sprite(player.x + travelVector.x / 10, player.y + travelVector.y / 10, 'spell-music-11')
+            .setScale(0.5)
+            .setOrigin(0.5, 0.5);
+
+        spell.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+        spell.play('spell-music-anim');
+        scene.tweens.add({
+            targets: spell,
+            x: spell.x + travelVector.x,
+            y: spell.y + travelVector.y,
+            duration: 1500,
+            ease: 'Sine.easeOut',
+            onComplete: () => spell.destroy(),
+        });
+        spell.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            spell.destroy();
+        });
+    }
+
+    private getTargetPosition(casterPosition: Position, directions: Direction[]): Position {
+        const targetPosition = { x: casterPosition.x, y: casterPosition.y };
+        for (const direction of directions) {
+            switch (direction) {
+                case 'UP': targetPosition.y -= 1; break;
+                case 'DOWN': targetPosition.y += 1; break;
+                case 'LEFT': targetPosition.x -= 1; break;
+                case 'RIGHT': targetPosition.x += 1; break;
+            }
+        }
+        return targetPosition;
+    }
+
+    private applyCastingFeedback(feedback: CastingFeedback): void {
+        this.applyChestPlacement(feedback.chestNumberPlaced);
+        this.applyBiomeProgression(feedback);
+        this.applyPowerLevelProgression(feedback);
+        //ToDo: Place animal if ?
+    }
+
+    private applyChestPlacement(chestNumberPlaced: number | undefined): void {
+        if (chestNumberPlaced === undefined || chestNumberPlaced <= 0) {
+            return;
+        }
+
+        const chestProgressFlags = CHEST_PROGRESS_FLAGS[chestNumberPlaced];
+        if (!chestProgressFlags) {
+            return;
+        }
+
+        //ToDo play chest sound (this.#chestSound.isPlaying === false) { this.#chestSound.play(); }
+        this.setMagicFlag(chestProgressFlags.placedKey, true);
+        this.setMagicFlag(chestProgressFlags.placableKey, false);
+    }
+
+    private applyBiomeProgression(feedback: CastingFeedback): void {
+        for (const progression of BIOME_PROGRESSIONS) {
+            if (progression.unlockedKey !== undefined && !this.getMagicFlag(progression.unlockedKey)) {
+                continue;
+            }
+
+            if (feedback[progression.tilesPlacedKey] > TILES_BEFORE_DECORATION_UNLOCK) {
+                this.setMagicFlag(progression.decorationUnlockedKey, true);
+            }
+
+            if (feedback[progression.decorationsPlacedKey] <= TILES_BEFORE_BLOCKING_UNLOCK || this.getMagicFlag(progression.blockingUnlockedKey)) {
+                continue;
+            }
+
+            this.setMagicFlag(progression.blockingUnlockedKey, true);
+            if (!this.getMagicFlag(progression.chestPlacedKey)) {
+                this.setMagicFlag(progression.chestPlacableKey, true);
+            }
+
+            for (const unlockKey of progression.unlockOnBlockingKeys) {
+                this.setMagicFlag(unlockKey, true);
+            }
+        }
+    }
+
+    private applyPowerLevelProgression(feedback: CastingFeedback): void {
+        const placedTileCount = this.getPlacedTileCount(feedback);
+        const debugDivider = DataManager.instance.data.isDebugMode ? 10 : 1;
+        const levelUpThreshold = LEVEL_UP_TILE_THRESHOLDS[this.#playerCurrentMagic.powerLevel];
+        if (levelUpThreshold === undefined || placedTileCount < levelUpThreshold / debugDivider) {
+            return;
+        }
+
+        this.#playerCurrentMagic.powerLevel++;
+        //ToDo: Update UI
+        if (this.#levelUpSound.isPlaying === false) {
+            this.#levelUpSound.play();
+        }
+    }
+
+    private getPlacedTileCount(feedback: CastingFeedback): number {
+        return feedback.rockTilesPlaced +
+            feedback.desertTilesPlaced +
+            feedback.grassTilesPlaced +
+            feedback.forestTilesPlaced +
+            feedback.swampTilesPlaced +
+            feedback.crystalTilesPlaced +
+            feedback.lavaTilesPlaced +
+            feedback.waterTilesPlaced +
+            feedback.mountainTilesPlaced;
+    }
+
+    private getMagicFlag(key: MagicFlagKey): boolean {
+        return this.#playerCurrentMagic[key];
+    }
+
+    private setMagicFlag(key: MagicFlagKey, value: boolean): void {
+        this.#playerCurrentMagic[key] = value;
     }
 }
