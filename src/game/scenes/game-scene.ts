@@ -245,7 +245,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     #startControlsHelpTimer(): void {
-        this.time.delayedCall(15000, () => {
+        this.time.delayedCall(10000, () => {
             if (this.#hasPlayerMoved || this.#controlsHelpShown || this.#gameOverShown) {
                 return;
             }
