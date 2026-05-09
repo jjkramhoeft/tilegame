@@ -330,7 +330,6 @@ export class DebugSpellcasting {
             }
 
             this.setMagicFlag(progression.blockingUnlockedKey, true);
-            // Enable the player to place the biome chest once blocking is unlocked, unless it already exists.
             if (!this.getMagicFlag(progression.chestPlacedKey)) {
                 this.setMagicFlag(progression.chestPlacableKey, true);
             }
