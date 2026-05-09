@@ -92,6 +92,10 @@ export class GameScene extends Phaser.Scene {
         this.#debugSpellcasting.update(this, this.#player, this.#earth);
     }
 
+    public getChestGroup(): Phaser.GameObjects.Group {
+        return this.#chestJJKGroup;
+    }
+
     public getBlockingGeometryGroup(): Phaser.GameObjects.Group {
         return this.#earth.getBlockingGeometryGroup();
     }

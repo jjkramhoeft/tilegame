@@ -10,7 +10,9 @@ export function setupDebugChests(
     firstTilePosition: Position,
     chestGroup: Phaser.GameObjects.Group,
 ): ChestJJK[] {
+
     const chests: ChestJJK[] = [];
+
     const debugTileOffsets: Position[] = [
         { x: 0, y: -1 },
         { x: -1, y: -2 }, { x: 0, y: -2 }, { x: 1, y: -2 },
@@ -20,54 +22,40 @@ export function setupDebugChests(
         { x: -2, y: 3 }, { x: -1, y: 3 }, { x: 0, y: 3 }, { x: 1, y: 3 }, { x: 2, y: 3 },
     ];
     const debugVoidBorderTileOffsets: Position[] = [
-        { x: -2, y: -4 }, { x: -1, y: -4 }, { x: 0, y: -4 }, { x: 1, y: -4 }, { x: 2, y: -4 }, 
+        { x: -2, y: -4 }, { x: -1, y: -4 }, { x: 0, y: -4 }, { x: 1, y: -4 }, { x: 2, y: -4 },
         { x: -3, y: -3 }, { x: 3, y: -3 },
         { x: -2, y: -2 }, { x: 2, y: -2 },
-        { x: -1, y: -1 }, { x: 1, y: -1 },        
-        { x: -1, y: 0 },{ x: 1, y: 0 },        
-        { x: -1, y: 1 }, { x: 1, y: 1 },    
-        { x: -2, y: 2 }, { x: 2, y: 2 },    
-        { x: -3, y: 3 }, { x: 3, y: 3 },        
-        { x: -2, y: 4 }, { x: -1, y: 4 }, { x: 0, y: 4 }, { x: 1, y: 4 }, { x: 2, y: 4 }, 
+        { x: -1, y: -1 }, { x: 1, y: -1 },
+        { x: -1, y: 0 }, { x: 1, y: 0 },
+        { x: -1, y: 1 }, { x: 1, y: 1 },
+        { x: -2, y: 2 }, { x: 2, y: 2 },
+        { x: -3, y: 3 }, { x: 3, y: 3 },
+        { x: -2, y: 4 }, { x: -1, y: 4 }, { x: 0, y: 4 }, { x: 1, y: 4 }, { x: 2, y: 4 },
     ];
 
-
     debugTileOffsets.forEach((offset) => {
-        let chestGear: string = GEAR.NONE;
-        let chestWeapon: string = WEAPON.NONE;
         let debugChestNumber = undefined;
         if (offset.y === -3) {
-            if (offset.x === -2) { debugChestNumber = 1; chestGear = GEAR.BARE }
-            if (offset.x === 0) { debugChestNumber = 2; chestGear = GEAR.BASIC }
-            if (offset.x === 2) { debugChestNumber = 3; chestGear = GEAR.ARMOR }
+            if (offset.x === -2) { debugChestNumber = 1; }
+            if (offset.x === 0) { debugChestNumber = 2; }
+            if (offset.x === 2) { debugChestNumber = 3; }
         } else if (offset.y === 3) {
-            if (offset.x === -2) { debugChestNumber = 4; chestWeapon = WEAPON.DAGGER }
-            if (offset.x === 0) { debugChestNumber = 5; chestWeapon = WEAPON.STAFF }
-            if (offset.x === 2) { debugChestNumber = 6; chestWeapon = WEAPON.SWORD }
+            if (offset.x === -2) { debugChestNumber = 4; }
+            if (offset.x === 0) { debugChestNumber = 5; }
+            if (offset.x === 2) { debugChestNumber = 6; }
         }
-
-        const tile = new Tile({
-            tilenumber: { x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y },
-            biome: 1,
-            chest: debugChestNumber,
-        });
-        earth.AddTile(tile);
-
-        
         if (debugChestNumber !== undefined) {
-            const chest = new ChestJJK(scene, {
-                id: debugChestNumber,
-                tilePosition: { x: tile.tileX, y: tile.tileY },
-                worldPosition: { x: tile.tileX * 64, y: tile.tileY * 64 + 64 },
-                contents: {
-                    gear: chestGear,
-                    weapon: chestWeapon,
-                }
-            }, CHEST_STATE.REVEALED);
-            chests.push(chest);
-            chestGroup.add(chest);
+            earth.AddTile(new Tile({
+                tilenumber: { x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y },
+                biome: 1,
+            }));
+            addChest({ x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y }, scene, chests, chestGroup, debugChestNumber);
+        } else {
+            earth.AddTile(new Tile({
+                tilenumber: { x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y },
+                biome: 1,
+            }));
         }
-            
     });
 
     debugVoidBorderTileOffsets.forEach((offset) => {
@@ -80,3 +68,41 @@ export function setupDebugChests(
 
     return chests;
 }
+
+export function addChest(position: Position, scene: Phaser.Scene, chests: ChestJJK[], chestGroup: Phaser.GameObjects.Group, chestNumber: number) {
+    let chestGear: string = GEAR.NONE;
+    let chestWeapon: string = WEAPON.NONE;
+    switch (chestNumber) {
+        case 1:
+            chestGear = GEAR.BARE;
+            break;
+        case 2: 
+            chestWeapon = WEAPON.DAGGER;
+            break;
+        case 3:
+            chestGear = GEAR.BASIC;
+            break;
+        case 4:
+            chestWeapon = WEAPON.STAFF;
+            break;
+        case 5:
+            chestGear = GEAR.ARMOR;
+            break;
+        case 6:
+            chestWeapon = WEAPON.SWORD;
+            break;
+    }
+
+    const chest = new ChestJJK(scene, {
+        id: chestNumber,
+        tilePosition: position,
+        worldPosition: { x: position.x * 64, y: position.y * 64 + 64 },
+        contents: {
+            gear: chestGear,
+            weapon: chestWeapon,
+        }
+    }, CHEST_STATE.REVEALED);
+    chests.push(chest);
+    chestGroup.add(chest);
+}
+

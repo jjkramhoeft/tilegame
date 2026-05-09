@@ -7,6 +7,8 @@ import { findTargetTiles, DecideBiome, DecideDecoration, DecideBlockingAndFloati
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
 import { ENABLE_LOGGING } from '../common/config';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
+import { addChest } from '../scenes/debug/debug-chests';
+import { GameScene } from '../scenes/game-scene';
 
 export type EarthCastingConfig = {
     // Void and rock are unlocked from the start.
@@ -586,8 +588,9 @@ export class Earth {
             if (ENABLE_LOGGING) { console.log(`Placing floating tile with index ${tile.floating} at (${tile.tileX}, ${tile.tileY})`); }
             this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY - 1);
         }
-        if (tile.chest !== undefined) {
-            //ToDo call addChestFunction
+        if (0 < tile.chest) {
+            const gameScene = this.scene as GameScene;
+            addChest({ x: tile.tileX, y: tile.tileY }, gameScene, gameScene.getChestArray(), gameScene.getChestGroup(), tile.chest);
         }
     }
 
