@@ -211,7 +211,7 @@ export class DebugSpellcasting {
         console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
 
         this.applyCastingFeedback(feedback);
-        this.tryPlaceLamb(scene, player, earth);
+        this.tryPlaceLamb(scene, player, earth);//ToDo: Replace with actual animal placement logic once more animals are added and the logic is decoupled from debug spellcasting.
     }
 
     private tryPlaceLamb(scene: Phaser.Scene, player: Player, earth: Earth): void {
