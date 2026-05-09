@@ -37,8 +37,6 @@ const LEVEL_UP_TILE_THRESHOLDS: Record<number, number> = {
     5: 750,
 };
 
-const MAX_POWER_LEVEL = 1;
-
 const CHEST_PROGRESS_FLAGS: Record<number, { placedKey: MagicFlagKey; placableKey: MagicFlagKey }> = {
     1: { placedKey: 'isChest1Placed', placableKey: 'isChest1Placable' },
     2: { placedKey: 'isChest2Placed', placableKey: 'isChest2Placable' },
@@ -346,7 +344,7 @@ export class DebugSpellcasting {
 
     private applyPowerLevelProgression(feedback: CastingFeedback): void {
         const placedTileCount = this.getPlacedTileCount(feedback);
-        const debugDivider = DataManager.instance.data.isDebugMode ? 10 : 1;
+        const debugDivider = DataManager.instance.data.isDebugMode ? 10 : 2;
         const levelUpThreshold = LEVEL_UP_TILE_THRESHOLDS[this.#playerCurrentMagic.powerLevel];
         if (levelUpThreshold === undefined || placedTileCount < levelUpThreshold / debugDivider) {
             return;
