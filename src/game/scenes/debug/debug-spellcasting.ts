@@ -1,6 +1,8 @@
 import * as Phaser from 'phaser';
 import { Player } from '../../game-objects/player/player';
 import { Lamb } from '../../game-objects/enemies/lamb';
+import { Chicken } from '../../game-objects/enemies/chicken';
+import { Spider } from '../../game-objects/enemies/spider';
 import { CastingFeedback, Earth, EarthCastingConfig } from '../../ground/earth';
 import { Direction, Position } from '../../common/types';
 import { BIOME } from '../../common/common';
@@ -166,9 +168,11 @@ export class DebugSpellcasting {
     #levelUpSound: Phaser.Sound.BaseSound;
     #previousStateName: string | undefined;
     #castingFeedbackTotals: CastingFeedback = this.createEmptyCastingFeedback();
+    #enemyGroup: Phaser.GameObjects.Group;
     #critterGroup: Phaser.GameObjects.Group;
 
-    constructor(scene: Phaser.Scene, critterGroup: Phaser.GameObjects.Group) {
+    constructor(scene: Phaser.Scene, enemyGroup: Phaser.GameObjects.Group, critterGroup: Phaser.GameObjects.Group) {
+        this.#enemyGroup = enemyGroup;
         this.#critterGroup = critterGroup;
         this.#spellSound = scene.sound.add('spellnotes1', { volume: 0.9 });
         this.#levelUpSound = scene.sound.add('levelup', { volume: 0.9 });
@@ -212,12 +216,16 @@ export class DebugSpellcasting {
         console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
 
         this.applyCastingFeedback(feedback);
-        this.tryPlaceLamb(scene, player, earth);//ToDo: Replace with actual animal placement logic once more animals are added and the logic is decoupled from debug spellcasting.
+        this.tryPlaceMob(scene, player, earth);//ToDo: Replace with actual animal placement logic once more animals are added and the logic is decoupled from debug spellcasting.
     }
 
-    private tryPlaceLamb(scene: Phaser.Scene, player: Player, earth: Earth): void {
+    private tryPlaceMob(scene: Phaser.Scene, player: Player, earth: Earth): void {
         const animalBiome = this.pickAnimalBiome(this.#playerCurrentMagic);
         if (animalBiome === null) {
+            return;
+        }
+
+        if (Phaser.Math.Between(0, 1) === 0) {
             return;
         }
 
@@ -229,13 +237,39 @@ export class DebugSpellcasting {
             return;
         }
 
-        console.log(`New animals from ${animalBiome} biome are now placable!`);
-        const lamb = new Lamb({
-            scene,
-            position: this.getTileCenterPosition(animalTilePosition),
-        });
-        lamb.enableObject();
-        this.#critterGroup.add(lamb);
+        const mobPosition = this.getTileCenterPosition(animalTilePosition);
+        switch (Phaser.Math.Between(0, 2)) {
+            case 0: {
+                console.log(`New lamb from ${animalBiome} biome is now placable!`);
+                const lamb = new Lamb({
+                    scene,
+                    position: mobPosition,
+                });
+                lamb.enableObject();
+                this.#critterGroup.add(lamb);
+                break;
+            }
+            case 1: {
+                console.log(`New chicken from ${animalBiome} biome is now placable!`);
+                const chicken = new Chicken({
+                    scene,
+                    position: mobPosition,
+                });
+                chicken.enableObject();
+                this.#critterGroup.add(chicken);
+                break;
+            }
+            case 2: {
+                console.log(`New spider from ${animalBiome} biome is now placable!`);
+                const spider = new Spider({
+                    scene,
+                    position: mobPosition,
+                });
+                spider.enableObject();
+                this.#enemyGroup.add(spider);
+                break;
+            }
+        }
     }
 
     private pickAnimalBiome(magicState: EarthCastingConfig): BIOME | null {

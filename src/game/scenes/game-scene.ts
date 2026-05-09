@@ -308,7 +308,7 @@ export class GameScene extends Phaser.Scene {
         }
 
         this.#registerColliders();
-        this.#debugSpellcasting = new DebugSpellcasting(this, this.#critterGroup!);
+        this.#debugSpellcasting = new DebugSpellcasting(this, this.#enemyGroup!, this.#critterGroup!);
         this.#isGameplayReady = true;
         this.#controls.isMovementLocked = false;
         console.debug('[GameScene] gameplay ready', {
