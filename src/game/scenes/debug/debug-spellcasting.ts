@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { Player } from '../../game-objects/player/player';
 import { CastingFeedback, Earth, EarthCastingConfig } from '../../ground/earth';
 import { Direction, Position } from '../../common/types';
-import { PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK } from '../../common/config';
+import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
 
 type MagicFlagKey = {
@@ -27,14 +27,6 @@ type BiomeProgressionRule = {
     chestPlacableKey: MagicFlagKey;
     chestPlacedKey: MagicFlagKey;
     unlockOnBlockingKeys: MagicFlagKey[];
-};
-
-const LEVEL_UP_TILE_THRESHOLDS: Record<number, number> = {
-    1: 50,
-    2: 150,
-    3: 300,
-    4: 500,
-    5: 750,
 };
 
 const CHEST_PROGRESS_FLAGS: Record<number, { placedKey: MagicFlagKey; placableKey: MagicFlagKey }> = {

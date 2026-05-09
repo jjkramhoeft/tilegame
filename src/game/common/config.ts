@@ -49,6 +49,14 @@ export const ENEMY_BOSS_START_INITIAL_DELAY = 1000;
 export const HURT_PUSH_BACK_DELAY = 200;
 export const BOSS_HURT_PUSH_BACK_DELAY = 50;
 
-export const TILES_BEFORE_DECORATION_UNLOCK = 2;
-export const TILES_BEFORE_BLOCKING_UNLOCK = 2;
+export const TILES_BEFORE_DECORATION_UNLOCK = 10;
+export const TILES_BEFORE_BLOCKING_UNLOCK = 10;
+export const LEVEL_UP_TILE_THRESHOLDS: Record<number, number> = {
+	1: 25,
+	2: 75,
+	3: 150,
+	4: 300,
+	5: 500,
+	6: 750,
+};
 export const CHEST_CHANCE = 0.2

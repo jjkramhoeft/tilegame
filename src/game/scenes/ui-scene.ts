@@ -136,7 +136,7 @@ export class UiScene extends Phaser.Scene {
   }
 
   public updatePowerInHud(data: PlayerPowerUpdated): void {
-    this.#syncMeter(this.#power, DataManager.instance.data.maxPower, data.currentPower+1);
+    this.#syncMeter(this.#power, DataManager.instance.data.maxPower, data.currentPower+2);
   }
 
   public updateProgressInHud(data: PlayerProgressUpdated): void {
