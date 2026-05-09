@@ -1,21 +1,58 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
-import { ASSET_KEYS, } from '../common/assets';
+import { ASSET_KEYS } from '../common/assets';
 import { DataManager } from '../common/data-manager';
-import { CUSTOM_EVENTS, EVENT_BUS, PLAYER_UPDATE_TYPE, PlayerHealthUpdated } from '../common/event-bus';
-import { DEFAULT_UI_HEADING_STYLE, DEFAULT_UI_OPTION_STYLE, WEAPON, GEAR } from '../common/common';
+import {
+  CUSTOM_EVENTS,
+  EVENT_BUS,
+  PLAYER_UPDATE_TYPE,
+  type PlayerHealthUpdated,
+  type PlayerPowerUpdated,
+  type PlayerProgressUpdated,
+} from '../common/event-bus';
+import { DEFAULT_UI_HEADING_STYLE, DEFAULT_UI_OPTION_STYLE } from '../common/common';
+import type { DialogPayload } from '../common/chest-dialog';
 import { KeyboardComponent } from '../components/input/keyboard-component';
-import { ChestJJK } from '../game-objects/objects/chestJJK';
 
-export interface ChestDialogInfo {
-  option1GearToPlayer: string,
-  option1WeaponToPlayer: string,
-  option1GearToLeave: string,
-  option1WeaponToLeave: string,
-  option2GearToPlayer: string,
-  option2GearToLeave: string,
-  chestNumber?: number,
-  message: string,
+const HUD_ICON_SIZE = 16;
+const HUD_ROW_LENGTH = 10;
+const HUD_METER_SPRITE_COUNT = 20;
+const HUD_FIRST_ROW_Y = 25;
+const HUD_SECOND_ROW_Y = 43;
+const HUD_HEALTH_X = 50;
+const HUD_POWER_X = 400;
+const HUD_PROGRESS_X = 800;
+const HUD_EMPTY_FRAME = 0;
+const HUD_FULL_FRAME = 2;
+const HUD_NONE_FRAME = 3;
+
+const DIALOG_X = 205;
+const DIALOG_Y = 80;
+const SAVE_DIALOG_Y = 480;
+const DIALOG_WIDTH = 610;
+const DIALOG_HEIGHT = 250;
+const DIALOG_HEADING_X = 75;
+const DIALOG_HEADING_Y = 40;
+const DIALOG_OPTION_X = 65;
+const SAVE_DIALOG_OPTION_X = 165;
+const DIALOG_CURSOR_X = 45;
+const SAVE_DIALOG_CURSOR_X = 145;
+const DIALOG_FIRST_OPTION_Y = 85;
+const DIALOG_OPTION_SPACING = 40;
+const DIALOG_CURSOR_SIZE = 16;
+const SAVE_DIALOG_OPTION_COUNT = 3;
+
+type HudMeterConfig = {
+  currentValue: number;
+  maxValue: number;
+  startX: number;
+  textureKey: string;
+};
+
+const enum UiMode {
+  HudOnly,
+  ChestDialog,
+  SaveDialog,
 }
 
 export class UiScene extends Phaser.Scene {
@@ -23,25 +60,20 @@ export class UiScene extends Phaser.Scene {
   #hearts!: Phaser.GameObjects.Sprite[];
   #power!: Phaser.GameObjects.Sprite[];
   #progress!: Phaser.GameObjects.Sprite[];
+
   #saveDialogContainer!: Phaser.GameObjects.Container;
-  #saveDialogContainerOption1!: Phaser.GameObjects.Text;//Escape - back to main menu
-  #saveDialogContainerOption2!: Phaser.GameObjects.Text;//Save
-  #saveDialogContainerOption3!: Phaser.GameObjects.Text;//Continue playing
   #saveDialogCursorGameObject!: Phaser.GameObjects.Image;
 
   #dialogContainer!: Phaser.GameObjects.Container;
   #dialogContainerText!: Phaser.GameObjects.Text;
-  #dialogContainerOption1!: Phaser.GameObjects.Text;
-  #dialogContainerOption2!: Phaser.GameObjects.Text;
-  #dialogContainerOption3!: Phaser.GameObjects.Text;
-  #dialogOptionCount!: number;
+  #dialogOptions!: Phaser.GameObjects.Text[];
+  #activeDialogOptionCount!: number;
   #cursorGameObject!: Phaser.GameObjects.Image;
+
   #controls!: KeyboardComponent;
   #selectedMenuOptionIndex!: number;
   #selectedSaveOptionIndex!: number;
-
-  #chestDialogIsOpen!: boolean;
-  #saveDialogIsOpen!: boolean;
+  #uiMode = UiMode.HudOnly;
 
   constructor() {
     super({
@@ -54,163 +86,41 @@ export class UiScene extends Phaser.Scene {
       return;
     }
 
-    this.#chestDialogIsOpen = false;
-    this.#saveDialogIsOpen = false;
-
-    // create main hud
-    this.#hudContainer = this.add.container(0, 0, []);
-    this.#hearts = [];
-    this.#power = [];
-    this.#progress = [];
-
-    let dH = 50;
-    let dPow = 400;
-    let dPr = 800;
-    // Health -----------------------------------------------
-    const numberOfHearts = Math.floor(DataManager.instance.data.maxHealth / 2);
-    const numberOfFullHearts = Math.floor(DataManager.instance.data.currentHealth / 2);
-    const hasHalfHeart = DataManager.instance.data.currentHealth % 2 === 1;
-    for (let i = 0; i < 20; i += 1) {
-      let x = dH + 16 * i;
-      let y = 25;
-      if (i >= 10) {
-        x = dH + 16 * (i - 10);
-        y = 43;
-      }
-      let frame: number = 3;//none heart
-      if (i < numberOfFullHearts) {
-        frame = 2;//full heart
-      } else if (i < numberOfHearts) {
-        frame = 0;//empty heart
-      }
-      if (hasHalfHeart && i === numberOfFullHearts) {
-        frame = 2;//half heart
-      }
-      this.#hearts.push(this.add.sprite(x, y, "hearts16", frame).setOrigin(0));
-    }
-    this.#hudContainer.add(this.#hearts);
-
-    // Power --------------------------------------------------
-    const numberOfPower = Math.floor(DataManager.instance.data.maxPower / 2);
-    const numberOfFullPower = Math.floor(DataManager.instance.data.currentPower / 2);
-    const hasHalfPower = DataManager.instance.data.currentPower % 2 === 1;
-    for (let i = 0; i < 20; i += 1) {
-      let x = dPow + 16 * i;
-      let y = 25;
-      if (i >= 10) {
-        x = dPow + 16 * (i - 10);
-        y = 43;
-      }
-      let frame: number = 3;//none power
-      if (i < numberOfFullPower) {
-        frame = 2;//full power
-      } else if (i < numberOfPower) {
-        frame = 0;//empty power
-      }
-      if (hasHalfPower && i === numberOfFullPower) {
-        frame = 2;//half power
-      }
-      this.#power.push(this.add.sprite(x, y, "power16", frame).setOrigin(0));
-    }
-    this.#hudContainer.add(this.#power);
-
-    // Progress --------------------------------------------------
-    const numberOfProgress = Math.floor(DataManager.instance.data.maxProgress / 2);
-    const numberOfFullProgress = Math.floor(DataManager.instance.data.currentProgress / 2);
-    const hasHalfProgress = DataManager.instance.data.currentProgress % 2 === 1;
-    for (let i = 0; i < 20; i += 1) {
-      let x = dPr + 16 * i;
-      let y = 25;
-      if (i >= 10) {
-        x = dPr + 16 * (i - 10);
-        y = 43;
-      }
-      let frame: number = 3;//none progress
-      if (i < numberOfFullProgress) {
-        frame = 2;//full progress
-      } else if (i < numberOfProgress) {
-        frame = 0;//empty progress
-      }
-      if (hasHalfProgress && i === numberOfFullProgress) {
-        frame = 2;//half progress
-      }
-      this.#progress.push(this.add.sprite(x, y, "progress16", frame).setOrigin(0));
-    }
-    this.#hudContainer.add(this.#progress);
-
-    // Dialog --------------------------------------------------
-    // Frame
-    this.#dialogContainer = this.add.container(205, 80, [this.add.image(0, 0, ASSET_KEYS.UI_DIALOG, 0).setOrigin(0).setDisplaySize(610, 250)]);
-    // Header
-    this.#dialogContainerText = this.add.text(75, 40, '', DEFAULT_UI_HEADING_STYLE).setOrigin(0);
-    this.#dialogContainer.add(this.#dialogContainerText);
-    // Option 1
-    this.#dialogContainerOption1 = this.add.text(65, 85, '', DEFAULT_UI_OPTION_STYLE).setOrigin(0);
-    this.#dialogContainer.add(this.#dialogContainerOption1);
-    // Option 2
-    this.#dialogContainerOption2 = this.add.text(65, 125, '', DEFAULT_UI_OPTION_STYLE).setOrigin(0);
-    this.#dialogContainer.add(this.#dialogContainerOption2);
-    // Option 3
-    this.#dialogContainerOption3 = this.add.text(65, 165, '', DEFAULT_UI_OPTION_STYLE).setOrigin(0);
-    this.#dialogContainer.add(this.#dialogContainerOption3);
-
-    // Cursor
-    this.#cursorGameObject = this.add.image(45, 85, ASSET_KEYS.UI_CURSOR, 0).setOrigin(0).setDisplaySize(16, 16);
-    this.#dialogContainer.add(this.#cursorGameObject);
-
-    this.#dialogContainer.visible = false;
-
-    // Escape Dialog --------------------------------------------------
-    // Frame
-    this.#saveDialogContainer = this.add.container(205, 480, [this.add.image(0, 0, ASSET_KEYS.UI_DIALOG, 0).setOrigin(0).setDisplaySize(610, 250)]);
-    // Option 1
-    this.#saveDialogContainerOption1 = this.add.text(165, 85, 'Back to Main Menu', DEFAULT_UI_OPTION_STYLE).setOrigin(0);
-    this.#saveDialogContainer.add(this.#saveDialogContainerOption1);
-    // Option 2
-    this.#saveDialogContainerOption2 = this.add.text(165, 125, 'Save', DEFAULT_UI_OPTION_STYLE).setOrigin(0);
-    this.#saveDialogContainer.add(this.#saveDialogContainerOption2);
-    // Option 3
-    this.#saveDialogContainerOption3 = this.add.text(165, 165, 'Continue Playing', DEFAULT_UI_OPTION_STYLE).setOrigin(0);
-    this.#saveDialogContainer.add(this.#saveDialogContainerOption3);
-    // SaveCursor
-    this.#saveDialogCursorGameObject = this.add.image(145, 85, ASSET_KEYS.UI_CURSOR, 0).setOrigin(0).setDisplaySize(16, 16);
-    this.#saveDialogContainer.add(this.#saveDialogCursorGameObject);
-
-    this.#saveDialogContainer.visible = false;
-
-    // -----------------------------------------------------------------
+    this.#createHud();
+    this.#createDialog();
+    this.#createSaveDialog();
 
     this.#controls = new KeyboardComponent(this.input.keyboard);
     this.#selectedMenuOptionIndex = 0;
     this.#selectedSaveOptionIndex = 0;
 
-
-    // register event listeners
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
+    EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
+    EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_PROGRESS_UPDATED, this.updateProgressInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.SHOW_DIALOG, this.showDialog, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
+      EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
+      EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_PROGRESS_UPDATED, this.updateProgressInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.SHOW_DIALOG, this.showDialog, this);
     });
   }
 
   public async updateHealthInHud(data: PlayerHealthUpdated): Promise<void> {
     if (data.type === PLAYER_UPDATE_TYPE.INCREASE) {
-      // if player has increased their health, picking up hearts, new heart container, fairy, etc.,
-      // need to update their health here
+      this.#syncMeter(this.#hearts, DataManager.instance.data.maxHealth, data.currentHealth);
       return;
     }
 
-    // play animation for losing hearts depending on the amount of health lost
     const healthDifference = data.previousHealth - data.currentHealth;
     let health = data.previousHealth;
-    for (let i = 0; i < healthDifference; i += 1) {
+    for (let index = 0; index < healthDifference; index += 1) {
       const heartIndex = Math.round(health / 2) - 1;
       const isHalfHeart = health % 2 === 1;
-      let animationName = "JJK_LOOSE_SECOND_HALF";//last half of heart lost animation
+      let animationName = 'JJK_LOOSE_SECOND_HALF';
       if (!isHalfHeart) {
-        animationName = "JJK_LOOSE_FIRST_HALF";//first half of heart lost animation
+        animationName = 'JJK_LOOSE_FIRST_HALF';
       }
       await new Promise((resolve) => {
         this.#hearts[heartIndex].play(animationName);
@@ -220,187 +130,229 @@ export class UiScene extends Phaser.Scene {
       });
       health -= 1;
     }
+    this.#syncMeter(this.#hearts, DataManager.instance.data.maxHealth, data.currentHealth);
   }
 
-  public showDialog(message: string): void {
-    this.#chestDialogIsOpen = true;
+  public updatePowerInHud(data: PlayerPowerUpdated): void {
+    this.#syncMeter(this.#power, DataManager.instance.data.maxPower, data.currentPower);
+  }
+
+  public updateProgressInHud(data: PlayerProgressUpdated): void {
+    this.#syncMeter(this.#progress, DataManager.instance.data.maxProgress, data.currentProgress);
+  }
+
+  public showDialog(dialog: DialogPayload): void {
+    this.#uiMode = UiMode.ChestDialog;
     this.#selectedMenuOptionIndex = 0;
     this.#selectedSaveOptionIndex = 0;
+    this.#activeDialogOptionCount = dialog.options.length;
     this.#dialogContainer.visible = true;
-    let messageParts = message.split('|');
-    this.#dialogOptionCount = messageParts.length - 2;
-    this.#dialogContainerText.setText(messageParts[0]);
-    this.#dialogContainerOption1.setText(messageParts[1]);
-    this.#dialogContainerOption2.setText(messageParts[2]);
-    this.#dialogContainerOption3.setText(messageParts[3]);
+    this.#dialogContainerText.setText(dialog.heading);
+    this.#dialogOptions.forEach((option, index) => {
+      option.setText(dialog.options[index] ?? '');
+      option.visible = index < dialog.options.length;
+    });
+    this.#updateDialogCursor();
   }
 
   public update(): void {
-
     if (this.#controls.isEscapeKeyJustDown) {
-      console.debug('Escape key just down, opening escape and save dialog');
-      this.#saveDialogContainer.visible = true;
-      this.#saveDialogIsOpen = true;
+      this.#openSaveDialog();
       return;
     }
 
     if (this.#controls.isEnterKeyJustDown) {
-      if (this.#chestDialogIsOpen) {
-        let d = DataManager.instance.data;
-        d.lastDialogOptionSelected = this.#selectedMenuOptionIndex;
-        DataManager.instance.data = d;
-        this.#dialogContainer.visible = false;
-        EVENT_BUS.emit(CUSTOM_EVENTS.DIALOG_CLOSED);
-        this.#chestDialogIsOpen = false;
-        return;
-      } else if (this.#saveDialogIsOpen) {
-        if (this.#selectedSaveOptionIndex === 0) {
-          // back to main menu
-          this.scene.stop(SCENE_KEYS.GAME_SCENE);
-          this.scene.start(SCENE_KEYS.INTRO);
-        } else if (this.#selectedSaveOptionIndex === 1) {
-          // save game
-        } else if (this.#selectedSaveOptionIndex === 2) {
-          // continue playing
-          this.#saveDialogContainer.visible = false;
-          this.#saveDialogIsOpen = false;
-        }
-      }
-    }
-
-    if (this.#controls.isUpJustDown) {
-      if (this.#chestDialogIsOpen) {
-        this.#selectedMenuOptionIndex -= 1;
-        if (this.#selectedMenuOptionIndex < 0) {
-          this.#selectedMenuOptionIndex = 0;
-        }
-      } else if (this.#saveDialogIsOpen) {
-        this.#selectedSaveOptionIndex -= 1;
-        if (this.#selectedSaveOptionIndex < 0) {
-          this.#selectedSaveOptionIndex = 0;
-        }
-      }
-    } else if (this.#controls.isDownJustDown) {
-      if (this.#chestDialogIsOpen) {
-        this.#selectedMenuOptionIndex += 1;
-        if (this.#selectedMenuOptionIndex > this.#dialogOptionCount) {
-          this.#selectedMenuOptionIndex = this.#dialogOptionCount;
-        }
-      } else if (this.#saveDialogIsOpen) {
-        this.#selectedSaveOptionIndex += 1;
-        if (this.#selectedSaveOptionIndex > 2) {
-          this.#selectedSaveOptionIndex = 2;
-        }
-      }
-    } else {
+      this.#confirmSelectedOption();
       return;
     }
 
-    if (this.#chestDialogIsOpen) {
-      this.#cursorGameObject.setY(85 + this.#selectedMenuOptionIndex * 40);
-    } else if (this.#saveDialogIsOpen) {
-      this.#saveDialogCursorGameObject.setY(85 + this.#selectedSaveOptionIndex * 40);
+    if (this.#controls.isUpJustDown) {
+      this.#moveSelection(-1);
+      return;
+    }
+
+    if (this.#controls.isDownJustDown) {
+      this.#moveSelection(1);
     }
   }
 
   public getSelectedDialogOption(): number {
     return this.#selectedMenuOptionIndex;
   }
-}
 
-export function writeChestDialogInfo(chest: ChestJJK): ChestDialogInfo {
-  let result: ChestDialogInfo = {
-    option1GearToPlayer: GEAR.NONE,
-    option1WeaponToPlayer: WEAPON.NONE,
-    option1GearToLeave: GEAR.NONE,
-    option1WeaponToLeave: WEAPON.NONE,
-    option2GearToPlayer: GEAR.NONE,
-    option2GearToLeave: GEAR.NONE,
-    chestNumber: chest.id,
-    message: '',
-  };
-  let heading = 'You opened an empty chest.';
-  if (chest.contents.weapon !== WEAPON.NONE || chest.contents.gear !== GEAR.NONE) {
-    heading = `You opened a chest and found `;
-    switch (chest.contents.gear) {
-      case GEAR.BARE: heading += 'a piece of cloth'; break;
-      case GEAR.BASIC: heading += 'some simple clothing'; break;
-      case GEAR.ARMOR: heading += 'a shining armor'; break;
+  #createHud(): void {
+    const playerData = DataManager.instance.data;
+
+    this.#hudContainer = this.add.container(0, 0, []);
+    this.#hearts = this.#createMeter({
+      currentValue: playerData.currentHealth,
+      maxValue: playerData.maxHealth,
+      startX: HUD_HEALTH_X,
+      textureKey: 'hearts16',
+    });
+    this.#power = this.#createMeter({
+      currentValue: playerData.currentPower,
+      maxValue: playerData.maxPower,
+      startX: HUD_POWER_X,
+      textureKey: 'power16',
+    });
+    this.#progress = this.#createMeter({
+      currentValue: playerData.currentProgress,
+      maxValue: playerData.maxProgress,
+      startX: HUD_PROGRESS_X,
+      textureKey: 'progress16',
+    });
+
+    this.#hudContainer.add(this.#hearts);
+    this.#hudContainer.add(this.#power);
+    this.#hudContainer.add(this.#progress);
+  }
+
+  #createMeter(config: HudMeterConfig): Phaser.GameObjects.Sprite[] {
+    const meter: Phaser.GameObjects.Sprite[] = [];
+    for (let index = 0; index < HUD_METER_SPRITE_COUNT; index += 1) {
+      const position = this.#getMeterSpritePosition(config.startX, index);
+      const frame = this.#getMeterFrame(index, config.maxValue, config.currentValue);
+      meter.push(this.add.sprite(position.x, position.y, config.textureKey, frame).setOrigin(0));
     }
-    if (chest.contents.weapon !== WEAPON.NONE && chest.contents.gear !== GEAR.NONE) {
-      heading += ' and ';
+    return meter;
+  }
+
+  #syncMeter(meter: Phaser.GameObjects.Sprite[], maxValue: number, currentValue: number): void {
+    meter.forEach((sprite, index) => {
+      sprite.setFrame(this.#getMeterFrame(index, maxValue, currentValue));
+    });
+  }
+
+  #getMeterFrame(index: number, maxValue: number, currentValue: number): number {
+    const numberOfSlots = Math.floor(maxValue / 2);
+    const numberOfFullSlots = Math.floor(currentValue / 2);
+    const hasHalfSlot = currentValue % 2 === 1;
+
+    if (index < numberOfFullSlots) {
+      return HUD_FULL_FRAME;
     }
-    switch (chest.contents.weapon) {
-      case WEAPON.DAGGER: heading += 'a dagger'; break;
-      case WEAPON.STAFF: heading += 'a staff'; break;
-      case WEAPON.SWORD: heading += 'a sword'; break;
+    if (hasHalfSlot && index === numberOfFullSlots) {
+      return HUD_FULL_FRAME;
+    }
+    if (index < numberOfSlots) {
+      return HUD_EMPTY_FRAME;
+    }
+    return HUD_NONE_FRAME;
+  }
+
+  #getMeterSpritePosition(startX: number, index: number): { x: number; y: number } {
+    const column = index % HUD_ROW_LENGTH;
+    const row = Math.floor(index / HUD_ROW_LENGTH);
+    return {
+      x: startX + HUD_ICON_SIZE * column,
+      y: row === 0 ? HUD_FIRST_ROW_Y : HUD_SECOND_ROW_Y,
+    };
+  }
+
+  #createDialog(): void {
+    this.#dialogContainer = this.add.container(DIALOG_X, DIALOG_Y, [
+      this.add.image(0, 0, ASSET_KEYS.UI_DIALOG, 0).setOrigin(0).setDisplaySize(DIALOG_WIDTH, DIALOG_HEIGHT),
+    ]);
+    this.#dialogContainerText = this.add.text(DIALOG_HEADING_X, DIALOG_HEADING_Y, '', DEFAULT_UI_HEADING_STYLE).setOrigin(0);
+    this.#dialogContainer.add(this.#dialogContainerText);
+
+    this.#dialogOptions = [0, 1, 2].map((index) => {
+      const option = this.add.text(
+        DIALOG_OPTION_X,
+        DIALOG_FIRST_OPTION_Y + index * DIALOG_OPTION_SPACING,
+        '',
+        DEFAULT_UI_OPTION_STYLE,
+      ).setOrigin(0);
+      this.#dialogContainer.add(option);
+      return option;
+    });
+
+    this.#cursorGameObject = this.add.image(DIALOG_CURSOR_X, DIALOG_FIRST_OPTION_Y, ASSET_KEYS.UI_CURSOR, 0)
+      .setOrigin(0)
+      .setDisplaySize(DIALOG_CURSOR_SIZE, DIALOG_CURSOR_SIZE);
+    this.#dialogContainer.add(this.#cursorGameObject);
+    this.#dialogContainer.visible = false;
+    this.#activeDialogOptionCount = 0;
+  }
+
+  #createSaveDialog(): void {
+    this.#saveDialogContainer = this.add.container(DIALOG_X, SAVE_DIALOG_Y, [
+      this.add.image(0, 0, ASSET_KEYS.UI_DIALOG, 0).setOrigin(0).setDisplaySize(DIALOG_WIDTH, DIALOG_HEIGHT),
+    ]);
+    ['Back to Main Menu', 'Save', 'Continue Playing'].forEach((text, index) => {
+      const option = this.add.text(
+        SAVE_DIALOG_OPTION_X,
+        DIALOG_FIRST_OPTION_Y + index * DIALOG_OPTION_SPACING,
+        text,
+        DEFAULT_UI_OPTION_STYLE,
+      ).setOrigin(0);
+      this.#saveDialogContainer.add(option);
+    });
+
+    this.#saveDialogCursorGameObject = this.add.image(SAVE_DIALOG_CURSOR_X, DIALOG_FIRST_OPTION_Y, ASSET_KEYS.UI_CURSOR, 0)
+      .setOrigin(0)
+      .setDisplaySize(DIALOG_CURSOR_SIZE, DIALOG_CURSOR_SIZE);
+    this.#saveDialogContainer.add(this.#saveDialogCursorGameObject);
+    this.#saveDialogContainer.visible = false;
+  }
+
+  #openSaveDialog(): void {
+    if (this.#uiMode === UiMode.ChestDialog) {
+      return;
+    }
+    console.debug('Escape key just down, opening escape and save dialog');
+    this.#selectedSaveOptionIndex = 0;
+    this.#saveDialogContainer.visible = true;
+    this.#uiMode = UiMode.SaveDialog;
+    this.#updateSaveDialogCursor();
+  }
+
+  #confirmSelectedOption(): void {
+    if (this.#uiMode === UiMode.ChestDialog) {
+      const playerData = DataManager.instance.data;
+      playerData.lastDialogOptionSelected = this.#selectedMenuOptionIndex;
+      DataManager.instance.data = playerData;
+      this.#dialogContainer.visible = false;
+      EVENT_BUS.emit(CUSTOM_EVENTS.DIALOG_CLOSED);
+      this.#uiMode = UiMode.HudOnly;
+      return;
+    }
+
+    if (this.#uiMode === UiMode.SaveDialog) {
+      if (this.#selectedSaveOptionIndex === 0) {
+        this.scene.stop(SCENE_KEYS.GAME_SCENE);
+        this.scene.start(SCENE_KEYS.INTRO);
+      } else if (this.#selectedSaveOptionIndex === 2) {
+        this.#saveDialogContainer.visible = false;
+        this.#uiMode = UiMode.HudOnly;
+      }
     }
   }
-  let weaponHasOption = false;
-  let optionWeapon = '';
-  let leaveWeapon = 'leave your current ';
-  switch (DataManager.instance.data.weapon) {
-    case WEAPON.DAGGER: leaveWeapon += 'dagger'; break;
-    case WEAPON.STAFF: leaveWeapon += 'staff'; break;
-    case WEAPON.SWORD: leaveWeapon += 'sword'; break;
-  }
-  if (chest.contents.weapon !== WEAPON.NONE) {
-    weaponHasOption = true;
-    optionWeapon = 'Take ';
-    switch (chest.contents.weapon) {
-      case WEAPON.DAGGER: optionWeapon += 'the dagger'; break;
-      case WEAPON.STAFF: optionWeapon += 'the staff'; break;
-      case WEAPON.SWORD: optionWeapon += 'the sword'; break;
-    }
-    if (DataManager.instance.data.weapon !== WEAPON.NONE) {
-      optionWeapon += ' and ';
+
+  #moveSelection(direction: number): void {
+    if (this.#uiMode === UiMode.ChestDialog) {
+      this.#selectedMenuOptionIndex = Phaser.Math.Clamp(
+        this.#selectedMenuOptionIndex + direction,
+        0,
+        Math.max(this.#activeDialogOptionCount - 1, 0),
+      );
+      this.#updateDialogCursor();
+    } else if (this.#uiMode === UiMode.SaveDialog) {
+      this.#selectedSaveOptionIndex = Phaser.Math.Clamp(
+        this.#selectedSaveOptionIndex + direction,
+        0,
+        SAVE_DIALOG_OPTION_COUNT - 1,
+      );
+      this.#updateSaveDialogCursor();
     }
   }
-  if (DataManager.instance.data.weapon !== WEAPON.NONE) {
-    optionWeapon += leaveWeapon;
-    weaponHasOption = true;
+
+  #updateDialogCursor(): void {
+    this.#cursorGameObject.setY(DIALOG_FIRST_OPTION_Y + this.#selectedMenuOptionIndex * DIALOG_OPTION_SPACING);
   }
-  let gearHasOption = false;
-  let optionGear = '';
-  let leaveGear = 'leave your current ';
-  switch (DataManager.instance.data.gear) {
-    case GEAR.BARE: leaveGear += 'piece of cloth'; break;
-    case GEAR.BASIC: leaveGear += 'simple clothing'; break;
-    case GEAR.ARMOR: leaveGear += 'shining armor'; break;
+
+  #updateSaveDialogCursor(): void {
+    this.#saveDialogCursorGameObject.setY(DIALOG_FIRST_OPTION_Y + this.#selectedSaveOptionIndex * DIALOG_OPTION_SPACING);
   }
-  if (chest.contents.gear !== GEAR.NONE) {
-    gearHasOption = true;
-    optionGear = 'Take';
-    switch (chest.contents.gear) {
-      case GEAR.BARE: optionGear += ' the piece of cloth'; break;
-      case GEAR.BASIC: optionGear += ' the simple clothing'; break;
-      case GEAR.ARMOR: optionGear += ' the shining armor'; break;
-    }
-    if (DataManager.instance.data.gear !== GEAR.NONE) {
-      optionGear += ' and ';
-    }
-  }
-  if (DataManager.instance.data.gear !== GEAR.NONE) {
-    optionGear += leaveGear;
-    gearHasOption = true;
-  }
-  result.message = `${heading}|Leave`;
-  if (gearHasOption && weaponHasOption) {
-    result.message = `${heading}|${optionWeapon}|${optionGear}|Leave`;
-    result.option1WeaponToPlayer = chest.contents.weapon;
-    result.option1WeaponToLeave = DataManager.instance.data.weapon;
-    result.option2GearToPlayer = chest.contents.gear;
-    result.option2GearToLeave = DataManager.instance.data.gear;
-  } else if (gearHasOption || weaponHasOption) {
-    if (gearHasOption) {
-      result.message = `${heading}|${optionGear}|Leave`;
-      result.option1GearToPlayer = chest.contents.gear;
-      result.option1GearToLeave = DataManager.instance.data.gear;
-    } else {
-      result.message = `${heading}|${optionWeapon}|Leave`;
-      result.option1WeaponToPlayer = chest.contents.weapon;
-      result.option1WeaponToLeave = DataManager.instance.data.weapon;
-    }
-  }
-  return result;
 }

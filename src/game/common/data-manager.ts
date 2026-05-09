@@ -1,4 +1,4 @@
-import { ChestDialogInfo } from '../scenes/ui-scene';
+import type { ChestDialogInfo } from './chest-dialog';
 import { PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
