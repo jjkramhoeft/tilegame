@@ -75,6 +75,11 @@ export class GameScene extends Phaser.Scene {
         this.#registerCustomEvents();
 
         this.scene.launch(SCENE_KEYS.UI_SCENE);
+        if (DataManager.instance.data.isDebugMode) {
+            this.#startGameplay();
+            return;
+        }
+
         this.#showIntroHelp();
     }
 
@@ -152,7 +157,8 @@ export class GameScene extends Phaser.Scene {
 
     #registerColliders(): void {
         // collision between player and blocking map geometry (treetrunks, stones, etc.)
-        this.#playerMapCollider = this.physics.add.collider(this.#player, this.#earth.getBlockingGeometryGroup());
+        const blockingGeometryGroup = this.#earth.getBlockingGeometryGroup();
+        this.#playerMapCollider = this.physics.add.collider(this.#player, blockingGeometryGroup);
 
         // register collisions between player and JJKChest game objects
         this.#playerChestCollider = this.physics.add.collider(this.#player, this.#chestJJKGroup, (_player, chest) => {
@@ -176,6 +182,10 @@ export class GameScene extends Phaser.Scene {
             const critterObj = critter as CharacterGameObject;
             critterObj.hit(this.#player.direction, this.#player.weaponDamage);
         });
+
+        // enemies and critters bounce against blocking map geometry.
+        this.physics.add.collider(this.#enemyGroup!, blockingGeometryGroup);
+        this.physics.add.collider(this.#critterGroup!, blockingGeometryGroup);
 
         // register overlap enemies and void tiles from map, so enemies can avoid falling into void.
         this.physics.add.collider(this.#enemyGroup!, this.#earth.getVoidLayer(), (_enemy, _voidTile) => {
@@ -205,6 +215,11 @@ export class GameScene extends Phaser.Scene {
     }
 
     #showIntroHelp(): void {
+        if (DataManager.instance.data.isDebugMode) {
+            this.#startGameplay();
+            return;
+        }
+
         if (this.#introShown) {
             return;
         }
@@ -245,6 +260,10 @@ export class GameScene extends Phaser.Scene {
     }
 
     #startControlsHelpTimer(): void {
+        if (DataManager.instance.data.isDebugMode) {
+            return;
+        }
+
         this.time.delayedCall(10000, () => {
             if (this.#hasPlayerMoved || this.#controlsHelpShown || this.#gameOverShown) {
                 return;
@@ -280,7 +299,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     #handleTilesPlaced(data: TilesPlacedUpdated): void {
-        if (this.#followUpShown || data.totalPlacedTiles < 4) {
+        if (DataManager.instance.data.isDebugMode || this.#followUpShown || data.totalPlacedTiles < 4) {
             return;
         }
 
@@ -294,12 +313,20 @@ export class GameScene extends Phaser.Scene {
         }
 
         this.#gameOverShown = true;
+        if (DataManager.instance.data.isDebugMode) {
+            return;
+        }
+
         this.time.delayedCall(1000, () => {
             this.#showProgressionHelp({ textKey: 'ui.progression.gameOver', closeAction: 'mainMenu' });
         });
     }
 
     #showProgressionHelp(payload: ProgressionHelpPayload): void {
+        if (DataManager.instance.data.isDebugMode) {
+            return;
+        }
+
         this.#controls.isMovementLocked = true;
         this.time.delayedCall(0, () => {
             EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, payload);

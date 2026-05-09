@@ -594,9 +594,12 @@ export class Earth {
         if (tile.biome >= 0) {
             if (ENABLE_LOGGING) { console.log(`Placing biome tile with index ${tile.biome} at (${tile.tileX}, ${tile.tileY})`); }
             if (tile.biome === BIOME.VOID) {
-                this.voidLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
+                const voidTile = this.voidLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
+                voidTile?.setCollision(true, true, true, true);
+                this.biomeLayer.removeTileAt(tile.tileX, tile.tileY, true, true);
             }
             else {
+                this.voidLayer.removeTileAt(tile.tileX, tile.tileY, true, true);
                 this.biomeLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
             }
             if (tile.biome === BIOME.WATER) {

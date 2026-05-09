@@ -40,6 +40,7 @@ export class BounceMoveState extends BaseCharacterState {
     }
     this._gameObject.setBounce(1);
     this.#updateFacingFromVelocity(true);
+    this.#updateDepth();
 
     // after a random period of time, switch to bounce-idle so the character pauses to rest
     const delay = Phaser.Math.Between(BOUNCE_MOVE_DURATION_MIN, BOUNCE_MOVE_DURATION_MAX);
@@ -58,6 +59,11 @@ export class BounceMoveState extends BaseCharacterState {
 
   public onUpdate(): void {
     this.#updateFacingFromVelocity(false);
+    this.#updateDepth();
+  }
+
+  #updateDepth(): void {
+    this._gameObject.depth = this._gameObject.y + 32;
   }
 
   #updateFacingFromVelocity(forceAnimation: boolean): void {
