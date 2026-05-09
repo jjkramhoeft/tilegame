@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { ASSET_KEYS } from '../common/assets';
 import { getText } from '../common/texts';
@@ -9,9 +10,38 @@ const COLORS = {
     uiTextBorder: '#000000',
 };
 
+const CREDIT_SCROLL_TOP = 220;
+const CREDIT_SCROLL_BOTTOM = 700;
+const CREDIT_SCROLL_HEIGHT = CREDIT_SCROLL_BOTTOM - CREDIT_SCROLL_TOP;
+const CREDIT_TEXT_X = 60;
+const CREDIT_TEXT_SPACING = 34;
+const CREDIT_KEYBOARD_SCROLL_SPEED = 420;
+const CREDIT_MOUSE_WHEEL_SCROLL_SPEED = 0.7;
+
+type CreditTextConfig = {
+    textKey: Parameters<typeof getText>[0];
+    width: number;
+};
+
+const CREDIT_TEXTS: CreditTextConfig[] = [
+    { textKey: 'credits.madeFor', width: 800 },
+    { textKey: 'credits.thanks', width: 800 },
+    { textKey: 'credits.codeHelp', width: 600 },
+    { textKey: 'credits.tutorials', width: 600 },
+    { textKey: 'credits.graphicsMusic', width: 800 },
+    { textKey: 'credits.graphicsOther', width: 800 },
+    { textKey: 'credits.graphicsFont', width: 800 },
+    { textKey: 'credits.tokenBudget', width: 800 },
+    { textKey: 'credits.humanOperator', width: 800 },
+];
+
 export class Credits extends Scene
 {
     creditsMusic?: Phaser.Sound.BaseSound;
+    private creditsScrollContainer?: Phaser.GameObjects.Container;
+    private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
+    private scrollOffset = 0;
+    private maxScrollOffset = 0;
 
     constructor ()
     {
@@ -42,46 +72,8 @@ export class Credits extends Scene
         }).setOrigin(0.5).setDepth(100);
 
         // -------------------------------------------------------------------------------------------
-        
-        this.add.text(60, 230, getText('credits.madeFor'), {
-            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
-            stroke: COLORS.titleStroke, strokeThickness: 6,
-            align: 'left',
-            wordWrap: { width: 800 },
-            lineSpacing: 4,
-        });
-        
-        this.add.text(60, 340, getText('credits.thanks'), {
-            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
-            stroke: COLORS.titleStroke, strokeThickness: 6,
-            align: 'left',
-            wordWrap: { width: 800 },
-            lineSpacing: 4,
-        });
-        
-        this.add.text(60, 460, getText('credits.codeHelp'), {
-            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
-            stroke: COLORS.titleStroke, strokeThickness: 6,
-            align: 'left',
-            wordWrap: { width: 600 },
-            lineSpacing: 4,
-        });
-        
-        this.add.text(60, 540, getText('credits.tutorials'), {
-            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
-            stroke: COLORS.titleStroke, strokeThickness: 6,
-            align: 'left',
-            wordWrap: { width: 600 },
-            lineSpacing: 4,
-        });
 
-        this.add.text(60, 620, getText('credits.graphicsMusic'), {
-            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
-            stroke: COLORS.titleStroke, strokeThickness: 6,
-            align: 'left',
-            wordWrap: { width: 800 },
-            lineSpacing: 4,
-        });
+        this.createScrollableCreditsText();
 
         // -------------------------------------------------------------------------------------------
         
@@ -101,5 +93,66 @@ export class Credits extends Scene
             this.creditsMusic?.destroy();
             this.creditsMusic = undefined;
         });
+    }
+
+    update (_time: number, delta: number)
+    {
+        if (!this.cursorKeys) {
+            return;
+        }
+
+        const scrollAmount = CREDIT_KEYBOARD_SCROLL_SPEED * (delta / 1000);
+
+        if (this.cursorKeys.up.isDown) {
+            this.scrollCredits(-scrollAmount);
+        }
+
+        if (this.cursorKeys.down.isDown) {
+            this.scrollCredits(scrollAmount);
+        }
+    }
+
+    private createScrollableCreditsText ()
+    {
+        this.creditsScrollContainer = this.add.container(0, CREDIT_SCROLL_TOP).setDepth(50);
+        this.scrollOffset = 0;
+        this.maxScrollOffset = 0;
+
+        let currentY = 0;
+        CREDIT_TEXTS.forEach((creditText) => {
+            const text = this.add.text(CREDIT_TEXT_X, currentY, getText(creditText.textKey), {
+                fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
+                stroke: COLORS.titleStroke, strokeThickness: 6,
+                align: 'left',
+                wordWrap: { width: creditText.width },
+                lineSpacing: 4,
+            });
+
+            this.creditsScrollContainer?.add(text);
+            currentY += text.height + CREDIT_TEXT_SPACING;
+        });
+
+        const contentHeight = Math.max(0, currentY - CREDIT_TEXT_SPACING);
+        this.maxScrollOffset = Math.max(0, contentHeight - CREDIT_SCROLL_HEIGHT);
+
+        Phaser.Actions.AddMaskShape(this.creditsScrollContainer, {
+            shape: 'rectangle',
+            region: new Phaser.Geom.Rectangle(0, CREDIT_SCROLL_TOP, this.scale.width, CREDIT_SCROLL_HEIGHT),
+        });
+
+        this.cursorKeys = this.input.keyboard?.createCursorKeys();
+        this.input.on('wheel', (_pointer: Phaser.Input.Pointer, _gameObjects: Phaser.GameObjects.GameObject[], _deltaX: number, deltaY: number) => {
+            this.scrollCredits(deltaY * CREDIT_MOUSE_WHEEL_SCROLL_SPEED);
+        });
+    }
+
+    private scrollCredits (amount: number)
+    {
+        if (!this.creditsScrollContainer) {
+            return;
+        }
+
+        this.scrollOffset = Phaser.Math.Clamp(this.scrollOffset + amount, 0, this.maxScrollOffset);
+        this.creditsScrollContainer.y = CREDIT_SCROLL_TOP - this.scrollOffset;
     }
 }

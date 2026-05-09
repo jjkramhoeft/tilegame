@@ -101,6 +101,22 @@ const TEXTS = {
         en: 'Graphics & Music: ComfyUI, AceStep, Flux_2-Turbo-LoRA',
         da: 'Grafik og musik: ComfyUI, AceStep, Flux_2-Turbo-LoRA',
     },
+    'credits.graphicsOther': {
+        en: 'Graphics Other: LPC, OpenGameArt, Itch.io',
+        da: 'Grafik Andet: LPC, OpenGameArt, Itch.io',
+    },
+    'credits.graphicsFont': {
+        en: 'Graphics Font: PixelSerif',
+        da: 'Grafik Font: PixelSerif',
+    },
+    'credits.tokenBudget': {
+        en: 'Copilot token budget: BiQ A/S',
+        da: 'Copilot token budget: BiQ A/S',
+    },
+    'credits.humanOperator': {
+        en: 'Human Operator: Jens Jakob Kramhæft',
+        da: 'Menneskelig operatør: Jens Jakob Kramhæft',
+    },
     'credits.back': {
         en: 'Back',
         da: 'Tilbage',
