@@ -294,7 +294,7 @@ export class GameScene extends Phaser.Scene {
         }
 
         this.#gameOverShown = true;
-        this.time.delayedCall(5000, () => {
+        this.time.delayedCall(1000, () => {
             this.#showProgressionHelp({ textKey: 'ui.progression.gameOver', closeAction: 'mainMenu' });
         });
     }

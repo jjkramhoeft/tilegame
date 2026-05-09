@@ -128,8 +128,8 @@ const TEXTS = {
         da: 'I begyndelsen var jorden øde og tom...',
     },
     'ui.progression.controlsHelp': {
-        en: 'Movement: w, a, s and d -keys, hit/cast: z, interact: x',
-        da: 'Bevægelse: w, a, s og d-taster, slå/kast: z, interager: x',
+        en: 'Movement: w, a, s, d or arrow-keys, hit/cast: z, interact: x',
+        da: 'Bevægelse: w, a, s, d eller piletaster, slå/magi: z, interager: x',
     },
     'ui.progression.followUp': {
         en: 'Take care of the earth and animales...',
