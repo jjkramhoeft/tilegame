@@ -51,6 +51,7 @@ export const BOSS_HURT_PUSH_BACK_DELAY = 50;
 
 export const TILES_BEFORE_DECORATION_UNLOCK = 10;
 export const TILES_BEFORE_BLOCKING_UNLOCK = 10;
+export const TILES_BEFORE_ANIMAL_UNLOCK = 5;
 export const LEVEL_UP_TILE_THRESHOLDS: Record<number, number> = {
 	1: 25,
 	2: 75,

@@ -1,8 +1,10 @@
 import * as Phaser from 'phaser';
 import { Player } from '../../game-objects/player/player';
+import { Lamb } from '../../game-objects/enemies/lamb';
 import { CastingFeedback, Earth, EarthCastingConfig } from '../../ground/earth';
 import { Direction, Position } from '../../common/types';
-import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK } from '../../common/config';
+import { BIOME } from '../../common/common';
+import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK, TILES_BEFORE_ANIMAL_UNLOCK } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
 
 type MagicFlagKey = {
@@ -24,6 +26,7 @@ type BiomeProgressionRule = {
     decorationUnlockedKey: MagicFlagKey;
     decorationsPlacedKey: FeedbackCountKey;
     blockingUnlockedKey: MagicFlagKey;
+    blockingPlacedKey: FeedbackCountKey;
     chestPlacableKey: MagicFlagKey;
     chestPlacedKey: MagicFlagKey;
     unlockOnBlockingKeys: MagicFlagKey[];
@@ -45,6 +48,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         decorationUnlockedKey: 'isRockDecorationUnlocked',
         decorationsPlacedKey: 'rockDecorationsPlaced',
         blockingUnlockedKey: 'isRockBlockingUnlocked',
+        blockingPlacedKey: 'rockBlockingPlaced',
         chestPlacableKey: 'isChest1Placable',
         chestPlacedKey: 'isChest1Placed',
         animalUnlockKey: 'isRockAnimalsUnlocked',
@@ -56,6 +60,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         decorationUnlockedKey: 'isDesertDecorationUnlocked',
         decorationsPlacedKey: 'desertDecorationsPlaced',
         blockingUnlockedKey: 'isDesertBlockingUnlocked',
+        blockingPlacedKey: 'desertBlockingPlaced',
         chestPlacableKey: 'isChest2Placable',
         chestPlacedKey: 'isChest2Placed',
         animalUnlockKey: 'isDesertAnimalsUnlocked',
@@ -67,6 +72,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         decorationUnlockedKey: 'isGrassDecorationUnlocked',
         decorationsPlacedKey: 'grassDecorationsPlaced',
         blockingUnlockedKey: 'isGrassBlockingUnlocked',
+        blockingPlacedKey: 'grassBlockingPlaced',
         chestPlacableKey: 'isChest3Placable',
         chestPlacedKey: 'isChest3Placed',
         animalUnlockKey: 'isGrassAnimalsUnlocked',
@@ -78,6 +84,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         decorationUnlockedKey: 'isForestDecorationUnlocked',
         decorationsPlacedKey: 'forestDecorationsPlaced',
         blockingUnlockedKey: 'isForestBlockingUnlocked',
+        blockingPlacedKey: 'forestBlockingPlaced',
         chestPlacableKey: 'isChest4Placable',
         chestPlacedKey: 'isChest4Placed',
         animalUnlockKey: 'isForestAnimalsUnlocked',
@@ -89,6 +96,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         decorationUnlockedKey: 'isSwampDecorationUnlocked',
         decorationsPlacedKey: 'swampDecorationsPlaced',
         blockingUnlockedKey: 'isSwampBlockingUnlocked',
+        blockingPlacedKey: 'swampBlockingPlaced',
         chestPlacableKey: 'isChest5Placable',
         chestPlacedKey: 'isChest5Placed',
         animalUnlockKey: 'isSwampAnimalsUnlocked',
@@ -100,6 +108,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         decorationUnlockedKey: 'isCrystalDecorationUnlocked',
         decorationsPlacedKey: 'crystalDecorationsPlaced',
         blockingUnlockedKey: 'isCrystalBlockingUnlocked',
+        blockingPlacedKey: 'crystalBlockingPlaced',
         chestPlacableKey: 'isChest6Placable',
         chestPlacedKey: 'isChest6Placed',
         animalUnlockKey: 'isCrystalAnimalsUnlocked',
@@ -156,8 +165,10 @@ export class DebugSpellcasting {
     #levelUpSound: Phaser.Sound.BaseSound;
     #previousStateName: string | undefined;
     #castingFeedbackTotals: CastingFeedback = this.createEmptyCastingFeedback();
+    #critterGroup: Phaser.GameObjects.Group;
 
-    constructor(scene: Phaser.Scene) {
+    constructor(scene: Phaser.Scene, critterGroup: Phaser.GameObjects.Group) {
+        this.#critterGroup = critterGroup;
         this.#spellSound = scene.sound.add('spellnotes1', { volume: 0.9 });
         this.#levelUpSound = scene.sound.add('levelup', { volume: 0.9 });
         //If debug mode is on then ease progression to save test time.
@@ -200,6 +211,45 @@ export class DebugSpellcasting {
         console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
 
         this.applyCastingFeedback(feedback);
+        this.tryPlaceLamb(scene, player, earth);
+    }
+
+    private tryPlaceLamb(scene: Phaser.Scene, player: Player, earth: Earth): void {
+        const animalBiome = this.pickAnimalBiome(this.#playerCurrentMagic);
+        if (animalBiome === null) {
+            return;
+        }
+
+        const animalTilePosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, false);
+        animalTilePosition.y--; // Place the animal on the tile above the player for testing purposes.
+
+        const animalTile = earth.getTile(animalTilePosition.x, animalTilePosition.y);
+        if (animalTile === undefined || animalTile.biome === BIOME.VOID) {
+            return;
+        }
+
+        console.log(`New animals from ${animalBiome} biome are now placable!`);
+        const lamb = new Lamb({
+            scene,
+            position: this.getTileCenterPosition(animalTilePosition),
+        });
+        lamb.enableObject();
+        this.#critterGroup.add(lamb);
+    }
+
+    private pickAnimalBiome(magicState: EarthCastingConfig): BIOME | null {
+        if (magicState.isRockAnimalsUnlocked) {
+            return BIOME.ROCK;
+        }
+
+        return null;
+    }
+
+    private getTileCenterPosition(tilePosition: Position): Position {
+        return {
+            x: tilePosition.x * 64 + 32,
+            y: tilePosition.y * 64 + 32,
+        };
     }
 
     private getCastTravelVector(directions: Direction[]): CastVector {
@@ -254,10 +304,6 @@ export class DebugSpellcasting {
         this.addCastingFeedbackToTotals(feedback);
         this.applyBiomeProgression(this.#castingFeedbackTotals);
         this.applyPowerLevelProgression(this.#castingFeedbackTotals);
-        //ToDo: Place animal if ?
-        if(this.#castingFeedbackTotals.rockBlockingPlaced>5){
-                console.log('Spawn an animal!');
-        }
     }
 
     private createEmptyCastingFeedback(): CastingFeedback {
@@ -336,6 +382,11 @@ export class DebugSpellcasting {
             // Tile placement unlocks decorations for the current biome.
             if (feedback[progression.tilesPlacedKey] > TILES_BEFORE_DECORATION_UNLOCK) {
                 this.setMagicFlag(progression.decorationUnlockedKey, true);
+            }
+
+            // Blocking placement unlocks animals and enemies for the current biome.
+            if (feedback[progression.blockingPlacedKey] >= TILES_BEFORE_ANIMAL_UNLOCK) {
+                this.setMagicFlag(progression.animalUnlockKey, true);
             }
 
             // Decoration placement is the gate for blocking tiles, chests, and the next biome unlocks.

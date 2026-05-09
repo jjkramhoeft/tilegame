@@ -77,7 +77,7 @@ export class GameScene extends Phaser.Scene {
 
         this.scene.launch('UiScene');
 
-        this.#debugSpellcasting = new DebugSpellcasting(this);
+        this.#debugSpellcasting = new DebugSpellcasting(this, this.#critterGroup);
     }
 
     update() {

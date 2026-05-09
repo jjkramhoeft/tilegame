@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { CHARACTER_ANIMATIONS } from './assets';
-import { CHEST_STATE, DIRECTION, DUNGEON_ITEM, INTERACTIVE_OBJECT_TYPE, LEVEL_NAME, GEAR, WEAPON, SEX } from './common';
+import { CHEST_STATE, DIRECTION, DUNGEON_ITEM, INTERACTIVE_OBJECT_TYPE, LEVEL_NAME } from './common';
 
 export type CharacterAnimation = keyof typeof CHARACTER_ANIMATIONS;
 
