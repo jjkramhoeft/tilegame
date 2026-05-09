@@ -98,7 +98,7 @@ consist of the fowwing ellements
 - Progression Level Indicator (Animals, shows how many live animals there current is on the earth)
 - Chest Dialog
 - Save/Exit Dialog
-- Story Dialog (will be use for story driven text. not done yet)
+- Story Dialog (used for story driven text)
 
 ### Chest Dialog
 

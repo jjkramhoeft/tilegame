@@ -6,11 +6,18 @@ This is a Phaser TypeScript top-down RPG where the player dynamically builds the
 
 ### Tile Map
 
-The map has six layers (bottom to top): Void, Base (biome), Border, Decoration, Blocking, Floating. Depth constants used in code:
-- `VOID_SOLID_DEPTH` = -50, `PLAYER_FALLING_STATE_DEPTH` = -40, `VOID_ANIM_DEPTH` = -30
-- `BASE_DEPTH` = -20, `BORDER_DEPTH` = -18, `LAVA_DEPTH` = -16, `WATER_DEPTH` = -14, `CRYSTAL_GLIMTS_DEPTH` = -12
-- `DECORATION_DEPTH` = -10, `BLOCKING_TILE_DEPTH` = 0, `FLOATING_DEPTH` = 9999999
-- Blocking sprites are placed at `worldY +64`and the players dept at changed with worldY to create the illusion of depth.
+The map has six layers (bottom to top): Void, Base (biome), Border, Decoration, Blocking, Floating.
+
+Depth constants used in code:
+
+| Category | Constants |
+| --- | --- |
+| Void and falling | `VOID_SOLID_DEPTH` = -50, `PLAYER_FALLING_STATE_DEPTH` = -40, `VOID_ANIM_DEPTH` = -30 |
+| Terrain and animated biome details | `BASE_DEPTH` = -20, `BORDER_DEPTH` = -18, `LAVA_DEPTH` = -16, `WATER_DEPTH` = -14, `CRYSTAL_GLIMTS_DEPTH` = -12 |
+| Decorations and blocking | `DECORATION_DEPTH` = -10, `BLOCKING_TILE_DEPTH` = 0 |
+| Floating overlays | `FLOATING_DEPTH` = 9999999 |
+
+Blocking sprites are placed at `worldY +64`, and the player's depth changes dynamically based on `worldY` to create the illusion of depth.
 
 ### Game Progression
 
@@ -33,4 +40,4 @@ Void → Rock → Desert → Water → Grass → Forest → Mountain → Swamp �
 ### UI
 
 - Hearts (health), Magic Level indicator, Animal progression indicator.
-- Chest dialog, Save/Exit dialog, Story dialog (not yet implemented).
+- Chest dialog, Save/Exit dialog, Story dialog.
