@@ -1,9 +1,6 @@
 Implementations ToDo
 
-- Add IsCreateChestXPlacable x 6
 - Add IsEnemyXUnlocked x ?
-- Add logic to placeChest
-- Add logic to place blockable tiles in blockable layer if applicable
 - Add logic to add Enimies/Animals
 - Add Player takes hit/dames when on Lava
 - Add UI-meny for generel info and game-progression text
