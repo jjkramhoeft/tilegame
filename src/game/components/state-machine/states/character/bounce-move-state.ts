@@ -2,6 +2,9 @@ import * as Phaser from 'phaser';
 import { BaseCharacterState } from './base-character-state';
 import { CHARACTER_STATES } from './character-states';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
+import { DIRECTION } from '../../../../common/common';
+import { Direction } from '../../../../common/types';
+import { isArcadePhysicsBody } from '../../../../common/utils';
 
 // How long (ms) the character keeps bouncing before randomly switching to BOUNCE_IDLE_STATE.
 const BOUNCE_MOVE_DURATION_MIN = 1500;
@@ -15,9 +18,6 @@ export class BounceMoveState extends BaseCharacterState {
   }
 
   public onEnter(): void {
-    // play idle animation based on game object direction
-    this._gameObject.animationComponent.playAnimation(`IDLE_${this._gameObject.direction}`);
-
     // pick a random direction to start moving towards (4 diagonals + 4 cardinals = 8)
     const speed = this._gameObject.speed;
     const randomDirection = Phaser.Math.Between(0, 7);
@@ -39,6 +39,7 @@ export class BounceMoveState extends BaseCharacterState {
       this._gameObject.setVelocity(speed * -1, 0);
     }
     this._gameObject.setBounce(1);
+    this.#updateFacingFromVelocity(true);
 
     // after a random period of time, switch to bounce-idle so the character pauses to rest
     const delay = Phaser.Math.Between(BOUNCE_MOVE_DURATION_MIN, BOUNCE_MOVE_DURATION_MAX);
@@ -53,5 +54,51 @@ export class BounceMoveState extends BaseCharacterState {
       this.#idleTimer.remove(false);
       this.#idleTimer = undefined;
     }
+  }
+
+  public onUpdate(): void {
+    this.#updateFacingFromVelocity(false);
+  }
+
+  #updateFacingFromVelocity(forceAnimation: boolean): void {
+    if (!isArcadePhysicsBody(this._gameObject.body)) {
+      return;
+    }
+
+    const direction = this.#getDirectionFromVelocity(
+      this._gameObject.body.velocity.x,
+      this._gameObject.body.velocity.y,
+    );
+    if (direction === undefined) {
+      return;
+    }
+
+    const directionChanged = this._gameObject.direction !== direction;
+    if (!forceAnimation && !directionChanged) {
+      return;
+    }
+
+    this._gameObject.direction = direction;
+    this._gameObject.animationComponent.playAnimation(`IDLE_${this._gameObject.direction}`);
+  }
+
+  #getDirectionFromVelocity(velocityX: number, velocityY: number): Direction | undefined {
+    if (velocityX < 0) {
+      return DIRECTION.LEFT;
+    }
+
+    if (velocityX > 0) {
+      return DIRECTION.RIGHT;
+    }
+
+    if (velocityY < 0) {
+      return DIRECTION.UP;
+    }
+
+    if (velocityY > 0) {
+      return DIRECTION.DOWN;
+    }
+
+    return undefined;
   }
 }
