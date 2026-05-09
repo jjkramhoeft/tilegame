@@ -27,6 +27,7 @@ type BiomeProgressionRule = {
     chestPlacableKey: MagicFlagKey;
     chestPlacedKey: MagicFlagKey;
     unlockOnBlockingKeys: MagicFlagKey[];
+    animalUnlockKey: MagicFlagKey;
 };
 
 const CHEST_PROGRESS_FLAGS: Record<number, { placedKey: MagicFlagKey; placableKey: MagicFlagKey }> = {
@@ -46,6 +47,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         blockingUnlockedKey: 'isRockBlockingUnlocked',
         chestPlacableKey: 'isChest1Placable',
         chestPlacedKey: 'isChest1Placed',
+        animalUnlockKey: 'isRockAnimalsUnlocked',
         unlockOnBlockingKeys: ['isDesertUnlocked'],
     },
     {
@@ -56,6 +58,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         blockingUnlockedKey: 'isDesertBlockingUnlocked',
         chestPlacableKey: 'isChest2Placable',
         chestPlacedKey: 'isChest2Placed',
+        animalUnlockKey: 'isDesertAnimalsUnlocked',
         unlockOnBlockingKeys: ['isGrassUnlocked', 'isWaterUnlocked'],
     },
     {
@@ -66,6 +69,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         blockingUnlockedKey: 'isGrassBlockingUnlocked',
         chestPlacableKey: 'isChest3Placable',
         chestPlacedKey: 'isChest3Placed',
+        animalUnlockKey: 'isGrassAnimalsUnlocked',
         unlockOnBlockingKeys: ['isForestUnlocked'],
     },
     {
@@ -76,6 +80,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         blockingUnlockedKey: 'isForestBlockingUnlocked',
         chestPlacableKey: 'isChest4Placable',
         chestPlacedKey: 'isChest4Placed',
+        animalUnlockKey: 'isForestAnimalsUnlocked',
         unlockOnBlockingKeys: ['isSwampUnlocked', 'isMountainUnlocked'],
     },
     {
@@ -86,6 +91,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         blockingUnlockedKey: 'isSwampBlockingUnlocked',
         chestPlacableKey: 'isChest5Placable',
         chestPlacedKey: 'isChest5Placed',
+        animalUnlockKey: 'isSwampAnimalsUnlocked',
         unlockOnBlockingKeys: ['isCrystalUnlocked'],
     },
     {
@@ -96,6 +102,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
         blockingUnlockedKey: 'isCrystalBlockingUnlocked',
         chestPlacableKey: 'isChest6Placable',
         chestPlacedKey: 'isChest6Placed',
+        animalUnlockKey: 'isCrystalAnimalsUnlocked',
         unlockOnBlockingKeys: ['isLavaUnlocked'],
     },
 ];
@@ -105,34 +112,41 @@ export class DebugSpellcasting {
     #playerCurrentMagic: EarthCastingConfig = {
         isRockDecorationUnlocked: false,
         isRockBlockingUnlocked: false,
+        isRockAnimalsUnlocked: false,
         isChest1Placable: false,
         isChest1Placed: false,
         isDesertUnlocked: false,
         isDesertDecorationUnlocked: false,
         isDesertBlockingUnlocked: false,
+        isDesertAnimalsUnlocked: false,
         isChest2Placable: false,
         isChest2Placed: false,
         isGrassUnlocked: false,
         isGrassDecorationUnlocked: false,
         isGrassBlockingUnlocked: false,
+        isGrassAnimalsUnlocked: false,
         isChest3Placable: false,
         isChest3Placed: false,
         isForestUnlocked: false,
         isForestDecorationUnlocked: false,
         isForestBlockingUnlocked: false,
+        isForestAnimalsUnlocked: false,
         isChest4Placable: false,
         isChest4Placed: false,
         isSwampUnlocked: false,
         isSwampDecorationUnlocked: false,
         isSwampBlockingUnlocked: false,
+        isSwampAnimalsUnlocked: false,
         isChest5Placable: false,
         isChest5Placed: false,
         isCrystalUnlocked: false,
         isCrystalDecorationUnlocked: false,
         isCrystalBlockingUnlocked: false,
+        isCrystalAnimalsUnlocked: false,
         isChest6Placable: false,
         isChest6Placed: false,
         isWaterUnlocked: false,
+        isWaterAnimalsUnlocked: false,
         isLavaUnlocked: false,
         isMountainUnlocked: false,
         powerLevel: 1,

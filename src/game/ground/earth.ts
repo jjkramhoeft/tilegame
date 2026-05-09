@@ -13,40 +13,47 @@ export type EarthCastingConfig = {
     // Void and rock are unlocked from the start.
     isRockDecorationUnlocked: boolean;
     isRockBlockingUnlocked: boolean;
+    isRockAnimalsUnlocked: boolean;
     isChest1Placable: boolean;
     isChest1Placed: boolean;
     // Desert
     isDesertUnlocked: boolean;
     isDesertDecorationUnlocked: boolean;
     isDesertBlockingUnlocked: boolean;
+    isDesertAnimalsUnlocked: boolean;
     isChest2Placable: boolean;
     isChest2Placed: boolean;
     // Grass
     isGrassUnlocked: boolean;
     isGrassDecorationUnlocked: boolean;
     isGrassBlockingUnlocked: boolean;
+    isGrassAnimalsUnlocked: boolean;
     isChest3Placable: boolean;
     isChest3Placed: boolean;
     //Forest
     isForestUnlocked: boolean;
     isForestDecorationUnlocked: boolean;
     isForestBlockingUnlocked: boolean;
+    isForestAnimalsUnlocked: boolean;
     isChest4Placable: boolean;
     isChest4Placed: boolean;
     // Swamp
     isSwampUnlocked: boolean;
     isSwampDecorationUnlocked: boolean;
     isSwampBlockingUnlocked: boolean;
+    isSwampAnimalsUnlocked: boolean;
     isChest5Placable: boolean;
     isChest5Placed: boolean;
     // Crystal
     isCrystalUnlocked: boolean;
     isCrystalDecorationUnlocked: boolean;
     isCrystalBlockingUnlocked: boolean;
+    isCrystalAnimalsUnlocked: boolean;
     isChest6Placable: boolean;
     isChest6Placed: boolean;
     // Water
     isWaterUnlocked: boolean;
+    isWaterAnimalsUnlocked: boolean;
     // Lava
     isLavaUnlocked: boolean;
     // Mountain
