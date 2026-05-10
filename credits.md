@@ -4,7 +4,7 @@
 
 All LPC character assets were created by the following artists and sourced from OpenGameArt.
 
-**Authors:** bluecarrot16, JaidynReiman, Benjamin K. Smith (BenCreating), Evert, Eliza Wyatt (ElizaWy), TheraHedwig, MuffinElZangano, Durrani, Johannes Sjölund (wulax), Stephen Challener (Redshrike), Thane Brimhall (pennomi), laetissima, Matthew Krohn (makrohn), Manuel Riecke (MrBeast), Joe White, Pierre Vigier (pvigier), Michael Whitlock (bigbeargames), Mandi Paugh, Dr. Jamgo
+**Authors:** bluecarrot16, JaidynReiman, Benjamin K. Smith (BenCreating), Evert, Eliza Wyatt (ElizaWy), TheraHedwig, MuffinElZangano, Durrani, Johannes Sjölund (wulax), Stephen Challener (Redshrike), Thane Brimhall (pennomi), laetissima, Matthew Krohn (makrohn), Manuel Riecke (MrBeast), Joe White, Pierre Vigier (pvigier), Michael Whitlock (bigbeargames), Mandi Paugh, Dr. Jamgo, JJKramhoft
 
 **Primary Resource:** https://opengameart.org/content/lpc-character-bases
 
