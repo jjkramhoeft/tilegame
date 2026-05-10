@@ -211,7 +211,7 @@ const TEXTS = {
     },
     'gear.bare.option': {
         en: 'the piece of cloth',
-        da: 'stykket stof',
+        da: 'stof stykket',
     },
     'gear.basic.option': {
         en: 'the simple clothing',

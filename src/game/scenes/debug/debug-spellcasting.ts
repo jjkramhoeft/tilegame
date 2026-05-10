@@ -6,7 +6,7 @@ import { Spider } from '../../game-objects/enemies/spider';
 import { CastingFeedback, Earth, EarthCastingConfig } from '../../ground/earth';
 import { Direction, Position } from '../../common/types';
 import { BIOME } from '../../common/common';
-import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK, TILES_BEFORE_ANIMAL_UNLOCK } from '../../common/config';
+import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK, TILES_BEFORE_ANIMAL_UNLOCK, ENABLE_LOGGING } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilesPlacedUpdated } from '../../common/event-bus';
 
@@ -211,9 +211,9 @@ export class DebugSpellcasting {
         const casterPosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
         const targetPosition = this.getTargetPosition(casterPosition, directions);
 
-        console.log('Casting spell magic:', JSON.stringify(this.#playerCurrentMagic, null, 2));
+        if(ENABLE_LOGGING) console.log('Casting spell magic:', JSON.stringify(this.#playerCurrentMagic, null, 2));
         const feedback = earth.AddTiles(this.#playerCurrentMagic, casterPosition, targetPosition, directions);
-        console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
+        if(ENABLE_LOGGING) console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
 
         this.applyCastingFeedback(feedback);
         this.tryPlaceMob(scene, player, earth);//ToDo: Replace with actual animal placement logic once more animals are added and the logic is decoupled from debug spellcasting.
@@ -240,7 +240,7 @@ export class DebugSpellcasting {
         const mobPosition = this.getTileCenterPosition(animalTilePosition);
         switch (Phaser.Math.Between(0, 2)) {
             case 0: {
-                console.log(`New lamb from ${animalBiome} biome is now placable!`);
+                if(ENABLE_LOGGING) console.log(`New lamb from ${animalBiome} biome is now placable!`);
                 const lamb = new Lamb({
                     scene,
                     position: mobPosition,
@@ -251,7 +251,7 @@ export class DebugSpellcasting {
                 break;
             }
             case 1: {
-                console.log(`New chicken from ${animalBiome} biome is now placable!`);
+                if(ENABLE_LOGGING) console.log(`New chicken from ${animalBiome} biome is now placable!`);
                 const chicken = new Chicken({
                     scene,
                     position: mobPosition,
@@ -262,7 +262,7 @@ export class DebugSpellcasting {
                 break;
             }
             case 2: {
-                console.log(`New spider from ${animalBiome} biome is now placable!`);
+                if(ENABLE_LOGGING) console.log(`New spider from ${animalBiome} biome is now placable!`);
                 const spider = new Spider({
                     scene,
                     position: mobPosition,
