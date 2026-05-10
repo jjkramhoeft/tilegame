@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { ASSET_KEYS } from '../common/assets';
 import { getText } from '../common/texts';
+import { SCENE_KEYS } from './scene-keys';
 
 const COLORS = {
     title: '#5eb1da',
@@ -45,7 +46,7 @@ export class Credits extends Scene
 
     constructor ()
     {
-        super('Credits');
+        super('credits');
     }
 
     create ()
@@ -85,7 +86,7 @@ export class Credits extends Scene
         exit_text.setInteractive({ useHandCursor: true });
         exit_text.on('pointerdown', () => {
             this.creditsMusic?.stop();
-            this.scene.start('Intro');
+            this.scene.start(SCENE_KEYS.INTRO);
         });
 
         this.events.once('shutdown', () => {

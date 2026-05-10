@@ -1,7 +1,5 @@
 import { Earth } from '../../ground/earth';
 import { Tile } from '../../ground/tile';
-import { WEAPON, GEAR, CHEST_STATE } from '../../common/common';
-import { ChestJJK } from '../../game-objects/objects/chestJJK';
 import { Position } from '../../common/types';
 
 export function setupDebugBlocking(

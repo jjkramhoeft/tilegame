@@ -19,18 +19,6 @@ export const INTERACTIVE_OBJECT_TYPE = {
   OPEN: 'OPEN',
 } as const;
 
-export const LEVEL_NAME = {
-  WORLD: 'WORLD',
-  DUNGEON_1: 'DUNGEON_1',
-} as const;
-
-export const DUNGEON_ITEM = {
-  SMALL_KEY: 'SMALL_KEY',
-  BOSS_KEY: 'BOSS_KEY',
-  MAP: 'MAP',
-  COMPASS: 'COMPASS',
-} as const;
-
 export const DEFAULT_UI_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
   align: 'center',
   fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX,

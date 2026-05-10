@@ -1,5 +1,5 @@
 import { PreloadScene } from './scenes/preload-scene';
-import { Intro } from './scenes/Intro';
+import { Intro } from './scenes/intro';
 import { GameScene } from './scenes/game-scene';
 import { Credits } from './scenes/credits';
 import { Settings } from './scenes/settings';

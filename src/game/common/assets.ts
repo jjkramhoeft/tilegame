@@ -6,22 +6,13 @@ export const ASSET_KEYS = {
   PLAYER: 'PLAYER',
   SPIDER: 'SPIDER',
   WISP: 'WISP',
-  DROW: 'DROW',
   LAMB: 'Lamb',
   CHICKEN: 'Chicken',
   DAGGER: 'DAGGER',
-  DUNGEON_1_BACKGROUND: 'DUNGEON_1_BACKGROUND',
-  DUNGEON_1_FOREGROUND: 'DUNGEON_1_FOREGROUND',
-  DUNGEON_1_LEVEL: 'DUNGEON_1_LEVEL',
-  COLLISION: 'COLLISION',
-  DUNGEON_OBJECTS: 'DUNGEON_OBJECTS',
   ENEMY_DEATH: 'ENEMY_DEATH',
   UI_DIALOG: 'UI_DIALOG',
   UI_ICONS: 'UI_ICONS',
   UI_CURSOR: 'UI_CURSOR',
-  WORLD_BACKGROUND: 'WORLD_BACKGROUND',
-  WORLD_FOREGROUND: 'WORLD_FOREGROUND',
-  WORLD_LEVEL: 'WORLD_LEVEL',
   HUD_NUMBERS: 'HUD_NUMBERS',
   FONT_PRESS_START_2P: 'FONT_PRESS_START_2P',
   FONT_PIXEL_SERIF_16PX: 'FONT_PIXEL_SERIF_16PX',
@@ -190,20 +181,6 @@ export const SPIDER_ANIMATION_KEYS = {
   WALK: 'spider_walk',
   HIT: 'spider_hit',
   DEATH: ASSET_KEYS.ENEMY_DEATH,
-} as const;
-
-export const DROW_ANIMATION_KEYS = {
-  WALK_DOWN: 'drow_walk_down',
-  WALK_UP: 'drow_walk_up',
-  WALK_LEFT: 'drow_walk_left',
-  WALK_RIGHT: 'drow_walk_right',
-  IDLE_DOWN: 'drow_idle_down',
-  IDLE_UP: 'drow_idle_up',
-  IDLE_SIDE: 'drow_idle_right',
-  HIT: 'drow_hit',
-  ATTACK_DOWN: 'drow_atk_down',
-  ATTACK_UP: 'drow_atk_up',
-  ATTACK_SIDE: 'drow_atk_right',
 } as const;
 
 export const WISP_ANIMATION_KEYS = {

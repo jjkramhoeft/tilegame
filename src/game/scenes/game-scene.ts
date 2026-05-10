@@ -48,7 +48,7 @@ export class GameScene extends Phaser.Scene {
     #gameOverShown = false;
 
     constructor() {
-        super('GameScene');
+        super('game-scene');
     }
 
     get player(): Player {

@@ -16,7 +16,7 @@ export class Intro extends Scene {
     introMusic?: Phaser.Sound.BaseSound;
 
     constructor() {
-        super('Intro');
+        super('intro');
     }
 
     create() {
@@ -51,7 +51,7 @@ export class Intro extends Scene {
         this.exit_text.setInteractive({ useHandCursor: true });
         this.exit_text.on('pointerdown', () => {
             this.introMusic?.stop();
-            this.scene.stop('Intro');
+            this.scene.stop(SCENE_KEYS.INTRO);
         });
 
         const credits_text = this.add.text(980, 700, getText('intro.credits'), {
@@ -62,7 +62,7 @@ export class Intro extends Scene {
         credits_text.setInteractive({ useHandCursor: true });
         credits_text.on('pointerdown', () => {
             this.introMusic?.stop();
-            this.scene.start('Credits');
+            this.scene.start(SCENE_KEYS.CREDITS);
         });
 
         const settings_text = this.add.text(980, 650, getText('intro.settings'), {
@@ -73,7 +73,7 @@ export class Intro extends Scene {
         settings_text.setInteractive({ useHandCursor: true });
         settings_text.on('pointerdown', () => {
             this.introMusic?.stop();
-            this.scene.start('Settings');
+            this.scene.start(SCENE_KEYS.SETTINGS);
         });
 
         this.exit_text = this.add.text(20, 700, getText('intro.newGame'), {

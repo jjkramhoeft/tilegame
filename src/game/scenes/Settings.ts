@@ -4,6 +4,7 @@ import { DataManager } from '../common/data-manager';
 import { setEnableLogging } from '../common/config';
 import { ASSET_KEYS } from '../common/assets';
 import { getText, type TextKey } from '../common/texts';
+import { SCENE_KEYS } from './scene-keys';
 
 const COLORS = {
     title: '#5eb1da',
@@ -41,7 +42,7 @@ export class Settings extends Scene
 
     constructor ()
     {
-        super('Settings');
+        super('settings');
     }
 
     create ()
@@ -141,7 +142,7 @@ export class Settings extends Scene
         backText.setOrigin(1);
         backText.setInteractive({ useHandCursor: true });
         backText.on('pointerdown', () => {
-            this.scene.start('Intro');
+            this.scene.start(SCENE_KEYS.INTRO);
         });
     }
 
