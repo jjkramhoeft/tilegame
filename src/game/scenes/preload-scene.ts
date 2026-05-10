@@ -190,7 +190,7 @@ export class PreloadScene extends Phaser.Scene {
             });
         });
 
-        anims.create({ key: 'spell-music-anim', frames: anims.generateFrameNumbers('spell-music-11', { start: 0, end: 10 }), frameRate: 9, repeat: 0 });
+        anims.create({ key: 'spell-music-anim', frames: anims.generateFrameNumbers('spell-music-11_grayscale', { start: 0, end: 10 }), frameRate: 9, repeat: 0 });
 
         //Critter animations (currently only Lamb and Chicken)
         //Lamb sprite sheet layout: row 0 = down, row 1 = up, row 2 = left, row 3 = right. Each row has 6 frames for walking, followed by rows with 4 frames for idle.

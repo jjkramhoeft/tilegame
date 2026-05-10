@@ -68,6 +68,20 @@ export const enum BIOME {
   MOUNTAIN = 9,
 }
 
+// Biome color mapping for spell effects and visual tinting
+export const BIOME_COLOR_MAP: Record<number, number> = {
+  [BIOME.VOID]: 0x1a1a1a,      // dark gray
+  [BIOME.ROCK]: 0x8b7355,      // brown
+  [BIOME.DESERT]: 0xf4a460,    // sandy
+  [BIOME.GRASS]: 0x6ba547,     // green
+  [BIOME.FOREST]: 0x2d5016,    // dark green
+  [BIOME.WATER]: 0x1e90ff,     // blue
+  [BIOME.SWAMP]: 0x556b2f,     // olive
+  [BIOME.CRYSTAL]: 0x00d9ff,   // cyan
+  [BIOME.LAVA]: 0xff4500,      // red-orange
+  [BIOME.MOUNTAIN]: 0x808080,  // gray
+};
+
 // Rendering dept for the tiles and objects. Higher value means rendered on top of lower value. Negative values are for tiles, positive values are for objects.
 export const FLOATING_DEPTH = 9999999;
 // BLOCKING_OBJECT_DEPTH MIN:1 MAX:9999998 (depending on y-axis value)

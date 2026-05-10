@@ -1,6 +1,7 @@
 # Implementations ToDo
   
 - Fix multiple of the same chest in the same cast at higer powerlevels
+- Fix spawning blocking on top of chests
 - Finalize aminal placment (pick a better placement tile and pick animal fitting the unlocked biome)
 
 ## Implementation ToDo that require new asserts

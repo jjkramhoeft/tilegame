@@ -5,7 +5,7 @@ import { Chicken } from '../../game-objects/enemies/chicken';
 import { Spider } from '../../game-objects/enemies/spider';
 import { CastingFeedback, Earth, EarthCastingConfig } from '../../ground/earth';
 import { Direction, Position } from '../../common/types';
-import { BIOME } from '../../common/common';
+import { BIOME, BIOME_COLOR_MAP } from '../../common/common';
 import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK, TILES_BEFORE_ANIMAL_UNLOCK, ENABLE_LOGGING } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilesPlacedUpdated } from '../../common/event-bus';
@@ -206,7 +206,7 @@ export class DebugSpellcasting {
 
         const directions = player.getLastMoveDirections();
         const travelVector = this.getCastTravelVector(directions);
-        this.playSpellEffect(scene, player, travelVector);
+        this.playSpellEffect(scene, player, travelVector, earth);
 
         const casterPosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
         const targetPosition = this.getTargetPosition(casterPosition, directions);
@@ -303,13 +303,21 @@ export class DebugSpellcasting {
         return travelVector;
     }
 
-    private playSpellEffect(scene: Phaser.Scene, player: Player, travelVector: CastVector): void {
+    private playSpellEffect(scene: Phaser.Scene, player: Player, travelVector: CastVector, earth: Earth): void {
         const spell = scene.add
-            .sprite(player.x + travelVector.x / 10, player.y + travelVector.y / 10, 'spell-music-11')
+            .sprite(player.x + travelVector.x / 10, player.y + travelVector.y / 10, 'spell-music-11_grayscale')
             .setScale(0.5)
             .setOrigin(0.5, 0.5);
 
         spell.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+        
+        // Get player's current biome and apply corresponding tint
+        const playerTilePos = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
+        const playerTile = earth.getTile(playerTilePos.x, playerTilePos.y);
+        const biome = playerTile?.biome ?? BIOME.VOID;
+        const tintColor = BIOME_COLOR_MAP[biome] ?? BIOME_COLOR_MAP[BIOME.VOID];
+        spell.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
+        
         spell.play('spell-music-anim');
         scene.tweens.add({
             targets: spell,
