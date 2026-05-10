@@ -77,19 +77,19 @@ export function addChest(position: Position, scene: Phaser.Scene, chests: ChestJ
             chestGear = GEAR.BARE;
             break;
         case 2:
-            chestGear = GEAR.BASIC;
+            chestWeapon = WEAPON.DAGGER;            
             break;
         case 3:
-            chestGear = GEAR.ARMOR;
+            chestGear = GEAR.BASIC;            
             break;
         case 4:
-            chestWeapon = WEAPON.DAGGER;
-            break;
-        case 5:
             chestWeapon = WEAPON.STAFF;
             break;
-        case 6:
+        case 5:            
             chestWeapon = WEAPON.SWORD;
+            break;
+        case 6:            
+            chestGear = GEAR.ARMOR;
             break;
     }
 
