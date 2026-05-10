@@ -146,3 +146,15 @@ Power level progress with the total count of tiles placed: 0-49 = level 1, 50-14
 9) Lava. Burning - will dammage player
 
 First when a biome is unlocked only plain basetiles with borderlayer can be added as new tiles. After 10 tiles are placed, new placed tiles can also include decorations.
+
+### Biome and their animals
+
+||Spider|Lamb|Chicken|Cow|Snake|Lizard|Skeleton|Shark|
+|-|-|-|-|-|-|-|-|-|
+|Rock|x||||x||||
+|Desert|||||x||||
+|Grass||x|x|x|x||||
+|Forest|x||x||x||||
+|Swamp|x||||x|x|||
+|Crystal|x||||||x||
+|Water||||||||x|

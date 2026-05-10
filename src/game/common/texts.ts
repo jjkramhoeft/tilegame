@@ -140,15 +140,15 @@ const TEXTS = {
         da: 'Fortsæt',
     },
     'ui.progression.intro': {
-        en: 'In the beginning the earth was void and empty...',
-        da: 'I begyndelsen var jorden øde og tom...',
+        en: 'In the beginning the earth was formless and empty...',
+        da: 'I begyndelsen var jorden tomhed og øde...',
     },
     'ui.progression.controlsHelp': {
         en: 'Movement: w, a, s, d or arrow-keys, hit/cast: z, interact: x',
         da: 'Bevægelse: w, a, s, d eller piletaster, slå/magi: z, interager: x',
     },
     'ui.progression.followUp': {
-        en: 'Take care of the earth and animales...',
+        en: 'Work the earth and take care of it....',
         da: 'Pas på jorden og dyrene...',
     },
     'ui.progression.gameOver': {
@@ -178,11 +178,11 @@ const TEXTS = {
     },
     'chest.takeWeaponAndLeave': {
         en: 'Take {item} and leave your current {currentItem}',
-        da: 'Tag {item} og læg dit nuværende {currentItem}',
+        da: 'Tag {item} og læg din nuværende {currentItem}',
     },
     'chest.leaveWeapon': {
         en: 'Leave your current {currentItem}',
-        da: 'Læg dit nuværende {currentItem}',
+        da: 'Læg din nuværende {currentItem}',
     },
     'chest.takeGear': {
         en: 'Take {item}',
