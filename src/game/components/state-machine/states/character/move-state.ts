@@ -15,7 +15,7 @@ export class MoveState extends BaseMoveState {
 
   public onEnter(): void {
     if (this._gameObject.isPlayer) {
-      this.#footstepSound = this._gameObject.scene.sound.add('steps', { loop: true });
+      this.#footstepSound = this._gameObject.scene.sound.add('steps', { loop: true, volume: 1.5 });
       this.#footstepSound.play();
     }
   }
