@@ -7,6 +7,10 @@
 - Finalize aminal placment (pick a better placement tile and pick animal fitting the unlocked biome)
 - Rotate void animation, for more variation
 - Add 'water-splash' sound when swimming (in sted of footsteps)
+- walk slower when waering armor
+- take less damage when waering armor
+- Alternative to bounce-movement
+- Consistent keybord-only input for intro-scene, credits-scene & settings-scene
 - Implemet progression framework (use state-machine to make (implement) a base-game-state, the base-game-state are extended into 9 different game states - see below)
 
 ## Implementations that require new asserts
@@ -19,6 +23,7 @@
 - More diverser spell sounds and animation
 - Add distinct frame for nariator
 - Add water ponds to swamp as decorations
+- add monster (Zombie)
 
 ----------------------------------------------------------------------
 
@@ -65,8 +70,40 @@ Add box (a chest) of fuit, where the player can interact to eat an apple and get
 
 #### Regular State
 
+Progres by unlocking tile biomes, trees and animals
+
+#### First Tree State
+
+Triggered by first blocking forest tree, desert palm/cacti, swamp tree, from regular state
+Text "You added you first tree, fine here can animal trive..."
+
+#### First Animal State
+
+Triggered by first Chichken, Lamb ect.
+Text "You are not alone"
+
+#### Eve State
+
+Trigger by ???
+Adam or Eve depnding on what play play as.
+Same gear and weapon as player, but can not be changed
+Following player.
+Auto attacks
+Multiply aimals
+Adds to max health to player
+
 #### Boss Fight State
+
+Triggered by ???
+Lizardman boss, do timed minions attack starting with sound
 
 #### Game Over State
 
+Triggered by player death
+Simple Game Over
+Text: "Game Over..."
+
 #### Victory State
+
+Trigger by boss fight end or aminal progressin maxed
+Text: "You have won!.."
