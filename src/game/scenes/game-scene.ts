@@ -7,9 +7,6 @@ import { SEX, WEAPON, GEAR, DIRECTION } from '../common/common';
 import {
     CUSTOM_EVENTS,
     EVENT_BUS,
-    type ProgressionHelpClosed,
-    type ProgressionHelpPayload,
-    type TilesPlacedUpdated,
 } from '../common/event-bus';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
@@ -40,12 +37,6 @@ export class GameScene extends Phaser.Scene {
     #playerMobCollider!: Phaser.Physics.Arcade.Collider;
     #playerCritterCollider!: Phaser.Physics.Arcade.Collider;
     #isGameplayReady = false;
-    #isIntroPending = false;
-    #introShown = false;
-    #controlsHelpShown = false;
-    #followUpShown = false;
-    #hasPlayerMoved = false;
-    #gameOverShown = false;
 
     constructor() {
         super('game-scene');
@@ -95,9 +86,9 @@ export class GameScene extends Phaser.Scene {
             this.#startDebugGameplay();
             return;
         }
-
-        console.debug('[GameScene] regular mode, showing intro progression help');
-        this.#showIntroHelp();
+        else{
+            this.#startGameplay();
+        }
     }
 
     #resetSceneState(): void {
@@ -105,21 +96,11 @@ export class GameScene extends Phaser.Scene {
         this.#critterGroup = undefined;
         this.#chests = [];
         this.#isGameplayReady = false;
-        this.#isIntroPending = false;
-        this.#introShown = false;
-        this.#controlsHelpShown = false;
-        this.#followUpShown = false;
-        this.#hasPlayerMoved = false;
-        this.#gameOverShown = false;
     }
 
     update() {
         if (!this.#isGameplayReady) {
             return;
-        }
-
-        if (!this.#hasPlayerMoved && this.#isMovementInputDown()) {
-            this.#hasPlayerMoved = true;
         }
 
         this.#enemyGroup?.getChildren().forEach((enemy) => {
@@ -239,51 +220,23 @@ export class GameScene extends Phaser.Scene {
         EVENT_BUS.on(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
         //EVENT_BUS.on(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
         EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
-        EVENT_BUS.on(CUSTOM_EVENTS.DIALOG_CLOSED, this.#handleDialogClosed, this);
-        EVENT_BUS.on(CUSTOM_EVENTS.NARRATOR_DIALOG_CLOSED, this.#handleProgressionHelpClosed, this);
-        EVENT_BUS.on(CUSTOM_EVENTS.TILES_PLACED, this.#handleTilesPlaced, this);
+        EVENT_BUS.on(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, this.#handleDialogClosed, this);
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
             console.debug('[GameScene] shutdown cleanup');
             EVENT_BUS.off(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
             //EVENT_BUS.off(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
             EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
-            EVENT_BUS.off(CUSTOM_EVENTS.DIALOG_CLOSED, this.#handleDialogClosed, this);
-            EVENT_BUS.off(CUSTOM_EVENTS.NARRATOR_DIALOG_CLOSED, this.#handleProgressionHelpClosed, this);
-            EVENT_BUS.off(CUSTOM_EVENTS.TILES_PLACED, this.#handleTilesPlaced, this);
+            EVENT_BUS.off(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, this.#handleDialogClosed, this);
             this.scene.stop(SCENE_KEYS.UI_SCENE);
         });
     }
 
-    #showIntroHelp(): void {
-        console.debug('[GameScene] showIntroHelp', {
-            isDebugMode: DataManager.instance.data.isDebugMode,
-            introShown: this.#introShown,
-            isIntroPending: this.#isIntroPending,
-            isGameplayReady: this.#isGameplayReady,
-        });
-
-        if (DataManager.instance.data.isDebugMode) {
-            this.#startDebugGameplay();
-            return;
-        }
-
-        if (this.#introShown) {
-            return;
-        }
-
-        this.#introShown = true;
-        this.#isIntroPending = true;
-        this.#showProgressionHelp({ textKey: 'ui.progression.intro' });
-    }
-
     #startDebugGameplay(): void {
         console.debug('[GameScene] startDebugGameplay', {
-            wasIntroPending: this.#isIntroPending,
             isGameplayReady: this.#isGameplayReady,
         });
 
-        this.#isIntroPending = false;
         this.#startGameplay();
     }
 
@@ -291,7 +244,6 @@ export class GameScene extends Phaser.Scene {
         console.debug('[GameScene] startGameplay requested', {
             isGameplayReady: this.#isGameplayReady,
             isDebugMode: DataManager.instance.data.isDebugMode,
-            isIntroPending: this.#isIntroPending,
         });
 
         if (this.#isGameplayReady) {
@@ -317,8 +269,6 @@ export class GameScene extends Phaser.Scene {
             isGameplayReady: this.#isGameplayReady,
             movementLocked: this.#controls.isMovementLocked,
         });
-
-        this.#startControlsHelpTimer();
     }
 
     #placeStartingTile(): Position {
@@ -331,98 +281,9 @@ export class GameScene extends Phaser.Scene {
         return firstTilePosition;
     }
 
-    #startControlsHelpTimer(): void {
-        if (DataManager.instance.data.isDebugMode) {
-            return;
-        }
-
-        this.time.delayedCall(10000, () => {
-            if (this.#hasPlayerMoved || this.#controlsHelpShown || this.#gameOverShown) {
-                return;
-            }
-
-            this.#controlsHelpShown = true;
-            this.#showProgressionHelp({ textKey: 'ui.progression.controlsHelp' });
-        });
-    }
-
-    #handleProgressionHelpClosed(data: ProgressionHelpClosed): void {
-        console.debug('[GameScene] progression help closed received', {
-            closeAction: data.closeAction,
-            isIntroPending: this.#isIntroPending,
-            isGameplayReady: this.#isGameplayReady,
-            isDebugMode: DataManager.instance.data.isDebugMode,
-        });
-
-        if (this.#isIntroPending) {
-            this.#isIntroPending = false;
-            this.#startGameplay();
-            return;
-        }
-
-        if (data.closeAction === 'mainMenu') {
-            this.scene.stop(SCENE_KEYS.UI_SCENE);
-            this.scene.start(SCENE_KEYS.INTRO);
-            return;
-        }
-
-        if (data.closeAction === 'restart') {
-            this.scene.stop(SCENE_KEYS.UI_SCENE);
-            this.scene.restart();
-            return;
-        }
-
-        if (this.#isGameplayReady && !this.#gameOverShown) {
-            this.#controls.isMovementLocked = false;
-        }
-    }
-
-    #handleTilesPlaced(data: TilesPlacedUpdated): void {
-        if (DataManager.instance.data.isDebugMode || this.#followUpShown || data.totalPlacedTiles < 4) {
-            return;
-        }
-
-        this.#followUpShown = true;
-        this.#showProgressionHelp({ textKey: 'ui.progression.followUp' });
-    }
-
     #handlePlayerDefeatedEvent(): void {
-        if (this.#gameOverShown) {
-            return;
-        }
-
-        this.#gameOverShown = true;
-        if (DataManager.instance.data.isDebugMode) {
-            return;
-        }
-
-        this.time.delayedCall(1000, () => {
-            this.#showProgressionHelp({ textKey: 'ui.progression.gameOver', closeAction: 'mainMenu' });
-        });
-    }
-
-    #showProgressionHelp(payload: ProgressionHelpPayload): void {
-        console.debug('[GameScene] showProgressionHelp requested', {
-            payload,
-            isDebugMode: DataManager.instance.data.isDebugMode,
-            movementLocked: this.#controls.isMovementLocked,
-        });
-
-        if (DataManager.instance.data.isDebugMode) {
-            console.debug('[GameScene] showProgressionHelp skipped in debug mode');
-            return;
-        }
-
-        this.#controls.isMovementLocked = true;
-        this.time.delayedCall(0, () => {
-            console.debug('[GameScene] emitting SHOW_PROGRESSION_HELP', payload);
-            EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, payload);
-        });
-    }
-
-    #isMovementInputDown(): boolean {
-        return this.#controls.isUpDown || this.#controls.isDownDown || this.#controls.isLeftDown || this.#controls.isRightDown;
-    }
+        //ToDo: show game over
+    }    
 
     #handleDialogClosed(): void {
         let d = DataManager.instance.data;
@@ -470,7 +331,7 @@ export class GameScene extends Phaser.Scene {
             ...DataManager.instance.data,
             lastDialogResultInfo: chestInfo,
         };
-        EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_DIALOG, chestInfo.dialog);
+        EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_CHEST_DIALOG, chestInfo.dialog);
     }
 
 }

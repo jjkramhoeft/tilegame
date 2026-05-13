@@ -24,7 +24,7 @@ export class OpenChestState extends BaseCharacterState {
     // emit event data regarding chest
     EVENT_BUS.emit(CUSTOM_EVENTS.OPENED_CHEST, chest);
     // after showing message to player, transition to idle state
-    EVENT_BUS.once(CUSTOM_EVENTS.DIALOG_CLOSED, () => {
+    EVENT_BUS.once(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, () => {
       // make character vulnerable so we can take damage
       this._gameObject.invulnerableComponent.invulnerable = false;
       this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);

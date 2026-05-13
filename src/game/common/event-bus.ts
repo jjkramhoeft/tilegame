@@ -11,11 +11,10 @@ export const CUSTOM_EVENTS = {
   PLAYER_POWER_UPDATED: 'PLAYER_POWER_UPDATED',
   PLAYER_PROGRESS_UPDATED: 'PLAYER_PROGRESS_UPDATED',
   LIVING_CREATURES_UPDATED: 'LIVING_CREATURES_UPDATED',
-  SHOW_DIALOG: 'SHOW_DIALOG',
-  DIALOG_CLOSED: 'DIALOG_CLOSED',
+  SHOW_CHEST_DIALOG: 'SHOW_CHEST_DIALOG',
+  CHEST_DIALOG_CLOSED: 'CHEST_DIALOG_CLOSED',
   SHOW_NARRATOR_DIALOG: 'SHOW_NARRATOR_DIALOG',
   NARRATOR_DIALOG_CLOSED: 'NARRATOR_DIALOG_CLOSED',
-  TILES_PLACED: 'TILES_PLACED',
 } as const;
 
 export const PLAYER_UPDATE_TYPE = {
@@ -58,8 +57,4 @@ export type ProgressionHelpPayload = {
 
 export type ProgressionHelpClosed = {
   closeAction: ProgressionHelpCloseAction;
-};
-
-export type TilesPlacedUpdated = {
-  totalPlacedTiles: number;
 };

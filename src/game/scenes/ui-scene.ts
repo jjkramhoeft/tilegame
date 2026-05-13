@@ -122,7 +122,7 @@ export class UiScene extends Phaser.Scene {
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, this.updateLivingCreaturesInHud, this);
-    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_DIALOG, this.showDialog, this);
+    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_CHEST_DIALOG, this.showDialog, this);
     EVENT_BUS.on(CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, this.showNarratorDialog, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -136,7 +136,7 @@ export class UiScene extends Phaser.Scene {
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, this.updateLivingCreaturesInHud, this);
-      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_DIALOG, this.showDialog, this);
+      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_CHEST_DIALOG, this.showDialog, this);
       EVENT_BUS.off(CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, this.showNarratorDialog, this);
     });
   }
@@ -425,7 +425,7 @@ export class UiScene extends Phaser.Scene {
       playerData.lastDialogOptionSelected = this.#selectedMenuOptionIndex;
       DataManager.instance.data = playerData;
       this.#dialogContainer.visible = false;
-      EVENT_BUS.emit(CUSTOM_EVENTS.DIALOG_CLOSED);
+      EVENT_BUS.emit(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED);
       this.#uiMode = UiMode.HudOnly;
       return;
     }
