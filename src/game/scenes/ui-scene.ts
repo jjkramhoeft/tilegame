@@ -123,7 +123,7 @@ export class UiScene extends Phaser.Scene {
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, this.updateLivingCreaturesInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.SHOW_DIALOG, this.showDialog, this);
-    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, this.showNarratorDialog, this);
+    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, this.showNarratorDialog, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       console.debug('[UiScene] shutdown cleanup', {
@@ -137,7 +137,7 @@ export class UiScene extends Phaser.Scene {
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, this.updateLivingCreaturesInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.SHOW_DIALOG, this.showDialog, this);
-      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, this.showNarratorDialog, this);
+      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, this.showNarratorDialog, this);
     });
   }
 
@@ -201,14 +201,6 @@ export class UiScene extends Phaser.Scene {
   }
 
   public showNarratorDialog(payload: NarratorDialogPayload): void {
-    console.debug('[UiScene] showNarratorDialog', {
-      payload,
-      previousMode: this.#getUiModeName(),
-      narratorDialogVisible: this.#narratorDialogContainer.visible,
-      saveDialogVisible: this.#saveDialogContainer.visible,
-      dialogVisible: this.#dialogContainer.visible,
-    });
-
     this.#uiMode = UiMode.NarratorDialog;
     this.#narratorDialogCloseAction = payload.closeAction ?? 'close';
     this.#saveDialogContainer.visible = false;
@@ -457,7 +449,7 @@ export class UiScene extends Phaser.Scene {
       this.#narratorDialogContainer.visible = false;
       this.#narratorDialogCloseAction = 'close';
       this.#uiMode = UiMode.HudOnly;
-      EVENT_BUS.emit(CUSTOM_EVENTS.PROGRESSION_HELP_CLOSED, closedPayload);
+      EVENT_BUS.emit(CUSTOM_EVENTS.NARRATOR_DIALOG_CLOSED, closedPayload);
     }
   }
 

@@ -240,7 +240,7 @@ export class GameScene extends Phaser.Scene {
         //EVENT_BUS.on(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
         EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
         EVENT_BUS.on(CUSTOM_EVENTS.DIALOG_CLOSED, this.#handleDialogClosed, this);
-        EVENT_BUS.on(CUSTOM_EVENTS.PROGRESSION_HELP_CLOSED, this.#handleProgressionHelpClosed, this);
+        EVENT_BUS.on(CUSTOM_EVENTS.NARRATOR_DIALOG_CLOSED, this.#handleProgressionHelpClosed, this);
         EVENT_BUS.on(CUSTOM_EVENTS.TILES_PLACED, this.#handleTilesPlaced, this);
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -249,7 +249,7 @@ export class GameScene extends Phaser.Scene {
             //EVENT_BUS.off(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
             EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
             EVENT_BUS.off(CUSTOM_EVENTS.DIALOG_CLOSED, this.#handleDialogClosed, this);
-            EVENT_BUS.off(CUSTOM_EVENTS.PROGRESSION_HELP_CLOSED, this.#handleProgressionHelpClosed, this);
+            EVENT_BUS.off(CUSTOM_EVENTS.NARRATOR_DIALOG_CLOSED, this.#handleProgressionHelpClosed, this);
             EVENT_BUS.off(CUSTOM_EVENTS.TILES_PLACED, this.#handleTilesPlaced, this);
             this.scene.stop(SCENE_KEYS.UI_SCENE);
         });
@@ -416,7 +416,7 @@ export class GameScene extends Phaser.Scene {
         this.#controls.isMovementLocked = true;
         this.time.delayedCall(0, () => {
             console.debug('[GameScene] emitting SHOW_PROGRESSION_HELP', payload);
-            EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_PROGRESSION_HELP, payload);
+            EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, payload);
         });
     }
 
