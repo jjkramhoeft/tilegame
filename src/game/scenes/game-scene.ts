@@ -2,7 +2,6 @@ import * as Phaser from 'phaser';
 import { Player } from '../game-objects/player/player';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Earth } from '../ground/earth';
-import { Tile } from '../ground/tile';
 import { SEX, WEAPON, GEAR, DIRECTION } from '../common/common';
 import {
     CUSTOM_EVENTS,
