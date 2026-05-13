@@ -220,14 +220,14 @@ export class GameScene extends Phaser.Scene {
         EVENT_BUS.on(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
         //EVENT_BUS.on(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
         EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
-        EVENT_BUS.on(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, this.#handleDialogClosed, this);
+        EVENT_BUS.on(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, this.#handleChestDialogClosed, this);
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
             console.debug('[GameScene] shutdown cleanup');
             EVENT_BUS.off(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
             //EVENT_BUS.off(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
             EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
-            EVENT_BUS.off(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, this.#handleDialogClosed, this);
+            EVENT_BUS.off(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, this.#handleChestDialogClosed, this);
             this.scene.stop(SCENE_KEYS.UI_SCENE);
         });
     }
@@ -272,20 +272,14 @@ export class GameScene extends Phaser.Scene {
     }
 
     #placeStartingTile(): Position {
-        const firstTilePosition = this.#earth.getTileXYFromScreenCoordinates(this.#playerStartPosition.x, this.#playerStartPosition.y, true);
-        const firstTile = new Tile({
-            tilenumber: firstTilePosition,
-            biome: 1,
-        });
-        this.#earth.AddTile(firstTile);
-        return firstTilePosition;
+        return this.#earth.placeStartingTile(this.#playerStartPosition);
     }
 
     #handlePlayerDefeatedEvent(): void {
         //ToDo: show game over
     }    
 
-    #handleDialogClosed(): void {
+    #handleChestDialogClosed(): void {
         let d = DataManager.instance.data;
         const dialogResultInfo = d.lastDialogResultInfo;
         console.debug(`Dialog closed, Player: ${d.sex} ${d.gear} ${d.weapon}, last option selected: ${d.lastDialogOptionSelected}, dialog result info: ${JSON.stringify(dialogResultInfo)}`);

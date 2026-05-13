@@ -103,6 +103,7 @@ export class Earth {
     private blockingData: Map<number, TileCollisionObject> = new Map<number, TileCollisionObject>();
     private tileSize = 64;
     private placeChest?: ChestPlacementHandler;
+    private firstTilePosition?: Position;
 
     constructor(scene: Phaser.Scene, placeChest?: ChestPlacementHandler) {
         this.scene = scene;
@@ -693,6 +694,24 @@ export class Earth {
         } else if ((screenY + playOffsetY) % this.tileSize > this.tileSize - 10) { // Down border
             return this.allTiles.get(this.key(borderTileX, borderTileY + 1));
         }
+    }
+
+    public placeStartingTile(playerStartPosition: Position): Position {
+        this.firstTilePosition = this.getTileXYFromScreenCoordinates(playerStartPosition.x, playerStartPosition.y, true);
+        const firstTile = new Tile({
+            tilenumber: this.firstTilePosition,
+            biome: 1,
+        });
+        this.AddTile(firstTile);
+        return this.firstTilePosition!;
+    }
+
+    public placeTargetVoidTiles(): void {
+        //ToDo: Implement adding a 7x7 grid of void tiles around the starting tile.
+    }
+
+    public placeGardenTiles(): void {
+        //ToDo: Implement changing the center tiles to a lush green garden, using forest, grass and water tiles, then add the big-tree.
     }
 
     public getTileXYFromScreenCoordinates(screenX: number, screenY: number, offsetPlayer: boolean): Position {
