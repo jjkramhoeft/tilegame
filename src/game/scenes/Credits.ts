@@ -3,6 +3,7 @@ import { Scene } from 'phaser';
 import { ASSET_KEYS } from '../common/assets';
 import { getText } from '../common/texts';
 import { SCENE_KEYS } from './scene-keys';
+import { KeyboardComponent } from '../components/input/keyboard-component';
 
 const COLORS = {
     title: '#5eb1da',
@@ -41,6 +42,7 @@ export class Credits extends Scene
     creditsMusic?: Phaser.Sound.BaseSound;
     private creditsScrollContainer?: Phaser.GameObjects.Container;
     private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
+    private controls?: KeyboardComponent;
     private scrollOffset = 0;
     private maxScrollOffset = 0;
 
@@ -85,9 +87,14 @@ export class Credits extends Scene
         exit_text.setOrigin(1);
         exit_text.setInteractive({ useHandCursor: true });
         exit_text.on('pointerdown', () => {
-            this.creditsMusic?.stop();
-            this.scene.start(SCENE_KEYS.INTRO);
+            this.returnToIntro();
         });
+
+        if (this.input.keyboard) {
+            this.controls = new KeyboardComponent(this.input.keyboard);
+        } else {
+            console.warn('[Credits] keyboard plugin is not setup properly');
+        }
 
         this.events.once('shutdown', () => {
             this.creditsMusic?.stop();
@@ -98,6 +105,11 @@ export class Credits extends Scene
 
     update (_time: number, delta: number)
     {
+        if (this.controls && (this.controls.isEnterKeyJustDown || this.controls.isActionKeyJustDown)) {
+            this.returnToIntro();
+            return;
+        }
+
         if (!this.cursorKeys) {
             return;
         }
@@ -111,6 +123,12 @@ export class Credits extends Scene
         if (this.cursorKeys.down.isDown) {
             this.scrollCredits(scrollAmount);
         }
+    }
+
+    private returnToIntro ()
+    {
+        this.creditsMusic?.stop();
+        this.scene.start(SCENE_KEYS.INTRO);
     }
 
     private createScrollableCreditsText ()

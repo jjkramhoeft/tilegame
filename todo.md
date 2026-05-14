@@ -6,7 +6,6 @@
 - no swimming when wearing  armor (take damage if player is trying to swim in armor)
 - take less damage when wearing  armor
 - Alternative to bounce-movement
-- Consistent keybord-only input for intro-scene, credits-scene & settings-scene
 - Implement deferred gameStates
   - bossFightState
   - victoryState
