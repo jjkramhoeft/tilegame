@@ -57,8 +57,8 @@ const TEXTS = {
         da: 'Sværhedsgrad',
     },
     'settings.back': {
-        en: 'Back',
-        da: 'Tilbage',
+        en: '(arrow keys and \'x\' or \'enter\' to go back)',
+        da: '(pile taster og \'x\' eller \'return\' for at gå tilbage)',
     },
     'settings.language.danish': {
         en: 'Danish',

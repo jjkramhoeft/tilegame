@@ -53,9 +53,15 @@ export class KeyboardComponent extends InputComponent {
   get isLeftDown(): boolean {
     return this.#cursorKeys.left.isDown || this.#altLeftKey.isDown;
   }
+  get isLeftJustDown(): boolean {
+    return Phaser.Input.Keyboard.JustDown(this.#cursorKeys.left) || Phaser.Input.Keyboard.JustDown(this.#altLeftKey);
+  }
 
   get isRightDown(): boolean {
     return this.#cursorKeys.right.isDown || this.#altRightKey.isDown;
+  }
+  get isRightJustDown(): boolean {
+    return Phaser.Input.Keyboard.JustDown(this.#cursorKeys.right) || Phaser.Input.Keyboard.JustDown(this.#altRightKey);
   }
 
   get isActionKeyJustDown(): boolean {

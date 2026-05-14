@@ -6,6 +6,10 @@ import { ASSET_KEYS } from '../common/assets';
 import { getText, type TextKey } from '../common/texts';
 import { SCENE_KEYS } from './scene-keys';
 import { DIFFICULTY } from '../common/common';
+import { KeyboardComponent } from '../components/input/keyboard-component';
+
+const CURSOR_SIZE = 16;
+const CURSOR_X_OFFSET = 30; // distance left of the '<' arrow
 
 const COLORS = {
     title: '#5eb1da',
@@ -34,6 +38,14 @@ type LocalizedTextObject = {
     getValue: () => string;
 };
 
+type PickerRow = {
+    y: number;
+    valueText: Phaser.GameObjects.Text;
+    getValueText: () => string;
+    onPrevious: () => void;
+    onNext: () => void;
+};
+
 export class Settings extends Scene
 {
     private musicIndex = 1;
@@ -41,6 +53,11 @@ export class Settings extends Scene
     private playerIndex = 0;
     private debugIndex = 0;
     private localizedTextObjects: LocalizedTextObject[] = [];
+    private rows: PickerRow[] = [];
+    private selectedRowIndex = 0;
+    private cursor!: Phaser.GameObjects.Image;
+    private cursorOutline!: Phaser.GameObjects.Image;
+    private controls?: KeyboardComponent;
 
     constructor ()
     {
@@ -50,6 +67,8 @@ export class Settings extends Scene
     create ()
     {
         this.localizedTextObjects = [];
+        this.rows = [];
+        this.selectedRowIndex = 0;
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'credit-bg');
 
         const savedMusicVolume = this.registry.get('musicVolume');
@@ -136,8 +155,26 @@ export class Settings extends Scene
         this.applyPlayer();
         this.applyDifficulty();
 
+        this.cursorOutline = this.add.image(0, 0, ASSET_KEYS.UI_CURSOR, 0)
+            .setOrigin(0.5)
+            .setDisplaySize(CURSOR_SIZE*2 + 6, CURSOR_SIZE*2 + 6)
+            .setDepth(100)
+            .setTint(0x000010);
+        this.cursor = this.add.image(0, 0, ASSET_KEYS.UI_CURSOR, 0)
+            .setOrigin(0.56, 0.5)
+            .setDisplaySize(CURSOR_SIZE*2-4, CURSOR_SIZE*2-2)
+            .setDepth(101)
+            .setTint(0x5eb1da);
+        this.updateCursorPosition();
+
+        if (this.input.keyboard) {
+            this.controls = new KeyboardComponent(this.input.keyboard);
+        } else {
+            console.warn('[Settings] keyboard plugin is not setup properly');
+        }
+
         const backText = this.add.text(980, 750, getText('settings.back'), {
-            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
         });
         this.trackLocalizedText(backText, () => getText('settings.back'));
@@ -146,6 +183,52 @@ export class Settings extends Scene
         backText.on('pointerdown', () => {
             this.scene.start(SCENE_KEYS.INTRO);
         });
+    }
+
+    update (): void
+    {
+        if (!this.controls || this.rows.length === 0) {
+            return;
+        }
+
+        if (this.controls.isEscapeKeyJustDown || this.controls.isEnterKeyJustDown) {
+            this.scene.start(SCENE_KEYS.INTRO);
+            return;
+        }
+
+        if (this.controls.isUpJustDown) {
+            this.selectedRowIndex = Phaser.Math.Clamp(this.selectedRowIndex - 1, 0, this.rows.length - 1);
+            this.updateCursorPosition();
+            return;
+        }
+
+        if (this.controls.isDownJustDown) {
+            this.selectedRowIndex = Phaser.Math.Clamp(this.selectedRowIndex + 1, 0, this.rows.length - 1);
+            this.updateCursorPosition();
+            return;
+        }
+
+        const activeRow = this.rows[this.selectedRowIndex];
+        if (this.controls.isLeftJustDown) {
+            activeRow.onPrevious();
+            activeRow.valueText.setText(activeRow.getValueText());
+            return;
+        }
+        if (this.controls.isRightJustDown) {
+            activeRow.onNext();
+            activeRow.valueText.setText(activeRow.getValueText());
+        }
+    }
+
+    private updateCursorPosition (): void
+    {
+        if (!this.cursor || this.rows.length === 0) {
+            return;
+        }
+        const row = this.rows[this.selectedRowIndex];
+        const cursorX = 700 - 170 - CURSOR_X_OFFSET;
+        this.cursor.setPosition(cursorX, row.y);
+        this.cursorOutline.setPosition(cursorX, row.y);
     }
 
     private createPickerRow (config: {
@@ -192,6 +275,14 @@ export class Settings extends Scene
         nextText.on('pointerdown', () => {
             config.onNext();
             valueText.setText(config.getValueText());
+        });
+
+        this.rows.push({
+            y: config.y,
+            valueText,
+            getValueText: config.getValueText,
+            onPrevious: config.onPrevious,
+            onNext: config.onNext,
         });
     }
 
