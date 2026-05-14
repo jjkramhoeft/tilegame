@@ -598,6 +598,10 @@ export class Earth {
 
     // Used to add visual distinct viod tiles.
     public AddVoidMarkerTile(tileX: number, tileY: number): void {
+        const existing = this.allTiles.get(this.key(tileX, tileY));
+        if (existing !== undefined && existing.biome !== BIOME.VOID) {
+            return; // Don't overwrite a real tile with a void marker.
+        }
         const voidMarkerTile = new Tile({
             tilenumber: { x: tileX, y: tileY },
             biome: BIOME.VOID
