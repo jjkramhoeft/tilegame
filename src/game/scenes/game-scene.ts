@@ -49,6 +49,22 @@ export class GameScene extends Phaser.Scene {
         return this.#player;
     }
 
+    get earth(): Earth {
+        return this.#earth;
+    }
+
+    get controls(): KeyboardComponent {
+        return this.#controls;
+    }
+
+    get chestArray(): ChestJJK[] {
+        return this.#chests;
+    }
+
+    get chestJJKGroup(): Phaser.GameObjects.Group {
+        return this.#chestJJKGroup;
+    }
+
     create() {
         this.#resetSceneState();
 
@@ -84,6 +100,11 @@ export class GameScene extends Phaser.Scene {
             uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE),
         });
 
+        // Common setup that applies to both debug and progression paths.
+        this.#registerColliders();
+        this.#debugSpellcasting = new DebugSpellcasting(this, this.#enemyGroup!, this.#critterGroup!);
+        this.#isGameplayReady = true;
+
         this.#progression = new GameProgression(this);
 
         if (DataManager.instance.data.isDebugMode) {
@@ -91,11 +112,12 @@ export class GameScene extends Phaser.Scene {
             this.#startDebugGameplay();
             return;
         }
-        else {
-            this.#startGameplay();
-            // Phase 1: progression states are stubs; concrete intro flow lands in Phase 2.
-            this.#progression.start(GAME_STATES.START);
-        }
+
+        // Progression-driven start: hide player until StartState reveals it.
+        this.#player.setVisible(false);
+        this.#player.setActive(false);
+        this.#controls.isMovementLocked = true;
+        this.#progression.start(GAME_STATES.START);
     }
 
     #resetSceneState(): void {
@@ -243,59 +265,62 @@ export class GameScene extends Phaser.Scene {
     }
 
     #startDebugGameplay(): void {
-        console.debug('[GameScene] startDebugGameplay', {
-            isGameplayReady: this.#isGameplayReady,
-        });
+        console.debug('[GameScene] startDebugGameplay');
 
-        this.#startGameplay();
-    }
-
-    #startGameplay(): void {
-        console.debug('[GameScene] startGameplay requested', {
-            isGameplayReady: this.#isGameplayReady,
-            isDebugMode: DataManager.instance.data.isDebugMode,
-        });
-
-        if (this.#isGameplayReady) {
-            console.debug('[GameScene] startGameplay ignored because gameplay is already ready');
-            return;
-        }
-
-        const firstTilePosition = this.#placeStartingTile();
+        const firstTilePosition = this.placeStartingTile();
         console.debug('[GameScene] starting tile placed', firstTilePosition);
 
-        if (DataManager.instance.data.isDebugMode) {
-            console.debug('[GameScene] setting up debug chests, blocking, and enemies');
-            this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
-            setupDebugBlocking(this, this.#earth, firstTilePosition);
-            spawnDebugEnemies(this, this.#enemyGroup!, this.#critterGroup!, this.#earth, firstTilePosition);
-            this.#earth.AddVoidMarkerTile(firstTilePosition.x + 5, firstTilePosition.y + 3);
-            this.#earth.AddVoidMarkerTile(firstTilePosition.x + 5, firstTilePosition.y + 4);
-            this.#earth.AddVoidMarkerTile(firstTilePosition.x + 6, firstTilePosition.y + 3);
-            this.#earth.AddVoidMarkerTile(firstTilePosition.x + 6, firstTilePosition.y + 4);
-            //Tmp test of fruitPotionChest
-            const fruitChestTile = new Tile({
-                tilenumber: { x: firstTilePosition.x + 7, y: firstTilePosition.y },
-                biome: BIOME.FOREST,
-            })
-            this.#earth.AddTile(fruitChestTile);
-            addChest({ x: firstTilePosition.x + 7, y: firstTilePosition.y }, this, this.#chests, this.#chestJJKGroup, 7);
-            //Tmp test of bigTree
-            //this.#earth.placeGardenTiles();
-        }
-
-        this.#registerColliders();
-        this.#debugSpellcasting = new DebugSpellcasting(this, this.#enemyGroup!, this.#critterGroup!);
-        this.#isGameplayReady = true;
-        this.#controls.isMovementLocked = false;
-        console.debug('[GameScene] gameplay ready', {
-            isGameplayReady: this.#isGameplayReady,
-            movementLocked: this.#controls.isMovementLocked,
+        this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
+        setupDebugBlocking(this, this.#earth, firstTilePosition);
+        spawnDebugEnemies(this, this.#enemyGroup!, this.#critterGroup!, this.#earth, firstTilePosition);
+        this.#earth.AddVoidMarkerTile(firstTilePosition.x + 5, firstTilePosition.y + 3);
+        this.#earth.AddVoidMarkerTile(firstTilePosition.x + 5, firstTilePosition.y + 4);
+        this.#earth.AddVoidMarkerTile(firstTilePosition.x + 6, firstTilePosition.y + 3);
+        this.#earth.AddVoidMarkerTile(firstTilePosition.x + 6, firstTilePosition.y + 4);
+        //Tmp test of fruitPotionChest
+        const fruitChestTile = new Tile({
+            tilenumber: { x: firstTilePosition.x + 7, y: firstTilePosition.y },
+            biome: BIOME.FOREST,
         });
+        this.#earth.AddTile(fruitChestTile);
+        addChest({ x: firstTilePosition.x + 7, y: firstTilePosition.y }, this, this.#chests, this.#chestJJKGroup, 7);
+        //Tmp test of bigTree
+        //this.#earth.placeGardenTiles();
+
+        this.#controls.isMovementLocked = false;
+        console.debug('[GameScene] debug gameplay ready');
     }
 
-    #placeStartingTile(): Position {
+    /** Place the very first tile under the player start position. Returns its tile coordinates. */
+    public placeStartingTile(): Position {
         return this.#earth.placeStartingTile(this.#playerStartPosition);
+    }
+
+    /** Make the player visible and active in the world. Movement remains gated by `controls`. */
+    public revealPlayer(): void {
+        this.#player.setVisible(true);
+        this.#player.setActive(true);
+    }
+
+    public unlockPlayerMovement(): void {
+        this.#controls.isMovementLocked = false;
+    }
+
+    public lockPlayerMovement(): void {
+        this.#controls.isMovementLocked = true;
+    }
+
+    /** Place the fruit potion chest (chest #7) on a forest tile near the big tree. */
+    public placeFruitChestNearBigTree(): void {
+        const first = this.#earth.getFirstTilePosition();
+        if (!first) {
+            console.warn('[GameScene] placeFruitChestNearBigTree called before starting tile placed');
+            return;
+        }
+        const tilePos = { x: first.x + 1, y: first.y };
+        const tile = new Tile({ tilenumber: tilePos, biome: BIOME.FOREST });
+        this.#earth.AddTile(tile);
+        addChest(tilePos, this, this.#chests, this.#chestJJKGroup, 7);
     }
 
     #handlePlayerDefeatedEvent(): void {

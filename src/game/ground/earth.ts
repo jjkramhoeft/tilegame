@@ -6,6 +6,7 @@ import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles, DecideBiome, DecideDecoration, DecideBlockingAndFloating, DecideBorder } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
 import { CHEST_CHANCE, ENABLE_LOGGING } from '../common/config';
+import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../common/event-bus';
 
 export type ChestPlacementHandler = (position: Position, chestNumber: number) => void;
 
@@ -687,10 +688,28 @@ export class Earth {
         if (0 < tile.chest) {
             this.placeChest?.({ x: tile.tileX, y: tile.tileY }, tile.chest);
         }
+
+        // Notify listeners (game progression, etc.) that a tile was placed.
+        const payload: TilePlacedPayload = {
+            tileX: tile.tileX,
+            tileY: tile.tileY,
+            biome: tile.biome,
+            hasBlocking: tile.blocking >= 0,
+        };
+        EVENT_BUS.emit(CUSTOM_EVENTS.TILE_PLACED, payload);
     }
 
     public getTile(x: number, y: number): Tile | undefined {
         return this.allTiles.get(this.key(x, y));
+    }
+
+    /** World-tile coordinates of the very first tile placed by `placeStartingTile`. */
+    public getFirstTilePosition(): Position | undefined {
+        return this.firstTilePosition;
+    }
+
+    public getTileSize(): number {
+        return this.tileSize;
     }
 
     public getBorderTile(screenX: number, screenY: number): Tile | undefined {

@@ -8,7 +8,25 @@ export class AssignmentState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] AssignmentState entered (stub)');
-    // TODO Phase 2: narrator + place target void tiles + transition.
+    console.debug('[GameProgression] AssignmentState entered');
+    this._scene.lockPlayerMovement();
+
+    // 1) 1 sec pause
+    this._pause(1000, () => {
+      // 2) Narrator text
+      this._showNarrator('narrator.assignment', () => {
+        // 3) 1 sec pause
+        this._pause(1000, () => {
+          // 4) Place target void area
+          this._scene.earth.placeTargetVoidTiles();
+          // 5) 1 sec pause
+          this._pause(1000, () => {
+            // 6) Transition.
+            this._scene.unlockPlayerMovement();
+            this._transitionTo(GAME_STATES.BABY_STEPS);
+          });
+        });
+      });
+    });
   }
 }

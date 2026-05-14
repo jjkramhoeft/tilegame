@@ -8,7 +8,9 @@ export class RegularState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] RegularState entered (stub)');
-    // TODO Phase 2/3: main play loop; transitions wired in later phases.
+    console.debug('[GameProgression] RegularState entered');
+    this._scene.unlockPlayerMovement();
+    // Passive holding state. Transitions to firstTree, firstAnimal, eve,
+    // bossFight, gameOver and victory states are wired in later phases.
   }
 }

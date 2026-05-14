@@ -15,6 +15,7 @@ export const CUSTOM_EVENTS = {
   CHEST_DIALOG_CLOSED: 'CHEST_DIALOG_CLOSED',
   SHOW_NARRATOR_DIALOG: 'SHOW_NARRATOR_DIALOG',
   NARRATOR_DIALOG_CLOSED: 'NARRATOR_DIALOG_CLOSED',
+  TILE_PLACED: 'TILE_PLACED',
 } as const;
 
 export const PLAYER_UPDATE_TYPE = {
@@ -57,4 +58,11 @@ export type ProgressionHelpPayload = {
 
 export type ProgressionHelpClosed = {
   closeAction: ProgressionHelpCloseAction;
+};
+
+export type TilePlacedPayload = {
+  tileX: number;
+  tileY: number;
+  biome: number;
+  hasBlocking: boolean;
 };

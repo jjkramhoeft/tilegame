@@ -155,6 +155,27 @@ const TEXTS = {
         en: 'Game Over',
         da: 'Spillet er slut',
     },
+    //Narrator (game progression)
+    'narrator.start.intro': {
+        en: '...In the beginning the earth was formless and empty...',
+        da: '...I begyndelsen var jorden tomhed og øde...',
+    },
+    'narrator.start.youCreated': {
+        en: '...God created the earth and the heavens, and you. Move carefully...',
+        da: '...Gud skabte jorden og himlen, og dig. Bevæg dig forsigtigt...',
+    },
+    'narrator.assignment': {
+        en: '...And you shall help in the creating, make the land, fill it with green forest and then animals.',
+        da: '...Og du skal hjælpe med at skabe; gør landet, fyld det med grøn skov og så dyr.',
+    },
+    'narrator.garden.lush': {
+        en: '...Not just barren rock and wasteland, but green fields, flowing rivers and trees...',
+        da: '...Ikke bare gold sten og ødemark, men grønne marker, rindende floder og træer...',
+    },
+    'narrator.garden.assignment': {
+        en: '...Your assignment is to create a lush forest with many animals. If you pick an evil path you will have to face the demon.',
+        da: '...Din opgave er at skabe en frodig skov med mange dyr. Vælger du en ond vej, må du møde dæmonen.',
+    },
     //Chest Dialog
     'chest.empty': {
         en: 'You opened an empty chest.',
