@@ -79,7 +79,7 @@ export class Credits extends Scene
         // -------------------------------------------------------------------------------------------
         
         const exit_text = this.add.text(980, 750, getText('credits.back'), {
-            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 42, color: COLORS.uiText,
+            fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 28, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 8,
         });
         exit_text.setOrigin(1);

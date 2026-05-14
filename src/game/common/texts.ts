@@ -122,8 +122,8 @@ const TEXTS = {
         da: 'Menneskelig operatør: Jens Jakob Kramhæft',
     },
     'credits.back': {
-        en: 'Back',
-        da: 'Tilbage',
+        en: '(Up, down and \'x\' or \'enter\' to go back)',
+        da: '(Op, ned og \'x\' eller \'retur\' for at gå tilbage)',
     },
     //Save UI
     'ui.save.backToMainMenu': {
