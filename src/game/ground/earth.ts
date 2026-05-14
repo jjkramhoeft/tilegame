@@ -269,6 +269,7 @@ export class Earth {
         }
 
         // Place regular tiles according to power level
+        let chestAlreadyPlaced = false;
         while (numberOfPlacedTiles < creationConfig.powerLevel) {
             const target = allTargets.shift();
             if (target == undefined) {
@@ -278,12 +279,13 @@ export class Earth {
             if (!this.canPlaceNewTile(targetTile)) {
                 continue;
             }
-            const newTile = this.CreateNewTile(creationConfig, target, creationConfig.powerLevel, casterTile, castingFeedback, isLimitedCast);
+            const newTile = this.CreateNewTile(creationConfig, target, creationConfig.powerLevel, casterTile, castingFeedback, isLimitedCast, chestAlreadyPlaced);
             if (newTile === undefined ||
                 (isLimitedCast && newTile.biome != BIOME.ROCK)) {
                 break; // Limited casts can only place rock tiles.
             }
             this.AddTile(newTile);
+            if(newTile.chest !== undefined && newTile.chest > 0 ) {chestAlreadyPlaced=true;}
             this.addMissingVoidNeighbors(target);
             numberOfPlacedTiles++;
             if (isLimitedCast) break; // Limited casts can only place one tile, even if power level is higher.
@@ -327,6 +329,7 @@ export class Earth {
         casterTile: Tile | undefined, 
         castingFeedback: CastingFeedback,
         isLimited: boolean = false,
+        chestAlreadyPlaced: boolean = false,
     ): Tile {
 
         const casterBiome = casterTile?.biome ?? BIOME.ROCK;
@@ -349,35 +352,38 @@ export class Earth {
         this.addBiomePlacementFeedback(castingFeedback, biome, decoration);
 
         //Test if chests should be placed
-        if (biome === BIOME.ROCK && 0 < decoration && creationConfig.isChest1Placable) {
-            if (!isLimited && Math.random() < CHEST_CHANCE) {
-                castingFeedback.chestNumberPlaced = 1;
-                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 1, });
-            }
-        } else if (biome === BIOME.DESERT && 0 < decoration && creationConfig.isChest2Placable) {
-            if (!isLimited && Math.random() < CHEST_CHANCE) {
-                castingFeedback.chestNumberPlaced = 2;
-                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 2, });
-            }
-        } else if (biome === BIOME.GRASS && 0 < decoration && creationConfig.isChest3Placable) {
-            if (!isLimited && Math.random() < CHEST_CHANCE) {
-                castingFeedback.chestNumberPlaced = 3;
-                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 3, });
-            }
-        } else if (biome === BIOME.FOREST && 0 < decoration && creationConfig.isChest4Placable) {
-            if (!isLimited && Math.random() < CHEST_CHANCE) {
-                castingFeedback.chestNumberPlaced = 4;
-                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 4, });
-            }
-        } else if (biome === BIOME.SWAMP && 0 < decoration && creationConfig.isChest5Placable) {
-            if (!isLimited && Math.random() < CHEST_CHANCE) {
-                castingFeedback.chestNumberPlaced = 5;
-                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 5, });
-            }
-        } else if (biome === BIOME.CRYSTAL && 0 < decoration && creationConfig.isChest6Placable) {
-            if (!isLimited && Math.random() < CHEST_CHANCE) {
-                castingFeedback.chestNumberPlaced = 6;
-                return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 6, });
+        if(!chestAlreadyPlaced && !isLimited)
+        {        
+            if (biome === BIOME.ROCK && 0 < decoration && creationConfig.isChest1Placable) {
+                if (Math.random() < CHEST_CHANCE) {
+                    castingFeedback.chestNumberPlaced = 1;
+                    return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 1, });
+                }
+            } else if (biome === BIOME.DESERT && 0 < decoration && creationConfig.isChest2Placable) {
+                if (Math.random() < CHEST_CHANCE) {
+                    castingFeedback.chestNumberPlaced = 2;
+                    return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 2, });
+                }
+            } else if (biome === BIOME.GRASS && 0 < decoration && creationConfig.isChest3Placable) {
+                if (Math.random() < CHEST_CHANCE) {
+                    castingFeedback.chestNumberPlaced = 3;
+                    return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 3, });
+                }
+            } else if (biome === BIOME.FOREST && 0 < decoration && creationConfig.isChest4Placable) {
+                if (Math.random() < CHEST_CHANCE) {
+                    castingFeedback.chestNumberPlaced = 4;
+                    return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 4, });
+                }
+            } else if (biome === BIOME.SWAMP && 0 < decoration && creationConfig.isChest5Placable) {
+                if (Math.random() < CHEST_CHANCE) {
+                    castingFeedback.chestNumberPlaced = 5;
+                    return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 5, });
+                }
+            } else if (biome === BIOME.CRYSTAL && 0 < decoration && creationConfig.isChest6Placable) {
+                if (Math.random() < CHEST_CHANCE) {
+                    castingFeedback.chestNumberPlaced = 6;
+                    return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 6, });
+                }
             }
         }
         // Return regular tile if no chest should be placed.

@@ -2,7 +2,6 @@
 
 ## Implementations that do not require new asserts  
 
-- Fix multiple of the same chest in the same cast at higer powerlevels
 - Finalize aminal placement (pick a better placement tile and pick animal fitting the unlocked biome)
 - no swimming when wearing  armor (take damage if player is trying to swim in armor)
 - take less damage when wearing  armor
