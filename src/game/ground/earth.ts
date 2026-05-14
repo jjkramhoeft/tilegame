@@ -249,17 +249,26 @@ export class Earth {
     }
 
     public AddTiles(
-        creationConfig: EarthCastingConfig, 
-        casterPosition: Position, 
-        primeTargetPosition: Position, 
+        creationConfig: EarthCastingConfig,
+        casterPosition: Position,
+        primeTargetPosition: Position,
         directions: Direction[],
         isLimitedCast: boolean): CastingFeedback {
         const castingFeedback = this.createCastingFeedback();
         let numberOfPlacedTiles = 0;
         let casterTile = this.getTile(casterPosition.x, casterPosition.y);
         let allTargets = findTargetTiles(primeTargetPosition, directions, creationConfig.powerLevel);
+        const firstTilePosition = this.getFirstTilePosition();
+        if(isLimitedCast && firstTilePosition) {
+            // For limited casts, filter targets to only include tiles close to the firstTilePosition (less than 4 tiles away).)
+            allTargets = allTargets.filter(targetTile => {
+                const maxXDistance = Math.abs(targetTile.x - firstTilePosition.x);
+                const maxYDistance = Math.abs(targetTile.y - firstTilePosition.y);
+                return maxXDistance  <= 4 && maxYDistance <= 4;
+            });
+        }
 
-        //Place regular tiles according to power level
+        // Place regular tiles according to power level
         while (numberOfPlacedTiles < creationConfig.powerLevel) {
             const target = allTargets.shift();
             if (target == undefined) {
@@ -269,15 +278,28 @@ export class Earth {
             if (!this.canPlaceNewTile(targetTile)) {
                 continue;
             }
-
-            this.AddTile(this.CreateNewTile(creationConfig, target, creationConfig.powerLevel, casterTile, castingFeedback), isLimitedCast);
+            const newTile = this.CreateNewTile(creationConfig, target, creationConfig.powerLevel, casterTile, castingFeedback, isLimitedCast);
+            if (newTile === undefined ||
+                (isLimitedCast && newTile.biome != BIOME.ROCK)) {
+                break; // Limited casts can only place rock tiles.
+            }
+            this.AddTile(newTile);
             this.addMissingVoidNeighbors(target);
             numberOfPlacedTiles++;
+            if (isLimitedCast) break; // Limited casts can only place one tile, even if power level is higher.
         }
 
         if (numberOfPlacedTiles === 0) {
-            //Placing blocking on existing tiles.
+            // Placing blocking on existing tiles.
             allTargets = findTargetTiles(primeTargetPosition, directions, creationConfig.powerLevel);
+            if(isLimitedCast && firstTilePosition) {
+                // For limited casts, filter targets to only include tiles close to the firstTilePosition (less than 4 tiles away).)
+                allTargets = allTargets.filter(targetTile => {
+                    const maxXDistance = Math.abs(targetTile.x - firstTilePosition.x);
+                    const maxYDistance = Math.abs(targetTile.y - firstTilePosition.y);
+                    return maxXDistance  <= 4 && maxYDistance <= 4;
+                });
+            }
             let numberOfPlacedBlockings = 0;
             while (numberOfPlacedBlockings * 2 < creationConfig.powerLevel) {
                 const target = allTargets.shift();
@@ -292,12 +314,20 @@ export class Earth {
                 if (this.tryPlaceBlockingOnExistingTile(creationConfig, casterTile, targetTile, castingFeedback)) {
                     numberOfPlacedBlockings++;
                 }
+                if (isLimitedCast) break; // Limited casts can only place one blocking, even if power level is higher.
             }
         }
         return castingFeedback;
     }
 
-    private CreateNewTile(creationConfig: EarthCastingConfig, tilePosition: Position, powerLevel: number, casterTile: Tile | undefined, castingFeedback: CastingFeedback): Tile {
+    private CreateNewTile(
+        creationConfig: EarthCastingConfig, 
+        tilePosition: Position, 
+        powerLevel: number, 
+        casterTile: Tile | undefined, 
+        castingFeedback: CastingFeedback,
+        isLimited: boolean = false,
+    ): Tile {
 
         const casterBiome = casterTile?.biome ?? BIOME.ROCK;
         const neighborTiles = this.get4NeighborTiles(tilePosition);
@@ -320,32 +350,32 @@ export class Earth {
 
         //Test if chests should be placed
         if (biome === BIOME.ROCK && 0 < decoration && creationConfig.isChest1Placable) {
-            if (Math.random() < CHEST_CHANCE) {
+            if (!isLimited && Math.random() < CHEST_CHANCE) {
                 castingFeedback.chestNumberPlaced = 1;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 1, });
             }
         } else if (biome === BIOME.DESERT && 0 < decoration && creationConfig.isChest2Placable) {
-            if (Math.random() < CHEST_CHANCE) {
+            if (!isLimited && Math.random() < CHEST_CHANCE) {
                 castingFeedback.chestNumberPlaced = 2;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 2, });
             }
         } else if (biome === BIOME.GRASS && 0 < decoration && creationConfig.isChest3Placable) {
-            if (Math.random() < CHEST_CHANCE) {
+            if (!isLimited && Math.random() < CHEST_CHANCE) {
                 castingFeedback.chestNumberPlaced = 3;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 3, });
             }
         } else if (biome === BIOME.FOREST && 0 < decoration && creationConfig.isChest4Placable) {
-            if (Math.random() < CHEST_CHANCE) {
+            if (!isLimited && Math.random() < CHEST_CHANCE) {
                 castingFeedback.chestNumberPlaced = 4;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 4, });
             }
         } else if (biome === BIOME.SWAMP && 0 < decoration && creationConfig.isChest5Placable) {
-            if (Math.random() < CHEST_CHANCE) {
+            if (!isLimited && Math.random() < CHEST_CHANCE) {
                 castingFeedback.chestNumberPlaced = 5;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 5, });
             }
         } else if (biome === BIOME.CRYSTAL && 0 < decoration && creationConfig.isChest6Placable) {
-            if (Math.random() < CHEST_CHANCE) {
+            if (!isLimited && Math.random() < CHEST_CHANCE) {
                 castingFeedback.chestNumberPlaced = 6;
                 return new Tile({ tilenumber: tilePosition, biome: biome, border: border, decoration: decoration, blocking: -1, floating: floating, chest: 6, });
             }
@@ -616,10 +646,7 @@ export class Earth {
             .play('void-marker-flow');
     }
 
-    public AddTile(tile: Tile, isLimitedCast: boolean = false): void {
-        if(isLimitedCast && (tile.biome >= 2 || tile.chest > 0)) {
-            return; // Limited cast places no tiles with biome index 2 or higher or chests.
-        }
+    public AddTile(tile: Tile): void {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
             if (ENABLE_LOGGING) { console.log(`Placing biome tile with index ${tile.biome} at (${tile.tileX}, ${tile.tileY})`); }

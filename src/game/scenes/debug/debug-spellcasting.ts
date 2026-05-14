@@ -203,7 +203,7 @@ export class DebugSpellcasting {
 
     private cast(scene: Phaser.Scene, player: Player, earth: Earth): void {
         if (this.#spellSound.isPlaying === false) {
-            const vol = this.isLimitedCastEnabled ? 0.5 : 1;
+            const vol = this.isLimitedCastEnabled ? 0.5 : 1;// ToDo: Consider adding separate sound effects for limited casts vs regular casts instead of just changing the volume.
             this.#spellSound.play({ volume: vol });
         }
 
@@ -351,12 +351,10 @@ export class DebugSpellcasting {
     }
 
     private applyCastingFeedback(feedback: CastingFeedback): void {
-        //Consider isLimmited
-        if(!this.isLimitedCastEnabled) this.applyChestPlacement(feedback.chestNumberPlaced);
+        this.applyChestPlacement(feedback.chestNumberPlaced);
         this.addCastingFeedbackToTotals(feedback);
         this.applyBiomeProgression(this.#castingFeedbackTotals);
         this.applyPowerLevelProgression(this.#castingFeedbackTotals);
-        //ToDo: Consider emmitting events for specific unlocks or feedback milestones to trigger game state changes.
     }
 
     private createEmptyCastingFeedback(): CastingFeedback {
@@ -461,7 +459,7 @@ export class DebugSpellcasting {
 
     private applyPowerLevelProgression(feedback: CastingFeedback): void {
         const placedTileCount = this.getPlacedTileCount(feedback);
-        const debugDivider = DataManager.instance.data.isDebugMode ? 10 : 2;
+        const debugDivider = DataManager.instance.data.isDebugMode ? 10 : 1;
         const levelUpThreshold = LEVEL_UP_TILE_THRESHOLDS[this.#playerCurrentMagic.powerLevel];
         if (levelUpThreshold === undefined || placedTileCount < levelUpThreshold / debugDivider) {
             return;

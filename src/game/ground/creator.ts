@@ -102,16 +102,16 @@ const BIOME_WEIGHT_RULES: readonly BiomeWeightRule[] = [
 ];
 
 const DECORATION_RULES = new Map<number, PlacementRule>([
-    [BIOME.ROCK, { minIndex: 18, maxIndex: 32, baseChance: 0.3, casterDecorationBonus: 0.2, neighborDecorationBonus: 0.1, powerLevelBonus: 0.05 }],
-    [BIOME.DESERT, { minIndex: 30, maxIndex: 34, baseChance: 0.12, casterDecorationBonus: 0.15, neighborDecorationBonus: 0.02, powerLevelBonus: 0.05 }],
-    [BIOME.GRASS, { minIndex: 35, maxIndex: 48, baseChance: 0.30, casterDecorationBonus: 0.20, neighborDecorationBonus: 0.15, powerLevelBonus: 0.05 }],
-    [BIOME.FOREST, { minIndex: 49, maxIndex: 55, baseChance: 0.25, casterDecorationBonus: 0.20, neighborDecorationBonus: 0.1, powerLevelBonus: 0.05 }],
-    [BIOME.SWAMP, { minIndex: 9, maxIndex: 17, baseChance: 0.20, casterDecorationBonus: 0.15, neighborDecorationBonus: 0.1, powerLevelBonus: 0.05 }],
-    [BIOME.CRYSTAL, { minIndex: 0, maxIndex: 8, baseChance: 0.20, casterDecorationBonus: 0.15, neighborDecorationBonus: 0.1, powerLevelBonus: 0.1 }],
+    [BIOME.ROCK, { minIndex: 18, maxIndex: 32, baseChance: 0.5, casterDecorationBonus: 0.3, neighborDecorationBonus: 0.1, powerLevelBonus: 0.05 }],
+    [BIOME.DESERT, { minIndex: 30, maxIndex: 34, baseChance: 0.15, casterDecorationBonus: 0.3, neighborDecorationBonus: 0.02, powerLevelBonus: 0.05 }],
+    [BIOME.GRASS, { minIndex: 35, maxIndex: 48, baseChance: 0.4, casterDecorationBonus: 0.3, neighborDecorationBonus: 0.15, powerLevelBonus: 0.05 }],
+    [BIOME.FOREST, { minIndex: 49, maxIndex: 55, baseChance: 0.3, casterDecorationBonus: 0.3, neighborDecorationBonus: 0.1, powerLevelBonus: 0.05 }],
+    [BIOME.SWAMP, { minIndex: 9, maxIndex: 17, baseChance: 0.4, casterDecorationBonus: 0.3, neighborDecorationBonus: 0.1, powerLevelBonus: 0.05 }],
+    [BIOME.CRYSTAL, { minIndex: 0, maxIndex: 8, baseChance: 0.25, casterDecorationBonus: 0.3, neighborDecorationBonus: 0.1, powerLevelBonus: 0.08 }],
 ]);
 
 const BLOCKING_RULES = new Map<number, BlockingRule>([
-    [BIOME.ROCK, { minIndex: 0, maxIndex: 19, baseChance: 0.1, casterDecorationBonus: 0.05, neighborDecorationBonus: 0.1, neighborBlockingBonus: -0.1, powerLevelBonus: 0.05, noDecorationBonus: 0.01 }],
+    [BIOME.ROCK, { minIndex: 0, maxIndex: 19, baseChance: 0.2, casterDecorationBonus: 0.05, neighborDecorationBonus: 0.1, neighborBlockingBonus: -0.1, powerLevelBonus: 0.05, noDecorationBonus: 0.01 }],
     [BIOME.DESERT, { minIndex: 84, maxIndex: 91, baseChance: 0.01, casterDecorationBonus: 0.01, neighborDecorationBonus: 0.01, neighborBlockingBonus: 0.02, powerLevelBonus: 0.01 }],
     [BIOME.FOREST, { minIndex: 20, maxIndex: 46, baseChance: 0.25, casterDecorationBonus: 0.20, neighborDecorationBonus: 0.05, neighborBlockingBonus: -0.10, powerLevelBonus: 0.05, floatingIndex: blocking => blocking >= 37 ? blocking - 37 : -1 }],
     [BIOME.SWAMP, { minIndex: 47, maxIndex: 58, baseChance: 0.112, casterDecorationBonus: 0.05, neighborDecorationBonus: 0.01, neighborBlockingBonus: -0.02, powerLevelBonus: 0.02, floatingIndex: blocking => blocking >= 53 ? blocking + 10 - 53 : -1 }],

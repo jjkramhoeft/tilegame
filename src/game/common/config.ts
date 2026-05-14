@@ -1,8 +1,10 @@
 export let ENABLE_LOGGING = false;
 export function setEnableLogging(value: boolean) { ENABLE_LOGGING = value; }
 
+export const DIFFICULTY_HARD_SPEED_MULTIPLIER = 1.5;
+
 export const PLAYER_SPEED = 90;
-export const PLAYER_ARMOR_AS_GERA_SPEED_PENALTY = 8;
+export const PLAYER_ARMOR_AS_GEAR_SPEED_PENALTY = 8;
 export const PLAYER_NORMAL_AS_GEAR_SPEED_PENALTY = 1;
 export const PLAYER_INVULNERABLE_AFTER_HIT_DURATION = 1000;
 export const PLAYER_HURT_PUSH_BACK_SPEED = 50;
@@ -41,9 +43,9 @@ export const ENEMY_WISP_MAX_HEALTH = 1;
 
 export const HURT_PUSH_BACK_DELAY = 200;
 
-export const TILES_BEFORE_DECORATION_UNLOCK = 10;
+export const TILES_BEFORE_DECORATION_UNLOCK = 6;
 export const TILES_BEFORE_BLOCKING_UNLOCK = 10;
-export const TILES_BEFORE_ANIMAL_UNLOCK = 5;
+export const TILES_BEFORE_ANIMAL_UNLOCK = 10;
 export const LEVEL_UP_TILE_THRESHOLDS: Record<number, number> = {
 	1: 49,
 	2: 80,

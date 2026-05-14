@@ -11,10 +11,11 @@ import { CHARACTER_STATES } from '../../components/state-machine/states/characte
 import { LifeComponent } from '../../components/game-object/life-component';
 import { DataManager } from '../../common/data-manager';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
-import { GEAR } from '../../common/common';
+import { GEAR, DIFFICULTY } from '../../common/common';
 import {
-  PLAYER_ARMOR_AS_GERA_SPEED_PENALTY,
+  PLAYER_ARMOR_AS_GEAR_SPEED_PENALTY,
   PLAYER_NORMAL_AS_GEAR_SPEED_PENALTY,
+  DIFFICULTY_HARD_SPEED_MULTIPLIER,
 } from '../../common/config';
 
 export type CharacterConfig = {
@@ -110,14 +111,17 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
 
   get speed(): number {
     const baseSpeed = this._speedComponent.speed;
-    if (!this._isPlayer) {
-      return baseSpeed;
+    const difficultySpeedMultiplyer = DataManager.instance.data.difficulty === DIFFICULTY.HARD 
+      ? DIFFICULTY_HARD_SPEED_MULTIPLIER 
+      : 1;
+    if (!this._isPlayer) {// Animals, Critter & Enemies
+      return baseSpeed*difficultySpeedMultiplyer;
     }
-
+    // Player
     const speedPenalty = DataManager.instance.data.gear === GEAR.ARMOR
-      ? PLAYER_ARMOR_AS_GERA_SPEED_PENALTY
+      ? PLAYER_ARMOR_AS_GEAR_SPEED_PENALTY
       : PLAYER_NORMAL_AS_GEAR_SPEED_PENALTY;
-    return Math.max(0, baseSpeed - speedPenalty);
+    return Math.max(0, (baseSpeed - speedPenalty) * difficultySpeedMultiplyer);
   }
 
   get direction(): Direction {
