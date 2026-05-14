@@ -2,6 +2,8 @@ export let ENABLE_LOGGING = false;
 export function setEnableLogging(value: boolean) { ENABLE_LOGGING = value; }
 
 export const PLAYER_SPEED = 90;
+export const PLAYER_ARMOR_AS_GERA_SPEED_PENALTY = 8;
+export const PLAYER_NORMAL_AS_GEAR_SPEED_PENALTY = 1;
 export const PLAYER_INVULNERABLE_AFTER_HIT_DURATION = 1000;
 export const PLAYER_HURT_PUSH_BACK_SPEED = 50;
 export const PLAYER_START_MAX_HEALTH = 6;
