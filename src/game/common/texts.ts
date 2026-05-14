@@ -139,18 +139,6 @@ const TEXTS = {
         en: 'Continue',
         da: 'Fortsæt',
     },
-    'ui.progression.intro': {
-        en: 'In the beginning the earth was formless and empty...',
-        da: 'I begyndelsen var jorden tomhed og øde...',
-    },
-    'ui.progression.controlsHelp': {
-        en: 'Movement: w, a, s, d or arrow-keys, hit/cast: z, interact: x',
-        da: 'Bevægelse: w, a, s, d eller piletaster, slå/magi: z, interager: x',
-    },
-    'ui.progression.followUp': {
-        en: 'Work the earth and take care of it....',
-        da: 'Pas på jorden og dyrene...',
-    },
     'ui.progression.gameOver': {
         en: 'Game Over',
         da: 'Spillet er slut',
@@ -231,8 +219,16 @@ const TEXTS = {
     },
     //Potions from chests
     'potion.fruit.found': {
-        en: 'a mysterious fruit potion',
-        da: 'en magisk frugt drik',
+        en: 'mysterious fruit from the tree of life',
+        da: 'magiske frugter fra livets træ',
+    },
+    'potion.fruit.take': {
+        en: 'Eat the fruit from the tree of life...',
+        da: 'Spis frugten fra livets træ...',
+    },
+    'potion.fruit.repeat': {
+        en: 'Eat fruit again from the tree of life...',
+        da: 'Spis igen af frugten fra livets træ...',
     },
     //Gear from chests
     'gear.bare.found': {
@@ -369,8 +365,11 @@ export function formatChestHeading(contents: { potion: string; gear: string; wea
 }
 
 export function formatChestPotionOption(chestPotion: string, currentPotion: string, language: LanguageCode = getCurrentLanguage()): string {
-    //ToDo: add all languages and an option to not eat...
-    return 'Eat the fruit from the tree of life...';
+    const repeat = chestPotion === currentPotion && chestPotion.length > 0;
+    if (repeat) {
+        return getText('potion.fruit.repeat', {}, language);
+    }
+    return getText('potion.fruit.take', {}, language);
 }
 
 export function formatChestWeaponOption(chestWeapon: string, currentWeapon: string, language: LanguageCode = getCurrentLanguage()): string {
