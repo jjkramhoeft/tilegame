@@ -16,6 +16,7 @@ export type ChestJJKConfig = {
 export type ChestReward = {
   gear: string;
   weapon: string;
+  potion: string;
 }
 
 export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameObject {

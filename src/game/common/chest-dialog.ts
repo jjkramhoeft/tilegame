@@ -1,6 +1,6 @@
-import { GEAR, WEAPON } from './common';
+import { GEAR, POTION, WEAPON } from './common';
 import { DataManager } from './data-manager';
-import { formatChestGearOption, formatChestHeading, formatChestWeaponOption, getText } from './texts';
+import { formatChestGearOption, formatChestHeading, formatChestWeaponOption, formatChestPotionOption, getText } from './texts';
 import type { ChestJJK } from '../game-objects/objects/chestJJK';
 
 export type DialogPayload = {
@@ -15,6 +15,7 @@ export interface ChestDialogInfo {
   option1WeaponToLeave: string,
   option2GearToPlayer: string,
   option2GearToLeave: string,
+  option1PotionToPlayer: string,
   chestNumber?: number,
   dialog: DialogPayload,
 }
@@ -27,6 +28,7 @@ export function writeChestDialogInfo(chest: ChestJJK): ChestDialogInfo {
     option1WeaponToLeave: WEAPON.NONE,
     option2GearToPlayer: GEAR.NONE,
     option2GearToLeave: GEAR.NONE,
+    option1PotionToPlayer: POTION.NONE,
     chestNumber: chest.id,
     dialog: {
       heading: '',
@@ -34,6 +36,11 @@ export function writeChestDialogInfo(chest: ChestJJK): ChestDialogInfo {
     },
   };
   const heading = formatChestHeading(chest.contents);
+  let potionHasOption = false;
+  let optionPotion = formatChestPotionOption(chest.contents.potion, DataManager.instance.data.potion);
+  if (chest.contents.potion !== POTION.NONE) {
+    potionHasOption = true;
+  }
   let weaponHasOption = false;
   let optionWeapon = formatChestWeaponOption(chest.contents.weapon, DataManager.instance.data.weapon);
   if (chest.contents.weapon !== WEAPON.NONE) {
@@ -54,7 +61,13 @@ export function writeChestDialogInfo(chest: ChestJJK): ChestDialogInfo {
     heading,
     options: [getText('chest.leave')],
   };
-  if (gearHasOption && weaponHasOption) {
+  if (potionHasOption ) {
+    result.dialog = {
+      heading,
+      options: [optionPotion, getText('chest.leave')],
+    };
+    result.option1PotionToPlayer = chest.contents.potion;
+  } else if  (gearHasOption && weaponHasOption) {
     result.dialog = {
       heading,
       options: [optionWeapon, optionGear, getText('chest.leave')],

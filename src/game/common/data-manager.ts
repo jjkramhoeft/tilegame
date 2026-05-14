@@ -23,6 +23,7 @@ export type PlayerData = {
   sex: string;
   gear: string;
   weapon: string;
+  potion: string;
   lastDialogOptionSelected: number;
   lastDialogResultInfo?: ChestDialogInfo;
   languageIsDanish: boolean;
@@ -47,6 +48,7 @@ export class DataManager {
       sex: 'male',
       gear: '',
       weapon: '',
+      potion: '',
       lastDialogOptionSelected: 0,
       languageIsDanish: false,
       isDebugMode: false,

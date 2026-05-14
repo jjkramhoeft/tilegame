@@ -1,6 +1,6 @@
 import { Earth } from '../../ground/earth';
 import { Tile } from '../../ground/tile';
-import { WEAPON, GEAR, CHEST_STATE } from '../../common/common';
+import { WEAPON, GEAR, CHEST_STATE, POTION } from '../../common/common';
 import { ChestJJK } from '../../game-objects/objects/chestJJK';
 import { Position } from '../../common/types';
 
@@ -72,6 +72,7 @@ export function setupDebugChests(
 export function addChest(position: Position, scene: Phaser.Scene, chests: ChestJJK[], chestGroup: Phaser.GameObjects.Group, chestNumber: number) {
     let chestGear: string = GEAR.NONE;
     let chestWeapon: string = WEAPON.NONE;
+    let chestPotion: string = POTION.NONE;
     switch (chestNumber) {
         case 1:
             chestGear = GEAR.BARE;
@@ -91,6 +92,9 @@ export function addChest(position: Position, scene: Phaser.Scene, chests: ChestJ
         case 6:            
             chestGear = GEAR.ARMOR;
             break;
+        case 7:            
+            chestPotion = POTION.FRUIT;
+            break;
     }
 
     const chest = new ChestJJK(scene, {
@@ -100,6 +104,7 @@ export function addChest(position: Position, scene: Phaser.Scene, chests: ChestJ
         contents: {
             gear: chestGear,
             weapon: chestWeapon,
+            potion: chestPotion,
         }
     }, CHEST_STATE.REVEALED);
     chests.push(chest);

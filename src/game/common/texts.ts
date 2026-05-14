@@ -1,4 +1,4 @@
-import { GEAR, WEAPON } from './common';
+import { GEAR, POTION, WEAPON } from './common';
 import { DataManager } from './data-manager';
 
 export type LanguageCode = 'en' | 'da';
@@ -196,6 +196,11 @@ const TEXTS = {
         en: 'Leave your current {currentItem}',
         da: 'Læg dit nuværende {currentItem}',
     },
+    //Potions from chests
+    'potion.fruit.found': {
+        en: 'a mysterious fruit potion',
+        da: 'en magisk frugt drik',
+    },
     //Gear from chests
     'gear.bare.found': {
         en: 'a piece of cloth',
@@ -289,6 +294,13 @@ export function getText(key: TextKey, params: TextParams = {}, language: Languag
     return text;
 }
 
+export function getPotionText(potion: string, language: LanguageCode = getCurrentLanguage()): string {
+    switch (potion) {
+        case POTION.FRUIT: return getText('potion.fruit.found', {}, language);
+        default: return '';
+    }
+}
+
 export function getGearText(gear: string, context: GearDisplayContext, language: LanguageCode = getCurrentLanguage()): string {
     switch (gear) {
         case GEAR.BARE: return getText(`gear.bare.${context}`, {}, language);
@@ -307,8 +319,9 @@ export function getWeaponText(weapon: string, context: WeaponDisplayContext, lan
     }
 }
 
-export function formatChestHeading(contents: { gear: string; weapon: string }, language: LanguageCode = getCurrentLanguage()): string {
+export function formatChestHeading(contents: { potion: string; gear: string; weapon: string }, language: LanguageCode = getCurrentLanguage()): string {
     const foundItems = [
+        getPotionText(contents.potion, language),
         getGearText(contents.gear, 'found', language),
         getWeaponText(contents.weapon, 'found', language),
     ].filter((item) => item.length > 0);
@@ -320,6 +333,11 @@ export function formatChestHeading(contents: { gear: string; weapon: string }, l
     return getText('chest.found', {
         items: foundItems.join(getText('chest.foundJoin', {}, language)),
     }, language);
+}
+
+export function formatChestPotionOption(chestPotion: string, currentPotion: string, language: LanguageCode = getCurrentLanguage()): string {
+    //ToDo: add all languages and an option to not eat...
+    return 'Eat the fruit from the tree of life...';
 }
 
 export function formatChestWeaponOption(chestWeapon: string, currentWeapon: string, language: LanguageCode = getCurrentLanguage()): string {

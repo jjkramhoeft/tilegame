@@ -102,6 +102,10 @@ export const  GEAR = {
   BASIC:'basic',
   ARMOR :'armor'
 }
+export const  POTION = {
+  NONE :'none',
+  FRUIT :'fruit',
+}
 
 export const SEX = {
   MALE : 'male',

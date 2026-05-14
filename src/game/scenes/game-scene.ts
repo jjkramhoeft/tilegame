@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { Player } from '../game-objects/player/player';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Earth } from '../ground/earth';
-import { SEX, WEAPON, GEAR, DIRECTION } from '../common/common';
+import { SEX, WEAPON, GEAR, DIRECTION, BIOME, POTION } from '../common/common';
 import {
     CUSTOM_EVENTS,
     EVENT_BUS,
@@ -20,6 +20,7 @@ import { updateSwimmingLogic } from './debug/debug-swimming';
 import { DebugSpellcasting } from './debug/debug-spellcasting';
 import { setupDebugBlocking } from './debug/debug-blocking';
 import { SCENE_KEYS } from './scene-keys';
+import { Tile } from '../ground/tile';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
@@ -85,7 +86,7 @@ export class GameScene extends Phaser.Scene {
             this.#startDebugGameplay();
             return;
         }
-        else{
+        else {
             this.#startGameplay();
         }
     }
@@ -149,6 +150,7 @@ export class GameScene extends Phaser.Scene {
             sex: currentData.sex ?? SEX.MALE,
             gear: GEAR.NONE,
             weapon: WEAPON.NONE,
+            potion: POTION.NONE,
             lastDialogOptionSelected: 0,
             languageIsDanish: currentData.languageIsDanish ?? false,
             isDebugMode: currentData.isDebugMode ?? false,
@@ -258,10 +260,18 @@ export class GameScene extends Phaser.Scene {
             this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
             setupDebugBlocking(this, this.#earth, firstTilePosition);
             spawnDebugEnemies(this, this.#enemyGroup!, this.#critterGroup!, this.#earth, firstTilePosition);
-            this.#earth.AddVoidMarkerTile(firstTilePosition.x+5, firstTilePosition.y+3);
-            this.#earth.AddVoidMarkerTile(firstTilePosition.x+5, firstTilePosition.y+4);
-            this.#earth.AddVoidMarkerTile(firstTilePosition.x+6, firstTilePosition.y+3);
-            this.#earth.AddVoidMarkerTile(firstTilePosition.x+6, firstTilePosition.y+4);
+            this.#earth.AddVoidMarkerTile(firstTilePosition.x + 5, firstTilePosition.y + 3);
+            this.#earth.AddVoidMarkerTile(firstTilePosition.x + 5, firstTilePosition.y + 4);
+            this.#earth.AddVoidMarkerTile(firstTilePosition.x + 6, firstTilePosition.y + 3);
+            this.#earth.AddVoidMarkerTile(firstTilePosition.x + 6, firstTilePosition.y + 4);
+            //Tmp test of fruitPotionChest
+            const fruitChestTile = new Tile({
+                tilenumber: { x: firstTilePosition.x + 7, y: firstTilePosition.y },
+                biome: BIOME.FOREST,
+            })
+            this.#earth.AddTile(fruitChestTile);
+            addChest({ x: firstTilePosition.x + 7, y: firstTilePosition.y }, this, this.#chests, this.#chestJJKGroup, 7);
+            //Tmp test of bigTree
             //this.#earth.placeGardenTiles();
         }
 
@@ -281,7 +291,7 @@ export class GameScene extends Phaser.Scene {
 
     #handlePlayerDefeatedEvent(): void {
         //ToDo: show game over
-    }    
+    }
 
     #handleChestDialogClosed(): void {
         let d = DataManager.instance.data;
@@ -294,7 +304,20 @@ export class GameScene extends Phaser.Scene {
                 DataManager.instance.data = d;
                 return;
             }
-
+            // Handle fruit potion chest.
+            if(dialogResultInfo.chestNumber===7){
+                console.debug('Applying potion result from chest dialog');
+                if (d.lastDialogOptionSelected === 0) {
+                    d.potion = dialogResultInfo.option1PotionToPlayer;
+                    //ToDo: Set player maxHealth to 6 if below 6, and set player current health to 6, make sure HUD is opdated accordingly.
+                    // The potion is unlimmeted in this chest, so we do not need to set the chest contents to NONE when taken.
+                } else {
+                    // Opted not to eat/drink, do nothing.
+                }
+                DataManager.instance.data = d;
+                return;
+            }
+            // handle regular chest with weapon and gear options.
             if (d.lastDialogOptionSelected === 0) {// Top Option Selected, can be either weapon or gear.
                 // Weapons is in the top option
                 if (!(dialogResultInfo.option1WeaponToPlayer === WEAPON.NONE && dialogResultInfo.option1WeaponToLeave === WEAPON.NONE)) {
