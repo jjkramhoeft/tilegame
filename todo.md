@@ -14,6 +14,7 @@
   - victoryState
   - eveState
 - Expand on gardenState, decorations, trees, water ect.
+- More uniform tile creation, to get larger area of the same biome
 
 ## Implementations that require new asserts
 

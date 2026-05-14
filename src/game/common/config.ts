@@ -2,6 +2,7 @@ export let ENABLE_LOGGING = false;
 export function setEnableLogging(value: boolean) { ENABLE_LOGGING = value; }
 
 export const DIFFICULTY_HARD_SPEED_MULTIPLIER = 1.5;
+export  const DIFFICULTY_HARD_WAIT_FACTOR = 0.5;
 
 export const PLAYER_SPEED = 90;
 export const PLAYER_ARMOR_AS_GEAR_SPEED_PENALTY = 8;

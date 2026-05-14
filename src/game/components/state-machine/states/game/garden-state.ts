@@ -1,6 +1,8 @@
 import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import type { GameScene } from '../../../../scenes/game-scene';
+import { DIFFICULTY_HARD_WAIT_FACTOR } from '../../../../common/config';
+import { DataManager } from '../../../../common/data-manager';
 
 export class GardenState extends BaseGameState {
   constructor(scene: GameScene) {
@@ -10,21 +12,26 @@ export class GardenState extends BaseGameState {
   public onEnter(): void {
     console.debug('[GameProgression] GardenState entered');
     this._scene.lockPlayerMovement();
+    let defaultWaitTime = 500;
+    let defaultStepWaitTime = 80;
+    if(DataManager.instance.data.difficulty === 'Hard') {
+      defaultWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
+      defaultStepWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
+    }
 
-    // 1) 1 sec pause
-    this._pause(1000, () => {
-      // 2) Narrator: "Not just barren rock and wasteland..."
+    this._pause(defaultWaitTime, () => {
       this._showNarrator('narrator.garden.lush', () => {
-        // 3) Change tiles to a lush green garden + big tree, one by one.
-        this._scene.earth.placeGardenTiles(80, () => {
-          // 4) Narrator: "Your assignment is to create a lush forest..."
-          this._pause(500, () => {
-            this._showNarrator('narrator.garden.assignment', () => {
-              // 5) Place fruit chest near the big tree.
-              this._scene.placeFruitChestNearBigTree();
-              // 6) Transition to the regular play state.
-              this._scene.unlockPlayerMovement();
-              this._transitionTo(GAME_STATES.REGULAR);
+        this._pause(defaultWaitTime, () => {
+          this._showNarrator('narrator.garden.assignment', () => {
+            this._scene.earth.placeGardenTiles(defaultStepWaitTime, () => {
+              this._pause(defaultWaitTime, () => {
+                this._scene.placeFruitChestNearBigTree();
+                this._pause(defaultWaitTime, () => {
+                  // Transition to the regular play state.
+                  this._scene.unlockPlayerMovement();
+                  this._transitionTo(GAME_STATES.REGULAR);
+                });
+              });
             });
           });
         });

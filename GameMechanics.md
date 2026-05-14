@@ -295,3 +295,6 @@ First when a biome is unlocked only plain basetiles with borderlayer can be adde
 |Swamp|x||||x|x|||
 |Crystal|x||||||x||
 |Water||||||||x|
+
+The snake can kill chickens
+The skeleton can kill lamb and cows

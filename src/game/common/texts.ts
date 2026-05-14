@@ -157,16 +157,16 @@ const TEXTS = {
         da: '...Gud skabte jorden og himlen, og dig. Bevæg dig forsigtigt...',
     },
     'narrator.assignment': {
-        en: '...And you shall help in the creating, make the land, fill it with green forest and then animals.',
-        da: '...Og du skal hjælpe med at skabe; gør landet, fyld det med grøn skov og så dyr.',
+        en: '...And you shall help create!, make the land, fill it with green forest and then animals. Do not let it be empty...',
+        da: '...Og du skal hjælpe med at skabe; frembring landet, fyld det med grøn skov og så dyr. Lad det ikke være tomt...',
     },
     'narrator.garden.lush': {
-        en: '...Not just barren rock and wasteland, but green fields, flowing rivers and trees...',
-        da: '...Ikke bare gold sten og ødemark, men grønne marker, rindende floder og træer...',
+        en: 'Fine! Your first rocks and pebbles. Practice and grow your skills. We need more than this wasteland. In time you will bring forth green fields, flowing rivers and trees.',
+        da: 'Fint! Dine første klipper og småsten. Øv dig og udvikl dine færdigheder. Vi har brug for mere end denne ødemark. Med tiden vil du frembringe grønne marker, strømmende floder og træer.',
     },
     'narrator.garden.assignment': {
-        en: '...Your assignment is to create a lush forest with many animals. If you pick an evil path you will have to face the demon.',
-        da: '...Din opgave er at skabe en frodig skov med mange dyr. Vælger du en ond vej, må du møde dæmonen.',
+        en: 'Let me give you the first garden. Your assignment is to create a lush forest with many animals. If you pick an evil path you will have to face the demon.',
+        da: 'Lad mig give dig den første have. Din opgave er at skabe en frodig skov med mange dyr. Hvis du vælger en ond vej, bliver du nødt til at stå ansigt til ansigt med dæmonen.',
     },
     'narrator.firstTree': {
         en: 'You added your first tree. Here, animals can thrive...',
