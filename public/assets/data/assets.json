@@ -1654,6 +1654,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "big-tree",
+        "textureURL": "big-tree.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 256
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "containers",
         "textureURL": "containers.png",
         "frameConfig": {

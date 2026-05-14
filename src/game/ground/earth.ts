@@ -749,9 +749,11 @@ export class Earth {
         }
         this.scene.add
             .sprite(this.firstTilePosition.x * this.tileSize, this.firstTilePosition.y * this.tileSize , 'big-tree')
-            .setOrigin(0, 0)
-            .setDepth(BASE_DEPTH)
-            .play('big-tree-growth');
+            .setOrigin(0.25, 0.85)
+            .setDepth(this.firstTilePosition.y * this.tileSize+32)
+            .play('big-tree-growth',true);
+        //ToDo: Add center forest tile with blocking matching the big-trees trunk.
+        //ToDo: Add void tiles around the garden
     }
 
     public getTileXYFromScreenCoordinates(screenX: number, screenY: number, offsetPlayer: boolean): Position {

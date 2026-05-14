@@ -112,6 +112,13 @@ export class PreloadScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('tile-animated', { start: 32, end: 39 }),
             frameRate: 4,
             repeat: -1
+        });        
+        const BIG_TREE_ANIM_KEY = 'big-tree-growth';
+        this.anims.create({
+            key: BIG_TREE_ANIM_KEY,
+            frames: this.anims.generateFrameNumbers('big-tree', { start: 0, end: 5 }),
+            frameRate: 3,
+            repeat: 0
         });
 
         this.anims.createFromAseprite(ASSET_KEYS.HUD_NUMBERS);

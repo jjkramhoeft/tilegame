@@ -262,6 +262,7 @@ export class GameScene extends Phaser.Scene {
             this.#earth.AddVoidMarkerTile(firstTilePosition.x+5, firstTilePosition.y+4);
             this.#earth.AddVoidMarkerTile(firstTilePosition.x+6, firstTilePosition.y+3);
             this.#earth.AddVoidMarkerTile(firstTilePosition.x+6, firstTilePosition.y+4);
+            //this.#earth.placeGardenTiles();
         }
 
         this.#registerColliders();
