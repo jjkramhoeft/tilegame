@@ -21,6 +21,8 @@ import { DebugSpellcasting } from './debug/debug-spellcasting';
 import { setupDebugBlocking } from './debug/debug-blocking';
 import { SCENE_KEYS } from './scene-keys';
 import { Tile } from '../ground/tile';
+import { GameProgression } from '../progression/game-progression';
+import { GAME_STATES } from '../components/state-machine/states/game/game-state-keys';
 
 export class GameScene extends Phaser.Scene {
     #controls!: KeyboardComponent;
@@ -32,6 +34,7 @@ export class GameScene extends Phaser.Scene {
     #chests: ChestJJK[] = [];
     #chestJJKGroup!: Phaser.GameObjects.Group;
     #debugSpellcasting!: DebugSpellcasting;
+    #progression!: GameProgression;
     #playerMapCollider!: Phaser.Physics.Arcade.Collider;
     #playerChestCollider!: Phaser.Physics.Arcade.Collider;
     #playerMobCollider!: Phaser.Physics.Arcade.Collider;
@@ -81,6 +84,8 @@ export class GameScene extends Phaser.Scene {
             uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE),
         });
 
+        this.#progression = new GameProgression(this);
+
         if (DataManager.instance.data.isDebugMode) {
             console.debug('[GameScene] debug mode detected, bypassing progression help');
             this.#startDebugGameplay();
@@ -88,6 +93,8 @@ export class GameScene extends Phaser.Scene {
         }
         else {
             this.#startGameplay();
+            // Phase 1: progression states are stubs; concrete intro flow lands in Phase 2.
+            this.#progression.start(GAME_STATES.START);
         }
     }
 
@@ -102,6 +109,8 @@ export class GameScene extends Phaser.Scene {
         if (!this.#isGameplayReady) {
             return;
         }
+
+        this.#progression?.update();
 
         this.#enemyGroup?.getChildren().forEach((enemy) => {
             enemy.update();
