@@ -2,7 +2,23 @@ import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import type { GameScene } from '../../../../scenes/game-scene';
 
-/** Deferred. Requires companion character type (see game-state.md). */
+/**
+ * Deferred. See game-state.md -> Eve State.
+ *
+ * Prerequisites before this state can be implemented:
+ *  - Companion character type (Adam/Eve), opposite sex of the player, sharing
+ *    the player's gear/weapon but unchangeable.
+ *  - Following + auto-attack behaviour for the companion.
+ *  - Companion adds to player's max health on introduction.
+ *  - Animal multiplication mechanic.
+ *  - A trigger from RegularState (TBD) to enter this state.
+ *
+ * Scripted beats once those land:
+ *  1) Narrator: "It is not good to be alone..."
+ *  2) Spawn the companion next to the player.
+ *  3) Narrator: "...Here is a companion fitting for you..."
+ *  4) Transition back to RegularState.
+ */
 export class EveState extends BaseGameState {
   constructor(scene: GameScene) {
     super(GAME_STATES.EVE, scene);
@@ -10,5 +26,7 @@ export class EveState extends BaseGameState {
 
   public onEnter(): void {
     console.debug('[GameProgression] EveState entered (stub - deferred)');
+    // No-op: transitions back to RegularState are wired when the companion
+    // character type ships.
   }
 }
