@@ -593,7 +593,7 @@ export class Earth {
     // Used to add visual distinct viod tiles.
     public AddVoidMarkerTile(tileX: number, tileY: number): void {
         const voidMarkerTile = new Tile({
-            tilenumber:  { x: tileX, y: tileY },
+            tilenumber: { x: tileX, y: tileY },
             biome: BIOME.VOID
         });
         this.allTiles.set(this.key(tileX, tileY), voidMarkerTile);
@@ -641,8 +641,6 @@ export class Earth {
                         .play('crystal-flow');
                 }
             } else if (tile.biome === BIOME.VOID) {
-                //const voidAnimationChance = 0.6;
-                //if (Phaser.Math.RND.realInRange(0, 1) < voidAnimationChance)
                 {
                     this.scene.add
                         .sprite(tile.tileX * this.tileSize + this.tileSize / 2, tile.tileY * this.tileSize + this.tileSize / 2, 'tile-animated')
@@ -724,12 +722,36 @@ export class Earth {
     }
 
     public placeTargetVoidTiles(): void {
-        //ToDo: Implement adding a 7x7 grid of void tiles around the starting tile.
-        //by using AddVoidMarkerTile(x,y)
+        if (!this.firstTilePosition) {
+            return;
+        }
+        for (let dx = -3; dx <= 3; dx++) {
+            for (let dy = -3; dy <= 3; dy++) {
+                if (Math.abs(dx) === 3 && Math.abs(dy) === 3) continue; // Skip the 4 outermost corners
+                if (dx === 0 && dy === 0) continue; // Skip the center tile (already the starting tile)
+                this.AddVoidMarkerTile(this.firstTilePosition.x + dx, this.firstTilePosition.y + dy);
+            }
+        }
     }
 
     public placeGardenTiles(): void {
         //ToDo: Implement changing the center tiles to a lush green garden, using forest, grass and water tiles, then add the big-tree.
+        //For now it just simple forest bioms and the big tree.
+        if (!this.firstTilePosition) {
+            return;
+        }
+        for (let dx = -3; dx <= 3; dx++) {
+            for (let dy = -3; dy <= 3; dy++) {
+                if (Math.abs(dx) === 3 && Math.abs(dy) === 3) continue; // Skip the 4 outermost corners
+                if (dx === 0 && dy === 0) continue; // Skip the center tile (already the starting tile)
+                this.AddTile(new Tile({ tilenumber: { x: this.firstTilePosition.x + dx, y: this.firstTilePosition.y + dy }, biome: BIOME.FOREST, blocking: -1 }));
+            }
+        }
+        this.scene.add
+            .sprite(this.firstTilePosition.x * this.tileSize, this.firstTilePosition.y * this.tileSize , 'big-tree')
+            .setOrigin(0, 0)
+            .setDepth(BASE_DEPTH)
+            .play('big-tree-growth');
     }
 
     public getTileXYFromScreenCoordinates(screenX: number, screenY: number, offsetPlayer: boolean): Position {
