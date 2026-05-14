@@ -5,6 +5,7 @@ import { setEnableLogging } from '../common/config';
 import { ASSET_KEYS } from '../common/assets';
 import { getText, type TextKey } from '../common/texts';
 import { SCENE_KEYS } from './scene-keys';
+import { DIFFICULTY } from '../common/common';
 
 const COLORS = {
     title: '#5eb1da',
@@ -23,8 +24,9 @@ const PLAYER_OPTIONS = [
     { textKey: 'settings.player.eve', sex: 'female' }
 ];
 const DEBUG_OPTIONS = [
-    { textKey: 'settings.debug.off', value: false },
-    { textKey: 'settings.debug.on', value: true }
+    { textKey: 'settings.difficulty.easy', value: DIFFICULTY.EASY },
+    { textKey: 'settings.difficulty.hard', value: DIFFICULTY.HARD },
+    { textKey: 'settings.difficulty.debug', value: DIFFICULTY.DEBUG },
 ];
 
 type LocalizedTextObject = {
@@ -123,16 +125,16 @@ export class Settings extends Scene
         this.createPickerRow({
             x: centerX,
             y: 350,
-            getLabelText: () => getText('settings.debug'),
+            getLabelText: () => getText('settings.difficulty'),
             getValueText: () => getText(DEBUG_OPTIONS[this.debugIndex].textKey as TextKey),
-            onPrevious: () => this.changeDebug(-1),
-            onNext: () => this.changeDebug(1)
+            onPrevious: () => this.changeDifficulty(-1),
+            onNext: () => this.changeDifficulty(1)
         });
 
         this.applyMusicVolume();
         this.applyLanguage();
         this.applyPlayer();
-        this.applyDebug();
+        this.applyDifficulty();
 
         const backText = this.add.text(980, 750, getText('settings.back'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 38, color: COLORS.uiText,
@@ -251,32 +253,34 @@ export class Settings extends Scene
         };
     }
 
-    private changeDebug (direction: number): void
+    private changeDifficulty (direction: number): void
     {
         this.debugIndex = Phaser.Math.Wrap(this.debugIndex + direction, 0, DEBUG_OPTIONS.length);
-        this.applyDebug();
+        this.applyDifficulty();
     }
 
-    private applyDebug (): void
+    private applyDifficulty (): void
     {
-        const enabled = DEBUG_OPTIONS[this.debugIndex].value;
-        this.registry.set('physicsDebug', enabled);
-        setEnableLogging(enabled);
-
+        const difficulty = DEBUG_OPTIONS[this.debugIndex].value;
+        const debugEnabled = difficulty === DIFFICULTY.DEBUG;
+        this.registry.set('physicsDebug', debugEnabled);
+        setEnableLogging(debugEnabled);
+        
         const gameScene = this.scene.get('GameScene');
         if (gameScene?.physics?.world) {
             const world = gameScene.physics.world;
-            if (enabled && !world.debugGraphic) {
+            if (debugEnabled && !world.debugGraphic) {
                 world.createDebugGraphic();
             }
-            world.drawDebug = enabled;
-            if (!enabled && world.debugGraphic) {
+            world.drawDebug = debugEnabled;
+            if (!debugEnabled && world.debugGraphic) {
                 world.debugGraphic.clear();
             }
         }
         DataManager.instance.data = {
             ...DataManager.instance.data,
-            isDebugMode: enabled,
+            isDebugMode: debugEnabled,
+            difficulty: difficulty,
         };
     }
 }

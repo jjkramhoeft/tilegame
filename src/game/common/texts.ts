@@ -52,9 +52,9 @@ const TEXTS = {
         en: 'Eve',
         da: 'Eva',
     },
-    'settings.debug': {
-        en: 'Debug',
-        da: 'Debug',
+    'settings.difficulty': {
+        en: 'Difficulty',
+        da: 'Sværhedsgrad',
     },
     'settings.back': {
         en: 'Back',
@@ -68,13 +68,17 @@ const TEXTS = {
         en: 'English',
         da: 'Engelsk',
     },
-    'settings.debug.off': {
-        en: 'Off',
-        da: 'Fra',
+    'settings.difficulty.easy': {
+        en: 'Easy',
+        da: 'Let',
     },
-    'settings.debug.on': {
-        en: 'On',
-        da: 'Til',
+    'settings.difficulty.hard': {
+        en: 'Hard',
+        da: 'Svær',
+    },
+    'settings.difficulty.debug': {
+        en: 'Debug',
+        da: 'Debug',
     },
     //Credit Scene
     'credits.title': {

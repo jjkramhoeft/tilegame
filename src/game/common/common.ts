@@ -96,6 +96,12 @@ export const VOID_ANIM_DEPTH = -30;
 export const PLAYER_FALLING_STATE_DEPTH = -40;
 export const VOID_SOLID_DEPTH = -50;
 
+export const  DIFFICULTY = {
+  EASY :'Easy',
+  HARD :'Hard',
+  DEBUG:'Debug'
+} as const;
+
 export const  GEAR = {
   NONE :'nude',
   BARE :'bare',

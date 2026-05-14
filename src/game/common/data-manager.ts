@@ -1,4 +1,5 @@
 import type { ChestDialogInfo } from './chest-dialog';
+import { DIFFICULTY } from './common';
 import { PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
@@ -28,6 +29,7 @@ export type PlayerData = {
   lastDialogResultInfo?: ChestDialogInfo;
   languageIsDanish: boolean;
   isDebugMode: boolean;
+  difficulty: string;
 };
 
 export class DataManager {
@@ -52,6 +54,7 @@ export class DataManager {
       lastDialogOptionSelected: 0,
       languageIsDanish: false,
       isDebugMode: false,
+      difficulty: DIFFICULTY.EASY,
     };
   }
 
