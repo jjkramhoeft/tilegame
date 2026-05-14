@@ -26,4 +26,3 @@
 - Add water ponds to swamp as decorations
 - add monster (Zombie)
 - record voice-over for narrator. Nathan for english, Ulla, Taina or me for danish
-- add border to animated tiles

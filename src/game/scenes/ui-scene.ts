@@ -207,10 +207,7 @@ export class UiScene extends Phaser.Scene {
     this.#dialogContainer.visible = false;
     this.#narratorDialogText.setText(getText(payload.textKey));
     this.#narratorDialogContainer.visible = true;
-    console.debug('[UiScene] narrator dialog visible', {
-      mode: this.#getUiModeName(),
-      closeAction: this.#narratorDialogCloseAction,
-    });
+    //console.debug('[UiScene] narrator dialog visible', {mode: this.#getUiModeName(), closeAction: this.#narratorDialogCloseAction, });
   }
 
   public update(): void {
@@ -412,13 +409,13 @@ export class UiScene extends Phaser.Scene {
     this.#updateSaveDialogCursor();
   }
 
-  #confirmSelectedOption(): void {
+  #confirmSelectedOption(): void {/*
     console.debug('[UiScene] confirm selected option', {
       mode: this.#getUiModeName(),
       selectedMenuOptionIndex: this.#selectedMenuOptionIndex,
       selectedSaveOptionIndex: this.#selectedSaveOptionIndex,
       narratorDialogCloseAction: this.#narratorDialogCloseAction,
-    });
+    });*/
 
     if (this.#uiMode === UiMode.ChestDialog) {
       const playerData = DataManager.instance.data;
@@ -445,7 +442,7 @@ export class UiScene extends Phaser.Scene {
     if (this.#uiMode === UiMode.NarratorDialog) {
       const closeAction = this.#narratorDialogCloseAction;
       const closedPayload: NarratorDialogClosed = { closeAction };
-      console.debug('[UiScene] closing narrator dialog', closedPayload);
+      //console.debug('[UiScene] closing narrator dialog', closedPayload);
       this.#narratorDialogContainer.visible = false;
       this.#narratorDialogCloseAction = 'close';
       this.#uiMode = UiMode.HudOnly;

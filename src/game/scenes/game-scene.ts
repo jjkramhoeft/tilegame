@@ -268,10 +268,10 @@ export class GameScene extends Phaser.Scene {
     }
 
     #startDebugGameplay(): void {
-        console.debug('[GameScene] startDebugGameplay');
+        //console.debug('[GameScene] startDebugGameplay');
 
         const firstTilePosition = this.placeStartingTile();
-        console.debug('[GameScene] starting tile placed', firstTilePosition);
+        //console.debug('[GameScene] starting tile placed', firstTilePosition);
 
         this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
         setupDebugBlocking(this, this.#earth, firstTilePosition);
@@ -291,7 +291,7 @@ export class GameScene extends Phaser.Scene {
         //this.#earth.placeGardenTiles();
 
         this.#controls.isMovementLocked = false;
-        console.debug('[GameScene] debug gameplay ready');
+        //console.debug('[GameScene] debug gameplay ready');
     }
 
     /** Place the very first tile under the player start position. Returns its tile coordinates. */
@@ -339,7 +339,7 @@ export class GameScene extends Phaser.Scene {
     #handleChestDialogClosed(): void {
         let d = DataManager.instance.data;
         const dialogResultInfo = d.lastDialogResultInfo;
-        console.debug(`Dialog closed, Player: ${d.sex} ${d.gear} ${d.weapon}, last option selected: ${d.lastDialogOptionSelected}, dialog result info: ${JSON.stringify(dialogResultInfo)}`);
+        //console.debug(`Dialog closed, Player: ${d.sex} ${d.gear} ${d.weapon}, last option selected: ${d.lastDialogOptionSelected}, dialog result info: ${JSON.stringify(dialogResultInfo)}`);
         if (dialogResultInfo) {
             const chest = this.#getChestById(dialogResultInfo.chestNumber);
             if (!chest) {
@@ -349,7 +349,7 @@ export class GameScene extends Phaser.Scene {
             }
             // Handle fruit potion chest.
             if(dialogResultInfo.chestNumber===7){
-                console.debug('Applying potion result from chest dialog');
+                //console.debug('Applying potion result from chest dialog');
                 if (d.lastDialogOptionSelected === 0) {
                     d.potion = dialogResultInfo.option1PotionToPlayer;
                     //ToDo: Set player maxHealth to 6 if below 6, and set player current health to 6, make sure HUD is opdated accordingly.
