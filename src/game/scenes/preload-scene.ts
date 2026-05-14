@@ -99,7 +99,7 @@ export class PreloadScene extends Phaser.Scene {
             frameRate: 8,
             repeat: -1
         });
-        const VOID_ANIM_KEY = 'void-flow';
+        const VOID_ANIM_KEY = 'void-marker-flow';
         this.anims.create({
             key: VOID_ANIM_KEY,
             frames: this.anims.generateFrameNumbers('tile-animated', { start: 24, end: 31 }),

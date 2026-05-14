@@ -258,6 +258,10 @@ export class GameScene extends Phaser.Scene {
             this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
             setupDebugBlocking(this, this.#earth, firstTilePosition);
             spawnDebugEnemies(this, this.#enemyGroup!, this.#critterGroup!, this.#earth, firstTilePosition);
+            this.#earth.AddVoidMarkerTile(firstTilePosition.x+5, firstTilePosition.y+3);
+            this.#earth.AddVoidMarkerTile(firstTilePosition.x+5, firstTilePosition.y+4);
+            this.#earth.AddVoidMarkerTile(firstTilePosition.x+6, firstTilePosition.y+3);
+            this.#earth.AddVoidMarkerTile(firstTilePosition.x+6, firstTilePosition.y+4);
         }
 
         this.#registerColliders();

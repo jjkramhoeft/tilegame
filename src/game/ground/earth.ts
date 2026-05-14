@@ -590,6 +590,21 @@ export class Earth {
         return neighborBiomes;
     }
 
+    // Used to add visual distinct viod tiles.
+    public AddVoidMarkerTile(tileX: number, tileY: number): void {
+        const voidMarkerTile = new Tile({
+            tilenumber:  { x: tileX, y: tileY },
+            biome: BIOME.VOID
+        });
+        this.allTiles.set(this.key(tileX, tileY), voidMarkerTile);
+        //voidMarkerTile?.setCollision(true, true, true, true); collision not need on maker void tiles, they are use early in the game when there are no animals, so no bounce is needed.
+        this.scene.add
+            .sprite(voidMarkerTile.tileX * this.tileSize, voidMarkerTile.tileY * this.tileSize, 'tile-animated')
+            .setOrigin(0, 0)
+            .setDepth(VOID_ANIM_DEPTH)
+            .play('void-marker-flow');
+    }
+
     public AddTile(tile: Tile) {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
@@ -708,6 +723,7 @@ export class Earth {
 
     public placeTargetVoidTiles(): void {
         //ToDo: Implement adding a 7x7 grid of void tiles around the starting tile.
+        //by using AddVoidMarkerTile(x,y)
     }
 
     public placeGardenTiles(): void {
