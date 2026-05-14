@@ -7,10 +7,15 @@
 - Finalize aminal placment (pick a better placement tile and pick animal fitting the unlocked biome)
 - Add 'water-splash' sound when swimming (in sted of footsteps)
 - walk slower when waering armor
+- no swimming when waering armor (take damage if player is trying to swim in armor)
 - take less damage when waering armor
 - Alternative to bounce-movement
 - Consistent keybord-only input for intro-scene, credits-scene & settings-scene
-- Implemet progression framework (use state-machine to make (implement) a base-game-state, the base-game-state are extended into 9 different game states - see below)
+- Implement deferred gameStates
+  - bossFightState
+  - victoryState
+  - eveState
+- Expand on gardenState, decorations, trees, water ect.
 
 ## Implementations that require new asserts
 
@@ -19,7 +24,8 @@
 - Find player hit sounds; player takes hit, Enemy takes hit
 - Find Mountain sprite sheet
 - Add chest placement/open sound effect
-- More diverser spell sounds and animation
-- Add distinct frame for nariator
+- More diverser spell sounds
 - Add water ponds to swamp as decorations
 - add monster (Zombie)
+- record voice-over for narrator. Nathan for english, Ulla, Taina or me for danish
+- add border to animated tiles
