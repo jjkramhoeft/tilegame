@@ -137,16 +137,16 @@ const TEXTS = {
     'ui.save.continuePlaying': {
         en: 'Continue Playing',
         da: 'Spil videre',
-    },
-    //Progression Help UI
+    },    
+    //Narrator Progression Dialog UI
     'ui.progression.continue': {
-        en: 'Continue',
-        da: 'Fortsæt',
+        en: 'Continue   (\'x\' or \'enter\')',
+        da: 'Fortsæt   (\'x\' eller \'retur\')',
     },
     'ui.progression.gameOver': {
         en: 'Game Over',
         da: 'Spillet er slut',
-    },
+    },    
     //Narrator (game progression)
     'narrator.start.intro': {
         en: '...In the beginning the earth was formless and empty...',
