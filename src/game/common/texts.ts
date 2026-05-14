@@ -138,6 +138,12 @@ const TEXTS = {
         en: 'Continue Playing',
         da: 'Spil videre',
     },    
+    'ui.dialog_navigation_help': {
+        en: '(arrow up, down and \'x\' or \'enter\')',
+        da: '(pil op, ned og \'x\' eller \'retur\')',
+    },    
+    
+
     //Narrator Progression Dialog UI
     'ui.progression.continue': {
         en: 'Continue   (\'x\' or \'enter\')',
