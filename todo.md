@@ -5,7 +5,6 @@
 - Fix multiple of the same chest in the same cast at higer powerlevels
 - Fix spawning blocking on top of chests
 - Finalize aminal placment (pick a better placement tile and pick animal fitting the unlocked biome)
-- Rotate void animation, for more variation
 - Add 'water-splash' sound when swimming (in sted of footsteps)
 - walk slower when waering armor
 - take less damage when waering armor
