@@ -5,10 +5,9 @@
 - Fix multiple of the same chest in the same cast at higer powerlevels
 - Fix spawning blocking on top of chests
 - Finalize aminal placment (pick a better placement tile and pick animal fitting the unlocked biome)
-- Add 'water-splash' sound when swimming (in sted of footsteps)
-- walk slower when waering armor
-- no swimming when waering armor (take damage if player is trying to swim in armor)
-- take less damage when waering armor
+- walk slower when wearing  armor
+- no swimming when wearing  armor (take damage if player is trying to swim in armor)
+- take less damage when wearing  armor
 - Alternative to bounce-movement
 - Consistent keybord-only input for intro-scene, credits-scene & settings-scene
 - Implement deferred gameStates
