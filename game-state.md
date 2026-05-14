@@ -1,4 +1,4 @@
-The game need a narrator to guide the player and introduce the game mechanichs, and som scripted cut seence to make the progression memorable.
+The game need a narrator to guide the player and introduce the game mechanics, and some scripted cut scene to make the progression memorable.
 The narrators text should be shown via the narratorDialog in the UI-scene.
 
 Implement the game play progression by using StateMachine (from state-machine.ts) to make (implement) a BaseGameState (new file base-game-state.ts), the base-game-state are extended into 12 different game states - see below
@@ -21,7 +21,7 @@ Implement the game play progression by using StateMachine (from state-machine.ts
 #### Start State
 
 A narrator game state, Player is passive.
-The events in this gameState is as follwing:
+The events in this gameState is as following:
 1) empty screen (no player and no tiles)
 2) text: "...In the beginning the earth was formless and empty..."
 3) 1 sec pause
@@ -36,9 +36,9 @@ The events in this gameState is as follwing:
 #### First Tile State
 
 An active player game state, No narrator
-Fist very simple play state.
-player can move (and can fall and die), player can attack but cast is limmited to an off sound and no effect.
-ToDo: implement limmited cast. (where isLimmited = true)
+First very simple play state.
+player can move (and can fall and die), player can attack but cast is limited to an off sound and no effect.
+ToDo: implement limited cast. (where isLimmited = true)
 After player movement and an attack/cast transition to Assignment State
 
 #### Assignment State
@@ -64,69 +64,74 @@ when target are filled and 2 blocking rocks are placed in tiles, and player is b
 A narrator game state, Player is passive.
 No player movement
 1) 1 sec pause
-2) Text: "...Not just baren rock and wasteland, no green fields, flowing rivers and trees..."
-3) Change tiles one by one to a more fertiel and green, add water like an river, add bushes and small trees, and then add the big tree. (use placeGardenTiles() in earth)
-4) Text: "...Your assignmment is create a lush forest with many animals, if you pick an evil path you will have to face the demon"  
-5) Add box (a chest) of fuit, where the player can interact to eat an apple and get full life
-6) Tramsition to regularPlayState
+2) Text: "...Not just barren rock and wasteland, no green fields, flowing rivers and trees..."
+3) Change tiles one by one to a more fertile and green, add water like a river, add bushes and small trees, and then add the big tree. (use placeGardenTiles() in earth)
+4) Text: "...Your assignment is create a lush forest with many animals, if you pick an evil path you will have to face the demon"  
+5) Add box (a chest) of fruit next to the bigTree, where the player can interact to eat an apple and get a boost to max health and full health (use chest number 7)
+6) Transition to regularPlayState
 
 #### Regular Play State
 
 An active player game state, No narrator
 The main gameplay state.
-Progres by unlocking tile biomes, trees and animals. Flee or fight enemies.
-Can transistion to many game states: 
+Progress by unlocking tile biomes, trees and animals. Flee or fight enemies.
+Can transition to many game states (firstTree, firstAnimal, eve, bossFight, gameOver, victory), the transitions will be defined later.
 
 #### First Tree State
 
 A narrator game state, Player is passive.
 No player movement.
-Triggered by first blocking forest tree, desert palm/cacti, swamp tree, from regular state
-- Text "You added you first tree, fine here can animal trive..."
-- Transition to regular game state
+Triggered by first blocking forest tree, desert palm/cacti, swamp tree, from regular state. This transition will be implemented later.
+1) 1 sec pause
+2) Text "You added you first tree, fine here can animal thrive..."
+3) Transition to regular game state
 
 #### First Animal State
 
 A narrator game state, Player is passive.
-Triggered by first Chichken, Lamb ect.
-- Text "You are not alone! let life multiply..."
-- Transistion to regular Game State
+Triggered by first Chicken, Lamb etc. This transition will be implemented later.
+1) 1 sec pause
+2) Text "You are not alone! let life multiply..."
+3) Transition to regular Game State
 
 #### Eve State
 
-To be implemented later. Needs futher refinement.
+To be implemented later. Needs further refinement and development of a companion character type
 A narrator game state, Player is passive.
 No player movement
-Trigger by ???
-Adam or Eve depnding on what play play as.
-Same gear and weapon as player, but can not be changed
-Following player.
-Auto attacks
-Multiply aimals
-Adds to max health to player
-- Text: "It is not good to be alone..."
-- Place Eve
-- Text: ", Here is a companion fitting for you..."
-- Transition to Regular Play State
+Trigger by ??? (to be defined)
+Adam or Eve depending on what play play as. (will pick the opposite sex as the player)
+Same gear and weapon as player, but can not be changed.
+The main features of the companion character type should be:
+- Following player.
+- Auto attacks
+- Multiply animals
+- Adds to max health to player, when introduced
+The narrator game state should have these elements:
+1) Text: "It is not good to be alone..."
+2) Place Eve(or Adam) companion
+3) Text: ", Here is a companion fitting for you..."
+4) Transition to Regular Play State
 
 #### Boss Fight State
 
-To be implemented later. Needs futher refinement.
+To be implemented later. Needs further refinement, and development of a boss enemy type
 An active player game state, No narrator
-Triggered by ???
-Lizardman boss, do timed minions attack starting with sound
+Triggered by ??? (to be defined)
+Lizardman boss, do timed minions (small snakes) attack starting with sound.
 
 #### Game Over State
 
 A narrator game state, Player is passive.
 Triggered by player death
 Simple Game Over
-- Text: "Game Over..."
-- on exit then exit to main menu (intro-scene)
+1) Text: "Game Over..."
+2) on exit then exit to main menu (intro-scene)
 
 #### Victory State
 
+To be implemented later. Needs further refinement.
 A narrator game state, Player is passive.
-Trigger by boss fight end or aminal progressin maxed
+Trigger by boss fight end or animal progression maxed
 - Text: "You have won!.."
 - on exit then exit to main menu (intro-scene)
