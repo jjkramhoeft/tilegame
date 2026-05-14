@@ -4,8 +4,7 @@
 
 - Fix multiple of the same chest in the same cast at higer powerlevels
 - Fix spawning blocking on top of chests
-- Finalize aminal placment (pick a better placement tile and pick animal fitting the unlocked biome)
-- walk slower when wearing  armor
+- Finalize aminal placement (pick a better placement tile and pick animal fitting the unlocked biome)
 - no swimming when wearing  armor (take damage if player is trying to swim in armor)
 - take less damage when wearing  armor
 - Alternative to bounce-movement

@@ -1631,7 +1631,9 @@
         "textureURL": "tile-animated.png",
         "frameConfig": {
           "frameWidth": 64,
-          "frameHeight": 64
+          "frameHeight": 64,
+          "margin": 2,
+          "spacing": 4
         }
       },
       {
