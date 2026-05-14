@@ -191,7 +191,7 @@ export class Settings extends Scene
             return;
         }
 
-        if (this.controls.isEscapeKeyJustDown || this.controls.isEnterKeyJustDown) {
+        if (this.controls.isEscapeKeyJustDown || this.controls.isEnterKeyJustDown || this.controls.isActionKeyJustDown) {
             this.scene.start(SCENE_KEYS.INTRO);
             return;
         }
