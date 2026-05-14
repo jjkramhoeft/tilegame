@@ -8,7 +8,6 @@ import { Direction, Position } from '../../common/types';
 import { BIOME, BIOME_COLOR_MAP } from '../../common/common';
 import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK, TILES_BEFORE_ANIMAL_UNLOCK, ENABLE_LOGGING } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
-import { CUSTOM_EVENTS, EVENT_BUS, type TilesPlacedUpdated } from '../../common/event-bus';
 
 type MagicFlagKey = {
     [Key in keyof EarthCastingConfig]: EarthCastingConfig[Key] extends boolean ? Key : never;
@@ -187,7 +186,7 @@ export class DebugSpellcasting {
     update(scene: Phaser.Scene, player: Player, earth: Earth): void {
         const currentStateName = player.stateMachine.currentStateName;
         if (this.shouldCast(currentStateName)) {
-            this.cast(scene, player, earth);
+            this.cast(scene, player, earth, false);
         }
 
         this.#previousStateName = currentStateName;
@@ -199,14 +198,20 @@ export class DebugSpellcasting {
             this.#previousStateName !== 'SWIM_STATE';
     }
 
-    private cast(scene: Phaser.Scene, player: Player, earth: Earth): void {
+    private cast(scene: Phaser.Scene, player: Player, earth: Earth, isLimmited: boolean): void {
         if (this.#spellSound.isPlaying === false) {
-            this.#spellSound.play();
+            const vol = isLimmited ? 0.5 : 1;
+            this.#spellSound.play({ volume: vol });
         }
 
         const directions = player.getLastMoveDirections();
         const travelVector = this.getCastTravelVector(directions);
-        this.playSpellEffect(scene, player, travelVector, earth);
+        this.playSpellAnimationEffect(scene, player, travelVector, earth, isLimmited);
+
+        if(isLimmited) {
+            //ToDo: Consider emmitting events to trigger game state changes.
+            return; // Limeted cast places no tiles or mobs!
+        }
 
         const casterPosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
         const targetPosition = this.getTargetPosition(casterPosition, directions);
@@ -303,7 +308,7 @@ export class DebugSpellcasting {
         return travelVector;
     }
 
-    private playSpellEffect(scene: Phaser.Scene, player: Player, travelVector: CastVector, earth: Earth): void {
+    private playSpellAnimationEffect(scene: Phaser.Scene, player: Player, travelVector: CastVector, earth: Earth, isLimited: boolean): void {
         const spell = scene.add
             .sprite(player.x + travelVector.x / 10, player.y + travelVector.y / 10, 'spell-music-11_grayscale')
             .setScale(0.5)
@@ -316,7 +321,7 @@ export class DebugSpellcasting {
         const playerTile = earth.getTile(playerTilePos.x, playerTilePos.y);
         const biome = playerTile?.biome ?? BIOME.VOID;
         const tintColor = BIOME_COLOR_MAP[biome] ?? BIOME_COLOR_MAP[BIOME.VOID];
-        spell.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
+        if(!isLimited) spell.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
         
         spell.play('spell-music-anim');
         scene.tweens.add({
@@ -350,14 +355,7 @@ export class DebugSpellcasting {
         this.addCastingFeedbackToTotals(feedback);
         this.applyBiomeProgression(this.#castingFeedbackTotals);
         this.applyPowerLevelProgression(this.#castingFeedbackTotals);
-        this.emitTilesPlaced();
-    }
-
-    private emitTilesPlaced(): void {
-        const payload: TilesPlacedUpdated = {
-            totalPlacedTiles: this.getPlacedTileCount(this.#castingFeedbackTotals),
-        };
-        EVENT_BUS.emit(CUSTOM_EVENTS.TILES_PLACED, payload);
+        //ToDo: Consider emmitting events for specific unlocks or feedback milestones to trigger game state changes.
     }
 
     private createEmptyCastingFeedback(): CastingFeedback {
