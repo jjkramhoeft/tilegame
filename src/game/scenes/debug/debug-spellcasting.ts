@@ -169,6 +169,9 @@ export class DebugSpellcasting {
     #castingFeedbackTotals: CastingFeedback = this.createEmptyCastingFeedback();
     #enemyGroup: Phaser.GameObjects.Group;
     #critterGroup: Phaser.GameObjects.Group;
+    /** When true, casting plays a quieter sound + spell animation but places no
+     *  tiles or mobs. Used by the FirstTileState during the scripted intro. */
+    public isLimitedCastEnabled = false;
 
     constructor(scene: Phaser.Scene, enemyGroup: Phaser.GameObjects.Group, critterGroup: Phaser.GameObjects.Group) {
         this.#enemyGroup = enemyGroup;
@@ -186,7 +189,7 @@ export class DebugSpellcasting {
     update(scene: Phaser.Scene, player: Player, earth: Earth): void {
         const currentStateName = player.stateMachine.currentStateName;
         if (this.shouldCast(currentStateName)) {
-            this.cast(scene, player, earth, false);
+            this.cast(scene, player, earth, this.isLimitedCastEnabled);
         }
 
         this.#previousStateName = currentStateName;

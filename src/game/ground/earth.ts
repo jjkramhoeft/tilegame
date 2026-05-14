@@ -753,26 +753,54 @@ export class Earth {
         }
     }
 
-    public placeGardenTiles(): void {
+    public placeGardenTiles(staggerMs = 0, onComplete?: () => void): void {
         //ToDo: Implement changing the center tiles to a lush green garden, using forest, grass and water tiles, then add the big-tree.
         //For now it just simple forest bioms and the big tree.
         if (!this.firstTilePosition) {
+            onComplete?.();
             return;
         }
+        const first = this.firstTilePosition;
+        const tilesToPlace: Position[] = [];
         for (let dx = -3; dx <= 3; dx++) {
             for (let dy = -3; dy <= 3; dy++) {
                 if (Math.abs(dx) === 3 && Math.abs(dy) === 3) continue; // Skip the 4 outermost corners
                 if (dx === 0 && dy === 0) continue; // Skip the center tile (already the starting tile)
-                this.AddTile(new Tile({ tilenumber: { x: this.firstTilePosition.x + dx, y: this.firstTilePosition.y + dy }, biome: BIOME.FOREST, blocking: -1 }));
+                tilesToPlace.push({ x: first.x + dx, y: first.y + dy });
             }
         }
-        this.scene.add
-            .sprite(this.firstTilePosition.x * this.tileSize, this.firstTilePosition.y * this.tileSize , 'big-tree')
-            .setOrigin(0.25, 0.85)
-            .setDepth(this.firstTilePosition.y * this.tileSize+32)
-            .play('big-tree-growth',true);
-        //ToDo: Add center forest tile with blocking matching the big-trees trunk.
-        //ToDo: Add void tiles around the garden
+
+        const placeTileAt = (pos: Position): void => {
+            this.AddTile(new Tile({
+                tilenumber: { x: pos.x, y: pos.y },
+                biome: BIOME.FOREST,
+                blocking: -1,
+            }));
+        };
+
+        const spawnBigTree = (): void => {
+            this.scene.add
+                .sprite(first.x * this.tileSize, first.y * this.tileSize, 'big-tree')
+                .setOrigin(0.25, 0.85)
+                .setDepth(first.y * this.tileSize + 32)
+                .play('big-tree-growth', true);
+            //ToDo: Add center forest tile with blocking matching the big-trees trunk.
+            //ToDo: Add void tiles around the garden
+            onComplete?.();
+        };
+
+        if (staggerMs <= 0) {
+            // Original behaviour: place every tile immediately, then the tree.
+            tilesToPlace.forEach(placeTileAt);
+            spawnBigTree();
+            return;
+        }
+
+        // Staged: place tiles one by one with a delay, then the big tree.
+        tilesToPlace.forEach((pos, index) => {
+            this.scene.time.delayedCall(staggerMs * index, () => placeTileAt(pos));
+        });
+        this.scene.time.delayedCall(staggerMs * tilesToPlace.length, spawnBigTree);
     }
 
     public getTileXYFromScreenCoordinates(screenX: number, screenY: number, offsetPlayer: boolean): Position {

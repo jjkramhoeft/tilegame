@@ -109,6 +109,9 @@ export class GameScene extends Phaser.Scene {
 
         if (DataManager.instance.data.isDebugMode) {
             console.debug('[GameScene] debug mode detected, bypassing progression help');
+            // Debug bypass: GameProgression is constructed (so PLAYER_DEFEATED
+            // routing exists if ever needed) but `start()` is never called, so
+            // no game state is active and no narrator/listener side-effects fire.
             this.#startDebugGameplay();
             return;
         }
@@ -308,6 +311,12 @@ export class GameScene extends Phaser.Scene {
 
     public lockPlayerMovement(): void {
         this.#controls.isMovementLocked = true;
+    }
+
+    /** When enabled, casting plays a quieter cue + animation but places no
+     *  tiles or mobs. Used by the FirstTileState during the scripted intro. */
+    public setLimitedCast(enabled: boolean): void {
+        this.#debugSpellcasting.isLimitedCastEnabled = enabled;
     }
 
     /** Place the fruit potion chest (chest #7) on a forest tile near the big tree. */

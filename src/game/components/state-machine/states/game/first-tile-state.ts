@@ -26,8 +26,13 @@ export class FirstTileState extends BaseGameState {
     this.#startY = player.y;
     this.#moved = false;
     this.#attacked = false;
-    // TODO Phase 5: implement limited cast (silent sound, no effect) via an
-    //   `isLimited = true` flag on the player's weapon/cast component.
+    // Limited cast: silent-ish sound, no tile or mob placement.
+    this._scene.setLimitedCast(true);
+  }
+
+  public onExit(): void {
+    this._scene.setLimitedCast(false);
+    super.onExit();
   }
 
   public onUpdate(): void {
