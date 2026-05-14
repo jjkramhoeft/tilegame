@@ -599,8 +599,9 @@ export class Earth {
         this.allTiles.set(this.key(tileX, tileY), voidMarkerTile);
         //voidMarkerTile?.setCollision(true, true, true, true); collision not need on maker void tiles, they are use early in the game when there are no animals, so no bounce is needed.
         this.scene.add
-            .sprite(voidMarkerTile.tileX * this.tileSize, voidMarkerTile.tileY * this.tileSize, 'tile-animated')
-            .setOrigin(0, 0)
+            .sprite(voidMarkerTile.tileX * this.tileSize + this.tileSize / 2, voidMarkerTile.tileY * this.tileSize + this.tileSize / 2, 'tile-animated')
+            .setOrigin(0.5, 0.5)
+            .setAngle(Phaser.Math.RND.pick([0, 90, 180, 270]))
             .setDepth(VOID_ANIM_DEPTH)
             .play('void-marker-flow');
     }
@@ -644,8 +645,9 @@ export class Earth {
                 //if (Phaser.Math.RND.realInRange(0, 1) < voidAnimationChance)
                 {
                     this.scene.add
-                        .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
-                        .setOrigin(0, 0)
+                        .sprite(tile.tileX * this.tileSize + this.tileSize / 2, tile.tileY * this.tileSize + this.tileSize / 2, 'tile-animated')
+                        .setOrigin(0.5, 0.5)
+                        .setAngle(Phaser.Math.RND.pick([0, 90, 180, 270]))
                         .setDepth(VOID_ANIM_DEPTH)
                         .play('void-border-flow');
                 }
