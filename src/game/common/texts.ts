@@ -176,6 +176,18 @@ const TEXTS = {
         en: '...Your assignment is to create a lush forest with many animals. If you pick an evil path you will have to face the demon.',
         da: '...Din opgave er at skabe en frodig skov med mange dyr. Vælger du en ond vej, må du møde dæmonen.',
     },
+    'narrator.firstTree': {
+        en: 'You added your first tree. Here, animals can thrive...',
+        da: 'Du har plantet dit første træ. Her kan dyr trives...',
+    },
+    'narrator.firstAnimal': {
+        en: 'You are not alone! Let life multiply...',
+        da: 'Du er ikke alene! Lad livet formere sig...',
+    },
+    'narrator.gameOver': {
+        en: 'Game Over...',
+        da: 'Spillet er slut...',
+    },
     //Chest Dialog
     'chest.empty': {
         en: 'You opened an empty chest.',

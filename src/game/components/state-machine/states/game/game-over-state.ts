@@ -1,5 +1,6 @@
 import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
+import { SCENE_KEYS } from '../../../../scenes/scene-keys';
 import type { GameScene } from '../../../../scenes/game-scene';
 
 export class GameOverState extends BaseGameState {
@@ -8,7 +9,11 @@ export class GameOverState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] GameOverState entered (stub)');
-    // TODO Phase 3: narrator "Game Over" + return to intro on close.
+    console.debug('[GameProgression] GameOverState entered');
+    this._scene.lockPlayerMovement();
+    // 1) Narrator text. 2) On close, leave the game scene back to the main menu.
+    this._showNarrator('narrator.gameOver', () => {
+      this._scene.scene.start(SCENE_KEYS.INTRO);
+    });
   }
 }

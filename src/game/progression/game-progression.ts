@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { StateMachine } from '../components/state-machine/state-machine';
 import { GAME_STATES, GameStateName } from '../components/state-machine/states/game/game-state-keys';
 import { StartState } from '../components/state-machine/states/game/start-state';
@@ -12,6 +13,7 @@ import { EveState } from '../components/state-machine/states/game/eve-state';
 import { BossFightState } from '../components/state-machine/states/game/boss-fight-state';
 import { GameOverState } from '../components/state-machine/states/game/game-over-state';
 import { VictoryState } from '../components/state-machine/states/game/victory-state';
+import { CUSTOM_EVENTS, EVENT_BUS } from '../common/event-bus';
 import type { GameScene } from '../scenes/game-scene';
 
 /**
@@ -20,6 +22,7 @@ import type { GameScene } from '../scenes/game-scene';
  */
 export class GameProgression {
   #stateMachine: StateMachine;
+  #playerDefeatedHandler = (): void => this.#onPlayerDefeated();
 
   constructor(scene: GameScene) {
     this.#stateMachine = new StateMachine('game-progression');
@@ -35,6 +38,14 @@ export class GameProgression {
     this.#stateMachine.addState(new BossFightState(scene));
     this.#stateMachine.addState(new GameOverState(scene));
     this.#stateMachine.addState(new VictoryState(scene));
+
+    // Reset once-per-game flags so subsequent runs trigger narrator beats again.
+    RegularState.resetFlags();
+
+    EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#playerDefeatedHandler);
+    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#playerDefeatedHandler);
+    });
   }
 
   public start(initial: GameStateName = GAME_STATES.START): void {
@@ -51,5 +62,17 @@ export class GameProgression {
 
   public setState(name: GameStateName, ...args: unknown[]): void {
     this.#stateMachine.setState(name, ...args);
+  }
+
+  #onPlayerDefeated(): void {
+    // Only intercept death when progression is actively running (i.e. not in
+    // debug mode where no initial state was set).
+    if (this.#stateMachine.currentStateName === undefined) {
+      return;
+    }
+    if (this.#stateMachine.currentStateName === GAME_STATES.GAME_OVER) {
+      return;
+    }
+    this.#stateMachine.setState(GAME_STATES.GAME_OVER);
   }
 }
