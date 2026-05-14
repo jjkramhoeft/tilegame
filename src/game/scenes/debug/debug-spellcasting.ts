@@ -215,7 +215,9 @@ export class DebugSpellcasting {
         const targetPosition = this.getTargetPosition(casterPosition, directions);
 
         if(ENABLE_LOGGING) console.log('Casting spell magic:', JSON.stringify(this.#playerCurrentMagic, null, 2));
+
         const feedback = earth.AddTiles(this.#playerCurrentMagic, casterPosition, targetPosition, directions, this.isLimitedCastEnabled);
+        
         if(ENABLE_LOGGING) console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
 
         this.applyCastingFeedback(feedback);

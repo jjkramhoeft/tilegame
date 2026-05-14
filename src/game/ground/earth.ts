@@ -446,7 +446,8 @@ export class Earth {
         return targetTile.biome !== BIOME.VOID &&
             targetTile.blocking < 0 &&
             casterTile?.biome === targetTile.biome &&
-            this.isBlockingUnlockedForBiome(creationConfig, targetTile.biome);
+            this.isBlockingUnlockedForBiome(creationConfig, targetTile.biome) &&
+            (targetTile.chest === undefined ||targetTile.chest < 1); // Don't place blocking on tiles with chests.
     }
 
     private isBlockingUnlockedForBiome(creationConfig: EarthCastingConfig, biome: number): boolean {
