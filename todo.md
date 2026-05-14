@@ -15,6 +15,7 @@
   - eveState
 - Expand on gardenState, decorations, trees, water ect.
 - More uniform tile creation, to get larger area of the same biome
+- Emmit FIRST_ANIMAL_SPAWNED for the FirstAnimalState
 
 ## Implementations that require new asserts
 

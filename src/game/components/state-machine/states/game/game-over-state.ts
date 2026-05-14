@@ -11,7 +11,6 @@ export class GameOverState extends BaseGameState {
   public onEnter(): void {
     console.debug('[GameProgression] GameOverState entered');
     this._scene.lockPlayerMovement();
-    // 1) Narrator text. 2) On close, leave the game scene back to the main menu.
     this._showNarrator('narrator.gameOver', () => {
       this._scene.scene.start(SCENE_KEYS.INTRO);
     });

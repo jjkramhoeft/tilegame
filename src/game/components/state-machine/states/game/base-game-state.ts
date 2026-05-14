@@ -2,6 +2,8 @@ import { State, StateMachine } from '../../state-machine';
 import { CUSTOM_EVENTS, EVENT_BUS } from '../../../../common/event-bus';
 import type { TextKey } from '../../../../common/texts';
 import type { GameScene } from '../../../../scenes/game-scene';
+import { DIFFICULTY_HARD_WAIT_FACTOR } from '../../../../common/config';
+import { DataManager } from '../../../../common/data-manager';
 
 /**
  * Base class for the game progression states. Concrete states extend this and
@@ -18,6 +20,7 @@ import type { GameScene } from '../../../../scenes/game-scene';
 export abstract class BaseGameState implements State {
   protected _scene: GameScene;
   protected _stateMachine!: StateMachine;
+  protected defaultWaitTime = 500;
   #name: string;
   #pendingTimers: Phaser.Time.TimerEvent[] = [];
   #narratorClosedHandler?: () => void;
@@ -25,6 +28,10 @@ export abstract class BaseGameState implements State {
   constructor(name: string, scene: GameScene) {
     this.#name = name;
     this._scene = scene;
+    this.defaultWaitTime = 500;
+    if(DataManager.instance.data.difficulty === 'Hard') {
+      this.defaultWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
+    }
   }
 
   get name(): string {

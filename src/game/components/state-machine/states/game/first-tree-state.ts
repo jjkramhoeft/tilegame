@@ -10,9 +10,7 @@ export class FirstTreeState extends BaseGameState {
   public onEnter(): void {
     console.debug('[GameProgression] FirstTreeState entered');
     this._scene.lockPlayerMovement();
-    // 1) 1 sec pause
-    this._pause(1000, () => {
-      // 2) Narrator text. 3) Transition back to RegularState on close.
+    this._pause(this.defaultWaitTime, () => {
       this._showNarrator('narrator.firstTree', () => {
         this._scene.unlockPlayerMovement();
         this._transitionTo(GAME_STATES.REGULAR);

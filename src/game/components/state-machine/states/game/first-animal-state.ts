@@ -8,11 +8,9 @@ export class FirstAnimalState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] FirstAnimalState entered');
+    console.debug('[GameProgression] FirstAnimalState entered');    
     this._scene.lockPlayerMovement();
-    // 1) 1 sec pause
-    this._pause(1000, () => {
-      // 2) Narrator text. 3) Transition back to RegularState on close.
+    this._pause(this.defaultWaitTime, () => {
       // NOTE: nothing currently emits FIRST_ANIMAL_SPAWNED; that hookup will
       //   land alongside non-debug animal spawning in a later feature.
       this._showNarrator('narrator.firstAnimal', () => {

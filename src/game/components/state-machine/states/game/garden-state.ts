@@ -12,21 +12,19 @@ export class GardenState extends BaseGameState {
   public onEnter(): void {
     console.debug('[GameProgression] GardenState entered');
     this._scene.lockPlayerMovement();
-    let defaultWaitTime = 500;
     let defaultStepWaitTime = 80;
     if(DataManager.instance.data.difficulty === 'Hard') {
-      defaultWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
       defaultStepWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
     }
 
-    this._pause(defaultWaitTime, () => {
+    this._pause(this.defaultWaitTime, () => {
       this._showNarrator('narrator.garden.lush', () => {
-        this._pause(defaultWaitTime, () => {
+        this._pause(this.defaultWaitTime, () => {
           this._showNarrator('narrator.garden.assignment', () => {
             this._scene.earth.placeGardenTiles(defaultStepWaitTime, () => {
-              this._pause(defaultWaitTime, () => {
+              this._pause(this.defaultWaitTime, () => {
                 this._scene.placeFruitChestNearBigTree();
-                this._pause(defaultWaitTime, () => {
+                this._pause(this.defaultWaitTime, () => {
                   // Transition to the regular play state.
                   this._scene.unlockPlayerMovement();
                   this._transitionTo(GAME_STATES.REGULAR);
