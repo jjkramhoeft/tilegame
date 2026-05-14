@@ -352,7 +352,7 @@ export class DebugSpellcasting {
 
     private applyCastingFeedback(feedback: CastingFeedback): void {
         //Consider isLimmited
-        this.applyChestPlacement(feedback.chestNumberPlaced);
+        if(!this.isLimitedCastEnabled) this.applyChestPlacement(feedback.chestNumberPlaced);
         this.addCastingFeedbackToTotals(feedback);
         this.applyBiomeProgression(this.#castingFeedbackTotals);
         this.applyPowerLevelProgression(this.#castingFeedbackTotals);
@@ -438,7 +438,7 @@ export class DebugSpellcasting {
             }
 
             // Blocking placement unlocks animals and enemies for the current biome.
-            if (feedback[progression.blockingPlacedKey] >= TILES_BEFORE_ANIMAL_UNLOCK) {
+            if (feedback[progression.blockingPlacedKey] >= TILES_BEFORE_ANIMAL_UNLOCK && !this.isLimitedCastEnabled) {
                 this.setMagicFlag(progression.animalUnlockKey, true);
             }
 

@@ -30,11 +30,6 @@ export class FirstTileState extends BaseGameState {
     this._scene.setLimitedCast(true);
   }
 
-  public onExit(): void {
-    this._scene.setLimitedCast(false);
-    super.onExit();
-  }
-
   public onUpdate(): void {
     const player = this._scene.player;
 

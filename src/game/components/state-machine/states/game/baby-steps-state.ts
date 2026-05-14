@@ -34,6 +34,7 @@ export class BabyStepsState extends BaseGameState {
   }
 
   public onExit(): void {
+    this._scene.setLimitedCast(false);
     if (this.#handler) {
       EVENT_BUS.off(CUSTOM_EVENTS.TILE_PLACED, this.#handler);
       this.#handler = undefined;
