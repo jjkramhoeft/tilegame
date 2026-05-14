@@ -248,7 +248,12 @@ export class Earth {
         this.isInitialized = true;
     }
 
-    public AddTiles(creationConfig: EarthCastingConfig, casterPosition: Position, primeTargetPosition: Position, directions: Direction[]): CastingFeedback {
+    public AddTiles(
+        creationConfig: EarthCastingConfig, 
+        casterPosition: Position, 
+        primeTargetPosition: Position, 
+        directions: Direction[],
+        isLimitedCast: boolean): CastingFeedback {
         const castingFeedback = this.createCastingFeedback();
         let numberOfPlacedTiles = 0;
         let casterTile = this.getTile(casterPosition.x, casterPosition.y);
@@ -265,7 +270,7 @@ export class Earth {
                 continue;
             }
 
-            this.AddTile(this.CreateNewTile(creationConfig, target, creationConfig.powerLevel, casterTile, castingFeedback));
+            this.AddTile(this.CreateNewTile(creationConfig, target, creationConfig.powerLevel, casterTile, castingFeedback), isLimitedCast);
             this.addMissingVoidNeighbors(target);
             numberOfPlacedTiles++;
         }
@@ -607,7 +612,10 @@ export class Earth {
             .play('void-marker-flow');
     }
 
-    public AddTile(tile: Tile) {
+    public AddTile(tile: Tile, isLimitedCast: boolean = false): void {
+        if(isLimitedCast && (tile.biome >= 2 || tile.chest > 0)) {
+            return; // Limited cast places no tiles with biome index 2 or higher or chests.
+        }
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
             if (ENABLE_LOGGING) { console.log(`Placing biome tile with index ${tile.biome} at (${tile.tileX}, ${tile.tileY})`); }

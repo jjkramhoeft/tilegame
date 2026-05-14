@@ -189,7 +189,7 @@ export class DebugSpellcasting {
     update(scene: Phaser.Scene, player: Player, earth: Earth): void {
         const currentStateName = player.stateMachine.currentStateName;
         if (this.shouldCast(currentStateName)) {
-            this.cast(scene, player, earth, this.isLimitedCastEnabled);
+            this.cast(scene, player, earth);
         }
 
         this.#previousStateName = currentStateName;
@@ -201,30 +201,27 @@ export class DebugSpellcasting {
             this.#previousStateName !== 'SWIM_STATE';
     }
 
-    private cast(scene: Phaser.Scene, player: Player, earth: Earth, isLimmited: boolean): void {
+    private cast(scene: Phaser.Scene, player: Player, earth: Earth): void {
         if (this.#spellSound.isPlaying === false) {
-            const vol = isLimmited ? 0.5 : 1;
+            const vol = this.isLimitedCastEnabled ? 0.5 : 1;
             this.#spellSound.play({ volume: vol });
         }
 
         const directions = player.getLastMoveDirections();
         const travelVector = this.getCastTravelVector(directions);
-        this.playSpellAnimationEffect(scene, player, travelVector, earth, isLimmited);
-
-        if(isLimmited) {
-            //ToDo: Consider emmitting events to trigger game state changes.
-            return; // Limeted cast places no tiles or mobs!
-        }
+        this.playSpellAnimationEffect(scene, player, travelVector, earth);
 
         const casterPosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
         const targetPosition = this.getTargetPosition(casterPosition, directions);
 
         if(ENABLE_LOGGING) console.log('Casting spell magic:', JSON.stringify(this.#playerCurrentMagic, null, 2));
-        const feedback = earth.AddTiles(this.#playerCurrentMagic, casterPosition, targetPosition, directions);
+        const feedback = earth.AddTiles(this.#playerCurrentMagic, casterPosition, targetPosition, directions, this.isLimitedCastEnabled);
         if(ENABLE_LOGGING) console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
 
         this.applyCastingFeedback(feedback);
-        this.tryPlaceMob(scene, player, earth);//ToDo: Replace with actual animal placement logic once more animals are added and the logic is decoupled from debug spellcasting.
+        if (!this.isLimitedCastEnabled) {
+            this.tryPlaceMob(scene, player, earth);//ToDo: Replace with actual animal placement logic once more animals are added and the logic is decoupled from debug spellcasting.
+        }
     }
 
     private tryPlaceMob(scene: Phaser.Scene, player: Player, earth: Earth): void {
@@ -311,7 +308,7 @@ export class DebugSpellcasting {
         return travelVector;
     }
 
-    private playSpellAnimationEffect(scene: Phaser.Scene, player: Player, travelVector: CastVector, earth: Earth, isLimited: boolean): void {
+    private playSpellAnimationEffect(scene: Phaser.Scene, player: Player, travelVector: CastVector, earth: Earth): void {
         const spell = scene.add
             .sprite(player.x + travelVector.x / 10, player.y + travelVector.y / 10, 'spell-music-11_grayscale')
             .setScale(0.5)
@@ -324,7 +321,7 @@ export class DebugSpellcasting {
         const playerTile = earth.getTile(playerTilePos.x, playerTilePos.y);
         const biome = playerTile?.biome ?? BIOME.VOID;
         const tintColor = BIOME_COLOR_MAP[biome] ?? BIOME_COLOR_MAP[BIOME.VOID];
-        if(!isLimited) spell.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
+        if(!this.isLimitedCastEnabled) spell.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
         
         spell.play('spell-music-anim');
         scene.tweens.add({
@@ -354,6 +351,7 @@ export class DebugSpellcasting {
     }
 
     private applyCastingFeedback(feedback: CastingFeedback): void {
+        //Consider isLimmited
         this.applyChestPlacement(feedback.chestNumberPlaced);
         this.addCastingFeedbackToTotals(feedback);
         this.applyBiomeProgression(this.#castingFeedbackTotals);
