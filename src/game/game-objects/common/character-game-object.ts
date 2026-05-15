@@ -136,6 +136,10 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     return this._animationComponent;
   }
 
+  get lifeComponent(): LifeComponent {
+    return this._lifeComponent;
+  }
+
   get invulnerableComponent(): InvulnerableComponent {
     return this._invulnerableComponent;
   }

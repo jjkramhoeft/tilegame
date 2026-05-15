@@ -173,8 +173,8 @@ export class GameScene extends Phaser.Scene {
     #setupPlayer(): void {
         const currentData = DataManager.instance.data;
         DataManager.instance.data = {
-            currentHealth: 6,
-            maxHealth: 6,
+            currentHealth: 2,
+            maxHealth: 2,
             currentPower: 1,
             maxPower: 1,
             currentProgress: 0,
@@ -188,13 +188,14 @@ export class GameScene extends Phaser.Scene {
             lastDialogOptionSelected: 0,
             languageIsDanish: currentData.languageIsDanish ?? false,
             isDebugMode: currentData.isDebugMode ?? false,
+            difficulty: currentData.difficulty ?? 'Easy',
         };
         this.#player = new Player({
             scene: this,
             position: this.#playerStartPosition,
             controls: this.#controls,
-            maxLife: 3,
-            currentLife: 3
+            maxLife: 1,
+            currentLife: 1
         });
         this.#controls.isMovementLocked = true;
 
@@ -352,8 +353,20 @@ export class GameScene extends Phaser.Scene {
                 //console.debug('Applying potion result from chest dialog');
                 if (d.lastDialogOptionSelected === 0) {
                     d.potion = dialogResultInfo.option1PotionToPlayer;
-                    //ToDo: Set player maxHealth to 6 if below 6, and set player current health to 6, make sure HUD is opdated accordingly.
-                    // The potion is unlimmeted in this chest, so we do not need to set the chest contents to NONE when taken.
+                    // Boost max health to 6 (3 full hearts) and fully heal. Only apply when
+                    // not already maxed, to avoid redundant HUD churn. The potion is
+                    // unlimited in this chest, so chest contents are not cleared.
+                    if (d.maxHealth < 6) {
+                        this.#player.lifeComponent.setMaxLife(3, true);
+                        d.maxHealth = 6;
+                        DataManager.instance.data = d;
+                        DataManager.instance.updatePlayerMaxHealth(6);
+                        // Animate the HUD filling one half-heart at a time instead of
+                        // snapping straight to full. Each step emits PLAYER_HEALTH_UPDATED
+                        // (INCREASE) which redraws the meter against the new maxHealth.
+                        this.#animateHealthGainTo(6);
+                        return;
+                    }
                 } else {
                     // Opted not to eat/drink, do nothing.
                 }
@@ -386,6 +399,22 @@ export class GameScene extends Phaser.Scene {
 
     #getChestById(chestId: number | undefined): ChestJJK | undefined {
         return this.#chests.find((chest) => chest.id === chestId);
+    }
+
+    /** Step current health up by one half-heart per `stepDelayMs` until reaching `target`.
+     *  Each step emits PLAYER_HEALTH_UPDATED so the HUD redraws incrementally. */
+    #animateHealthGainTo(target: number, stepDelayMs = 120): void {
+        const tick = () => {
+            const cur = DataManager.instance.data.currentHealth;
+            if (cur >= target) {
+                return;
+            }
+            DataManager.instance.updatePlayerCurrentHealth(cur + 1);
+            if (cur + 1 < target) {
+                this.time.delayedCall(stepDelayMs, tick);
+            }
+        };
+        tick();
     }
 
     #handleOpenChest(chest: ChestJJK): void {

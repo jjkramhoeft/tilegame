@@ -28,4 +28,18 @@ export class LifeComponent extends BaseGameObjectComponent {
       this.#currentLife = 0;
     }
   }
+
+  public heal(amount: number): void {
+    this.#currentLife += amount;
+    if (this.#currentLife > this.#maxLife) {
+      this.#currentLife = this.#maxLife;
+    }
+  }
+
+  public setMaxLife(max: number, fillCurrent = false): void {
+    this.#maxLife = max;
+    if (fillCurrent || this.#currentLife > max) {
+      this.#currentLife = max;
+    }
+  }
 }
