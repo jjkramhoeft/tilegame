@@ -10,6 +10,8 @@ import { Sheep } from '../../game-objects/enemies/sheep';
 import { Piglet } from '../../game-objects/enemies/piglet';
 import { Rooster } from '../../game-objects/enemies/rooster';
 import { Turkey } from '../../game-objects/enemies/turkey';
+import { Bull } from '../../game-objects/enemies/bull';
+import { Calf } from '../../game-objects/enemies/calf';
 //import { Wisp } from '../../game-objects/enemies/wisp';
 
 export function spawnDebugEnemies(
@@ -78,7 +80,6 @@ export function spawnDebugEnemies(
     sheep.enableObject();
     critterGroup.add(sheep);
     DataManager.instance.increaseLivingCreatureCount();
-
     
     // A Piglet, added on a empty tile away from chests and the player.
     const pigletOffset: Position = { x: 5, y: 4 };
@@ -94,7 +95,6 @@ export function spawnDebugEnemies(
     piglet.enableObject();
     critterGroup.add(piglet);
     DataManager.instance.increaseLivingCreatureCount();
-
     
     // A Rooster, added on a empty tile away from chests and the player.
     const roosterOffset: Position = { x: 5, y: -4 };
@@ -110,7 +110,6 @@ export function spawnDebugEnemies(
     rooster.enableObject();
     critterGroup.add(rooster);
     DataManager.instance.increaseLivingCreatureCount();
-
     
     // A Turkey, added on a empty tile away from chests and the player.
     const turkeyOffset: Position = { x: 7, y: -2 };
@@ -125,6 +124,36 @@ export function spawnDebugEnemies(
     });
     turkey.enableObject();
     critterGroup.add(turkey);
+    DataManager.instance.increaseLivingCreatureCount();
+    
+    // A Bull, added on a empty tile away from chests and the player.
+    const bullOffset: Position = { x: 7, y: 6 };
+    addTileAndVoid(earth, { x: firstTilePosition.x + bullOffset.x, y: firstTilePosition.y + bullOffset.y });
+    const bullWorldPosition = {
+        x: (bullOffset.x + firstTilePosition.x) * earth.getTileSize() + 10,
+        y: (bullOffset.y + firstTilePosition.y) * earth.getTileSize() + 20,
+    };
+    const bull = new Bull({
+        scene: scene,
+        position: bullWorldPosition,
+    });
+    bull.enableObject();
+    critterGroup.add(bull);
+    DataManager.instance.increaseLivingCreatureCount();
+    
+    // A Calf, added on a empty tile away from chests and the player.
+    const calfOffset: Position = { x: 5, y: 6 };
+    addTileAndVoid(earth, { x: firstTilePosition.x + calfOffset.x, y: firstTilePosition.y + calfOffset.y });
+    const calfWorldPosition = {
+        x: (calfOffset.x + firstTilePosition.x) * earth.getTileSize() + 10,
+        y: (calfOffset.y + firstTilePosition.y) * earth.getTileSize() + 20,
+    };
+    const calf = new Calf({
+        scene: scene,
+        position: calfWorldPosition,
+    });
+    calf.enableObject();
+    critterGroup.add(calf);
     DataManager.instance.increaseLivingCreatureCount();
 
 

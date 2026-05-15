@@ -12,6 +12,8 @@ export const ASSET_KEYS = {
   TURKEY: 'Turkey',
   PIGLET: 'Piglet',
   ROOSTER: 'Rooster',
+  CALF: 'Calf',
+  BULL: 'Bull',
   DAGGER: 'DAGGER',
   ENEMY_DEATH: 'ENEMY_DEATH',
   UI_DIALOG: 'UI_DIALOG',
@@ -255,6 +257,28 @@ export const ROOSTER_ANIMATION_KEYS = {
   IDLE_UP: 'rooster-idle-up',
   IDLE_LEFT: 'rooster-idle-left',
   IDLE_RIGHT: 'rooster-idle-right',
+} as const;
+
+export const CALF_ANIMATION_KEYS = {
+  WALK_DOWN: 'calf-walk-down',
+  WALK_UP: 'calf-walk-up',
+  WALK_LEFT: 'calf-walk-left',
+  WALK_RIGHT: 'calf-walk-right',
+  IDLE_DOWN: 'calf-idle-down',
+  IDLE_UP: 'calf-idle-up',
+  IDLE_LEFT: 'calf-idle-left',
+  IDLE_RIGHT: 'calf-idle-right',
+} as const;
+
+export const BULL_ANIMATION_KEYS = {
+  WALK_DOWN: 'bull-walk-down',
+  WALK_UP: 'bull-walk-up',
+  WALK_LEFT: 'bull-walk-left',
+  WALK_RIGHT: 'bull-walk-right',
+  IDLE_DOWN: 'bull-idle-down',
+  IDLE_UP: 'bull-idle-up',
+  IDLE_LEFT: 'bull-idle-left',
+  IDLE_RIGHT: 'bull-idle-right',
 } as const;
 
 export const CHARACTER_ANIMATIONS = {

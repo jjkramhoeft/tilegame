@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
-import { ASSET_KEYS, ASSET_PACK_KEYS, LAMB_ANIMATION_KEYS, CHICKEN_ANIMATION_KEYS, SHEEP_ANIMATION_KEYS, TURKEY_ANIMATION_KEYS, PIGLET_ANIMATION_KEYS, ROOSTER_ANIMATION_KEYS } from '../common/assets';
+import { ASSET_KEYS, ASSET_PACK_KEYS, LAMB_ANIMATION_KEYS, CHICKEN_ANIMATION_KEYS, SHEEP_ANIMATION_KEYS, TURKEY_ANIMATION_KEYS, PIGLET_ANIMATION_KEYS, ROOSTER_ANIMATION_KEYS, CALF_ANIMATION_KEYS, BULL_ANIMATION_KEYS } from '../common/assets';
 
 export class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -260,5 +260,25 @@ export class PreloadScene extends Phaser.Scene {
         anims.create({ key: ROOSTER_ANIMATION_KEYS.IDLE_LEFT, frames: anims.generateFrameNumbers('Rooster', { start: 12, end: 15 }), frameRate: 4, repeat: -1 });
         anims.create({ key: ROOSTER_ANIMATION_KEYS.IDLE_DOWN, frames: anims.generateFrameNumbers('Rooster', { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
         anims.create({ key: ROOSTER_ANIMATION_KEYS.IDLE_RIGHT, frames: anims.generateFrameNumbers('Rooster', { start: 18, end: 21 }), frameRate: 4, repeat: -1 });
+
+        //Calf sprite sheet layout: row 0 = down, row 1 = up, row 2 = left, row 3 = right. Each row has 6 frames for walking, followed by rows with 4 frames for idle.
+        anims.create({ key: CALF_ANIMATION_KEYS.WALK_UP, frames: anims.generateFrameNumbers('Calf', { start: 6, end: 11 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: CALF_ANIMATION_KEYS.WALK_LEFT, frames: anims.generateFrameNumbers('Calf', { start: 12, end: 17 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: CALF_ANIMATION_KEYS.WALK_DOWN, frames: anims.generateFrameNumbers('Calf', { start: 0, end: 5 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: CALF_ANIMATION_KEYS.WALK_RIGHT, frames: anims.generateFrameNumbers('Calf', { start: 18, end: 23 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: CALF_ANIMATION_KEYS.IDLE_UP, frames: anims.generateFrameNumbers('Calf', { start: 6, end: 9 }), frameRate: 4, repeat: -1 });
+        anims.create({ key: CALF_ANIMATION_KEYS.IDLE_LEFT, frames: anims.generateFrameNumbers('Calf', { start: 12, end: 15 }), frameRate: 4, repeat: -1 });
+        anims.create({ key: CALF_ANIMATION_KEYS.IDLE_DOWN, frames: anims.generateFrameNumbers('Calf', { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
+        anims.create({ key: CALF_ANIMATION_KEYS.IDLE_RIGHT, frames: anims.generateFrameNumbers('Calf', { start: 18, end: 21 }), frameRate: 4, repeat: -1 });
+
+        //Bull sprite sheet layout: row 0 = down, row 1 = up, row 2 = left, row 3 = right. Each row has 6 frames for walking, followed by rows with 4 frames for idle.
+        anims.create({ key: BULL_ANIMATION_KEYS.WALK_UP, frames: anims.generateFrameNumbers('Bull', { start: 6, end: 11 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: BULL_ANIMATION_KEYS.WALK_LEFT, frames: anims.generateFrameNumbers('Bull', { start: 12, end: 17 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: BULL_ANIMATION_KEYS.WALK_DOWN, frames: anims.generateFrameNumbers('Bull', { start: 0, end: 5 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: BULL_ANIMATION_KEYS.WALK_RIGHT, frames: anims.generateFrameNumbers('Bull', { start: 18, end: 23 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: BULL_ANIMATION_KEYS.IDLE_UP, frames: anims.generateFrameNumbers('Bull', { start: 6, end: 9 }), frameRate: 4, repeat: -1 });
+        anims.create({ key: BULL_ANIMATION_KEYS.IDLE_LEFT, frames: anims.generateFrameNumbers('Bull', { start: 12, end: 15 }), frameRate: 4, repeat: -1 });
+        anims.create({ key: BULL_ANIMATION_KEYS.IDLE_DOWN, frames: anims.generateFrameNumbers('Bull', { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
+        anims.create({ key: BULL_ANIMATION_KEYS.IDLE_RIGHT, frames: anims.generateFrameNumbers('Bull', { start: 18, end: 21 }), frameRate: 4, repeat: -1 });
     }
 }

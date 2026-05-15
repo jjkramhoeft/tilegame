@@ -1754,6 +1754,24 @@
         }
       },
       {
+        "type": "spritesheet",
+        "key": "Calf",
+        "textureURL": "Calf.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "Bull",
+        "textureURL": "Bull.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
         "type": "image",
         "key": "background",
         "url": "bg-garden-genesis.png"
