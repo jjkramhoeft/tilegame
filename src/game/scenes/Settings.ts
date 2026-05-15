@@ -71,6 +71,21 @@ export class Settings extends Scene
         this.selectedRowIndex = 0;
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'credit-bg');
 
+        const savedDifficulty = this.registry.get('difficulty');
+        const hasSavedDifficulty = savedDifficulty === DIFFICULTY.EASY || savedDifficulty === DIFFICULTY.HARD || savedDifficulty === DIFFICULTY.DEBUG;
+        if (hasSavedDifficulty) {
+            const index = DEBUG_OPTIONS.findIndex((option) => option.value === savedDifficulty);
+            if (index >= 0) {
+                this.debugIndex = index;
+            }
+        } else {
+            const currentDifficulty = DataManager.instance.data.difficulty;
+            const index = DEBUG_OPTIONS.findIndex((option) => option.value === currentDifficulty);
+            if (index >= 0) {
+                this.debugIndex = index;
+            }
+        }
+
         const savedMusicVolume = this.registry.get('musicVolume');
 
         if (typeof savedMusicVolume === 'number') {
@@ -101,7 +116,7 @@ export class Settings extends Scene
         }
 
         const savedDebug = this.registry.get('physicsDebug');
-        if (typeof savedDebug === 'boolean') {
+        if (!hasSavedDifficulty && typeof savedDebug === 'boolean') {
             this.debugIndex = savedDebug ? 1 : 0;
         }
 
@@ -354,6 +369,7 @@ export class Settings extends Scene
     {
         const difficulty = DEBUG_OPTIONS[this.debugIndex].value;
         const debugEnabled = difficulty === DIFFICULTY.DEBUG;
+        this.registry.set('difficulty', difficulty);
         this.registry.set('physicsDebug', debugEnabled);
         setEnableLogging(debugEnabled);
         
