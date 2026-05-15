@@ -48,7 +48,7 @@ export class Intro extends Scene {
         this.sound.volume = musicVolume;
 
         this.add.image(512, 384, 'background');
-        this.add.image(512, 150, 'logo').setDepth(100);
+        this.add.image(512, 150, 'logo').setDepth(100).setScale(2.5);
 
         this.introMusic = this.sound.add('introMusic', {
             loop: true

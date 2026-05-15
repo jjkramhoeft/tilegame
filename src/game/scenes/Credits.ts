@@ -67,7 +67,7 @@ export class Credits extends Scene
         this.creditsMusic.play();
 
         this.add.image(centerX, centerY, 'credit-bg');
-        this.add.image(centerX+180, 120, 'logo').setDepth(100);
+        this.add.image(centerX+180, 120, 'logo').setDepth(100).setScale(2);;
 
         this.add.text(200, 150, getText('credits.title'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 58, color: COLORS.title,
