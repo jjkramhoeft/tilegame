@@ -8,6 +8,10 @@ export const ASSET_KEYS = {
   WISP: 'WISP',
   LAMB: 'Lamb',
   CHICKEN: 'Chicken',
+  SHEEP: 'Sheep',
+  TURKEY: 'Turkey',
+  PIGLET: 'Piglet',
+  ROOSTER: 'Rooster',
   DAGGER: 'DAGGER',
   ENEMY_DEATH: 'ENEMY_DEATH',
   UI_DIALOG: 'UI_DIALOG',
@@ -207,6 +211,50 @@ export const CHICKEN_ANIMATION_KEYS = {
   IDLE_UP: 'chicken-idle-up',
   IDLE_LEFT: 'chicken-idle-left',
   IDLE_RIGHT: 'chicken-idle-right',
+} as const;
+
+export const SHEEP_ANIMATION_KEYS = {
+  WALK_DOWN: 'sheep-walk-down',
+  WALK_UP: 'sheep-walk-up',
+  WALK_LEFT: 'sheep-walk-left',
+  WALK_RIGHT: 'sheep-walk-right',
+  IDLE_DOWN: 'sheep-idle-down',
+  IDLE_UP: 'sheep-idle-up',
+  IDLE_LEFT: 'sheep-idle-left',
+  IDLE_RIGHT: 'sheep-idle-right',
+} as const;
+
+export const TURKEY_ANIMATION_KEYS = {
+  WALK_DOWN: 'turkey-walk-down',
+  WALK_UP: 'turkey-walk-up',
+  WALK_LEFT: 'turkey-walk-left',
+  WALK_RIGHT: 'turkey-walk-right',
+  IDLE_DOWN: 'turkey-idle-down',
+  IDLE_UP: 'turkey-idle-up',
+  IDLE_LEFT: 'turkey-idle-left',
+  IDLE_RIGHT: 'turkey-idle-right',
+} as const;
+
+export const PIGLET_ANIMATION_KEYS = {
+  WALK_DOWN: 'piglet-walk-down',
+  WALK_UP: 'piglet-walk-up',
+  WALK_LEFT: 'piglet-walk-left',
+  WALK_RIGHT: 'piglet-walk-right',
+  IDLE_DOWN: 'piglet-idle-down',
+  IDLE_UP: 'piglet-idle-up',
+  IDLE_LEFT: 'piglet-idle-left',
+  IDLE_RIGHT: 'piglet-idle-right',
+} as const;
+
+export const ROOSTER_ANIMATION_KEYS = {
+  WALK_DOWN: 'rooster-walk-down',
+  WALK_UP: 'rooster-walk-up',
+  WALK_LEFT: 'rooster-walk-left',
+  WALK_RIGHT: 'rooster-walk-right',
+  IDLE_DOWN: 'rooster-idle-down',
+  IDLE_UP: 'rooster-idle-up',
+  IDLE_LEFT: 'rooster-idle-left',
+  IDLE_RIGHT: 'rooster-idle-right',
 } as const;
 
 export const CHARACTER_ANIMATIONS = {
