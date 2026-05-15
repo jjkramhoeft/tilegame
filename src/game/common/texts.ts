@@ -118,8 +118,8 @@ const TEXTS = {
         da: 'Copilot token budget: BiQ A/S',
     },
     'credits.humanOperator': {
-        en: 'Human Operator: Jens Jakob Kramhæft',
-        da: 'Menneskelig operatør: Jens Jakob Kramhæft',
+        en: 'Human Operator: Jens Jakob Kramhøft',
+        da: 'Menneskelig operatør: Jens Jakob Kramhøft',
     },
     'credits.back': {
         en: '(Up, down and \'x\' or \'enter\' to go back)',
