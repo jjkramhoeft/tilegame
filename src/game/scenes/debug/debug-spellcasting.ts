@@ -8,6 +8,13 @@ import { Direction, Position } from '../../common/types';
 import { BIOME, BIOME_COLOR_MAP } from '../../common/common';
 import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK, TILES_BEFORE_ANIMAL_UNLOCK, ENABLE_LOGGING } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
+import { findTargetTiles } from '../../ground/creator';
+import { Sheep } from '../../game-objects/enemies/sheep';
+import { Rooster } from '../../game-objects/enemies/rooster';
+import { Bull } from '../../game-objects/enemies/bull';
+import { Calf } from '../../game-objects/enemies/calf';
+import { Turkey } from '../../game-objects/enemies/turkey';
+import { Piglet } from '../../game-objects/enemies/piglet';
 
 type MagicFlagKey = {
     [Key in keyof EarthCastingConfig]: EarthCastingConfig[Key] extends boolean ? Key : never;
@@ -223,15 +230,15 @@ export class DebugSpellcasting {
         const casterPosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
         const targetPosition = this.getTargetPosition(casterPosition, directions);
 
-        if(ENABLE_LOGGING) console.log('Casting spell magic:', JSON.stringify(this.#playerCurrentMagic, null, 2));
+        if (ENABLE_LOGGING) console.log('Casting spell magic:', JSON.stringify(this.#playerCurrentMagic, null, 2));
 
         const feedback = earth.AddTiles(this.#playerCurrentMagic, casterPosition, targetPosition, directions, this.isLimitedCastEnabled);
-        
-        if(ENABLE_LOGGING) console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
+
+        if (ENABLE_LOGGING) console.log('Casting spell feedback:', JSON.stringify(feedback, null, 2));
 
         this.applyCastingFeedback(feedback);
         if (!this.isLimitedCastEnabled) {
-            this.tryPlaceMob(scene, player, earth);//ToDo: Replace with actual animal placement logic once more animals are added and the logic is decoupled from debug spellcasting.
+            this.tryPlaceMob(scene, player, earth, casterPosition, targetPosition, directions);//ToDo: Replace with better animal placement logic.
         }
     }
 
@@ -258,68 +265,138 @@ export class DebugSpellcasting {
         this.#spellSound.play(`spell-cast-${markerIndex}`);
     }
 
-    private tryPlaceMob(scene: Phaser.Scene, player: Player, earth: Earth): void {
-        const animalBiome = this.pickAnimalBiome(this.#playerCurrentMagic);
-        if (animalBiome === null) {
-            return;
-        }
-
-        if (Phaser.Math.Between(0, 1) === 0) {
-            return;
-        }
-
-        const animalTilePosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, false);
-        animalTilePosition.y--; // Place the animal on the tile above the player for testing purposes.
-
-        const animalTile = earth.getTile(animalTilePosition.x, animalTilePosition.y);
-        if (animalTile === undefined || animalTile.biome === BIOME.VOID) {
-            return;
-        }
-
-        const mobPosition = this.getTileCenterPosition(animalTilePosition);
-        switch (Phaser.Math.Between(0, 2)) {
-            case 0: {
-                if(ENABLE_LOGGING) console.log(`New lamb from ${animalBiome} biome is now placable!`);
-                const lamb = new Lamb({
-                    scene,
-                    position: mobPosition,
-                });
-                lamb.enableObject();
-                this.#critterGroup.add(lamb);
-                DataManager.instance.increaseLivingCreatureCount();
+    private tryPlaceMob(scene: Phaser.Scene, player: Player, earth: Earth, casterPosition: Position, targetPosition: Position, directions: any): void {
+        const casterTile = earth.getTile(casterPosition.x, casterPosition.y);
+        if (casterTile === undefined) return;
+        const animalBiome = casterTile.biome;
+        //Test if animals is unlocked in this biome
+        switch (animalBiome) {
+            case BIOME.ROCK: {
+                if (!this.#playerCurrentMagic.isRockAnimalsUnlocked) return;
                 break;
             }
-            case 1: {
-                if(ENABLE_LOGGING) console.log(`New chicken from ${animalBiome} biome is now placable!`);
-                const chicken = new Chicken({
-                    scene,
-                    position: mobPosition,
-                });
-                chicken.enableObject();
-                this.#critterGroup.add(chicken);
-                DataManager.instance.increaseLivingCreatureCount();
+            case BIOME.DESERT: {
+                if (!this.#playerCurrentMagic.isDesertAnimalsUnlocked) return;
                 break;
             }
-            case 2: {
-                if(ENABLE_LOGGING) console.log(`New spider from ${animalBiome} biome is now placable!`);
-                const spider = new Spider({
-                    scene,
-                    position: mobPosition,
-                });
+            case BIOME.GRASS: {
+                if (!this.#playerCurrentMagic.isGrassAnimalsUnlocked) return;
+                break;
+            }
+            case BIOME.FOREST: {
+                if (!this.#playerCurrentMagic.isForestAnimalsUnlocked) return;
+                break;
+            }
+            case BIOME.SWAMP: {
+                if (!this.#playerCurrentMagic.isSwampAnimalsUnlocked) return;
+                break;
+            }
+            case BIOME.CRYSTAL: {
+                if (!this.#playerCurrentMagic.isCrystalAnimalsUnlocked) return;
+                break;
+            }
+        }
+        //Find a tile with the same biome in the cast direction to place the animal on.
+        let allTargets = earth.findAnimalTargetTiles(targetPosition, directions, this.#playerCurrentMagic.powerLevel + 1, animalBiome);
+        if (allTargets.length === 0) return;//No valid target tiles to place an animal on.        
+        const mobPosition = this.getTileCenterPosition(Phaser.Utils.Array.GetRandom(allTargets));
+        //Todo: when sharks are added the implement a way to place them in water tiles instead of a tile matching the players current biome.
+
+        //Pick a random animal macting the biome.
+        switch (animalBiome) {
+            case BIOME.ROCK: {
+                const spider = new Spider({ scene, position: mobPosition, });
                 spider.enableObject();
                 this.#enemyGroup.add(spider);
                 DataManager.instance.increaseLivingCreatureCount();
                 break;
             }
-        }
-    }
-
-    private pickAnimalBiome(magicState: EarthCastingConfig): BIOME | null {
-        if (magicState.isRockAnimalsUnlocked) {
-            return BIOME.ROCK;
-        }
-
-        return null;
+            case BIOME.DESERT: {
+                return;// no snake yet
+            }
+            case BIOME.GRASS: {                
+                const randomIndex = Phaser.Math.Between(0, 5);// pick one randomly between these 6
+                switch (randomIndex) {
+                    case 0: {
+                        const chicken = new Chicken({ scene, position: mobPosition, });
+                        chicken.enableObject();
+                        this.#critterGroup.add(chicken);
+                        break;
+                    }
+                    case 1: {
+                        const lamb = new Lamb({ scene, position: mobPosition, });
+                        lamb.enableObject();
+                        this.#critterGroup.add(lamb);
+                        break;
+                    }
+                    case 2: {
+                        const sheep = new Sheep({ scene, position: mobPosition, });
+                        sheep.enableObject();
+                        this.#critterGroup.add(sheep);
+                        break;
+                    }
+                    case 3: {
+                        const rooster = new Rooster({ scene, position: mobPosition, });
+                        rooster.enableObject();
+                        this.#critterGroup.add(rooster);
+                        break;
+                    }
+                    case 4: {
+                        const bull = new Bull({ scene, position: mobPosition, });
+                        bull.enableObject();
+                        this.#critterGroup.add(bull);
+                        break;
+                    }
+                    case 5: {
+                        const calf = new Calf({ scene, position: mobPosition, });
+                        calf.enableObject();
+                        this.#critterGroup.add(calf);
+                        break;
+                    }
+                }
+                DataManager.instance.increaseLivingCreatureCount();
+                break;
+            }
+            case BIOME.FOREST: {
+                const randomIndex = Phaser.Math.Between(0, 2);// pick one randomly between these 3
+                switch (randomIndex) {
+                    case 0: {
+                        const turkey = new Turkey({ scene, position: mobPosition, });
+                        turkey.enableObject();
+                        this.#critterGroup.add(turkey);
+                        break;
+                    }
+                    case 1: {
+                        const piglet = new Piglet({ scene, position: mobPosition, });
+                        piglet.enableObject();
+                        this.#critterGroup.add(piglet);
+                        break;
+                    }
+                    case 2: {
+                        const spider = new Spider({ scene, position: mobPosition, });
+                        spider.enableObject();
+                        this.#enemyGroup.add(spider);
+                        break;
+                    }
+                }
+                DataManager.instance.increaseLivingCreatureCount();
+                break;
+            }
+            case BIOME.SWAMP: {
+                const spider = new Spider({ scene, position: mobPosition, });
+                spider.enableObject();
+                this.#enemyGroup.add(spider);
+                DataManager.instance.increaseLivingCreatureCount();
+                break;
+            }
+            case BIOME.CRYSTAL: {
+                const spider = new Spider({ scene, position: mobPosition, });
+                spider.enableObject();
+                this.#enemyGroup.add(spider);
+                DataManager.instance.increaseLivingCreatureCount();
+                break;
+            }
+        }        
     }
 
     private getTileCenterPosition(tilePosition: Position): Position {
@@ -349,14 +426,14 @@ export class DebugSpellcasting {
             .setOrigin(0.5, 0.5);
 
         spell.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
-        
+
         // Get player's current biome and apply corresponding tint
         const playerTilePos = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
         const playerTile = earth.getTile(playerTilePos.x, playerTilePos.y);
         const biome = playerTile?.biome ?? BIOME.VOID;
         const tintColor = BIOME_COLOR_MAP[biome] ?? BIOME_COLOR_MAP[BIOME.VOID];
-        if(!this.isLimitedCastEnabled) spell.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
-        
+        if (!this.isLimitedCastEnabled) spell.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
+
         spell.play('spell-music-anim');
         scene.tweens.add({
             targets: spell,

@@ -6,6 +6,7 @@
 - no swimming when wearing  armor (take damage if player is trying to swim in armor)
 - take less damage when wearing  armor
 - Alternative to bounce-movement
+- Fix unlocking animals in grass without blockings
 - Implement deferred gameStates
   - bossFightState
   - victoryState
@@ -22,16 +23,8 @@
   - Plant3
   - Lamb is 192x256 [32], 6 columns, 8 rows: walk down, walk up, walk left, walk right, idle down, idle up, idle left, idle right  
 - Register sound effects
-
-attack-dagger.mp3
-attack-dagger.mp3
-attack-staff.mp3
-attack-sword.mp3
-
-levelup2.mp3 (heath of animal progression??)
-
-- Add chest placement/open sound effect
-- More diverser spell sounds
+  
+  levelup2.mp3 (heath of animal progression??)
 
 ## Implementations that require new asserts
 

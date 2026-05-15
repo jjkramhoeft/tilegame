@@ -399,6 +399,14 @@ export class Earth {
         });
     }
 
+    public findAnimalTargetTiles(targetPosition: Position, directions: Direction[], powerLevel: number, biome: number): Position[] {
+        const allTargets = findTargetTiles(targetPosition, directions, powerLevel);
+        return allTargets.filter(target => {
+            const targetTile = this.getTile(target.x, target.y);
+            return targetTile?.biome === biome && (targetTile.blocking === undefined || targetTile.blocking < 0);
+        });
+    }
+
     private createCastingFeedback(): CastingFeedback {
         return {
             rockTilesPlaced: 0,
