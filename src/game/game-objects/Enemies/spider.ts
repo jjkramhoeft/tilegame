@@ -62,6 +62,7 @@ export class Spider extends CharacterGameObject {
       inputComponent: new InputComponent(),
       isInvulnerable: false,
       maxLife: ENEMY_SPIDER_MAX_HEALTH,
+      contactDamage: 1,
     });
 
     // add shared components

@@ -114,6 +114,10 @@ export class DataManager {
     this.#data.maxLivingCreaturesThisGame = maxLivingCreaturesThisGame;
   }
 
+  public updatePlayerMaxHealth(max: number): void {
+    this.#data.maxHealth = max;
+  }
+
   public updatePlayerCurrentHealth(health: number): void {
     if (health === this.#data.currentHealth) {
       return;

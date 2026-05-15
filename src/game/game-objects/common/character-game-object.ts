@@ -32,6 +32,8 @@ export type CharacterConfig = {
   invulnerableAfterHitAnimationDuration?: number;
   maxLife: number;
   currentLife?: number;
+  /** Damage in half-hearts dealt to the player on contact. Defaults to 2 (one full heart). */
+  contactDamage?: number;
 };
 
 export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite implements CustomGameObject {
@@ -45,6 +47,7 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
   protected _isPlayer: boolean;
   protected _isDefeated: boolean;  
   protected _lastMoveDirections: Direction[] = [];
+  protected _contactDamage: number;
   
 
   constructor(config: CharacterConfig) {
@@ -62,6 +65,7 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
       isInvulnerable,
       maxLife,
       currentLife,
+      contactDamage,
     } = config;
     const { x, y } = position;
     super(scene, x, y, assetKey, frame || 0);
@@ -88,6 +92,7 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     // general config
     this._isPlayer = isPlayer;
     this._isDefeated = false;
+    this._contactDamage = contactDamage ?? 2;
     if (!this._isPlayer) {
       this.disableObject();
     }
@@ -134,6 +139,15 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
 
   get animationComponent(): AnimationComponent {
     return this._animationComponent;
+  }
+
+  get lifeComponent(): LifeComponent {
+    return this._lifeComponent;
+  }
+
+  /** Damage in half-hearts this character deals to the player on contact. */
+  get contactDamage(): number {
+    return this._contactDamage;
   }
 
   get invulnerableComponent(): InvulnerableComponent {

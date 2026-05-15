@@ -1718,6 +1718,60 @@
         }
       },
       {
+        "type": "spritesheet",
+        "key": "Sheep",
+        "textureURL": "Sheep.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 32
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "Turkey",
+        "textureURL": "Turkey.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 32
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "Piglet",
+        "textureURL": "Piglet.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 32
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "Rooster",
+        "textureURL": "Rooster.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 32
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "Calf",
+        "textureURL": "Calf.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "Bull",
+        "textureURL": "Bull.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
         "type": "image",
         "key": "background",
         "url": "bg-garden-genesis.png"
