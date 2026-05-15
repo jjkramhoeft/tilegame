@@ -42,7 +42,7 @@ The tile map consist of six layers
 - Can move in four or eight direction
 - Can Face in four direction
 - Animated: Idle, Walking, Die/Fall
-- Options: Cow, Sheep/Lamb, Chicken, Pig
+- Options: Sheep, Lamb, Chicken, Piglet, Rooster, Turkey, Bull, Calf
 - Cast blob shadow (in cluede in sprite)
 - Blocked by blocking layer, void layer, water layer and mountain layer
 
@@ -59,8 +59,8 @@ The animations for the Lamb is set up in PreloadScene and the key for the animat
 - Can move in four or eight direction
 - Can Face in four direction
 - Animated: Idle, Walking, Attack/Cast, Die/Fall
-- Options: Spider, Snake, Gosht, Lizard, Skeleton, Wisp, Drow
-- Cast blob shadow (in cluede in sprite)
+- Options: Spider, Snake, Lizardman, Skeleton, Wisp
+- Cast blob shadow (is included in sprite)
 - Blocked by blocking layer, void layer, water layer and mountain layer
 - Needs path finding and some simple chase mechanics 
 
@@ -134,7 +134,7 @@ The game starts with the play standing on a lone single tile. With magic level o
 The number and type of tile that the play has created are tracked
 
 For each of the six biomes (Rock, Desert, Grass, Forest, Swamp and Crystal) the progression follows this pattern:
-First only plain basetiles (with borderlayer) can be added, then after 10 of those are placed, Decorations are unlocked for that biome, Then after 10 tiles with decoration have been placed blocking is unlocked together with a chest, Then after 10 tiles with blocking Animals are unlocked.
+First only plain basetiles (with borderlayer) can be added, then after X of those are placed, Decorations are unlocked for that biome, Then after Y tiles with decoration have been placed blocking is unlocked together with a chest, Then after Z tiles with blocking Animals are unlocked.
 
 Void, Water, Mountains and Lava have no progression but all hinders movement in some way.
 
@@ -290,19 +290,23 @@ Trigger by boss fight end or animal progression maxed
 8) Crystal. Chest 3 (Armor outfit)
 9) Lava. Burning - will dammage player
 
-First when a biome is unlocked only plain basetiles with borderlayer can be added as new tiles. After 10 tiles are placed, new placed tiles can also include decorations.
+First when a biome is unlocked only plain basetiles with borderlayer can be added as new tiles. After X tiles are placed, new placed tiles can also include decorations.
 
 ### Biome and their animals
 
-||Spider|Lamb|Chicken|Cow|Snake|Lizard|Skeleton|Shark|
-|-|-|-|-|-|-|-|-|-|
-|Rock|x||||x||||
-|Desert|||||x||||
-|Grass||x|x|x|x||||
-|Forest|x||x||x||||
-|Swamp|x||||x|x|||
-|Crystal|x||||||x||
-|Water||||||||x|
-
-The snake can kill chickens
-The skeleton can kill lamb and cows
+||Rock|Desert|Grass|Forest|Swamp|Crystal|Water|
+|-|-|-|-|-|-|-|-|
+|Spider|x|||x|x|x||
+|Chicken|||x|||||
+|Lamb|||x|||||
+|Sheep|||x|||||
+|Rooster|||x|||||
+|Turkey||||x||||
+|Piglet||||x||||
+|Bull|||x|||||
+|Calf|||x|||||
+|Snake||x||x|x|||
+|Skeleton||||||x||
+|Lizardman||||||||
+|Shark|||||||x|
+|Plants|||||x|||
