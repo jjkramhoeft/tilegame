@@ -164,6 +164,8 @@ export class DebugSpellcasting {
     };
 
     #spellSound: Phaser.Sound.BaseSound;
+    #lastSpellMarkerIndex: number | undefined;
+    #limitedSpellSounds: Phaser.Sound.BaseSound[];
     #levelUpSound: Phaser.Sound.BaseSound;
     #previousStateName: string | undefined;
     #castingFeedbackTotals: CastingFeedback = this.createEmptyCastingFeedback();
@@ -176,7 +178,17 @@ export class DebugSpellcasting {
     constructor(scene: Phaser.Scene, enemyGroup: Phaser.GameObjects.Group, critterGroup: Phaser.GameObjects.Group) {
         this.#enemyGroup = enemyGroup;
         this.#critterGroup = critterGroup;
-        this.#spellSound = scene.sound.add('spellnotes1', { volume: 0.9 });
+        this.#spellSound = scene.sound.add('magic-audio-sprite');
+        // Register the 12 spell-cast markers on this sound instance (markers live on the
+        // BaseSound, not the cache, so they must be added to whichever instance plays them).
+        for (let i = 1; i <= 12; i++) {
+            this.#spellSound.addMarker({ name: `spell-cast-${i}`, start: (i - 1) * 2, duration: 1.5 });
+        }
+        // Limited casts (scripted intro) use a separate, distinct set of sounds.
+        this.#limitedSpellSounds = [
+            scene.sound.add('magic-down'),
+            scene.sound.add('magic-down-2'),
+        ];
         this.#levelUpSound = scene.sound.add('levelup', { volume: 0.9 });
         //If debug mode is on then ease progression to save test time.
         if (DataManager.instance.data.isDebugMode) {
@@ -202,10 +214,7 @@ export class DebugSpellcasting {
     }
 
     private cast(scene: Phaser.Scene, player: Player, earth: Earth): void {
-        if (this.#spellSound.isPlaying === false) {
-            const vol = this.isLimitedCastEnabled ? 0.5 : 1;// ToDo: Consider adding separate sound effects for limited casts vs regular casts instead of just changing the volume.
-            this.#spellSound.play({ volume: vol });
-        }
+        this.playCastSound();
 
         const directions = player.getLastMoveDirections();
         const travelVector = this.getCastTravelVector(directions);
@@ -224,6 +233,29 @@ export class DebugSpellcasting {
         if (!this.isLimitedCastEnabled) {
             this.tryPlaceMob(scene, player, earth);//ToDo: Replace with actual animal placement logic once more animals are added and the logic is decoupled from debug spellcasting.
         }
+    }
+
+    private playCastSound(): void {
+        if (this.isLimitedCastEnabled) {
+            // Pick randomly between the limited-cast sounds; skip if either is already playing.
+            const sound = this.#limitedSpellSounds[Phaser.Math.Between(0, this.#limitedSpellSounds.length - 1)];
+            if (this.#limitedSpellSounds.some(s => s.isPlaying)) {
+                return;
+            }
+            sound.play();
+            return;
+        }
+
+        if (this.#spellSound.isPlaying) {
+            return;
+        }
+        // Pick a random marker (1..12), re-roll once if it would repeat the previous cast sound.
+        let markerIndex = Phaser.Math.Between(1, 12);
+        if (markerIndex === this.#lastSpellMarkerIndex) {
+            markerIndex = Phaser.Math.Between(1, 12);
+        }
+        this.#lastSpellMarkerIndex = markerIndex;
+        this.#spellSound.play(`spell-cast-${markerIndex}`);
     }
 
     private tryPlaceMob(scene: Phaser.Scene, player: Player, earth: Earth): void {
