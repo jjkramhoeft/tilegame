@@ -259,12 +259,13 @@ export class Earth {
         let casterTile = this.getTile(casterPosition.x, casterPosition.y);
         let allTargets = findTargetTiles(primeTargetPosition, directions, creationConfig.powerLevel);
         const firstTilePosition = this.getFirstTilePosition();
-        if(isLimitedCast && firstTilePosition) {
+        if (isLimitedCast && firstTilePosition) {
             // For limited casts, filter targets to only include tiles close to the firstTilePosition (less than 4 tiles away).)
             allTargets = allTargets.filter(targetTile => {
                 const maxXDistance = Math.abs(targetTile.x - firstTilePosition.x);
                 const maxYDistance = Math.abs(targetTile.y - firstTilePosition.y);
-                return maxXDistance  <= 4 && maxYDistance <= 4;
+                return maxXDistance <= 4 && 
+                    maxYDistance <= 4;
             });
         }
 
@@ -285,7 +286,7 @@ export class Earth {
                 break; // Limited casts can only place rock tiles.
             }
             this.AddTile(newTile);
-            if(newTile.chest !== undefined && newTile.chest > 0 ) {chestAlreadyPlaced=true;}
+            if (newTile.chest !== undefined && newTile.chest > 0) { chestAlreadyPlaced = true; }
             this.addMissingVoidNeighbors(target);
             numberOfPlacedTiles++;
             if (isLimitedCast) break; // Limited casts can only place one tile, even if power level is higher.
@@ -294,12 +295,14 @@ export class Earth {
         if (numberOfPlacedTiles === 0) {
             // Placing blocking on existing tiles.
             allTargets = findTargetTiles(primeTargetPosition, directions, creationConfig.powerLevel);
-            if(isLimitedCast && firstTilePosition) {
+            if (isLimitedCast && firstTilePosition) {
                 // For limited casts, filter targets to only include tiles close to the firstTilePosition (less than 4 tiles away).)
                 allTargets = allTargets.filter(targetTile => {
                     const maxXDistance = Math.abs(targetTile.x - firstTilePosition.x);
                     const maxYDistance = Math.abs(targetTile.y - firstTilePosition.y);
-                    return maxXDistance  <= 4 && maxYDistance <= 4;
+                    return maxXDistance <= 4 && maxYDistance <= 4 && 
+                    (targetTile.x != firstTilePosition.x || targetTile.y != firstTilePosition.y) && // Don't include the first tile itself as a target for limited casts blocking.
+                    (targetTile.x != firstTilePosition.x+1 || targetTile.y != firstTilePosition.y); // Don't include the tile to the right of the first tile as a target for limited casts, because that's where the fruit chest shall spawn.
                 });
             }
             let numberOfPlacedBlockings = 0;
@@ -323,10 +326,10 @@ export class Earth {
     }
 
     private CreateNewTile(
-        creationConfig: EarthCastingConfig, 
-        tilePosition: Position, 
-        powerLevel: number, 
-        casterTile: Tile | undefined, 
+        creationConfig: EarthCastingConfig,
+        tilePosition: Position,
+        powerLevel: number,
+        casterTile: Tile | undefined,
         castingFeedback: CastingFeedback,
         isLimited: boolean = false,
         chestAlreadyPlaced: boolean = false,
@@ -352,8 +355,7 @@ export class Earth {
         this.addBiomePlacementFeedback(castingFeedback, biome, decoration);
 
         //Test if chests should be placed
-        if(!chestAlreadyPlaced && !isLimited)
-        {        
+        if (!chestAlreadyPlaced && !isLimited) {
             if (biome === BIOME.ROCK && 0 < decoration && creationConfig.isChest1Placable) {
                 if (Math.random() < CHEST_CHANCE) {
                     castingFeedback.chestNumberPlaced = 1;
@@ -453,7 +455,7 @@ export class Earth {
             targetTile.blocking < 0 &&
             casterTile?.biome === targetTile.biome &&
             this.isBlockingUnlockedForBiome(creationConfig, targetTile.biome) &&
-            (targetTile.chest === undefined ||targetTile.chest < 1); // Don't place blocking on tiles with chests.
+            (targetTile.chest === undefined || targetTile.chest < 1); // Don't place blocking on tiles with chests.
     }
 
     private isBlockingUnlockedForBiome(creationConfig: EarthCastingConfig, biome: number): boolean {
@@ -800,7 +802,7 @@ export class Earth {
         }
     }
 
-    public placeGardenTiles(staggerMs = 0, onComplete?: () => void): void {
+    public placeGardenTiles(staggerMs = 0, currentPlayerTilePosition: Position, onComplete?: () => void): void {
         //ToDo: Implement changing the center tiles to a lush green garden, using forest, grass and water tiles, then add the big-tree.
         //For now it just simple forest bioms and the big tree.
         if (!this.firstTilePosition) {
@@ -808,22 +810,119 @@ export class Earth {
             return;
         }
         const first = this.firstTilePosition;
-        const tilesToPlace: Position[] = [];
-        for (let dx = -3; dx <= 3; dx++) {
-            for (let dy = -3; dy <= 3; dy++) {
-                if (Math.abs(dx) === 3 && Math.abs(dy) === 3) continue; // Skip the 4 outermost corners
-                if (dx === 0 && dy === 0) continue; // Skip the center tile (already the starting tile)
-                tilesToPlace.push({ x: first.x + dx, y: first.y + dy });
-            }
-        }
+        const tilesToPlace: Tile[] = [
+            // A stream of water.
+            new Tile({ tilenumber: { x: first.x - 2, y: first.y + 4 }, biome: BIOME.WATER, blocking: -1 }),
+            new Tile({ tilenumber: { x: first.x - 2, y: first.y + 3 }, biome: BIOME.WATER, blocking: -1 }),
+            new Tile({ tilenumber: { x: first.x - 1, y: first.y + 3 }, biome: BIOME.WATER, blocking: -1 }),
+            new Tile({ tilenumber: { x: first.x - 1, y: first.y + 2 }, biome: BIOME.WATER, blocking: -1 }),
+            new Tile({ tilenumber: { x: first.x, y: first.y + 2 }, biome: BIOME.WATER, blocking: -1 }),
+            new Tile({ tilenumber: { x: first.x, y: first.y + 1 }, biome: BIOME.WATER, blocking: -1 }),
+            // bigTree tile & fruit chest tile.
+            new Tile({ tilenumber: { x: first.x, y: first.y }, biome: BIOME.FOREST, blocking: -1 }),
+            new Tile({ tilenumber: { x: first.x + 1, y: first.y }, biome: BIOME.FOREST, blocking: -1 }),//Chest will be placed later.
+            // Center forest tiles.
+            new Tile({ tilenumber: { x: first.x - 1, y: first.y + 1 }, biome: BIOME.FOREST, blocking: -1, decoration: -1 }),
+            new Tile({ tilenumber: { x: first.x + 1, y: first.y + 1 }, biome: BIOME.FOREST, blocking: -1, decoration: -1 }),
+            new Tile({ tilenumber: { x: first.x - 1, y: first.y }, biome: BIOME.FOREST, blocking: -1, decoration: -1 }),
+            new Tile({ tilenumber: { x: first.x + 1, y: first.y - 1 }, biome: BIOME.FOREST, blocking: -1, decoration: -1 }),
+            new Tile({ tilenumber: { x: first.x - 1, y: first.y - 1 }, biome: BIOME.FOREST, blocking: -1, decoration: -1 }),
+            new Tile({ tilenumber: { x: first.x, y: first.y - 1 }, biome: BIOME.FOREST, blocking: -1, decoration: -1 }),
+            // Center forest tiles again with decorations
+            new Tile({ tilenumber: { x: first.x - 1, y: first.y + 1 }, biome: BIOME.FOREST, blocking: -1, decoration: 49 }),
+            new Tile({ tilenumber: { x: first.x + 1, y: first.y + 1 }, biome: BIOME.FOREST, blocking: -1, decoration: 50 }),
+            new Tile({ tilenumber: { x: first.x - 1, y: first.y }, biome: BIOME.FOREST, blocking: -1, decoration: 51 }),
+            new Tile({ tilenumber: { x: first.x + 1, y: first.y - 1 }, biome: BIOME.FOREST, blocking: -1, decoration: 52 }),
+            new Tile({ tilenumber: { x: first.x - 1, y: first.y - 1 }, biome: BIOME.FOREST, blocking: -1, decoration: 53 }),
+            new Tile({ tilenumber: { x: first.x, y: first.y - 1 }, biome: BIOME.FOREST, blocking: -1, decoration: 54 }),
+            // Next ring. (12 tiles)           
+            new Tile({ tilenumber: { x: first.x + 1, y: first.y + 2 }, biome: BIOME.FOREST, blocking: -1, decoration: 55 }),
+            new Tile({ tilenumber: { x: first.x - 2, y: first.y + 2 }, biome: BIOME.FOREST, blocking: -1, decoration: 49 }),
+            new Tile({ tilenumber: { x: first.x - 2, y: first.y + 1 }, biome: BIOME.FOREST, blocking: -1, decoration: 50 }),
+            new Tile({ tilenumber: { x: first.x + 2, y: first.y + 1 }, biome: BIOME.FOREST, blocking: -1, decoration: 51 }),
+            //
+            new Tile({ tilenumber: { x: first.x - 2, y: first.y }, biome: BIOME.FOREST, blocking: -1, decoration: 52 }),
+            new Tile({ tilenumber: { x: first.x, y: first.y - 2 }, biome: BIOME.FOREST, blocking: -1, decoration: 53 }),
+            new Tile({ tilenumber: { x: first.x, y: first.y + 3 }, biome: BIOME.FOREST, blocking: -1, decoration: 54 }),
+            new Tile({ tilenumber: { x: first.x - 2, y: first.y - 1 }, biome: BIOME.FOREST, blocking: -1, decoration: 55 }),
+            //            
+            new Tile({ tilenumber: { x: first.x + 1, y: first.y - 2 }, biome: BIOME.FOREST, blocking: -1, decoration: 49 }),
+            new Tile({ tilenumber: { x: first.x - 1, y: first.y - 2 }, biome: BIOME.FOREST, blocking: -1, decoration: 50 }),
+            new Tile({ tilenumber: { x: first.x + 2, y: first.y - 1 }, biome: BIOME.FOREST, blocking: -1, decoration: 51 }),
+            new Tile({ tilenumber: { x: first.x + 2, y: first.y }, biome: BIOME.FOREST, blocking: -1, decoration: 52 }),
+            // 11 tiles from the outer ring.            
+            new Tile({ tilenumber: { x: first.x + 1, y: first.y + 3 }, biome: BIOME.FOREST, blocking: -1, decoration: 53 }),
+            new Tile({ tilenumber: { x: first.x - 3, y: first.y + 1 }, biome: BIOME.FOREST, blocking: -1, decoration: 54 }),
+            new Tile({ tilenumber: { x: first.x + 2, y: first.y + 2 }, biome: BIOME.FOREST, blocking: -1, decoration: 55 }),
+            new Tile({ tilenumber: { x: first.x - 3, y: first.y }, biome: BIOME.FOREST, blocking: -1, decoration: 49 }),
+            //
+            new Tile({ tilenumber: { x: first.x - 2, y: first.y - 2 }, biome: BIOME.FOREST, blocking: -1, decoration: 50 }),
+            new Tile({ tilenumber: { x: first.x + 3, y: first.y }, biome: BIOME.FOREST, blocking: -1, decoration: 51 }),
+            new Tile({ tilenumber: { x: first.x + 3, y: first.y - 1 }, biome: BIOME.FOREST, blocking: -1, decoration: 52 }),
+            new Tile({ tilenumber: { x: first.x + 1, y: first.y - 3 }, biome: BIOME.FOREST, blocking: -1, decoration: 53 }),
+            //
+            new Tile({ tilenumber: { x: first.x + 2, y: first.y - 2 }, biome: BIOME.FOREST, blocking: -1, decoration: 54 }),
+            new Tile({ tilenumber: { x: first.x, y: first.y - 3 }, biome: BIOME.FOREST, blocking: -1, decoration: 55 }),
+            new Tile({ tilenumber: { x: first.x - 1, y: first.y - 3 }, biome: BIOME.FOREST, blocking: -1, decoration: 49 }),
+        ];
 
-        const placeTileAt = (pos: Position): void => {
-            this.AddTile(new Tile({
-                tilenumber: { x: pos.x, y: pos.y },
-                biome: BIOME.FOREST,
-                blocking: -1,
-            }));
+        const tryPlaceTree = (): void => {
+            if (currentPlayerTilePosition.x !== first.x + pos.x || currentPlayerTilePosition.y !== first.y + pos.y) {
+                const currentTile: Tile | undefined = this.getTile(first.x + pos.x, first.y + pos.y);
+                if (currentTile === undefined || currentTile.blocking < 0) {
+                    tilesToPlace.push(new Tile({ 
+                        tilenumber: { x: first.x + pos.x, y: first.y + pos.y }, 
+                        biome: BIOME.FOREST, 
+                        blocking: blokking, 
+                        decoration: docoration }));
+                }
+            }
         };
+        const tryPlaceVoid = (): void => {
+            const currentTile: Tile | undefined = this.getTile(first.x + pos.x, first.y + pos.y);
+            if (currentTile === undefined) {
+                tilesToPlace.push(new Tile({ 
+                    tilenumber: { x: first.x + pos.x, y: first.y + pos.y }, 
+                    biome: BIOME.VOID 
+                }));
+            }
+        };
+
+        // Now again with blocking (if not on players tile)
+        let pos = { x: -1, y: 1 }; let blokking = 20; let docoration = 49;// center 1
+        tryPlaceTree();
+        pos = { x: -1, y: 0 }; blokking = 22; docoration = 51;// center 3
+        tryPlaceTree();
+        pos = { x: 0, y: 3 }; blokking = 24; docoration = 54;// next 7
+        tryPlaceTree();
+        pos = { x: 2, y: -2 }; blokking = 26; docoration = 54;// outer 9
+        tryPlaceTree();
+        pos = { x: -2, y: -2 }; blokking = 27; docoration = 50;// outer 5
+        tryPlaceTree();
+        pos = { x: 2, y: 2 }; blokking = 32; docoration = 55;// outer 3
+        tryPlaceTree();
+
+        // Now place void at the edges of the garden if needed.
+        pos = { x: 0, y: 4 }; tryPlaceVoid();
+        pos = { x: 1, y: 4 }; tryPlaceVoid();
+        pos = { x: 2, y: 3 }; tryPlaceVoid();
+        pos = { x: 3, y: 2 }; tryPlaceVoid();
+        pos = { x: 4, y: 0 }; tryPlaceVoid();
+        pos = { x: 4, y: -1 }; tryPlaceVoid();
+        pos = { x: 3, y: -2 }; tryPlaceVoid();
+        pos = { x: 2, y: -3 }; tryPlaceVoid();
+        pos = { x: 1, y: -4 }; tryPlaceVoid();
+        pos = { x: 0, y: -4 }; tryPlaceVoid();
+        pos = { x: -1, y: -4 }; tryPlaceVoid();
+        pos = { x: -2, y: -3 }; tryPlaceVoid();
+        pos = { x: -3, y: -2 }; tryPlaceVoid();
+        pos = { x: -4, y: 0 }; tryPlaceVoid();
+        pos = { x: -4, y: 1 }; tryPlaceVoid();
+        pos = { x: -3, y: 2 }; tryPlaceVoid();
+
+        this.createBlockingGeometryBody(first.x, first.y, 42);// The big tree trunk blocking. (Currently hardcoded at nor ready for Save Game). ToDo: Fix blocking bigTree.
+
+        const placeTileAt = (tile: Tile): void => { this.AddTile(tile); };
 
         const spawnBigTree = (): void => {
             this.scene.add
@@ -831,21 +930,13 @@ export class Earth {
                 .setOrigin(0.25, 0.85)
                 .setDepth(first.y * this.tileSize + 32)
                 .play('big-tree-growth', true);
-            //ToDo: Add center forest tile with blocking matching the big-trees trunk.
-            //ToDo: Add void tiles around the garden
+            
             onComplete?.();
         };
 
-        if (staggerMs <= 0) {
-            // Original behaviour: place every tile immediately, then the tree.
-            tilesToPlace.forEach(placeTileAt);
-            spawnBigTree();
-            return;
-        }
-
         // Staged: place tiles one by one with a delay, then the big tree.
-        tilesToPlace.forEach((pos, index) => {
-            this.scene.time.delayedCall(staggerMs * index, () => placeTileAt(pos));
+        tilesToPlace.forEach((tile, index) => {
+            this.scene.time.delayedCall(staggerMs * index, () => placeTileAt(tile));
         });
         this.scene.time.delayedCall(staggerMs * tilesToPlace.length, spawnBigTree);
     }

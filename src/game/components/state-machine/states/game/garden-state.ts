@@ -12,6 +12,11 @@ export class GardenState extends BaseGameState {
   public onEnter(): void {
     console.debug('[GameProgression] GardenState entered');
     this._scene.lockPlayerMovement();
+    const currentPlayerTilePosition = this._scene.earth.getTileXYFromScreenCoordinates(
+      this._scene.player.x,
+      this._scene.player.y,
+      true, // offsetPlayer to get the tile position of the player's center instead of feet
+    );
     let defaultStepWaitTime = 80;
     if(DataManager.instance.data.difficulty === 'Hard') {
       defaultStepWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
@@ -21,7 +26,7 @@ export class GardenState extends BaseGameState {
       this._showNarrator('narrator.garden.lush', () => {
         this._pause(this.defaultWaitTime, () => {
           this._showNarrator('narrator.garden.assignment', () => {
-            this._scene.earth.placeGardenTiles(defaultStepWaitTime, () => {
+            this._scene.earth.placeGardenTiles(defaultStepWaitTime, currentPlayerTilePosition, () => {
               this._pause(this.defaultWaitTime, () => {
                 this._scene.placeFruitChestNearBigTree();
                 this._pause(this.defaultWaitTime, () => {
