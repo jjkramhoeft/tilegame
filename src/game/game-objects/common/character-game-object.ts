@@ -162,14 +162,14 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     this._stateMachine.update();
   }
 
-  public hit(direction: Direction, damage: number): void {
+  public hit(direction: Direction, damage: number): boolean {
     if (this._isDefeated) {
-      return;
+      return false;
     }
 
     // check if character is invulnerable, if not update state to be hurt
     if (this._invulnerableComponent.invulnerable) {
-      return;
+      return false;
     }
 
     // have character take damage and see if the character has died
@@ -180,10 +180,11 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     if (this._lifeComponent.life === 0) {
       this._isDefeated = true;
       this._stateMachine.setState(CHARACTER_STATES.DEATH_STATE, direction);
-      return;
+      return true;
     }
 
     this._stateMachine.setState(CHARACTER_STATES.HURT_STATE, direction);
+    return true;
   }
 
   

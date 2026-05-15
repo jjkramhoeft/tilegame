@@ -229,13 +229,17 @@ export class GameScene extends Phaser.Scene {
         // register overlap between player weapon and enemies
         this.physics.add.overlap(this.#player.weaponBody, this.#enemyGroup!, (_weaponBody, enemy) => {
             const enemyObj = enemy as CharacterGameObject;
-            enemyObj.hit(this.#player.direction, this.#player.weaponDamage);
+            if (enemyObj.hit(this.#player.direction, this.#player.weaponDamage)) {
+                this.#playWeaponHitSound();
+            }
         });
 
         // critters (passive mobs) can be hit by the player's weapon but do not damage the player on contact.
         this.physics.add.overlap(this.#player.weaponBody, this.#critterGroup!, (_weaponBody, critter) => {
             const critterObj = critter as CharacterGameObject;
-            critterObj.hit(this.#player.direction, this.#player.weaponDamage);
+            if (critterObj.hit(this.#player.direction, this.#player.weaponDamage)) {
+                this.#playWeaponHitSound();
+            }
         });
 
         // enemies and critters bounce against blocking map geometry.
@@ -249,6 +253,18 @@ export class GameScene extends Phaser.Scene {
 
         // critters also avoid falling into void tiles.
         this.physics.add.collider(this.#critterGroup!, this.#earth.getVoidLayer());
+    }
+
+    #playWeaponHitSound(): void {
+        const weapon = DataManager.instance.data.weapon;
+        const soundKey = weapon === 'dagger' ? 'attack-dagger'
+            : weapon === 'staff' ? 'attack-staff'
+            : weapon === 'sword' ? 'attack-sword'
+            : 'attack-punch';
+        const sound = this.sound.get(soundKey) ?? this.sound.add(soundKey);
+        if (!sound.isPlaying) {
+            sound.play();
+        }
     }
 
     #registerCustomEvents(): void {

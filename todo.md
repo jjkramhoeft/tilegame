@@ -28,17 +28,7 @@ attack-dagger.mp3
 attack-staff.mp3
 attack-sword.mp3
 
-chest.mp3
-chest2.mp3
-
-female-ow.mp3
-male-ow.mp3
-
-magic-down-2.mp3
-magic-down.mp3
-magic-audio-sprite.mp3  (12 x 1½ sec + ½ sec pause)
-
-levelup2.mp3
+levelup2.mp3 (heath of animal progression??)
 
 - Add chest placement/open sound effect
 - More diverser spell sounds
