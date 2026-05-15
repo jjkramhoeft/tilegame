@@ -60,6 +60,10 @@ export class Turkey extends CharacterGameObject {
       maxLife: ENEMY_TURKEY_MAX_HEALTH,
     });
 
+    this.body?.setSize(22, 16, true); // tighter hitbox around the lamb's body
+    //this.body?.setOffset(6, 14); // push it down/right to align with the visual
+    this.setScale(1.5);
+
     // add state machine
     this._stateMachine.addState(new IdleState(this));
     this._stateMachine.addState(new BounceMoveState(this));

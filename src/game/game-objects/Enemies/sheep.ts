@@ -60,6 +60,10 @@ export class Sheep extends CharacterGameObject {
       maxLife: ENEMY_SHEEP_MAX_HEALTH,
     });
 
+    this.body?.setSize(26, 20, true); // tighter hitbox around the lamb's body
+    this.body?.setOffset(4, 8); // push it down/right to align with the visual
+    this.setScale(1.5);
+
     // add state machine
     this._stateMachine.addState(new IdleState(this));
     this._stateMachine.addState(new BounceMoveState(this));
