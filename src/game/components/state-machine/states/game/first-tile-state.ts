@@ -40,12 +40,12 @@ export class FirstTileState extends BaseGameState {
         this.#moved = true;
       }
     }
-
+    /*
     if (!this.#attacked && player.currentState === CHARACTER_STATES.ATTACK_STATE) {
       this.#attacked = true;
-    }
+    }*/
 
-    if (this.#moved && this.#attacked) {
+    if (this.#moved ){//&& this.#attacked) {
       this._transitionTo(GAME_STATES.ASSIGNMENT);
     }
   }
