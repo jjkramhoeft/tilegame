@@ -194,8 +194,8 @@ export class GameScene extends Phaser.Scene {
             scene: this,
             position: this.#playerStartPosition,
             controls: this.#controls,
-            maxLife: 1,
-            currentLife: 1
+            maxLife: 2,
+            currentLife: 2
         });
         this.#controls.isMovementLocked = true;
 
@@ -218,8 +218,9 @@ export class GameScene extends Phaser.Scene {
         });
 
         // register collisions between enemies and the player.
-        this.#playerMobCollider = this.physics.add.overlap(this.#player, this.#enemyGroup!, () => {
-            this.#player.hit(DIRECTION.DOWN, 1);
+        this.#playerMobCollider = this.physics.add.overlap(this.#player, this.#enemyGroup!, (_player, enemy) => {
+            const enemyObj = enemy as CharacterGameObject;
+            this.#player.hit(DIRECTION.DOWN, enemyObj.contactDamage);
         });
 
         // critters (passive animals) collide with the player and bounce away without damaging the player.
@@ -357,7 +358,7 @@ export class GameScene extends Phaser.Scene {
                     // not already maxed, to avoid redundant HUD churn. The potion is
                     // unlimited in this chest, so chest contents are not cleared.
                     if (d.maxHealth < 6) {
-                        this.#player.lifeComponent.setMaxLife(3, true);
+                        this.#player.lifeComponent.setMaxLife(6, true);
                         d.maxHealth = 6;
                         DataManager.instance.data = d;
                         DataManager.instance.updatePlayerMaxHealth(6);
