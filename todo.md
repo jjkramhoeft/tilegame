@@ -13,6 +13,20 @@
 - Expand on gardenState, decorations, trees, water ect.
 - More uniform tile creation, to get larger area of the same biome
 - Emmit FIRST_ANIMAL_SPAWNED for the FirstAnimalState
+- Add animal and enemies from included sprite sheets
+  - Snake
+  - Skeleton (as Player)
+  - Lizard w. dagger  (as Player)
+  - Plant1
+  - Plant2
+  - Plant3
+  - Sheep (as Lamb) 192x256 [32]
+  - Turkey (as Lamb) 192x256 [32]
+  - Piglet (as Lamb) 192x256 [32]
+  - Rooster (as lamb, but 6 idles) 192x256 [32]
+  - Calf (layout as Lamb, but bigger) 384x512 [64]
+  - Bull (layout as Lamb, but bigger) 384x512 [64]
+  - Lamb is 192x256 [32], 6 columns, 8 rows: walk down, walk up, walk left, walk right, idle down, idle up, idle left, idle right
 
 ## Implementations that require new asserts
 

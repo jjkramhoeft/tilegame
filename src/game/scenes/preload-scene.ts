@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
-import { ASSET_KEYS, ASSET_PACK_KEYS } from '../common/assets';
+import { ASSET_KEYS, ASSET_PACK_KEYS, LAMB_ANIMATION_KEYS, CHICKEN_ANIMATION_KEYS } from '../common/assets';
 
 export class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -200,24 +200,25 @@ export class PreloadScene extends Phaser.Scene {
         anims.create({ key: 'spell-music-anim', frames: anims.generateFrameNumbers('spell-music-11_grayscale', { start: 0, end: 10 }), frameRate: 9, repeat: 0 });
 
         //Critter animations (currently only Lamb and Chicken)
+
         //Lamb sprite sheet layout: row 0 = down, row 1 = up, row 2 = left, row 3 = right. Each row has 6 frames for walking, followed by rows with 4 frames for idle.
-        anims.create({ key: 'lamb-walk-up', frames: anims.generateFrameNumbers('Lamb', { start: 6, end: 11 }), frameRate: 6, repeat: -1 });
-        anims.create({ key: 'lamb-walk-left', frames: anims.generateFrameNumbers('Lamb', { start: 12, end: 17 }), frameRate: 6, repeat: -1 });
-        anims.create({ key: 'lamb-walk-down', frames: anims.generateFrameNumbers('Lamb', { start: 0, end: 5 }), frameRate: 6, repeat: -1 });
-        anims.create({ key: 'lamb-walk-right', frames: anims.generateFrameNumbers('Lamb', { start: 18, end: 23 }), frameRate: 6, repeat: -1 });
-        anims.create({ key: 'lamb-idle-up', frames: anims.generateFrameNumbers('Lamb', { start: 6, end: 9 }), frameRate: 4, repeat: -1 });
-        anims.create({ key: 'lamb-idle-left', frames: anims.generateFrameNumbers('Lamb', { start: 12, end: 15 }), frameRate: 4, repeat: -1 });
-        anims.create({ key: 'lamb-idle-down', frames: anims.generateFrameNumbers('Lamb', { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
-        anims.create({ key: 'lamb-idle-right', frames: anims.generateFrameNumbers('Lamb', { start: 18, end: 21 }), frameRate: 4, repeat: -1 });
+        anims.create({ key: LAMB_ANIMATION_KEYS.WALK_UP, frames: anims.generateFrameNumbers('Lamb', { start: 6, end: 11 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: LAMB_ANIMATION_KEYS.WALK_LEFT, frames: anims.generateFrameNumbers('Lamb', { start: 12, end: 17 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: LAMB_ANIMATION_KEYS.WALK_DOWN, frames: anims.generateFrameNumbers('Lamb', { start: 0, end: 5 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: LAMB_ANIMATION_KEYS.WALK_RIGHT, frames: anims.generateFrameNumbers('Lamb', { start: 18, end: 23 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: LAMB_ANIMATION_KEYS.IDLE_UP, frames: anims.generateFrameNumbers('Lamb', { start: 6, end: 9 }), frameRate: 4, repeat: -1 });
+        anims.create({ key: LAMB_ANIMATION_KEYS.IDLE_LEFT, frames: anims.generateFrameNumbers('Lamb', { start: 12, end: 15 }), frameRate: 4, repeat: -1 });
+        anims.create({ key: LAMB_ANIMATION_KEYS.IDLE_DOWN, frames: anims.generateFrameNumbers('Lamb', { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
+        anims.create({ key: LAMB_ANIMATION_KEYS.IDLE_RIGHT, frames: anims.generateFrameNumbers('Lamb', { start: 18, end: 21 }), frameRate: 4, repeat: -1 });
         
         //Chicken sprite sheet layout: row 0 = down, row 1 = up, row 2 = left, row 3 = right. Each row has 6 frames for walking, followed by rows with 4 frames for idle.
-        anims.create({ key: 'chicken-walk-up', frames: anims.generateFrameNumbers('Chicken', { start: 6, end: 11 }), frameRate: 10, repeat: -1 });
-        anims.create({ key: 'chicken-walk-left', frames: anims.generateFrameNumbers('Chicken', { start: 12, end: 17 }), frameRate: 10, repeat: -1 });
-        anims.create({ key: 'chicken-walk-down', frames: anims.generateFrameNumbers('Chicken', { start: 0, end: 5 }), frameRate: 10, repeat: -1 });
-        anims.create({ key: 'chicken-walk-right', frames: anims.generateFrameNumbers('Chicken', { start: 18, end: 23 }), frameRate: 10, repeat: -1 });
-        anims.create({ key: 'chicken-idle-up', frames: anims.generateFrameNumbers('Chicken', { start: 6, end: 9 }), frameRate: 6, repeat: -1 });
-        anims.create({ key: 'chicken-idle-left', frames: anims.generateFrameNumbers('Chicken', { start: 12, end: 15 }), frameRate: 6, repeat: -1 });
-        anims.create({ key: 'chicken-idle-down', frames: anims.generateFrameNumbers('Chicken', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
-        anims.create({ key: 'chicken-idle-right', frames: anims.generateFrameNumbers('Chicken', { start: 18, end: 21 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: CHICKEN_ANIMATION_KEYS.WALK_UP, frames: anims.generateFrameNumbers('Chicken', { start: 6, end: 11 }), frameRate: 10, repeat: -1 });
+        anims.create({ key: CHICKEN_ANIMATION_KEYS.WALK_LEFT, frames: anims.generateFrameNumbers('Chicken', { start: 12, end: 17 }), frameRate: 10, repeat: -1 });
+        anims.create({ key: CHICKEN_ANIMATION_KEYS.WALK_DOWN, frames: anims.generateFrameNumbers('Chicken', { start: 0, end: 5 }), frameRate: 10, repeat: -1 });
+        anims.create({ key: CHICKEN_ANIMATION_KEYS.WALK_RIGHT, frames: anims.generateFrameNumbers('Chicken', { start: 18, end: 23 }), frameRate: 10, repeat: -1 });
+        anims.create({ key: CHICKEN_ANIMATION_KEYS.IDLE_UP, frames: anims.generateFrameNumbers('Chicken', { start: 6, end: 9 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: CHICKEN_ANIMATION_KEYS.IDLE_LEFT, frames: anims.generateFrameNumbers('Chicken', { start: 12, end: 15 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: CHICKEN_ANIMATION_KEYS.IDLE_DOWN, frames: anims.generateFrameNumbers('Chicken', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
+        anims.create({ key: CHICKEN_ANIMATION_KEYS.IDLE_RIGHT, frames: anims.generateFrameNumbers('Chicken', { start: 18, end: 21 }), frameRate: 6, repeat: -1 });
     }
 }

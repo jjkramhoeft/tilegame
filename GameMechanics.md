@@ -46,6 +46,14 @@ The tile map consist of six layers
 - Cast blob shadow (in cluede in sprite)
 - Blocked by blocking layer, void layer, water layer and mountain layer
 
+#### Lamb
+Can be used as a template for implementing the other animals.
+
+Main class is lamb.ts in src/game/game-objets/enemies
+SpriteSheet: 'Lamb.png' with the same key but without the file extension ('Lamb'), this is registered in public/asserts/data/assets.json
+
+The animations for the Lamb is set up in PreloadScene and the key for the animations are defined in src/game/common/assets.ts
+
 ### Enemies
 
 - Can move in four or eight direction
