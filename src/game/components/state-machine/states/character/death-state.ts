@@ -8,10 +8,16 @@ import { DataManager } from '../../../../common/data-manager';
 
 export class DeathState extends BaseCharacterState {
   #onDieCallback: () => void;
+  #onStartCallback: () => void;
 
-  constructor(gameObject: CharacterGameObject, onDieCallback: () => void = () => undefined) {
+  constructor(
+    gameObject: CharacterGameObject,
+    onDieCallback: () => void = () => undefined,
+    onStartCallback: () => void = () => undefined,
+  ) {
     super(CHARACTER_STATES.DEATH_STATE, gameObject);
     this.#onDieCallback = onDieCallback;
+    this.#onStartCallback = onStartCallback;
   }
 
   public onEnter(): void {
@@ -23,6 +29,9 @@ export class DeathState extends BaseCharacterState {
 
     // disable body on game object so we stop triggering the collision
     (this._gameObject.body as Phaser.Physics.Arcade.Body).enable = false;
+
+    // call start callback so we can do custom effects (e.g. play sound) at the moment of death
+    this.#onStartCallback();
 
     // play animation for character dying
     this._gameObject.animationComponent.playAnimation(CHARACTER_ANIMATIONS.DIE_DOWN, () => {

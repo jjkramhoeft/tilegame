@@ -22,6 +22,7 @@ import { CollidingObjectsComponent } from '../../components/game-object/collidin
 import { JjkWeapons } from '../weapons/jjk-weapons';
 import { FallingState } from '../../components/state-machine/states/character/falling-state';
 import { SwimMoveState } from '../../components/state-machine/states/character/swim-move-state';
+import { DataManager } from '../../common/data-manager';
 
 
 export type PlayerConfig = {
@@ -79,16 +80,26 @@ export class Player extends CharacterGameObject {
       currentLife: config.currentLife,
     });
 
+    // Play sex-specific "ow" sound when the player takes damage or dies.
+    const playOwSound = (): void => {
+      const owSoundKey = DataManager.instance.data.sex === 'female' ? 'female-ow' : 'male-ow';
+      const owSound = config.scene.sound.get(owSoundKey) ?? config.scene.sound.add(owSoundKey);
+      if (!owSound.isPlaying) {
+        owSound.play();
+      }
+    };
+
     // add state machine
     this._stateMachine.addState(new IdleState(this));
     this._stateMachine.addState(new MoveState(this));
     this._stateMachine.addState(
       new HurtState(this, PLAYER_HURT_PUSH_BACK_SPEED, () => {
         flash(this);
+        playOwSound();
       }),
     );
     this._stateMachine.addState(new AttackState(this));
-    this._stateMachine.addState(new DeathState(this));
+    this._stateMachine.addState(new DeathState(this, undefined, playOwSound));
     this._stateMachine.addState(new OpenChestState(this));
     this._stateMachine.addState(new AttackState(this));
     this._stateMachine.addState(new FallingState(this));
