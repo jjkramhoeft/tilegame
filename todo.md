@@ -20,16 +20,33 @@
   - Plant1
   - Plant2
   - Plant3
-  - Lamb is 192x256 [32], 6 columns, 8 rows: walk down, walk up, walk left, walk right, idle down, idle up, idle left, idle right
+  - Lamb is 192x256 [32], 6 columns, 8 rows: walk down, walk up, walk left, walk right, idle down, idle up, idle left, idle right  
+- Register sound effects
+
+attack-dagger.mp3
+attack-dagger.mp3
+attack-staff.mp3
+attack-sword.mp3
+
+chest.mp3
+chest2.mp3
+
+female-ow.mp3
+male-ow.mp3
+
+magic-down-2.mp3
+magic-down.mp3
+magic-audio-sprite.mp3  (12 x 1½ sec + ½ sec pause)
+
+levelup2.mp3
+
+- Add chest placement/open sound effect
+- More diverser spell sounds
 
 ## Implementations that require new asserts
 
-- Find snake enemy sprite and animation
 - Implement boss; Lizard character with snake minions
-- Find player hit sounds; player takes hit, Enemy takes hit
 - Find Mountain sprite sheet
-- Add chest placement/open sound effect
-- More diverser spell sounds
 - Add water ponds to swamp as decorations
 - add monster (Zombie)
 - record voice-over for narrator. Nathan for english, Ulla, Taina or me for danish

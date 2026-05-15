@@ -1817,6 +1817,61 @@
         "url": "levelup.mp3"
       },
       {
+        "type": "audio",
+        "key": "levelup2",
+        "url": "levelup2.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "attack-punch",
+        "url": "attack-punch.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "attack-dagger",
+        "url": "attack-dagger.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "attack-staff",
+        "url": "attack-staff.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "attack-sword",
+        "url": "attack-sword.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "chest",
+        "url": "chest.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "chest2",
+        "url": "chest2.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "female-ow",
+        "url": "female-ow.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "male-ow",
+        "url": "male-ow.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "magic-down",
+        "url": "magic-down.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "magic-down-2",
+        "url": "magic-down-2.mp3"
+      },
+      {
         "type": "spritesheet",
         "key": "spell-music-11",
         "textureURL": "spell-music-11.png",

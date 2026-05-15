@@ -14,11 +14,27 @@ export class PreloadScene extends Phaser.Scene {
         this.load.pack(ASSET_PACK_KEYS.MAIN, 'assets/data/assets.json');
 
         this.load.image('tile-base', 'assets/tile-base.png');
+
+        this.load.audio('magic-audio-sprite', 'assets/magic-audio-sprite.mp3');
     }
 
     public create(): void {
 
         this.#createAnimations();
+
+        const fx = this.sound.add('magic-audio-sprite');
+        fx.addMarker({ name: 'spell-cast-1', start: 0, duration: 1.5 });
+        fx.addMarker({ name: 'spell-cast-2', start: 2, duration: 1.5 });
+        fx.addMarker({ name: 'spell-cast-3', start: 4, duration: 1.5 });
+        fx.addMarker({ name: 'spell-cast-4', start: 6, duration: 1.5 });
+        fx.addMarker({ name: 'spell-cast-5', start: 8, duration: 1.5 });
+        fx.addMarker({ name: 'spell-cast-6', start: 10, duration: 1.5 });        
+        fx.addMarker({ name: 'spell-cast-7', start: 12, duration: 1.5 });
+        fx.addMarker({ name: 'spell-cast-8', start: 14, duration: 1.5 });
+        fx.addMarker({ name: 'spell-cast-9', start: 16, duration: 1.5 });
+        fx.addMarker({ name: 'spell-cast-10', start: 18, duration: 1.5 });
+        fx.addMarker({ name: 'spell-cast-11', start: 20, duration: 1.5 });
+        fx.addMarker({ name: 'spell-cast-12', start: 22, duration: 1.5 });
 
         this.scene.start(SCENE_KEYS.INTRO);
     }
