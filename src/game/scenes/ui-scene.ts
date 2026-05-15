@@ -90,6 +90,8 @@ export class UiScene extends Phaser.Scene {
   #selectedMenuOptionIndex!: number;
   #selectedSaveOptionIndex!: number;
   #uiMode = UiMode.HudOnly;
+  #chestOpenSound!: Phaser.Sound.BaseSound;
+  #chestCloseSound!: Phaser.Sound.BaseSound;
 
   constructor() {
     super({
@@ -118,6 +120,8 @@ export class UiScene extends Phaser.Scene {
     this.#controls = new KeyboardComponent(this.input.keyboard);
     this.#selectedMenuOptionIndex = 0;
     this.#selectedSaveOptionIndex = 0;
+    this.#chestOpenSound = this.sound.add('chest');
+    this.#chestCloseSound = this.sound.add('chest2');
 
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
@@ -198,6 +202,9 @@ export class UiScene extends Phaser.Scene {
       option.visible = index < dialog.options.length;
     });
     this.#updateDialogCursor();
+    if (!this.#chestOpenSound.isPlaying) {
+      this.#chestOpenSound.play();
+    }
   }
 
   public showNarratorDialog(payload: NarratorDialogPayload): void {
@@ -429,6 +436,9 @@ export class UiScene extends Phaser.Scene {
       playerData.lastDialogOptionSelected = this.#selectedMenuOptionIndex;
       DataManager.instance.data = playerData;
       this.#chestDialogContainer.visible = false;
+      if (!this.#chestCloseSound.isPlaying) {
+        this.#chestCloseSound.play();
+      }
       EVENT_BUS.emit(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED);
       this.#uiMode = UiMode.HudOnly;
       return;
