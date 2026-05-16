@@ -6,6 +6,7 @@ import { Reflection } from './scenes/reflection';
 import { Settings } from './scenes/settings';
 import { AUTO, Game, Scale,Types } from 'phaser';
 import { UiScene } from './scenes/ui-scene';
+import { MapScene } from './scenes/map-scene';
 
 // Find out more information about the Game Config at:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -25,6 +26,7 @@ const config: Types.Core.GameConfig = {
         Intro,
         GameScene,
         UiScene,
+        MapScene,
         Credits,
         Reflection,
         Settings

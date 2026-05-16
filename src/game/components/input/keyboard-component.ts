@@ -14,6 +14,7 @@ export class KeyboardComponent extends InputComponent {
   #actionKey: Phaser.Input.Keyboard.Key;
   #enterKey: Phaser.Input.Keyboard.Key;
   #escapeKey: Phaser.Input.Keyboard.Key;
+  #mapKey: Phaser.Input.Keyboard.Key;
 
   constructor(keyboardPlugin: Phaser.Input.Keyboard.KeyboardPlugin) {
     super();
@@ -29,6 +30,7 @@ export class KeyboardComponent extends InputComponent {
     this.#actionKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.X);
     this.#enterKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     this.#escapeKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+    this.#mapKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.M);
     // wasd as alternative to arrow keys for movement, R for cast spell/ability as alternative attack key
     // z = B, Attack
     // x = A, Talk, Run, Push/Pull
@@ -82,5 +84,9 @@ export class KeyboardComponent extends InputComponent {
 
   get isEscapeKeyJustDown(): boolean {
     return Phaser.Input.Keyboard.JustDown(this.#escapeKey);
+  }
+
+  get isMapKeyJustDown(): boolean {
+    return Phaser.Input.Keyboard.JustDown(this.#mapKey);
   }
 }

@@ -65,6 +65,10 @@ export class GameScene extends Phaser.Scene {
         return this.#chestJJKGroup;
     }
 
+    get progression(): GameProgression {
+        return this.#progression;
+    }
+
     create() {
         this.#resetSceneState();
 
@@ -132,6 +136,15 @@ export class GameScene extends Phaser.Scene {
 
     update() {
         if (!this.#isGameplayReady) {
+            return;
+        }
+
+        if (
+            this.#controls.isMapKeyJustDown &&
+            this.#progression?.isMapUnlocked &&
+            !this.#controls.isMovementLocked
+        ) {
+            this.#openMap();
             return;
         }
 
@@ -329,6 +342,12 @@ export class GameScene extends Phaser.Scene {
 
     public lockPlayerMovement(): void {
         this.#controls.isMovementLocked = true;
+    }
+
+    #openMap(): void {
+        this.scene.sleep(SCENE_KEYS.UI_SCENE);
+        this.scene.launch(SCENE_KEYS.MAP_SCENE);
+        this.scene.pause();
     }
 
     /** When enabled, casting plays a quieter cue + animation but places no
