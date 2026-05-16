@@ -21,7 +21,7 @@ export class MapScene extends Phaser.Scene {
       .setDisplaySize(MAP_WIDTH, MAP_HEIGHT);
 
     this.add
-      .text(MAP_WIDTH / 2, MAP_HEIGHT - 60, "Press 'x' to return", DEFAULT_UI_HEADING_STYLE)
+      .text(MAP_WIDTH / 2, MAP_HEIGHT - 60, "Press 'x' or 'm' to return", DEFAULT_UI_HEADING_STYLE)
       .setOrigin(0.5);
 
     if (!this.input.keyboard) {
@@ -35,7 +35,7 @@ export class MapScene extends Phaser.Scene {
     if (!this.#controls) {
       return;
     }
-    if (this.#controls.isActionKeyJustDown) {
+    if (this.#controls.isActionKeyJustDown || this.#controls.isMapKeyJustDown) {
       this.#closeMap();
     }
   }

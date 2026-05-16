@@ -116,6 +116,8 @@ export class GameScene extends Phaser.Scene {
             // Debug bypass: GameProgression is constructed (so PLAYER_DEFEATED
             // routing exists if ever needed) but `start()` is never called, so
             // no game state is active and no narrator/listener side-effects fire.
+            // Unlock the map so it can be debugged without playing through progression.
+            this.#progression.unlockMap();
             this.#startDebugGameplay();
             return;
         }
