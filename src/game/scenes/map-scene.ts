@@ -70,15 +70,15 @@ type CreatureOverlay = {
 // One overlay per creature type that has ever been spawned by the player.
 // Coordinates are within the 100..600 range, alternating placeholders for now.
 const CREATURE_OVERLAYS: CreatureOverlay[] = [
-  { type: 'spider',  imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 460, y: 120 },
+  { type: 'spider',  imageKey: ASSET_KEYS.MAP_SPIDER, x: 460, y: 120 },
   { type: 'wisp',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 540, y: 120 },
   { type: 'drow',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 600, y: 120 },
   { type: 'lamb',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 460, y: 280 },
   { type: 'chicken', imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 540, y: 280 },
   { type: 'sheep',   imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 600, y: 280 },
   { type: 'rooster', imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 460, y: 360 },
-  { type: 'bull',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 540, y: 440 },
-  { type: 'calf',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 600, y: 440 },
+  { type: 'bull',    imageKey: ASSET_KEYS.MAP_BULL, x: 540, y: 440 },
+  { type: 'calf',    imageKey: ASSET_KEYS.MAP_CALF, x: 600, y: 440 },
   { type: 'turkey',  imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 460, y: 520 },
   { type: 'piglet',  imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 540, y: 520 },
 ];
