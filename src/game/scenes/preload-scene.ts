@@ -14,6 +14,9 @@ export class PreloadScene extends Phaser.Scene {
         this.load.pack(ASSET_PACK_KEYS.MAIN, 'assets/data/assets.json');
 
         this.load.image('tile-base', 'assets/tile-base.png');
+        this.load.image(ASSET_KEYS.MAP_BACKGROUND, 'assets/skymap.png');
+        this.load.image(ASSET_KEYS.MAP_PLACEHOLDER_1, 'assets/placeHolder1.png');
+        this.load.image(ASSET_KEYS.MAP_PLACEHOLDER_2, 'assets/placeHolder2.png');
 
         this.load.audio('magic-audio-sprite', 'assets/magic-audio-sprite.mp3');
     }

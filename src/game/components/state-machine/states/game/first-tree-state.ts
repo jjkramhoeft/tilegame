@@ -9,6 +9,7 @@ export class FirstTreeState extends BaseGameState {
 
   public onEnter(): void {
     console.debug('[GameProgression] FirstTreeState entered');
+    this._scene.progression.unlockMap();
     this._scene.lockPlayerMovement();
     this._pause(this.defaultWaitTime, () => {
       this._showNarrator('narrator.firstTree', () => {

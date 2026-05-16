@@ -23,6 +23,7 @@ import type { GameScene } from '../scenes/game-scene';
 export class GameProgression {
   #stateMachine: StateMachine;
   #playerDefeatedHandler = (): void => this.#onPlayerDefeated();
+  #isMapUnlocked = false;
 
   constructor(scene: GameScene) {
     this.#stateMachine = new StateMachine('game-progression');
@@ -62,6 +63,14 @@ export class GameProgression {
 
   public setState(name: GameStateName, ...args: unknown[]): void {
     this.#stateMachine.setState(name, ...args);
+  }
+
+  public get isMapUnlocked(): boolean {
+    return this.#isMapUnlocked;
+  }
+
+  public unlockMap(): void {
+    this.#isMapUnlocked = true;
   }
 
   #onPlayerDefeated(): void {

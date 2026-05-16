@@ -65,6 +65,14 @@ export class GameScene extends Phaser.Scene {
         return this.#chestJJKGroup;
     }
 
+    get progression(): GameProgression {
+        return this.#progression;
+    }
+
+    get debugSpellcasting(): DebugSpellcasting {
+        return this.#debugSpellcasting;
+    }
+
     create() {
         this.#resetSceneState();
 
@@ -112,6 +120,8 @@ export class GameScene extends Phaser.Scene {
             // Debug bypass: GameProgression is constructed (so PLAYER_DEFEATED
             // routing exists if ever needed) but `start()` is never called, so
             // no game state is active and no narrator/listener side-effects fire.
+            // Unlock the map so it can be debugged without playing through progression.
+            this.#progression.unlockMap();
             this.#startDebugGameplay();
             return;
         }
@@ -132,6 +142,15 @@ export class GameScene extends Phaser.Scene {
 
     update() {
         if (!this.#isGameplayReady) {
+            return;
+        }
+
+        if (
+            this.#controls.isMapKeyJustDown &&
+            this.#progression?.isMapUnlocked &&
+            !this.#controls.isMovementLocked
+        ) {
+            this.#openMap();
             return;
         }
 
@@ -329,6 +348,12 @@ export class GameScene extends Phaser.Scene {
 
     public lockPlayerMovement(): void {
         this.#controls.isMovementLocked = true;
+    }
+
+    #openMap(): void {
+        this.scene.sleep(SCENE_KEYS.UI_SCENE);
+        this.scene.launch(SCENE_KEYS.MAP_SCENE);
+        this.scene.pause();
     }
 
     /** When enabled, casting plays a quieter cue + animation but places no

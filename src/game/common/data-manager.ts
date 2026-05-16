@@ -12,6 +12,29 @@ import {
   PlayerUpdateType,
 } from './event-bus';
 
+export const CREATURE_TYPES = [
+  'spider',
+  'wisp',
+  'drow',
+  'lamb',
+  'chicken',
+  'sheep',
+  'rooster',
+  'bull',
+  'calf',
+  'turkey',
+  'piglet',
+] as const;
+export type CreatureType = (typeof CREATURE_TYPES)[number];
+
+function createEmptyCreaturesEverCreated(): Record<CreatureType, boolean> {
+  const result = {} as Record<CreatureType, boolean>;
+  for (const type of CREATURE_TYPES) {
+    result[type] = false;
+  }
+  return result;
+}
+
 export type PlayerData = {
   currentHealth: number;
   maxHealth: number;
@@ -21,6 +44,7 @@ export type PlayerData = {
   maxProgress: number;
   currentLivingCreatures: number;
   maxLivingCreaturesThisGame: number;
+  creaturesEverCreated: Record<CreatureType, boolean>;
   sex: string;
   gear: string;
   weapon: string;
@@ -47,6 +71,7 @@ export class DataManager {
       maxProgress: 0,
       currentLivingCreatures: 0,
       maxLivingCreaturesThisGame: 0,
+      creaturesEverCreated: createEmptyCreaturesEverCreated(),
       sex: 'male',
       gear: '',
       weapon: '',
@@ -71,6 +96,9 @@ export class DataManager {
 
   set data(data: PlayerData) {
     this.#data = { ...data };
+    if (!this.#data.creaturesEverCreated) {
+      this.#data.creaturesEverCreated = createEmptyCreaturesEverCreated();
+    }
   }
 
   public resetPlayerHealthToMin(): void {
@@ -94,6 +122,17 @@ export class DataManager {
       Math.max(0, this.#data.currentLivingCreatures - 1),
       this.#data.maxLivingCreaturesThisGame,
     );
+  }
+
+  public markCreatureEverCreated(type: CreatureType): void {
+    if (!this.#data.creaturesEverCreated) {
+      this.#data.creaturesEverCreated = createEmptyCreaturesEverCreated();
+    }
+    this.#data.creaturesEverCreated[type] = true;
+  }
+
+  public hasEverCreated(type: CreatureType): boolean {
+    return this.#data.creaturesEverCreated?.[type] === true;
   }
 
   #updateLivingCreatureCount(currentLivingCreatures: number, maxLivingCreaturesThisGame: number): void {
