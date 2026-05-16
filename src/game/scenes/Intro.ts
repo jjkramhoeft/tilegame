@@ -61,21 +61,26 @@ export class Intro extends Scene {
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
 
-        this.exit_text = this.createMenuText(600, getText('intro.newGame'), () => {
+        this.exit_text = this.createMenuText(550, getText('intro.newGame'), () => {
             this.introMusic?.stop();
             this.scene.stop(SCENE_KEYS.UI_SCENE);
             this.scene.stop(SCENE_KEYS.GAME_SCENE);
             this.scene.start(SCENE_KEYS.GAME_SCENE);
         });
 
-        this.createMenuText(650, getText('intro.settings'), () => {
+        this.createMenuText(600, getText('intro.settings'), () => {
             this.introMusic?.stop();
             this.scene.start(SCENE_KEYS.SETTINGS);
         });
 
-        this.createMenuText(700, getText('intro.credits'), () => {
+        this.createMenuText(650, getText('intro.credits'), () => {
             this.introMusic?.stop();
             this.scene.start(SCENE_KEYS.CREDITS);
+        });
+
+        this.createMenuText(700, getText('intro.reflection'), () => {
+            this.introMusic?.stop();
+            this.scene.start(SCENE_KEYS.REFLECTION);
         });
 
         this.cursorOutline = this.add.image(0, 0, ASSET_KEYS.UI_CURSOR, 0)

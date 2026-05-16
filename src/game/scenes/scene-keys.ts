@@ -4,5 +4,6 @@ export const SCENE_KEYS = {
   GAME_SCENE: 'game-scene',
   UI_SCENE: 'ui-scene',
   CREDITS: 'credits',
+  REFLECTION: 'reflection',
   SETTINGS: 'settings',
 } as const;

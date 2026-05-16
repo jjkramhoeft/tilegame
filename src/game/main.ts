@@ -2,6 +2,7 @@ import { PreloadScene } from './scenes/preload-scene';
 import { Intro } from './scenes/intro';
 import { GameScene } from './scenes/game-scene';
 import { Credits } from './scenes/credits';
+import { Reflection } from './scenes/reflection';
 import { Settings } from './scenes/settings';
 import { AUTO, Game, Scale,Types } from 'phaser';
 import { UiScene } from './scenes/ui-scene';
@@ -25,6 +26,7 @@ const config: Types.Core.GameConfig = {
         GameScene,
         UiScene,
         Credits,
+        Reflection,
         Settings
     ],
     physics: {

@@ -19,6 +19,10 @@ const TEXTS = {
         en: 'Credits',
         da: 'Krediteringer',
     },
+    'intro.reflection': {
+        en: 'Reflection',
+        da: 'Reflektionsspørgsmål',
+    },
     'intro.settings': {
         en: 'Settings',
         da: 'Indstillinger',
@@ -122,6 +126,87 @@ const TEXTS = {
         da: 'Menneskelig operatør: Jens Jakob Kramhøft',
     },
     'credits.back': {
+        en: '(Up, down and \'x\' or \'enter\' to go back)',
+        da: '(Op, ned og \'x\' eller \'retur\' for at gå tilbage)',
+    },
+    //Reflection Scene
+    'reflection.title': {
+        en: 'Talking Points',
+        da: 'Reflektionsspørgsmål',
+    },
+    'reflection.point1': {
+        en: 'Order and Chaos',
+        da: 'Orden og Kaos',
+    },
+    'reflection.point2': {
+        en: 'The sequence of creation, understanding and science',
+        da: 'Rækkefølgen af skabelsen, forståelse og videnskab',
+    },
+    'reflection.point3': {
+        en: '...',
+        da: '...',
+    },
+    'reflection.point4': {
+        en: 'Thinking and Preconsesions',
+        da: 'Tanker og Forforståelse',
+    },
+    'reflection.point5': {
+        en: 'An walking talking snake, Skeletons - where did the other humans come from',
+        da: 'En gående talende slange, Skeletter - hvor kom de andre mennesker fra',
+    },
+    'reflection.point6': {
+        en: '...',
+        da: '...',
+    },
+    'reflection.point7': {
+        en: 'Purpose',
+        da: 'Formål',
+    },
+    'reflection.point8': {
+        en: 'What are the goal of life, how to live a good life, how to win',
+        da: 'Hvad er livets mål, hvordan lever man et godt liv, hvordan vinder man',
+    },
+    'reflection.point9': {
+        en: '...',
+        da: '...',
+    },
+    'reflection.point10': {
+        en: '...',
+        da: '...',
+    },
+    'reflection.point11': {
+        en: 'Provision',
+        da: 'Forsyning',
+    },
+    'reflection.point12': {
+        en: 'Pairs, A helper - It is not good to for us to be alone, Healing, Abundance',
+        da: 'Par, En hjælper - Det er ikke godt for os at være alene, Helbredelse, Overflod',
+    },
+    'reflection.point13': {
+        en: '...',
+        da: '...',
+    },
+    'reflection.point14': {
+        en: '...',
+        da: '...',
+    },
+    'reflection.point15': {
+        en: 'A Second Chance',
+        da: 'En Ny Chance',
+    },
+    'reflection.point16': {
+        en: 'Starting over, Save game? Game Over, Trial and error, How do we learn?, How do we stay good friends?',
+        da: 'Starte forfra, Gemme spil? Game Over, Forsøg og fejl, Hvordan lærer vi?, Hvordan forbliver vi gode venner?',
+    },
+    'reflection.point17': {
+        en: '...',
+        da: '...',
+    },
+    'reflection.point18': {
+        en: '...',
+        da: '...',
+    },
+    'reflection.back': {
         en: '(Up, down and \'x\' or \'enter\' to go back)',
         da: '(Op, ned og \'x\' eller \'retur\' for at gå tilbage)',
     },

@@ -337,9 +337,9 @@ The game has a page/scene with points to talk about to encourage thinking about 
 
 ### Implementation of Talking Points
 I want to make a new scene: reflection
-It should be a mainly text page (like credits) with points to talk about to encourage thinking about lift and Genesis and creation.
+It should be a mainly text page (like the scolling credits scene) with points to talk about to encourage thinking about lift and Genesis and creation.
 Use Credits.ts as a template, use same background and logo. The text should be able to switch between English and Danish (like in Credits and the rest of the game)
-Here are the new content for the reflection scene:
+Here is the new content for the reflection scene (some of the text are currently just placeholder text):
 scene/class name: reflection  
 title: Talking Points
 textkeys and english content:
@@ -356,8 +356,8 @@ reflection.point10 "The quick brown fox jumps over the lazy dog"
 reflection.point11 "Provision"
 reflection.point12 "Pairs, A helper - It is not good to for us to be alone, Healing, Abundance"
 reflection.point13 "The quick brown fox jumps over the lazy dog"
-reflection.point10 "The quick brown fox jumps over the lazy dog"
-reflection.point10 "A Second Chance"
-reflection.point10 "Starting over, Save game? Game Over, Trial and error, How do we learn?, How do we stay good friends?"
-reflection.point10 "The quick brown fox jumps over the lazy dog"
-reflection.point10 "The quick brown fox jumps over the lazy dog"
+reflection.point14 "The quick brown fox jumps over the lazy dog"
+reflection.point15 "A Second Chance"
+reflection.point16 "Starting over, Save game? Game Over, Trial and error, How do we learn?, How do we stay good friends?"
+reflection.point17 "The quick brown fox jumps over the lazy dog"
+reflection.point18 "The quick brown fox jumps over the lazy dog"
