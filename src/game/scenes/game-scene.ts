@@ -69,6 +69,10 @@ export class GameScene extends Phaser.Scene {
         return this.#progression;
     }
 
+    get debugSpellcasting(): DebugSpellcasting {
+        return this.#debugSpellcasting;
+    }
+
     create() {
         this.#resetSceneState();
 

@@ -182,6 +182,11 @@ export class DebugSpellcasting {
      *  tiles or mobs. Used by the FirstTileState during the scripted intro. */
     public isLimitedCastEnabled = false;
 
+    /** Read-only view of the player's current magic config (used by UI like the map screen). */
+    public get playerCurrentMagic(): Readonly<EarthCastingConfig> {
+        return this.#playerCurrentMagic;
+    }
+
     constructor(scene: Phaser.Scene, enemyGroup: Phaser.GameObjects.Group, critterGroup: Phaser.GameObjects.Group) {
         this.#enemyGroup = enemyGroup;
         this.#critterGroup = critterGroup;
@@ -316,6 +321,7 @@ export class DebugSpellcasting {
                 const spider = new Spider({ scene, position: mobPosition, });
                 spider.enableObject();
                 this.#enemyGroup.add(spider);
+                DataManager.instance.markCreatureEverCreated('spider');
                 DataManager.instance.increaseLivingCreatureCount();
                 break;
             }
@@ -329,36 +335,42 @@ export class DebugSpellcasting {
                         const chicken = new Chicken({ scene, position: mobPosition, });
                         chicken.enableObject();
                         this.#critterGroup.add(chicken);
+                        DataManager.instance.markCreatureEverCreated('chicken');
                         break;
                     }
                     case 1: {
                         const lamb = new Lamb({ scene, position: mobPosition, });
                         lamb.enableObject();
                         this.#critterGroup.add(lamb);
+                        DataManager.instance.markCreatureEverCreated('lamb');
                         break;
                     }
                     case 2: {
                         const sheep = new Sheep({ scene, position: mobPosition, });
                         sheep.enableObject();
                         this.#critterGroup.add(sheep);
+                        DataManager.instance.markCreatureEverCreated('sheep');
                         break;
                     }
                     case 3: {
                         const rooster = new Rooster({ scene, position: mobPosition, });
                         rooster.enableObject();
                         this.#critterGroup.add(rooster);
+                        DataManager.instance.markCreatureEverCreated('rooster');
                         break;
                     }
                     case 4: {
                         const bull = new Bull({ scene, position: mobPosition, });
                         bull.enableObject();
                         this.#critterGroup.add(bull);
+                        DataManager.instance.markCreatureEverCreated('bull');
                         break;
                     }
                     case 5: {
                         const calf = new Calf({ scene, position: mobPosition, });
                         calf.enableObject();
                         this.#critterGroup.add(calf);
+                        DataManager.instance.markCreatureEverCreated('calf');
                         break;
                     }
                 }
@@ -372,18 +384,21 @@ export class DebugSpellcasting {
                         const turkey = new Turkey({ scene, position: mobPosition, });
                         turkey.enableObject();
                         this.#critterGroup.add(turkey);
+                        DataManager.instance.markCreatureEverCreated('turkey');
                         break;
                     }
                     case 1: {
                         const piglet = new Piglet({ scene, position: mobPosition, });
                         piglet.enableObject();
                         this.#critterGroup.add(piglet);
+                        DataManager.instance.markCreatureEverCreated('piglet');
                         break;
                     }
                     case 2: {
                         const spider = new Spider({ scene, position: mobPosition, });
                         spider.enableObject();
                         this.#enemyGroup.add(spider);
+                        DataManager.instance.markCreatureEverCreated('spider');
                         break;
                     }
                 }
@@ -394,6 +409,7 @@ export class DebugSpellcasting {
                 const spider = new Spider({ scene, position: mobPosition, });
                 spider.enableObject();
                 this.#enemyGroup.add(spider);
+                DataManager.instance.markCreatureEverCreated('spider');
                 DataManager.instance.increaseLivingCreatureCount();
                 break;
             }
@@ -401,6 +417,7 @@ export class DebugSpellcasting {
                 const spider = new Spider({ scene, position: mobPosition, });
                 spider.enableObject();
                 this.#enemyGroup.add(spider);
+                DataManager.instance.markCreatureEverCreated('spider');
                 DataManager.instance.increaseLivingCreatureCount();
                 break;
             }
