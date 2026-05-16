@@ -196,7 +196,7 @@ export class DebugSpellcasting {
             scene.sound.add('magic-down'),
             scene.sound.add('magic-down-2'),
         ];
-        this.#levelUpSound = scene.sound.add('levelup', { volume: 0.9 });
+        this.#levelUpSound = scene.sound.add('levelup', { volume: 1.0 });
         //If debug mode is on then ease progression to save test time.
         if (DataManager.instance.data.isDebugMode) {
             this.#playerCurrentMagic.isLavaUnlocked = true;

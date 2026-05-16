@@ -74,7 +74,6 @@ export class Reflection extends Scene
         const musicVolume = typeof registryVolume === 'number' ? registryVolume : 0.1;
 
         this.registry.set('musicVolume', musicVolume);
-        this.sound.volume = musicVolume;
 
         this.reflectionMusicIndex = 0;
         this.playNextReflectionMusic();
@@ -152,7 +151,10 @@ export class Reflection extends Scene
         const key = REFLECTION_MUSIC_KEYS[this.reflectionMusicIndex % REFLECTION_MUSIC_KEYS.length];
         this.reflectionMusicIndex += 1;
 
-        this.reflectionMusic = this.sound.add(key, { loop: false });
+        const registryVolume = this.registry.get('musicVolume');
+        const musicVolume = typeof registryVolume === 'number' ? registryVolume : 0.1;
+
+        this.reflectionMusic = this.sound.add(key, { loop: false, volume: musicVolume });
         this.reflectionMusic.once(Phaser.Sound.Events.COMPLETE, () => {
             this.playNextReflectionMusic();
         });

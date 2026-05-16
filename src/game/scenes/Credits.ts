@@ -59,10 +59,10 @@ export class Credits extends Scene
         const musicVolume = typeof registryVolume === 'number' ? registryVolume : 0.1;
 
         this.registry.set('musicVolume', musicVolume);
-        this.sound.volume = musicVolume;
 
         this.creditsMusic = this.sound.add('creditsMusic', {
-            loop: true
+            loop: true,
+            volume: musicVolume
         });
         this.creditsMusic.play();
 

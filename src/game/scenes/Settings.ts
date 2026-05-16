@@ -336,7 +336,6 @@ export class Settings extends Scene
     {
         const value = MUSIC_LEVELS[this.musicIndex];
         this.registry.set('musicVolume', value);
-        this.sound.volume = value;
     }
 
     private applyLanguage (): void
