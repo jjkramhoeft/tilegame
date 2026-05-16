@@ -199,7 +199,15 @@ export class DebugSpellcasting {
         this.#levelUpSound = scene.sound.add('levelup', { volume: 1.0 });
         //If debug mode is on then ease progression to save test time.
         if (DataManager.instance.data.isDebugMode) {
-            this.#playerCurrentMagic.isLavaUnlocked = true;
+            // Unlock all biome/decoration/blocking/animal magic so every spell variant
+            // is available for testing without playing through chest progression.
+            // (Chest "Placable"/"Placed" flags are deliberately left alone so chests
+            // can still be placed/opened via casting in debug mode.)
+            for (const key of Object.keys(this.#playerCurrentMagic) as (keyof EarthCastingConfig)[]) {
+                if (typeof this.#playerCurrentMagic[key] === 'boolean' && key.endsWith('Unlocked')) {
+                    (this.#playerCurrentMagic as Record<string, boolean | number>)[key] = true;
+                }
+            }
             this.#playerCurrentMagic.powerLevel = 5;
             DataManager.instance.updatePlayerCurrentPower(this.#playerCurrentMagic.powerLevel);
         }
