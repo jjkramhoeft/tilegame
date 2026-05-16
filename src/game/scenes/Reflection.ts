@@ -49,9 +49,12 @@ const REFLECTION_TEXTS: ReflectionTextConfig[] = [
     { textKey: 'reflection.point18', width: 800 },
 ];
 
+const REFLECTION_MUSIC_KEYS = ['reflectionMusic1', 'reflectionMusic2', 'reflectionMusic3'];
+
 export class Reflection extends Scene
 {
     reflectionMusic?: Phaser.Sound.BaseSound;
+    private reflectionMusicIndex = 0;
     private reflectionScrollContainer?: Phaser.GameObjects.Container;
     private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
     private controls?: KeyboardComponent;
@@ -73,10 +76,8 @@ export class Reflection extends Scene
         this.registry.set('musicVolume', musicVolume);
         this.sound.volume = musicVolume;
 
-        this.reflectionMusic = this.sound.add('creditsMusic', {
-            loop: true
-        });
-        this.reflectionMusic.play();
+        this.reflectionMusicIndex = 0;
+        this.playNextReflectionMusic();
 
         this.add.image(centerX, centerY, 'credit-bg');
         this.add.image(centerX+355, 95, 'logo').setDepth(100).setScale(1.5);
@@ -141,6 +142,21 @@ export class Reflection extends Scene
     {
         this.reflectionMusic?.stop();
         this.scene.start(SCENE_KEYS.INTRO);
+    }
+
+    private playNextReflectionMusic ()
+    {
+        this.reflectionMusic?.stop();
+        this.reflectionMusic?.destroy();
+
+        const key = REFLECTION_MUSIC_KEYS[this.reflectionMusicIndex % REFLECTION_MUSIC_KEYS.length];
+        this.reflectionMusicIndex += 1;
+
+        this.reflectionMusic = this.sound.add(key, { loop: false });
+        this.reflectionMusic.once(Phaser.Sound.Events.COMPLETE, () => {
+            this.playNextReflectionMusic();
+        });
+        this.reflectionMusic.play();
     }
 
     private createScrollableReflectionText ()

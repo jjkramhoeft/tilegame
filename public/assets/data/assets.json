@@ -1798,6 +1798,21 @@
       },
       {
         "type": "audio",
+        "key": "reflectionMusic1",
+        "url": "music1.ogg"
+      },
+      {
+        "type": "audio",
+        "key": "reflectionMusic2",
+        "url": "music2.ogg"
+      },
+      {
+        "type": "audio",
+        "key": "reflectionMusic3",
+        "url": "music3.ogg"
+      },
+      {
+        "type": "audio",
         "key": "steps",
         "url": "shortfootsteps.wav"
       },
