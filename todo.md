@@ -25,6 +25,11 @@
 - Register sound effects
   
   levelup2.mp3 (heath of animal progression??)
+- implement swim speed (very low when wearing cloth)  
+- implement talking point scene
+- implement night sky scene
+- rework inputs
+- add control section to settings
 
 ## Implementations that require new asserts
 
@@ -33,3 +38,4 @@
 - Add water ponds to swamp as decorations
 - add monster (Zombie)
 - record voice-over for narrator. Nathan for english, Ulla, Taina or me for danish
+- Pair of animals

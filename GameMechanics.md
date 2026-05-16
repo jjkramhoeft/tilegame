@@ -310,3 +310,54 @@ First when a biome is unlocked only plain basetiles with borderlayer can be adde
 |Lizardman||||||||
 |Shark|||||||x|
 |Plants|||||x|||
+
+## Talking Points (Danish: "Reflektionsspørgsmål")
+
+The game has a page/scene with points to talk about to encourage thinking about lift and Genesis and creation.
+
+- Order and Chaos
+
+  The sequence of creation, understanding and science
+
+- Thinking and Preconsesions
+
+  An walking talking snake, Skeletons - where did the other humans come from
+
+- Purpose
+
+  What are the goal of life, how to live a good life, how to win
+
+- Provision
+
+  Pairs, A helper - It is not good to for us to be alone, Healing, Abundance
+
+- A Second Chance
+
+  Starting over, Save game? Game Over, Trial and error, How do we learn?, How do we stay good friends?
+
+### Implementation of Talking Points
+I want to make a new scene: reflection
+It should be a mainly text page (like credits) with points to talk about to encourage thinking about lift and Genesis and creation.
+Use Credits.ts as a template, use same background and logo. The text should be able to switch between English and Danish (like in Credits and the rest of the game)
+Here are the new content for the reflection scene:
+scene/class name: reflection  
+title: Talking Points
+textkeys and english content:
+reflection.point1 "Order and Chaos"
+reflection.point2 "The sequence of creation, understanding and science"
+reflection.point3 "The quick brown fox jumps over the lazy dog"
+reflection.point4 "Thinking and Preconsesions"
+reflection.point5 "An walking talking snake, Skeletons - where did the other humans come from"
+reflection.point6 "The quick brown fox jumps over the lazy dog"
+reflection.point7 "Purpose"
+reflection.point8 "What are the goal of life, how to live a good life, how to win"
+reflection.point9 "The quick brown fox jumps over the lazy dog"
+reflection.point10 "The quick brown fox jumps over the lazy dog"
+reflection.point11 "Provision"
+reflection.point12 "Pairs, A helper - It is not good to for us to be alone, Healing, Abundance"
+reflection.point13 "The quick brown fox jumps over the lazy dog"
+reflection.point10 "The quick brown fox jumps over the lazy dog"
+reflection.point10 "A Second Chance"
+reflection.point10 "Starting over, Save game? Game Over, Trial and error, How do we learn?, How do we stay good friends?"
+reflection.point10 "The quick brown fox jumps over the lazy dog"
+reflection.point10 "The quick brown fox jumps over the lazy dog"
