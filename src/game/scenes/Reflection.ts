@@ -21,6 +21,7 @@ const REFLECTION_TEXT_SPACING = 18;
 const REFLECTION_HEADING_TOP_SPACING = 24;
 const REFLECTION_KEYBOARD_SCROLL_SPEED = 420;
 const REFLECTION_MOUSE_WHEEL_SCROLL_SPEED = 0.7;
+const REFLECTION_MUSIC_PAUSE_MS = 3000;
 
 type ReflectionTextConfig = {
     textKey: Parameters<typeof getText>[0];
@@ -55,6 +56,7 @@ export class Reflection extends Scene
 {
     reflectionMusic?: Phaser.Sound.BaseSound;
     private reflectionMusicIndex = 0;
+    private reflectionMusicPauseEvent?: Phaser.Time.TimerEvent;
     private reflectionScrollContainer?: Phaser.GameObjects.Container;
     private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
     private controls?: KeyboardComponent;
@@ -109,6 +111,7 @@ export class Reflection extends Scene
         }
 
         this.events.once('shutdown', () => {
+            this.clearReflectionMusicPauseEvent();
             this.reflectionMusic?.stop();
             this.reflectionMusic?.destroy();
             this.reflectionMusic = undefined;
@@ -139,12 +142,20 @@ export class Reflection extends Scene
 
     private returnToIntro ()
     {
+        this.clearReflectionMusicPauseEvent();
         this.reflectionMusic?.stop();
         this.scene.start(SCENE_KEYS.INTRO);
     }
 
+    private clearReflectionMusicPauseEvent ()
+    {
+        this.reflectionMusicPauseEvent?.remove(false);
+        this.reflectionMusicPauseEvent = undefined;
+    }
+
     private playNextReflectionMusic ()
     {
+        this.clearReflectionMusicPauseEvent();
         this.reflectionMusic?.stop();
         this.reflectionMusic?.destroy();
 
@@ -156,7 +167,11 @@ export class Reflection extends Scene
 
         this.reflectionMusic = this.sound.add(key, { loop: false, volume: musicVolume });
         this.reflectionMusic.once(Phaser.Sound.Events.COMPLETE, () => {
-            this.playNextReflectionMusic();
+            this.clearReflectionMusicPauseEvent();
+            this.reflectionMusicPauseEvent = this.time.delayedCall(REFLECTION_MUSIC_PAUSE_MS, () => {
+                this.reflectionMusicPauseEvent = undefined;
+                this.playNextReflectionMusic();
+            });
         });
         this.reflectionMusic.play();
     }
