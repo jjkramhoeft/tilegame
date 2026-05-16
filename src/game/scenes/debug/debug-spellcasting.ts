@@ -8,7 +8,7 @@ import { Direction, Position } from '../../common/types';
 import { BIOME, BIOME_COLOR_MAP } from '../../common/common';
 import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK, TILES_BEFORE_ANIMAL_UNLOCK, ENABLE_LOGGING } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
-import { findTargetTiles } from '../../ground/creator';
+//import { findTargetTiles } from '../../ground/creator';
 import { Sheep } from '../../game-objects/enemies/sheep';
 import { Rooster } from '../../game-objects/enemies/rooster';
 import { Bull } from '../../game-objects/enemies/bull';

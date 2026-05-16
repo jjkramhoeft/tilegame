@@ -24,6 +24,35 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(ASSET_KEYS.MAP_BIG_TREE, 'assets/map-big-tree.png');
         this.load.image(ASSET_KEYS.MAP_EVE, 'assets/map-eve.png');
         this.load.image(ASSET_KEYS.MAP_ADAM, 'assets/map-adam.png');
+        this.load.image(ASSET_KEYS.MAP_ROCK, 'assets/map-rock.png');
+        this.load.image(ASSET_KEYS.MAP_ROCK_DECO, 'assets/map-rock-deco.png');
+        this.load.image(ASSET_KEYS.MAP_DESERT, 'assets/map-desert.png');
+        this.load.image(ASSET_KEYS.MAP_DESERT_DECO, 'assets/map-desert-deco.png');
+        this.load.image(ASSET_KEYS.MAP_DESERT_BLOCKING, 'assets/map-desert-blocking.png');
+        this.load.image(ASSET_KEYS.MAP_GRASS, 'assets/map-grass.png');
+        this.load.image(ASSET_KEYS.MAP_GRASS_DECO, 'assets/map-grass-deco.png');
+        this.load.image(ASSET_KEYS.MAP_FOREST, 'assets/map-forest.png');
+        this.load.image(ASSET_KEYS.MAP_FOREST_DECO, 'assets/map-forest-deco.png');
+        this.load.image(ASSET_KEYS.MAP_FOREST_BLOCKING, 'assets/map-forest-blocking.png');
+        this.load.image(ASSET_KEYS.MAP_WATER, 'assets/map-water.png');
+        this.load.image(ASSET_KEYS.MAP_SWAMP, 'assets/map-swamp.png');
+        this.load.image(ASSET_KEYS.MAP_SWAMP_DECO, 'assets/map-swamp-deco.png');
+        this.load.image(ASSET_KEYS.MAP_SWAMP_BLOCKING, 'assets/map-swamp-blocking.png');
+        this.load.image(ASSET_KEYS.MAP_CRYSTAL, 'assets/map-crystal.png');
+        this.load.image(ASSET_KEYS.MAP_CRYSTAL_DECO, 'assets/map-crystal-deco.png');
+        this.load.image(ASSET_KEYS.MAP_CRYSTAL_BLOCKING, 'assets/map-crystal-blocking.png');
+        this.load.image(ASSET_KEYS.MAP_LAVA, 'assets/map-lava.png');
+        this.load.image(ASSET_KEYS.MAP_MOUNTAIN, 'assets/map-mountain.png');
+        this.load.image(ASSET_KEYS.MAP_CHICKEN, 'assets/map-chicken.png');
+        this.load.image(ASSET_KEYS.MAP_LAMB, 'assets/map-lamb.png');
+        this.load.image(ASSET_KEYS.MAP_SHEEP, 'assets/map-sheep.png');
+        this.load.image(ASSET_KEYS.MAP_ROOSTER, 'assets/map-rooster.png');
+        this.load.image(ASSET_KEYS.MAP_TURKEY, 'assets/map-turkey.png');
+        this.load.image(ASSET_KEYS.MAP_PIGLET, 'assets/map-piglet.png');
+        this.load.image(ASSET_KEYS.MAP_PLANT, 'assets/map-plant.png');
+        this.load.image(ASSET_KEYS.MAP_SNAKE, 'assets/map-snake.png');
+        this.load.image(ASSET_KEYS.MAP_SKELETON, 'assets/map-skeleton.png');
+        this.load.image(ASSET_KEYS.MAP_LIZARD, 'assets/map-lizard.png');
 
         this.load.audio('magic-audio-sprite', 'assets/magic-audio-sprite.mp3');
     }
