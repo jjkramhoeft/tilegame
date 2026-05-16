@@ -21,43 +21,42 @@ type MapOverlay = {
   y: number;
 };
 
-// Each unlocked magic flag shows a placeholder image at the configured x,y on the map.
-// Coordinates are in the 100..600 range as requested; image keys alternate between the
-// two placeholder textures for now.
+// Each unlocked magic flag shows a biome/feature image at the configured x,y on the map.
+// Coordinates are in the 100..600 range.
 const MAP_OVERLAYS: MapOverlay[] = [
-  { flag: 'isRockDecorationUnlocked', imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 120, y: 120 },
-  { flag: 'isRockBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 200, y: 120 },
-  { flag: 'isRockAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 280, y: 120 },
+  { flag: 'isRockDecorationUnlocked', imageKey: ASSET_KEYS.MAP_ROCK_DECO, x: 120, y: 120 },
+  { flag: 'isRockBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_ROCK, x: 200, y: 120 },
+  { flag: 'isRockAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_ROCK, x: 280, y: 120 },
 
-  { flag: 'isDesertUnlocked',           imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 120, y: 200 },
-  { flag: 'isDesertDecorationUnlocked', imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 200, y: 200 },
-  { flag: 'isDesertBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 280, y: 200 },
-  { flag: 'isDesertAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 360, y: 200 },
+  { flag: 'isDesertUnlocked',           imageKey: ASSET_KEYS.MAP_DESERT, x: 120, y: 200 },
+  { flag: 'isDesertDecorationUnlocked', imageKey: ASSET_KEYS.MAP_DESERT_DECO, x: 200, y: 200 },
+  { flag: 'isDesertBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_DESERT_BLOCKING, x: 280, y: 200 },
+  { flag: 'isDesertAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_DESERT, x: 360, y: 200 },
 
-  { flag: 'isGrassUnlocked',           imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 120, y: 280 },
-  { flag: 'isGrassDecorationUnlocked', imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 200, y: 280 },
-  { flag: 'isGrassBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 280, y: 280 },
-  { flag: 'isGrassAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 360, y: 280 },
+  { flag: 'isGrassUnlocked',           imageKey: ASSET_KEYS.MAP_GRASS, x: 120, y: 280 },
+  { flag: 'isGrassDecorationUnlocked', imageKey: ASSET_KEYS.MAP_GRASS_DECO, x: 200, y: 280 },
+  { flag: 'isGrassBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_GRASS, x: 280, y: 280 },
+  { flag: 'isGrassAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_GRASS, x: 360, y: 280 },
 
-  { flag: 'isForestUnlocked',           imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 120, y: 360 },
-  { flag: 'isForestDecorationUnlocked', imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 200, y: 360 },
-  { flag: 'isForestBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 280, y: 360 },
-  { flag: 'isForestAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 360, y: 360 },
+  { flag: 'isForestUnlocked',           imageKey: ASSET_KEYS.MAP_FOREST, x: 120, y: 360 },
+  { flag: 'isForestDecorationUnlocked', imageKey: ASSET_KEYS.MAP_FOREST_DECO, x: 200, y: 360 },
+  { flag: 'isForestBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_FOREST_BLOCKING, x: 280, y: 360 },
+  { flag: 'isForestAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_FOREST, x: 360, y: 360 },
 
-  { flag: 'isSwampUnlocked',           imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 120, y: 440 },
-  { flag: 'isSwampDecorationUnlocked', imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 200, y: 440 },
-  { flag: 'isSwampBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 280, y: 440 },
-  { flag: 'isSwampAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 360, y: 440 },
+  { flag: 'isSwampUnlocked',           imageKey: ASSET_KEYS.MAP_SWAMP, x: 120, y: 440 },
+  { flag: 'isSwampDecorationUnlocked', imageKey: ASSET_KEYS.MAP_SWAMP_DECO, x: 200, y: 440 },
+  { flag: 'isSwampBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_SWAMP_BLOCKING, x: 280, y: 440 },
+  { flag: 'isSwampAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_SWAMP, x: 360, y: 440 },
 
-  { flag: 'isCrystalUnlocked',           imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 120, y: 520 },
-  { flag: 'isCrystalDecorationUnlocked', imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 200, y: 520 },
-  { flag: 'isCrystalBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 280, y: 520 },
-  { flag: 'isCrystalAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 360, y: 520 },
+  { flag: 'isCrystalUnlocked',           imageKey: ASSET_KEYS.MAP_CRYSTAL, x: 120, y: 520 },
+  { flag: 'isCrystalDecorationUnlocked', imageKey: ASSET_KEYS.MAP_CRYSTAL_DECO, x: 200, y: 520 },
+  { flag: 'isCrystalBlockingUnlocked',   imageKey: ASSET_KEYS.MAP_CRYSTAL_BLOCKING, x: 280, y: 520 },
+  { flag: 'isCrystalAnimalsUnlocked',    imageKey: ASSET_KEYS.MAP_CRYSTAL, x: 360, y: 520 },
 
-  { flag: 'isWaterUnlocked',        imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 440, y: 200 },
-  { flag: 'isWaterAnimalsUnlocked', imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 520, y: 200 },
-  { flag: 'isLavaUnlocked',         imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 440, y: 520 },
-  { flag: 'isMountainUnlocked',     imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 600, y: 360 },
+  { flag: 'isWaterUnlocked',        imageKey: ASSET_KEYS.MAP_WATER, x: 440, y: 200 },
+  { flag: 'isWaterAnimalsUnlocked', imageKey: ASSET_KEYS.MAP_WATER, x: 520, y: 200 },
+  { flag: 'isLavaUnlocked',         imageKey: ASSET_KEYS.MAP_LAVA, x: 440, y: 520 },
+  { flag: 'isMountainUnlocked',     imageKey: ASSET_KEYS.MAP_MOUNTAIN, x: 600, y: 360 },
 ];
 
 type CreatureOverlay = {
@@ -68,19 +67,19 @@ type CreatureOverlay = {
 };
 
 // One overlay per creature type that has ever been spawned by the player.
-// Coordinates are within the 100..600 range, alternating placeholders for now.
+// Coordinates are within the 100..600 range.
 const CREATURE_OVERLAYS: CreatureOverlay[] = [
   { type: 'spider',  imageKey: ASSET_KEYS.MAP_SPIDER, x: 460, y: 120 },
-  { type: 'wisp',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 540, y: 120 },
-  { type: 'drow',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 600, y: 120 },
-  { type: 'lamb',    imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 460, y: 280 },
-  { type: 'chicken', imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 540, y: 280 },
-  { type: 'sheep',   imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 600, y: 280 },
-  { type: 'rooster', imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 460, y: 360 },
+  { type: 'wisp',    imageKey: ASSET_KEYS.MAP_PLANT, x: 540, y: 120 },
+  { type: 'drow',    imageKey: ASSET_KEYS.MAP_SKELETON, x: 600, y: 120 },
+  { type: 'lamb',    imageKey: ASSET_KEYS.MAP_LAMB, x: 460, y: 280 },
+  { type: 'chicken', imageKey: ASSET_KEYS.MAP_CHICKEN, x: 540, y: 280 },
+  { type: 'sheep',   imageKey: ASSET_KEYS.MAP_SHEEP, x: 600, y: 280 },
+  { type: 'rooster', imageKey: ASSET_KEYS.MAP_ROOSTER, x: 460, y: 360 },
   { type: 'bull',    imageKey: ASSET_KEYS.MAP_BULL, x: 540, y: 440 },
   { type: 'calf',    imageKey: ASSET_KEYS.MAP_CALF, x: 600, y: 440 },
-  { type: 'turkey',  imageKey: ASSET_KEYS.MAP_PLACEHOLDER_2, x: 460, y: 520 },
-  { type: 'piglet',  imageKey: ASSET_KEYS.MAP_PLACEHOLDER_1, x: 540, y: 520 },
+  { type: 'turkey',  imageKey: ASSET_KEYS.MAP_TURKEY, x: 460, y: 520 },
+  { type: 'piglet',  imageKey: ASSET_KEYS.MAP_PIGLET, x: 540, y: 520 },
 ];
 
 export class MapScene extends Phaser.Scene {
