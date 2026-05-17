@@ -1,6 +1,7 @@
 import { BIOME } from '../../common/common';
 import { Position } from '../../common/types';
 import { Spider } from '../../game-objects/enemies/spider';
+import { Snake } from '../../game-objects/enemies/snake';
 import { Lamb } from '../../game-objects/enemies/lamb';
 import { Chicken } from '../../game-objects/enemies/chicken';
 import { Earth } from '../../ground/earth';
@@ -34,6 +35,21 @@ export function spawnDebugEnemies(
     });
     spider.enableObject();
     enemyGroup.add(spider);
+    DataManager.instance.increaseLivingCreatureCount();
+
+    // A snake, added on an empty tile next to the spider.
+    const snakeTileOffset: Position = { x: 3, y: 2 };
+    addTileAndVoid(earth, { x: firstTilePosition.x + snakeTileOffset.x, y: firstTilePosition.y + snakeTileOffset.y });
+    const snakeWorldPosition = {
+        x: (snakeTileOffset.x + firstTilePosition.x) * earth.getTileSize() + 10,
+        y: (snakeTileOffset.y + firstTilePosition.y) * earth.getTileSize() + 20,
+    };
+    const snake = new Snake({
+        scene: scene,
+        position: snakeWorldPosition,
+    });
+    snake.enableObject();
+    enemyGroup.add(snake);
     DataManager.instance.increaseLivingCreatureCount();
 
     // A lamb, added on a empty tile away from chests and the player.

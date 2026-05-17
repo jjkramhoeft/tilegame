@@ -6,6 +6,7 @@ export const ASSET_KEYS = {
   PLAYER: 'PLAYER',
   SPIDER: 'SPIDER',
   WISP: 'WISP',
+  SNAKE: 'Snake',
   LAMB: 'Lamb',
   CHICKEN: 'Chicken',
   SHEEP: 'Sheep',
