@@ -15,6 +15,7 @@ import { Bull } from '../../game-objects/enemies/bull';
 import { Calf } from '../../game-objects/enemies/calf';
 import { Turkey } from '../../game-objects/enemies/turkey';
 import { Piglet } from '../../game-objects/enemies/piglet';
+import { Snake } from '../../game-objects/enemies/snake';
 
 type MagicFlagKey = {
     [Key in keyof EarthCastingConfig]: EarthCastingConfig[Key] extends boolean ? Key : never;
@@ -280,7 +281,7 @@ export class DebugSpellcasting {
 
     private tryPlaceMob(scene: Phaser.Scene, player: Player, earth: Earth, casterPosition: Position, targetPosition: Position, directions: any): void {
         const casterTile = earth.getTile(casterPosition.x, casterPosition.y);
-        if (casterTile === undefined) return;
+        if (casterTile === undefined || player == undefined) return;
         const animalBiome = casterTile.biome;
         //Test if animals is unlocked in this biome
         switch (animalBiome) {
@@ -326,7 +327,12 @@ export class DebugSpellcasting {
                 break;
             }
             case BIOME.DESERT: {
-                return;// no snake yet
+                const snake = new Snake({ scene, position: mobPosition, });
+                snake.enableObject();
+                this.#enemyGroup.add(snake);
+                DataManager.instance.markCreatureEverCreated('spider');
+                DataManager.instance.increaseLivingCreatureCount();
+                break;
             }
             case BIOME.GRASS: {                
                 const randomIndex = Phaser.Math.Between(0, 5);// pick one randomly between these 6
