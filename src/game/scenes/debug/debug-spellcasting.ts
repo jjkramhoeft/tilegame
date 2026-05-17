@@ -571,9 +571,18 @@ export class DebugSpellcasting {
                 this.setMagicFlag(progression.decorationUnlockedKey, true);
             }
 
-            // Blocking placement unlocks animals and enemies for the current biome.
-            if (feedback[progression.blockingPlacedKey] >= TILES_BEFORE_ANIMAL_UNLOCK && !this.isLimitedCastEnabled) {
-                this.setMagicFlag(progression.animalUnlockKey, true);
+            // Animal unlock rules:
+            // - Grass unlocks animals when decoration tier is reached.
+            // - Other biomes unlock animals from blocking progression.
+            const isGrassAnimalProgression = progression.animalUnlockKey === 'isGrassAnimalsUnlocked';
+            if (!this.isLimitedCastEnabled) {
+                if (isGrassAnimalProgression) {
+                    if (this.getMagicFlag(progression.decorationUnlockedKey)) {
+                        this.setMagicFlag(progression.animalUnlockKey, true);
+                    }
+                } else if (feedback[progression.blockingPlacedKey] >= TILES_BEFORE_ANIMAL_UNLOCK) {
+                    this.setMagicFlag(progression.animalUnlockKey, true);
+                }
             }
 
             // Decoration placement is the gate for blocking tiles, chests, and the next biome unlocks.

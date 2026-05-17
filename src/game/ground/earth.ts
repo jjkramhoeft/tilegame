@@ -692,7 +692,7 @@ export class Earth {
                 const crystalAnimationChance = 0.7;
                 if (Phaser.Math.RND.realInRange(0, 1) < crystalAnimationChance) {
                     this.scene.add
-                        .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
+                        .sprite(tile.tileX * this.tileSize + this.tileSize / 2, tile.tileY * this.tileSize + this.tileSize / 2, 'tile-animated')
                         .setOrigin(0.5, 0.5)
                         .setAngle(Phaser.Math.RND.pick([0, 90, 180, 270]))
                         .setDepth(CRYSTAL_GLIMTS_DEPTH)
