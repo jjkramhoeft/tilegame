@@ -321,6 +321,21 @@ export const BULL_ANIMATION_KEYS = {
   IDLE_RIGHT: 'bull-idle-right',
 } as const;
 
+export const SNAKE_ANIMATION_KEYS = {
+  WALK_DOWN: 'snake-walk-down',
+  WALK_UP: 'snake-walk-up',
+  WALK_LEFT: 'snake-walk-left',
+  WALK_RIGHT: 'snake-walk-right',
+  ATTACK_DOWN: 'snake-attack-down',
+  ATTACK_UP: 'snake-attack-up',
+  ATTACK_LEFT: 'snake-attack-left',
+  ATTACK_RIGHT: 'snake-attack-right',
+  IDLE_DOWN: 'snake-idle-down',
+  IDLE_UP: 'snake-idle-up',
+  IDLE_LEFT: 'snake-idle-left',
+  IDLE_RIGHT: 'snake-idle-right',
+} as const;
+
 export const CHARACTER_ANIMATIONS = {
   IDLE_DOWN: 'IDLE_DOWN',
   IDLE_UP: 'IDLE_UP',

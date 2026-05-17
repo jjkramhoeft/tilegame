@@ -1728,6 +1728,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "Snake",
+        "textureURL": "Snake.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 32
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "Turkey",
         "textureURL": "Turkey.png",
         "frameConfig": {
