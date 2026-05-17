@@ -15,7 +15,6 @@
 - More uniform tile creation, to get larger area of the same biome
 - Emmit FIRST_ANIMAL_SPAWNED for the FirstAnimalState
 - Add animal and enemies from included sprite sheets
-  - Snake
   - Skeleton (as Player)
   - Lizard w. dagger  (as Player)
   - Plant1
@@ -30,6 +29,10 @@
 - implement night sky scene
 - rework inputs
 - add control section to settings
+- repeat fruit chest sound put healt on max
+- fix animals walking on water
+- add magic fx
+- add new bad version of spell sound
 
 ## Implementations that require new asserts
 
@@ -39,3 +42,4 @@
 - add monster (Zombie)
 - record voice-over for narrator. Nathan for english, Ulla, Taina or me for danish
 - Pair of animals
+- Bump sound when pushed by animals
