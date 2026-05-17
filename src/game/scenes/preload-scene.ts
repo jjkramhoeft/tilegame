@@ -14,10 +14,7 @@ export class PreloadScene extends Phaser.Scene {
         this.load.pack(ASSET_PACK_KEYS.MAIN, 'assets/data/assets.json');
 
         this.load.image('tile-base', 'assets/tile-base.png');
-        this.load.image(ASSET_KEYS.MAP_BACKGROUND, 'assets/map-background.png');
-        this.load.image(ASSET_KEYS.MAP_PLACEHOLDER_1, 'assets/placeHolder1.png');
-        this.load.image(ASSET_KEYS.MAP_PLACEHOLDER_2, 'assets/placeHolder2.png');
-        
+        this.load.image(ASSET_KEYS.MAP_BACKGROUND, 'assets/map-background.png');        
         this.load.image(ASSET_KEYS.MAP_CALF, 'assets/map-calf.png');
         this.load.image(ASSET_KEYS.MAP_BULL, 'assets/map-bull.png');
         this.load.image(ASSET_KEYS.MAP_SPIDER, 'assets/map-spider.png');
@@ -26,6 +23,7 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(ASSET_KEYS.MAP_ADAM, 'assets/map-adam.png');
         this.load.image(ASSET_KEYS.MAP_ROCK, 'assets/map-rock.png');
         this.load.image(ASSET_KEYS.MAP_ROCK_DECO, 'assets/map-rock-deco.png');
+        this.load.image(ASSET_KEYS.MAP_ROCK_BLOCKING, 'assets/map-rock-blocking.png');
         this.load.image(ASSET_KEYS.MAP_DESERT, 'assets/map-desert.png');
         this.load.image(ASSET_KEYS.MAP_DESERT_DECO, 'assets/map-desert-deco.png');
         this.load.image(ASSET_KEYS.MAP_DESERT_BLOCKING, 'assets/map-desert-blocking.png');
@@ -52,7 +50,11 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(ASSET_KEYS.MAP_PLANT, 'assets/map-plant.png');
         this.load.image(ASSET_KEYS.MAP_SNAKE, 'assets/map-snake.png');
         this.load.image(ASSET_KEYS.MAP_SKELETON, 'assets/map-skeleton.png');
-        this.load.image(ASSET_KEYS.MAP_LIZARD, 'assets/map-lizard.png');
+        this.load.image(ASSET_KEYS.MAP_LIZARDMAN, 'assets/map-lizard.png');        
+        this.load.image(ASSET_KEYS.MAP_STAR1, 'assets/map-star1.png');
+        this.load.image(ASSET_KEYS.MAP_STAR2, 'assets/map-star2.png');
+        this.load.image(ASSET_KEYS.MAP_STAR3, 'assets/map-star3.png');
+        this.load.image(ASSET_KEYS.MAP_CONSTELLATIONS, 'assets/map-constellations.png');
 
         this.load.audio('magic-audio-sprite', 'assets/magic-audio-sprite.mp3');
     }

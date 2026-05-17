@@ -14,8 +14,8 @@ import {
 
 export const CREATURE_TYPES = [
   'spider',
-  'wisp',
-  'drow',
+  //'wisp',
+  //'drow',
   'lamb',
   'chicken',
   'sheep',
@@ -24,6 +24,10 @@ export const CREATURE_TYPES = [
   'calf',
   'turkey',
   'piglet',
+  'snake',
+  'skeleton',
+  'plant',
+  'lizardman',
 ] as const;
 export type CreatureType = (typeof CREATURE_TYPES)[number];
 
