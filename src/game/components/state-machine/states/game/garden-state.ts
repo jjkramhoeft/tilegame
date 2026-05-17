@@ -21,6 +21,7 @@ export class GardenState extends BaseGameState {
     if(DataManager.instance.data.difficulty === 'Hard') {
       defaultStepWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
     }
+    this._scene.progression.unlockMap();// unlocked early
 
     this._pause(this.defaultWaitTime, () => {
       this._showNarrator('narrator.garden.lush', () => {

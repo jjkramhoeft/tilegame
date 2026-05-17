@@ -260,8 +260,8 @@ const TEXTS = {
         da: 'Lad mig give dig den første have. Din opgave er at skabe en frodig skov med mange dyr. Hvis du vælger en ond vej, bliver du nødt til at stå ansigt til ansigt med dæmonen.',
     },
     'narrator.firstTree': {
-        en: 'You added your first tree. Here, animals can thrive...',
-        da: 'Du har plantet dit første træ. Her kan dyr trives...',
+        en: 'You added your first tree. Here, animals can thrive. Look to the night sky, the stars and the moon. They will guide you. (press \'m\' to look at map)',
+        da: 'Du har plantet dit første træ. Her can dyr trives. Kig op på nattehimlen, stjernerne og månen. De vil guide dig. (tryk \'m\' for at se kortet)',
     },
     'narrator.firstAnimal': {
         en: 'You are not alone! Let life multiply...',
