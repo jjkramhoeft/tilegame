@@ -228,7 +228,7 @@ export class UiScene extends Phaser.Scene {
     const narratorConfirmWithActionKey = this.#controls.isActionKeyJustDown && 
       (this.#uiMode === UiMode.NarratorDialog || this.#uiMode === UiMode.ChestDialog);
 
-    if (this.#controls.isEnterKeyJustDown || narratorConfirmWithActionKey) {
+    if ( narratorConfirmWithActionKey) {
       this.#confirmSelectedOption();
       return;
     }

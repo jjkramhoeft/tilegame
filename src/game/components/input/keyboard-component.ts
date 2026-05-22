@@ -12,8 +12,14 @@ export class KeyboardComponent extends InputComponent {
   #altAttackKey: Phaser.Input.Keyboard.Key;
 
   #actionKey: Phaser.Input.Keyboard.Key;
+
+  #castKey: Phaser.Input.Keyboard.Key;
+  #altCastKey: Phaser.Input.Keyboard.Key;
+
   #enterKey: Phaser.Input.Keyboard.Key;
+
   #escapeKey: Phaser.Input.Keyboard.Key;
+
   #mapKey: Phaser.Input.Keyboard.Key;
 
   constructor(keyboardPlugin: Phaser.Input.Keyboard.KeyboardPlugin) {
@@ -29,13 +35,25 @@ export class KeyboardComponent extends InputComponent {
 
     this.#actionKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.X);
     this.#enterKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
+    this.#castKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.C);
+    this.#altCastKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.T);
+    
     this.#escapeKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     this.#mapKey = keyboardPlugin.addKey(Phaser.Input.Keyboard.KeyCodes.M);
-    // wasd as alternative to arrow keys for movement, R for cast spell/ability as alternative attack key
-    // z = B, Attack
-    // x = A, Talk, Run, Push/Pull
-    // shift = Select, Open Save Menu
-    // return/enter = Start, Open Inventory
+    // Primary keys
+    // Arrow keys for movement, 
+    // z for attack key, x for action key, c for cast key, m for map key
+    // Layout:
+    //                    ^
+    // z x c      m     < v >
+
+    // Alternative keys
+    // wasd for movement, 
+    // r for attack key, enter for action key, t for cast key, m for map key
+    // Layout:
+    //   w    r t    enter
+    // a s d       m
   }
 
   get isUpDown(): boolean {
@@ -67,19 +85,11 @@ export class KeyboardComponent extends InputComponent {
   }
 
   get isActionKeyJustDown(): boolean {
-    return Phaser.Input.Keyboard.JustDown(this.#actionKey);
+    return Phaser.Input.Keyboard.JustDown(this.#actionKey) || Phaser.Input.Keyboard.JustDown(this.#enterKey);
   }
 
   get isAttackKeyJustDown(): boolean {
     return Phaser.Input.Keyboard.JustDown(this.#attackKey) || Phaser.Input.Keyboard.JustDown(this.#altAttackKey);
-  }
-
-  get isSelectKeyJustDown(): boolean {
-    return Phaser.Input.Keyboard.JustDown(this.#cursorKeys.shift);
-  }
-
-  get isEnterKeyJustDown(): boolean {
-    return Phaser.Input.Keyboard.JustDown(this.#enterKey);
   }
 
   get isEscapeKeyJustDown(): boolean {
@@ -88,5 +98,12 @@ export class KeyboardComponent extends InputComponent {
 
   get isMapKeyJustDown(): boolean {
     return Phaser.Input.Keyboard.JustDown(this.#mapKey);
+  }  
+
+  get isCastKeyDown(): boolean {
+    return this.#castKey.isDown || this.#altCastKey.isDown;
+  }
+  get isCastKeyJustDown(): boolean {
+    return Phaser.Input.Keyboard.JustDown(this.#castKey) || Phaser.Input.Keyboard.JustDown(this.#altCastKey); 
   }
 }

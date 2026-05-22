@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { CHARACTER_ANIMATIONS } from './assets';
-import { CHEST_STATE, DIRECTION, INTERACTIVE_OBJECT_TYPE, } from './common';
+import { CASTING_UNLOCKS, CHEST_STATE, CREATURE_TYPES, DIRECTION, INTERACTIVE_OBJECT_TYPE, } from './common';
 
 export type CharacterAnimation = keyof typeof CHARACTER_ANIMATIONS;
 
@@ -22,3 +22,7 @@ export interface CustomGameObject {
   enableObject(): void;
   disableObject(): void;
 }
+
+export type CreatureType = (typeof CREATURE_TYPES)[number];
+
+export type CastingUnlocks = keyof typeof CASTING_UNLOCKS;

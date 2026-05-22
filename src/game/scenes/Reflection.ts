@@ -120,7 +120,7 @@ export class Reflection extends Scene
 
     update (_time: number, delta: number)
     {
-        if (this.controls && (this.controls.isEnterKeyJustDown || this.controls.isActionKeyJustDown)) {
+        if (this.controls && (this.controls.isActionKeyJustDown)) {
             this.returnToIntro();
             return;
         }

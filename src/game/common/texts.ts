@@ -151,7 +151,7 @@ const TEXTS = {
         da: 'Tanker og Forforståelse',
     },
     'reflection.point5': {
-        en: 'An walking talking snake, Skeletons - where did the other humans come from',
+        en: 'A walking talking snake, Skeletons - where did those humans come from',
         da: 'En gående talende slange, Skeletter - hvor kom de andre mennesker fra',
     },
     'reflection.point6': {

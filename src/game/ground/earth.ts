@@ -10,6 +10,9 @@ import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../common/even
 
 export type ChestPlacementHandler = (position: Position, chestNumber: number) => void;
 
+/**
+ * @deprecated This constant will be replaced with the Datamanager instance's unlockedSpellCasting.
+ */
 export type EarthCastingConfig = {
     // Void and rock are unlocked from the start.
     isRockDecorationUnlocked: boolean;
@@ -248,6 +251,9 @@ export class Earth {
         this.isInitialized = true;
     }
 
+    /**
+     * @deprecated This class will be replaced by the SpellCastingService and new functions in Creator
+     */
     public AddTiles(
         creationConfig: EarthCastingConfig,
         casterPosition: Position,
@@ -325,6 +331,9 @@ export class Earth {
         return castingFeedback;
     }
 
+    /**
+     * @deprecated This class will be replaced by the SpellCastingService and new functions in Creator
+     */
     private CreateNewTile(
         creationConfig: EarthCastingConfig,
         tilePosition: Position,

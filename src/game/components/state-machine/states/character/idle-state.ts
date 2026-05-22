@@ -30,6 +30,12 @@ export class IdleState extends BaseCharacterState {
       return;
     }
 
+    // if cast key was pressed, cast a spell (new spellcasting pipeline)
+    if (controls.isCastKeyJustDown) {
+      this._stateMachine.setState(CHARACTER_STATES.CASTING_STATE);
+      return;
+    }
+
     // if no other input is provided, do nothing
     if (!controls.isDownDown && !controls.isUpDown && !controls.isLeftDown && !controls.isRightDown) {
       this.#slowVelocity();

@@ -124,7 +124,7 @@ export class Intro extends Scene {
             return;
         }
 
-        if (this.controls.isEnterKeyJustDown || this.controls.isActionKeyJustDown) {
+        if (this.controls.isActionKeyJustDown) {
             this.menuItems[this.selectedMenuIndex].onSelect();
         }
     }

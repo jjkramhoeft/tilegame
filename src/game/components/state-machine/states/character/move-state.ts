@@ -35,6 +35,12 @@ export class MoveState extends BaseMoveState {
       return;
     }
 
+    // if cast key was pressed, cast a spell (new spellcasting pipeline)
+    if (controls.isCastKeyJustDown) {
+      this._stateMachine.setState(CHARACTER_STATES.CASTING_STATE);
+      return;
+    }
+
     // if we interacted with an object and switched states, stop processing
     if (this.#checkIfObjectWasInteractedWith(controls)) {
       return;

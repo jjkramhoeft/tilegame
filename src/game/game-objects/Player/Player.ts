@@ -19,10 +19,12 @@ import { AttackState } from '../../components/state-machine/states/character/att
 import { flash } from '../../common/juice-utils';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
 import { CollidingObjectsComponent } from '../../components/game-object/colliding-objects-component';
+import { SpellCastingComponent } from '../../components/game-object/spell-casting-component';
 import { JjkWeapons } from '../weapons/jjk-weapons';
 import { FallingState } from '../../components/state-machine/states/character/falling-state';
 import { SwimMoveState } from '../../components/state-machine/states/character/swim-move-state';
 import { DataManager } from '../../common/data-manager';
+import { CastingState } from '../../components/state-machine/states/character/casting-state';
 
 
 export type PlayerConfig = {
@@ -104,11 +106,15 @@ export class Player extends CharacterGameObject {
     this._stateMachine.addState(new AttackState(this));
     this._stateMachine.addState(new FallingState(this));
     this._stateMachine.addState(new SwimMoveState(this));
+    this._stateMachine.addState(new CastingState(this))
     this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
 
     // add components
     this.#collidingObjectsComponent = new CollidingObjectsComponent(this);
     this.#weaponComponent = new WeaponComponent(this);
+    // SpellCastingComponent registers itself on this game object via the base class;
+    // future state machinery resolves it through `SpellCastingComponent.getComponent(this)`.
+    new SpellCastingComponent(this);
     this.#weaponComponent.weapon = new JjkWeapons(
       this,
       this.#weaponComponent,

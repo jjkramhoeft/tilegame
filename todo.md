@@ -33,6 +33,7 @@
 - fix animals walking on water
 - add magic fx
 - add new bad version of spell sound
+- Bounce-move-state -> follow-move-state (intaeract w. animal)
 
 ## Implementations that require new asserts
 

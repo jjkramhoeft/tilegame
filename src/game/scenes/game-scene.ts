@@ -2,15 +2,15 @@ import * as Phaser from 'phaser';
 import { Player } from '../game-objects/player/player';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Earth } from '../ground/earth';
-import { SEX, WEAPON, GEAR, DIRECTION, BIOME, POTION } from '../common/common';
+import { SEX, WEAPON, GEAR, DIRECTION, BIOME, POTION, CASTING_UNLOCKS } from '../common/common';
 import {
     CUSTOM_EVENTS,
     EVENT_BUS,
 } from '../common/event-bus';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
-import { GameObject2, Position } from '../common/types';
-import { DataManager } from '../common/data-manager';
+import { CastingUnlocks, GameObject2, Position } from '../common/types';
+import { DataManager, createEmptyCreaturesEverCreated } from '../common/data-manager';
 import { writeChestDialogInfo } from '../common/chest-dialog';
 import { addChest, setupDebugChests } from './debug/debug-chests';
 import { spawnDebugEnemies } from './debug/debug-enemies';
@@ -18,6 +18,7 @@ import { updateFallingLogic } from './debug/debug-falling';
 import { updateLavaDamageLogic } from './debug/debug-lava';
 import { updateSwimmingLogic } from './debug/debug-swimming';
 import { DebugSpellcasting } from './debug/debug-spellcasting';
+import { SpellCastingService } from '../spellcasting/spell-casting-service';
 import { setupDebugBlocking } from './debug/debug-blocking';
 import { SCENE_KEYS } from './scene-keys';
 import { Tile } from '../ground/tile';
@@ -34,6 +35,7 @@ export class GameScene extends Phaser.Scene {
     #chests: ChestJJK[] = [];
     #chestJJKGroup!: Phaser.GameObjects.Group;
     #debugSpellcasting!: DebugSpellcasting;
+    #spellCasting!: SpellCastingService;
     #progression!: GameProgression;
     #playerMapCollider!: Phaser.Physics.Arcade.Collider;
     #playerChestCollider!: Phaser.Physics.Arcade.Collider;
@@ -43,34 +45,6 @@ export class GameScene extends Phaser.Scene {
 
     constructor() {
         super('game-scene');
-    }
-
-    get player(): Player {
-        return this.#player;
-    }
-
-    get earth(): Earth {
-        return this.#earth;
-    }
-
-    get controls(): KeyboardComponent {
-        return this.#controls;
-    }
-
-    get chestArray(): ChestJJK[] {
-        return this.#chests;
-    }
-
-    get chestJJKGroup(): Phaser.GameObjects.Group {
-        return this.#chestJJKGroup;
-    }
-
-    get progression(): GameProgression {
-        return this.#progression;
-    }
-
-    get debugSpellcasting(): DebugSpellcasting {
-        return this.#debugSpellcasting;
     }
 
     create() {
@@ -111,6 +85,7 @@ export class GameScene extends Phaser.Scene {
         // Common setup that applies to both debug and progression paths.
         this.#registerColliders();
         this.#debugSpellcasting = new DebugSpellcasting(this, this.#enemyGroup!, this.#critterGroup!);
+        this.#spellCasting = new SpellCastingService(this, this.#earth);
         this.#isGameplayReady = true;
 
         this.#progression = new GameProgression(this);
@@ -131,13 +106,6 @@ export class GameScene extends Phaser.Scene {
         this.#player.setActive(false);
         this.#controls.isMovementLocked = true;
         this.#progression.start(GAME_STATES.START);
-    }
-
-    #resetSceneState(): void {
-        this.#enemyGroup = undefined;
-        this.#critterGroup = undefined;
-        this.#chests = [];
-        this.#isGameplayReady = false;
     }
 
     update() {
@@ -170,16 +138,11 @@ export class GameScene extends Phaser.Scene {
         this.#debugSpellcasting.update(this, this.#player, this.#earth);
     }
 
-    public getChestGroup(): Phaser.GameObjects.Group {
-        return this.#chestJJKGroup;
-    }
-
-    public getChestArray(): ChestJJK[] {
-        return this.#chests;
-    }
-
-    public getBlockingGeometryGroup(): Phaser.GameObjects.Group {
-        return this.#earth.getBlockingGeometryGroup();
+    #resetSceneState(): void {
+        this.#enemyGroup = undefined;
+        this.#critterGroup = undefined;
+        this.#chests = [];
+        this.#isGameplayReady = false;
     }
 
     public removePlayerColliders(): void {
@@ -192,22 +155,32 @@ export class GameScene extends Phaser.Scene {
     #setupPlayer(): void {
         const currentData = DataManager.instance.data;
         DataManager.instance.data = {
-            currentHealth: 2,
-            maxHealth: 2,
-            currentPower: 1,
-            maxPower: 1,
-            currentProgress: 0,
-            maxProgress: 0,
-            currentLivingCreatures: 0,
-            maxLivingCreaturesThisGame: 0,
             sex: currentData.sex ?? SEX.MALE,
             gear: GEAR.NONE,
             weapon: WEAPON.NONE,
-            potion: POTION.NONE,
-            lastDialogOptionSelected: 0,
+
             languageIsDanish: currentData.languageIsDanish ?? false,
             isDebugMode: currentData.isDebugMode ?? false,
             difficulty: currentData.difficulty ?? 'Easy',
+
+            potion: POTION.NONE,
+            currentHealth: 2,
+            maxHealth: 2,
+            
+            currentPower: 1,
+            maxPower: 1,
+            unlockedSpellCasting: currentData.unlockedSpellCasting ?? new Set<CastingUnlocks>([CASTING_UNLOCKS.ROCK_BASIC]),
+
+            currentProgress: 0,
+            maxProgress: 0,
+
+            currentLivingCreatures: 0,
+            maxLivingCreaturesThisGame: 0,
+            creaturesEverCreated: createEmptyCreaturesEverCreated(),
+            tilesPlaced: {} as Record<BIOME, number>,
+
+            lastDialogOptionSelected: 0,
+            lastDialogResultInfo: undefined
         };
         this.#player = new Player({
             scene: this,
@@ -439,10 +412,6 @@ export class GameScene extends Phaser.Scene {
         DataManager.instance.data = d;
     }
 
-    #getChestById(chestId: number | undefined): ChestJJK | undefined {
-        return this.#chests.find((chest) => chest.id === chestId);
-    }
-
     /** Step current health up by one half-heart per `stepDelayMs` until reaching `target`.
      *  Each step emits PLAYER_HEALTH_UPDATED so the HUD redraws incrementally. */
     #animateHealthGainTo(target: number, stepDelayMs = 120): void {
@@ -467,6 +436,56 @@ export class GameScene extends Phaser.Scene {
             lastDialogResultInfo: chestInfo,
         };
         EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_CHEST_DIALOG, chestInfo.dialog);
+    }
+
+    // Getters  ------------------------------------
+
+    #getChestById(chestId: number | undefined): ChestJJK | undefined {
+        return this.#chests.find((chest) => chest.id === chestId);
+    }
+
+    public getChestGroup(): Phaser.GameObjects.Group {
+        return this.#chestJJKGroup;
+    }
+
+    public getChestArray(): ChestJJK[] {
+        return this.#chests;
+    }
+
+    public getBlockingGeometryGroup(): Phaser.GameObjects.Group {
+        return this.#earth.getBlockingGeometryGroup();
+    }
+
+    get player(): Player {
+        return this.#player;
+    }
+
+    get earth(): Earth {
+        return this.#earth;
+    }
+
+    get controls(): KeyboardComponent {
+        return this.#controls;
+    }
+
+    get chestArray(): ChestJJK[] {
+        return this.#chests;
+    }
+
+    get chestJJKGroup(): Phaser.GameObjects.Group {
+        return this.#chestJJKGroup;
+    }
+
+    get progression(): GameProgression {
+        return this.#progression;
+    }
+
+    get debugSpellcasting(): DebugSpellcasting {
+        return this.#debugSpellcasting;
+    }
+
+    get spellCasting(): SpellCastingService {
+        return this.#spellCasting;
     }
 
 }

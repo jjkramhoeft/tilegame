@@ -1,5 +1,5 @@
 import type { ChestDialogInfo } from './chest-dialog';
-import { DIFFICULTY } from './common';
+import { BIOME, CREATURE_TYPES, DIFFICULTY } from './common';
 import { PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
@@ -11,27 +11,9 @@ import {
   PlayerProgressUpdated,
   PlayerUpdateType,
 } from './event-bus';
+import { CastingUnlocks, CreatureType } from './types';
 
-export const CREATURE_TYPES = [
-  'spider',
-  //'wisp',
-  //'drow',
-  'lamb',
-  'chicken',
-  'sheep',
-  'rooster',
-  'bull',
-  'calf',
-  'turkey',
-  'piglet',
-  'snake',
-  'skeleton',
-  'plant',
-  'lizardman',
-] as const;
-export type CreatureType = (typeof CREATURE_TYPES)[number];
-
-function createEmptyCreaturesEverCreated(): Record<CreatureType, boolean> {
+export function createEmptyCreaturesEverCreated(): Record<CreatureType, boolean> {
   const result = {} as Record<CreatureType, boolean>;
   for (const type of CREATURE_TYPES) {
     result[type] = false;
@@ -40,24 +22,33 @@ function createEmptyCreaturesEverCreated(): Record<CreatureType, boolean> {
 }
 
 export type PlayerData = {
-  currentHealth: number;
-  maxHealth: number;
-  currentPower: number;
-  maxPower: number;
-  currentProgress: number;
-  maxProgress: number;
-  currentLivingCreatures: number;
-  maxLivingCreaturesThisGame: number;
-  creaturesEverCreated: Record<CreatureType, boolean>;
+
   sex: string;
   gear: string;
   weapon: string;
-  potion: string;
-  lastDialogOptionSelected: number;
-  lastDialogResultInfo?: ChestDialogInfo;
+
   languageIsDanish: boolean;
   isDebugMode: boolean;
   difficulty: string;
+
+  potion: string;
+  currentHealth: number;
+  maxHealth: number;
+
+  currentPower: number;
+  maxPower: number;  
+  unlockedSpellCasting: Set<CastingUnlocks>;
+
+  currentProgress: number;
+  maxProgress: number;
+
+  currentLivingCreatures: number;
+  maxLivingCreaturesThisGame: number;
+  creaturesEverCreated: Record<CreatureType, boolean>;
+  tilesPlaced: Record<BIOME, number>;
+
+  lastDialogOptionSelected: number;
+  lastDialogResultInfo?: ChestDialogInfo;
 };
 
 export class DataManager {
@@ -67,23 +58,32 @@ export class DataManager {
 
   private constructor() {
     this.#data = {
-      currentHealth: PLAYER_START_MAX_HEALTH,
-      maxHealth: PLAYER_START_MAX_HEALTH,
-      currentPower: 1,
-      maxPower: 1,
-      currentProgress: 0,
-      maxProgress: 0,
-      currentLivingCreatures: 0,
-      maxLivingCreaturesThisGame: 0,
-      creaturesEverCreated: createEmptyCreaturesEverCreated(),
       sex: 'male',
       gear: '',
       weapon: '',
-      potion: '',
-      lastDialogOptionSelected: 0,
+
       languageIsDanish: false,
       isDebugMode: false,
       difficulty: DIFFICULTY.EASY,
+
+      potion: '',
+      currentHealth: PLAYER_START_MAX_HEALTH,
+      maxHealth: PLAYER_START_MAX_HEALTH,
+
+      currentPower: 1,
+      maxPower: 1,
+      unlockedSpellCasting: new Set<CastingUnlocks>(),
+
+      currentProgress: 0,
+      maxProgress: 0,
+
+      currentLivingCreatures: 0,
+      maxLivingCreaturesThisGame: 0,
+      creaturesEverCreated: createEmptyCreaturesEverCreated(),
+      tilesPlaced: {} as Record<BIOME, number>,
+
+      lastDialogOptionSelected: 0,
+      lastDialogResultInfo: undefined
     };
   }
 
@@ -102,6 +102,9 @@ export class DataManager {
     this.#data = { ...data };
     if (!this.#data.creaturesEverCreated) {
       this.#data.creaturesEverCreated = createEmptyCreaturesEverCreated();
+    }
+    if (!this.#data.unlockedSpellCasting) {
+      this.#data.unlockedSpellCasting = new Set<CastingUnlocks>();
     }
   }
 
@@ -137,6 +140,20 @@ export class DataManager {
 
   public hasEverCreated(type: CreatureType): boolean {
     return this.#data.creaturesEverCreated?.[type] === true;
+  } 
+
+  public increaseTilesPlaced(biome: BIOME): void {
+    if (!this.#data.tilesPlaced) {
+      this.#data.tilesPlaced = {} as Record<BIOME, number>;
+    }
+    if (!this.#data.tilesPlaced[biome]) {
+      this.#data.tilesPlaced[biome] = 0;
+    }
+    this.#data.tilesPlaced[biome] += 1;
+  }
+
+  public getTilesPlaced(biome: BIOME): number {
+    return this.#data.tilesPlaced?.[biome] ?? 0;
   }
 
   #updateLivingCreatureCount(currentLivingCreatures: number, maxLivingCreaturesThisGame: number): void {

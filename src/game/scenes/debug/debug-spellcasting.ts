@@ -8,7 +8,6 @@ import { Direction, Position } from '../../common/types';
 import { BIOME, BIOME_COLOR_MAP } from '../../common/common';
 import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_SPEED, TILES_BEFORE_DECORATION_UNLOCK, TILES_BEFORE_BLOCKING_UNLOCK, TILES_BEFORE_ANIMAL_UNLOCK, ENABLE_LOGGING } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
-//import { findTargetTiles } from '../../ground/creator';
 import { Sheep } from '../../game-objects/enemies/sheep';
 import { Rooster } from '../../game-objects/enemies/rooster';
 import { Bull } from '../../game-objects/enemies/bull';
@@ -30,6 +29,10 @@ type CastVector = {
     y: number;
 };
 
+
+/**
+ * @deprecated This constant will be replaced with the Datamanager instance's unlockedSpellCasting in combination with the SpellCastingService.
+ */
 type BiomeProgressionRule = {
     unlockedKey?: MagicFlagKey;
     tilesPlacedKey: FeedbackCountKey;
@@ -52,6 +55,9 @@ const CHEST_PROGRESS_FLAGS: Record<number, { placedKey: MagicFlagKey; placableKe
     6: { placedKey: 'isChest6Placed', placableKey: 'isChest6Placable' },
 };
 
+/**
+ * @deprecated This constant will be replaced with the Datamanager instance's unlockedSpellCasting.
+ */
 const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
     {
         tilesPlacedKey: 'rockTilesPlaced',
@@ -126,6 +132,11 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
     },
 ];
 
+/**
+ * @deprecated This class will be replaced with the actual SpellCastingComponent once it's fully implemented and integrated. 
+ * It has served as a testing ground for spellcasting-related features and mechanics
+ * When the SpellCastingComponent is done this class will be deleted.
+ */
 export class DebugSpellcasting {
 
     #playerCurrentMagic: EarthCastingConfig = {

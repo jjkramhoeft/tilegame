@@ -124,3 +124,57 @@ export const WEAPON = {
   STAFF : 'staff',
   SWORD : 'sword',
 }
+
+export const CREATURE_TYPES = [
+  'spider',
+  //'wisp',
+  //'drow',
+  'lamb',
+  'chicken',
+  'sheep',
+  'rooster',
+  'bull',
+  'calf',
+  'turkey',
+  'piglet',
+  'snake',
+  'skeleton',
+  'plant',
+  'lizardman',
+] as const;
+
+export const CASTING_UNLOCKS = {
+  ROCK_BASIC: 'ROCK_BASIC',
+  ROCK_DECORATION: 'ROCK_DECORATION',
+  ROCK_BLOCKING: 'ROCK_BLOCKING',
+  ROCK_ANIMALS: 'ROCK_ANIMALS',
+  CHEST1: 'CHEST1',// rock chest with cloth
+  DESERT_BASIC: 'DESERT_BASIC',
+  DESERT_DECORATION: 'DESERT_DECORATION',
+  DESERT_BLOCKING: 'DESERT_BLOCKING',
+  DESERT_ANIMALS: 'DESERT_ANIMALS',
+  CHEST2: 'CHEST2',// desert chest with dagger
+  WATER_BASIC: 'WATER_BASIC',
+  GRASS_BASIC: 'GRASS_BASIC',
+  GRASS_DECORATION: 'GRASS_DECORATION',
+  GRASS_BLOCKING: 'GRASS_BLOCKING',
+  GRASS_ANIMALS: 'GRASS_ANIMALS',
+  CHEST3: 'CHEST3',// grass chest with basic cloth
+  FOREST_BASIC: 'FOREST_BASIC',
+  FOREST_DECORATION: 'FOREST_DECORATION',
+  FOREST_BLOCKING: 'FOREST_BLOCKING',
+  FOREST_ANIMALS: 'FOREST_ANIMALS',
+  CHEST4: 'CHEST4',// forest chest with staff
+  MOUNTAIN_BASIC: 'MOUNTAIN_BASIC',
+  SWAMP_BASIC: 'SWAMP_BASIC',
+  SWAMP_DECORATION: 'SWAMP_DECORATION',
+  SWAMP_BLOCKING: 'SWAMP_BLOCKING',
+  SWAMP_ANIMALS: 'SWAMP_ANIMALS',
+  CHEST5: 'CHEST5',// swamp chest with armor
+  CRYSTAL_BASIC: 'CRYSTAL_BASIC',
+  CRYSTAL_DECORATION: 'CRYSTAL_DECORATION',
+  CRYSTAL_BLOCKING: 'CRYSTAL_BLOCKING',
+  CRYSTAL_ANIMALS: 'CRYSTAL_ANIMALS',
+  CHEST6: 'CHEST6',// crystal chest with sword
+  LAVA_BASIC: 'LAVA_BASIC',
+} as const;
