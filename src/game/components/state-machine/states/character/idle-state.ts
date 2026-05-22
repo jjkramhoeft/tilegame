@@ -3,6 +3,7 @@ import { CHARACTER_STATES } from './character-states';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
 import { isArcadePhysicsBody } from '../../../../common/utils';
 import { IDLE_SLOWDOWN_FACTOR, IDLE_STOP_SPEED } from '../../../../common/config';
+import { SpellCastingComponent } from '../../../game-object/spell-casting-component';
 
 export class IdleState extends BaseCharacterState {
   constructor(gameObject: CharacterGameObject) {
@@ -30,10 +31,15 @@ export class IdleState extends BaseCharacterState {
       return;
     }
 
-    // if cast key was pressed, cast a spell (new spellcasting pipeline)
+    // if cast key was pressed, cast a spell (new spellcasting pipeline).
+    // Skip the transition entirely if the caster can't cast (e.g. on cooldown)
+    // to avoid a 1-frame state churn when mashing the key.
     if (controls.isCastKeyJustDown) {
-      this._stateMachine.setState(CHARACTER_STATES.CASTING_STATE);
-      return;
+      const castingComponent = SpellCastingComponent.getComponent<SpellCastingComponent>(this._gameObject);
+      if (castingComponent?.canCast) {
+        this._stateMachine.setState(CHARACTER_STATES.CASTING_STATE);
+        return;
+      }
     }
 
     // if no other input is provided, do nothing

@@ -4,6 +4,7 @@ import { CharacterGameObject } from '../../../../game-objects/common/character-g
 import { CollidingObjectsComponent } from '../../../game-object/colliding-objects-component';
 import { InteractiveObjectComponent } from '../../../game-object/interactive-object-component';
 import { InputComponent } from '../../../input/input-component';
+import { SpellCastingComponent } from '../../../game-object/spell-casting-component';
 import { BaseMoveState } from './base-move-state';
 
 export class MoveState extends BaseMoveState {
@@ -35,10 +36,15 @@ export class MoveState extends BaseMoveState {
       return;
     }
 
-    // if cast key was pressed, cast a spell (new spellcasting pipeline)
+    // if cast key was pressed, cast a spell (new spellcasting pipeline).
+    // Skip the transition entirely if the caster can't cast (e.g. on cooldown)
+    // to avoid a 1-frame state churn when mashing the key.
     if (controls.isCastKeyJustDown) {
-      this._stateMachine.setState(CHARACTER_STATES.CASTING_STATE);
-      return;
+      const castingComponent = SpellCastingComponent.getComponent<SpellCastingComponent>(this._gameObject);
+      if (castingComponent?.canCast) {
+        this._stateMachine.setState(CHARACTER_STATES.CASTING_STATE);
+        return;
+      }
     }
 
     // if we interacted with an object and switched states, stop processing

@@ -6,9 +6,11 @@ import { Direction, GameObject2 } from '../common/types';
  * Scene-level service that will own the spellcasting pipeline (tile placement,
  * mob spawning, VFX, sounds, progression).
  *
- * v1 is intentionally a no-op stub. The real casting still runs through
- * `DebugSpellcasting`. Logic will be migrated here in later passes; until then
- * this class only defines the future entry point and logs what it would do.
+ * v1 is under development and is currently mostly logging. The old casting still runs through
+ * `DebugSpellcasting`. 
+ * 
+ * This service is attached to the scene and will be called by `SpellCastingComponent`s on casters when they want to cast. 
+ * The goal is to eventually migrate all spellcasting logic here and out of the debug class.
  */
 export class SpellCastingService {
   protected scene: Phaser.Scene;
@@ -25,8 +27,8 @@ export class SpellCastingService {
   }
 
   /**
-   * The future entry point for "this caster casts a spell in this direction".
-   * v1: logs only. `DebugSpellcasting` still drives the real cast pipeline.
+   * Entry point for "this caster casts a spell in this direction".
+   * Under development; currently just logs the cast attempt and parameters for debugging
    */
   public cast(caster: GameObject2, direction: Direction): void {
     this.#castCount += 1;

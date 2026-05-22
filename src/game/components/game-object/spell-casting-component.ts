@@ -1,4 +1,5 @@
 import { BIOME } from '../../common/common';
+import { PLAYER_SPELL_CAST_COOLDOWN } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
 import { CastingUnlocks, Direction, GameObject2 } from '../../common/types';
 import { GameScene } from '../../scenes/game-scene';
@@ -16,12 +17,31 @@ import { WeaponComponent } from './weapon-component';
  */
 export class SpellCastingComponent extends BaseGameObjectComponent {
 
+  /** Scene-time (ms) at which the next cast is allowed. 0 = ready now. */
+  #nextCastReadyAt = 0;
+
   constructor(gameObject2: GameObject2) {
     super(gameObject2);
   }
 
-  /** True when the caster has a weapon, is on a tile, and the tile is castable. */
+  /** True while the caster is still inside its post-cast cooldown window. */
+  get isOnCooldown(): boolean {
+    return this.scene.time.now < this.#nextCastReadyAt;
+  }
+
+  /** Milliseconds remaining on the cooldown (0 when ready). */
+  get cooldownRemainingMs(): number {
+    return Math.max(0, this.#nextCastReadyAt - this.scene.time.now);
+  }
+
+  /**
+   * True when the caster has a weapon, is on a castable tile, and is not
+   * currently on cooldown.
+   */
   get canCast(): boolean {
+    if (this.isOnCooldown) {
+      return false;
+    }
     const weaponComponent = WeaponComponent.getComponent<WeaponComponent>(this.gameObject2);
     if (weaponComponent === undefined || weaponComponent.weapon === undefined) {
       return false;
@@ -32,7 +52,7 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
     }
     const tilePos = earth.getTileXYFromScreenCoordinates(this.gameObject2.x, this.gameObject2.y, true);
     const tile = earth.getTile(tilePos.x, tilePos.y);
-    if (tile === undefined || tile.biome === BIOME.WATER) {
+    if (tile === undefined || tile.biome === BIOME.WATER || tile.biome <= BIOME.VOID) {
       return false;
     }
     return true;
@@ -48,7 +68,7 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
     return DataManager.instance.data.unlockedSpellCasting;
   }
 
-  /** Delegate to the scene service. */
+  /** Delegate to the scene service. Stamps the cooldown when the cast actually fires. */
   cast(direction: Direction): void {
     const service: SpellCastingService | undefined = (this.scene as GameScene).spellCasting;
     if (service === undefined) {
@@ -56,13 +76,19 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
       return;
     }
     if (!this.canCast) {
-      console.log('[SpellCastingComponent] cast blocked by canCast', { direction });
+      console.log('[SpellCastingComponent] cast blocked by canCast', {
+        direction,
+        isOnCooldown: this.isOnCooldown,
+        cooldownRemainingMs: this.cooldownRemainingMs,
+      });
       return;
     }
+    this.#nextCastReadyAt = this.scene.time.now + PLAYER_SPELL_CAST_COOLDOWN;
     console.log('[SpellCastingComponent] cast', {
       direction,
       powerLevel: this.powerLevel,
       unlocks: this.unlocks.size,
+      cooldownMs: PLAYER_SPELL_CAST_COOLDOWN,
     });
     service.cast(this.gameObject2, direction);
   }

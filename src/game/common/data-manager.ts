@@ -1,5 +1,5 @@
 import type { ChestDialogInfo } from './chest-dialog';
-import { BIOME, CREATURE_TYPES, DIFFICULTY } from './common';
+import { BIOME, CASTING_UNLOCKS, CREATURE_TYPES, DIFFICULTY } from './common';
 import { PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
@@ -72,7 +72,7 @@ export class DataManager {
 
       currentPower: 1,
       maxPower: 1,
-      unlockedSpellCasting: new Set<CastingUnlocks>(),
+      unlockedSpellCasting: new Set<CastingUnlocks>([CASTING_UNLOCKS.ROCK_BASIC]),
 
       currentProgress: 0,
       maxProgress: 0,
@@ -104,7 +104,7 @@ export class DataManager {
       this.#data.creaturesEverCreated = createEmptyCreaturesEverCreated();
     }
     if (!this.#data.unlockedSpellCasting) {
-      this.#data.unlockedSpellCasting = new Set<CastingUnlocks>();
+      this.#data.unlockedSpellCasting = new Set<CastingUnlocks>([CASTING_UNLOCKS.ROCK_BASIC]);
     }
   }
 
