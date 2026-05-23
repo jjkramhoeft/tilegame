@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { Earth } from '../ground/earth';
 import { Direction, GameObject2 } from '../common/types';
+import { CharacterGameObject } from '../game-objects/common/character-game-object';
 
 /**
  * Scene-level service that will own the spellcasting pipeline (tile placement,
@@ -15,9 +16,6 @@ import { Direction, GameObject2 } from '../common/types';
 export class SpellCastingService {
   protected scene: Phaser.Scene;
   protected earth: Earth;
-
-  /** Future home for the limited-cast flag currently on `DebugSpellcasting`. */
-  public isLimitedCastEnabled = false;
 
   #castCount = 0;
 
@@ -34,6 +32,7 @@ export class SpellCastingService {
     this.#castCount += 1;
     const casterTile = this.earth.getTileXYFromScreenCoordinates(caster.x, caster.y, true);
     const tile = this.earth.getTile(casterTile.x, casterTile.y);
+    const directions = (caster as CharacterGameObject).getLastMoveDirections();
     console.log(
       `[SpellCastingService] cast #${this.#castCount}`,
       {
@@ -42,7 +41,7 @@ export class SpellCastingService {
         screenPos: { x: Math.round(caster.x), y: Math.round(caster.y) },
         tilePos: casterTile,
         biome: tile?.biome,
-        isLimitedCastEnabled: this.isLimitedCastEnabled,
+        lastMoveDirections: directions,
       },
     );
   }

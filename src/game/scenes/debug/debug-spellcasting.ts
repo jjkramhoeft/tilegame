@@ -190,7 +190,8 @@ export class DebugSpellcasting {
     #castingFeedbackTotals: CastingFeedback = this.createEmptyCastingFeedback();
     #enemyGroup: Phaser.GameObjects.Group;
     #critterGroup: Phaser.GameObjects.Group;
-    /** When true, casting plays a quieter sound + spell animation but places no
+    /** 
+     * @deprecated When true, casting plays a quieter sound + spell animation but places no
      *  tiles or mobs. Used by the FirstTileState during the scripted intro. */
     public isLimitedCastEnabled = false;
 
