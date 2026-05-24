@@ -3,10 +3,12 @@ import { Earth } from '../ground/earth';
 import { Direction, GameObject2, SpellType, Position } from '../common/types';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
 import { Tile } from '../ground/tile';
-import { BIOME, DECORATION_DEPTH, SPELL_TYPES } from '../common/common';
+import { BIOME, CASTING_UNLOCKS, DECORATION_DEPTH, SPELL_TYPES } from '../common/common';
 import { ENABLE_LOGGING, SPELL_STAGGER_MS } from '../common/config';
 import { GameScene } from '../scenes/game-scene';
 import { ASSET_KEYS } from '../common/assets';
+import { findTargetTiles } from '../ground/creator';
+import { DataManager } from '../common/data-manager';
 
 type CastVector = {
   x: number;
@@ -41,6 +43,7 @@ export class SpellCastingService {
 
   #castCount = 0;
   #pendingHops: Phaser.Time.TimerEvent[] = [];
+  #powerLevel = 0;
 
   constructor(scene: Phaser.Scene, earth: Earth) {
     this.scene = scene;
@@ -61,6 +64,7 @@ export class SpellCastingService {
     const casterTile = this.earth.getTile(casterTilePosition.x, casterTilePosition.y);
     if (!casterTile) { console.warn('Caster is not on a valid tile'); return; }
     const directions = (caster as CharacterGameObject).getLastMoveDirections();
+    this.#powerLevel = DataManager.instance.data.currentPower;
 
     console.log(
       `[SpellCastingService] cast #${this.#castCount}`,
@@ -139,14 +143,52 @@ export class SpellCastingService {
     // 5) Blocking spell
     //     if not 1,2,3 & 4 and 
     //     ...
+    const primeTargetPosition = this.findPrimeTargetPosition({ x: _casterTile.tileX, y: _casterTile.tileY }, _directions);
+    const targets = findTargetTiles(primeTargetPosition, _directions, this.#powerLevel);
+    const targetWithInfo = this.earth.targetWithNeighborCountAndBiome(targets);
+    const voidTargets = targetWithInfo.filter(t => t.biome === BIOME.VOID);
+    if (voidTargets.length > 0) {
+      // There are empty (or void) tiles in the target area, so we will place base tiles. Prioritize void tiles with most neighbors.
+      const sortedVoidTargets = voidTargets.sort((a, b) => { return b.neighborCount - a.neighborCount; });
+      return { spellTiles: sortedVoidTargets.slice(0, Math.min(sortedVoidTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.BASIC };
+    }
+    if(this.decorationIsUnlocked(_casterTile.biome))
+    {
+      const decorationTargets = targetWithInfo.filter(t => 0 < t.biome && !t.decorated);
+      if(decorationTargets.length > 0) {
+        return { spellTiles: decorationTargets.slice(0, Math.min(decorationTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.DECORATION };
+      }
+    }
 
-    // Temporary placeholder logic until we have the above implemented. Just returns the first tile in the cast direction as the target and BASIC as the spell type.
-    const position1 = { x: _casterTile.tileX, y: _casterTile.tileY - 1 };
-    const position2 = { x: _casterTile.tileX, y: _casterTile.tileY - 2 };
-    return { spellTiles: [position1, position2], spellType: SPELL_TYPES.BASIC };
+    return { spellTiles: [], spellType: SPELL_TYPES.BASIC };
   }
 
-  /** execute one part of the staggeredspell effect (tile changes, mob spawns, VFX, sounds).  */ 
+  private decorationIsUnlocked(biome: number): boolean {
+    switch(biome) {
+      case BIOME.ROCK: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.ROCK_DECORATION);
+      case BIOME.DESERT: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.DESERT_DECORATION);
+      case BIOME.GRASS: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.GRASS_DECORATION);
+      case BIOME.FOREST: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.FOREST_DECORATION);
+      case BIOME.SWAMP: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.SWAMP_DECORATION);
+      case BIOME.CRYSTAL: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CRYSTAL_DECORATION);
+    }
+    return false;;
+  }
+
+  private findPrimeTargetPosition(casterPosition: Position, directions: Direction[]): Position {
+    const targetPosition = { x: casterPosition.x, y: casterPosition.y };
+    for (const direction of directions) {
+      switch (direction) {
+        case 'UP': targetPosition.y -= 1; break;
+        case 'DOWN': targetPosition.y += 1; break;
+        case 'LEFT': targetPosition.x -= 1; break;
+        case 'RIGHT': targetPosition.x += 1; break;
+      }
+    }
+    return targetPosition;
+  }
+
+  /** execute one part of the staggeredspell effect (tile changes, mob spawns, VFX, sounds).  */
   executeSpellEffect(spellType: SpellType, biome: BIOME, startTile: Position, endTile: Position, isOrigon: boolean): void {
     if (ENABLE_LOGGING) {
       console.log('[SpellCastingService] executeSpellEffect (stub)', { spellType, biome, startTile, endTile, isOrigon });
@@ -158,8 +200,8 @@ export class SpellCastingService {
     // play sound as a one-shot so concurrent hops/casts overlap instead of restarting
     // a shared sound instance. Re-roll once if we'd repeat the previous marker.
     let markerIndex = Phaser.Math.Between(1, 12);
-    let badTag = spellType===SPELL_TYPES.BASIC ? '-bad' : '';
-    let volume = spellType===SPELL_TYPES.BASIC ? 0.8 : 1.0;
+    let badTag = spellType === SPELL_TYPES.BASIC ? '-bad' : '';
+    let volume = spellType === SPELL_TYPES.BASIC ? 0.8 : 1.0;
     this.scene.sound.play(`magic-audio-sprite${badTag}`, {
       name: `spell-cast-${markerIndex}${badTag}`,
       start: (markerIndex - 1) * 2,
@@ -209,7 +251,7 @@ export class SpellCastingService {
     });
 
     // spawn delayed VFX at endTile after travel time.
-     this.scene.time.delayedCall(1000, () => {
+    this.scene.time.delayedCall(1000, () => {
       const impactVFX = this.scene.add.sprite(endTile.x * tile_size + half_tile, endTile.y * tile_size + half_tile, 'magic-fx-light-cast');
       impactVFX.setDepth(DECORATION_DEPTH + 1);
       impactVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
@@ -221,13 +263,15 @@ export class SpellCastingService {
       // Add the tile, decoration, blocking, chest or animal here.
       switch (spellType) {
         case SPELL_TYPES.BASIC:
-          // For now just add a tile of the same biome as the caster. Later...
           this.earth.AddBaseTile(endTile, biome, true);
           break;
-          //ToDo other spellTypes
+        case SPELL_TYPES.DECORATION:
+          this.earth.AddDecorationToTile(endTile);
+          break;
+        //Todo other spellTypes
       }
     });
-    
+
 
   }
 
@@ -237,3 +281,5 @@ export class SpellCastingService {
     // intentionally empty
   }
 }
+
+

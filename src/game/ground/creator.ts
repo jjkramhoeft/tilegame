@@ -101,6 +101,7 @@ const BIOME_WEIGHT_RULES: readonly BiomeWeightRule[] = [
     { biome: BIOME.MOUNTAIN, baseWeight: 10, unlockKey: 'isMountainUnlocked' },
 ];
 
+/** @deprecated */
 const DECORATION_RULES = new Map<number, PlacementRule>([
     [BIOME.ROCK, { minIndex: 18, maxIndex: 32, baseChance: 0.5, casterDecorationBonus: 0.3, neighborDecorationBonus: 0.1, powerLevelBonus: 0.05 }],
     [BIOME.DESERT, { minIndex: 30, maxIndex: 34, baseChance: 0.15, casterDecorationBonus: 0.3, neighborDecorationBonus: 0.02, powerLevelBonus: 0.05 }],
@@ -108,6 +109,15 @@ const DECORATION_RULES = new Map<number, PlacementRule>([
     [BIOME.FOREST, { minIndex: 49, maxIndex: 55, baseChance: 0.3, casterDecorationBonus: 0.3, neighborDecorationBonus: 0.1, powerLevelBonus: 0.05 }],
     [BIOME.SWAMP, { minIndex: 9, maxIndex: 17, baseChance: 0.4, casterDecorationBonus: 0.3, neighborDecorationBonus: 0.1, powerLevelBonus: 0.05 }],
     [BIOME.CRYSTAL, { minIndex: 0, maxIndex: 8, baseChance: 0.25, casterDecorationBonus: 0.3, neighborDecorationBonus: 0.1, powerLevelBonus: 0.08 }],
+]);
+
+const DECORATION_MAP = new Map<number, {minIndex: number, maxIndex: number}>([
+    [BIOME.ROCK, { minIndex: 18, maxIndex: 32}],
+    [BIOME.DESERT, { minIndex: 30, maxIndex: 34}],
+    [BIOME.GRASS, { minIndex: 35, maxIndex: 48}],
+    [BIOME.FOREST, { minIndex: 49, maxIndex: 55}],
+    [BIOME.SWAMP, { minIndex: 9, maxIndex: 17}],
+    [BIOME.CRYSTAL, { minIndex: 0, maxIndex: 8}],
 ]);
 
 const BLOCKING_RULES = new Map<number, BlockingRule>([
@@ -173,6 +183,7 @@ export function DecideBiome(creationConfig: EarthCastingConfig, casterBiome: num
     return BIOME.ROCK;
 }
 
+/** @deprecated */
 export function DecideDecoration(biome: number, countOfNeighborDecorations: number, casterGotDecoration: boolean, powerLevel: number): number {
     const rule = DECORATION_RULES.get(biome);
     if (rule === undefined) {
@@ -185,6 +196,14 @@ export function DecideDecoration(biome: number, countOfNeighborDecorations: numb
     }
 
     return -1;
+}
+
+export function PickDecoration(biome: number): number {
+    const rule = DECORATION_MAP.get(biome);
+    if (rule === undefined) {
+        return -1;
+    }
+    return Phaser.Math.RND.integerInRange(rule.minIndex, rule.maxIndex);
 }
 
 export function DecideBlockingAndFloating(

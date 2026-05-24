@@ -1,12 +1,14 @@
 import * as Phaser from 'phaser';
 import { Tile } from './tile';
 import { Position, Direction } from '../common/types';
-import { BASE_DEPTH, BIOME, BLOCKING_TILE_DEPTH, BORDER_DEPTH, CRYSTAL_GLIMTS_DEPTH, DECORATION_DEPTH, FLOATING_DEPTH, LAVA_DEPTH, VOID_ANIM_DEPTH, VOID_SOLID_DEPTH, WATER_DEPTH } from '../common/common';
+import { BASE_DEPTH, CASTING_UNLOCKS, BIOME, BLOCKING_TILE_DEPTH, BORDER_DEPTH, CRYSTAL_GLIMTS_DEPTH, DECORATION_DEPTH, FLOATING_DEPTH, LAVA_DEPTH, VOID_ANIM_DEPTH, VOID_SOLID_DEPTH, WATER_DEPTH } from '../common/common';
 import { ASSET_KEYS } from '../common/assets';
-import { findTargetTiles, DecideBiome, DecideDecoration, DecideBlockingAndFloating, DecideBorder } from './creator';
+import { findTargetTiles, DecideBiome, DecideDecoration, DecideBlockingAndFloating, DecideBorder, PickDecoration } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
 import { CHEST_CHANCE, ENABLE_LOGGING } from '../common/config';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../common/event-bus';
+import { DataManager } from '../common/data-manager';
+import { CastingUnlocks } from '../common/types';
 
 export type ChestPlacementHandler = (position: Position, chestNumber: number) => void;
 
@@ -672,24 +674,164 @@ export class Earth {
             .play('void-marker-flow');
     }
 
+    AddDecorationToTile(position: Position): void {
+        let existingTile = this.allTiles.get(this.key(position.x, position.y));
+        if (existingTile === undefined || existingTile?.biome === BIOME.VOID) return;
+        if(existingTile.decoration !== undefined && existingTile.decoration >= 0) return; // Don't place a decoration if there is already one.
+        const decoration = PickDecoration(existingTile.biome);
+        existingTile.decoration = decoration;
+        this.decorationLayer.putTileAt(decoration, position.x, position.y);
+        this.allTiles.set(this.key(position.x, position.y), existingTile);
+        let placedTileAsCastingUnlock: CastingUnlocks | undefined = undefined;
+        switch (existingTile.biome) {
+            case BIOME.ROCK:
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.ROCK_DECORATION;
+                break;
+            case BIOME.DESERT:
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.DESERT_DECORATION;
+                break;
+            case BIOME.GRASS:
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.GRASS_DECORATION;
+                break;
+            case BIOME.FOREST:
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.FOREST_DECORATION;
+                break;
+            case BIOME.SWAMP:
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.SWAMP_DECORATION;
+                break;
+            case BIOME.CRYSTAL:
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_DECORATION;
+                break;
+        }
+        if (placedTileAsCastingUnlock) DataManager.instance.increaseTilesPlaced(placedTileAsCastingUnlock);
+    }
 
-    AddBaseTile(position: Position, biome: BIOME, allowVariation: boolean) {
+    AddBaseTile(position: Position, biome: BIOME, allowVariation: boolean): void {
+        let placedTileAsCastingUnlock: CastingUnlocks | undefined = undefined;
         const existingTile = this.allTiles.get(this.key(position.x, position.y));
         if (existingTile !== undefined && existingTile?.biome !== BIOME.VOID) return;
+        const neighborBiomes = this.get4NeighborBiomes(position);
         let actualBiome = biome;
         if (allowVariation && BIOME.VOID < biome) {
-            //ToDo: Randomly change biome 
+            let rockFactor = 0;
+            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.ROCK_BASIC)) {
+                rockFactor = 1;
+                if (biome === BIOME.ROCK) rockFactor += 10;
+            }
+            let desertFactor = 0;
+            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.DESERT_BASIC)) {
+                desertFactor = 1;
+                if (biome === BIOME.DESERT) desertFactor += 10;
+            }
+            let waterFactor = 0;
+            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.WATER_BASIC)) {
+                waterFactor = 1;
+                if (biome === BIOME.WATER) waterFactor += 10;
+            }
+
+            let grassFactor = 0;
+            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.GRASS_BASIC)) {
+                grassFactor = 1;
+                if (biome === BIOME.GRASS) grassFactor += 10;
+            }
+            let forestFactor = 0;
+            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.FOREST_BASIC)) {
+                forestFactor = 1;
+                if (biome === BIOME.FOREST) forestFactor += 10;
+            }
+            let mountainFactor = 0;
+            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.MOUNTAIN_BASIC)) {
+                mountainFactor = 1;
+                if (biome === BIOME.MOUNTAIN) mountainFactor += 10;
+            }
+
+            let swampFactor = 0;
+            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.SWAMP_BASIC)) {
+                swampFactor = 1;
+                if (biome === BIOME.SWAMP) swampFactor += 10;
+            }
+            let crystalFactor = 0;
+            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CRYSTAL_BASIC)) {
+                crystalFactor = 1;
+                if (biome === BIOME.CRYSTAL) crystalFactor += 10;
+            }
+            let lavaFactor = 0;
+            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.LAVA_BASIC)) {
+                lavaFactor = 1;
+                if (biome === BIOME.LAVA) lavaFactor += 10;
+            }
+            const totalFactor = rockFactor + desertFactor + waterFactor + grassFactor + forestFactor + mountainFactor + swampFactor + crystalFactor + lavaFactor;
+            const randomValue = Phaser.Math.RND.integerInRange(1, totalFactor);
+            if (randomValue <= rockFactor) {
+                actualBiome = BIOME.ROCK;
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.ROCK_BASIC;
+            } else if (randomValue <= rockFactor + desertFactor) {
+                actualBiome = BIOME.DESERT;
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.DESERT_BASIC;
+            } else if (randomValue <= rockFactor + desertFactor + waterFactor) {
+                actualBiome = BIOME.WATER;
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.WATER_BASIC;
+            } else if (randomValue <= rockFactor + desertFactor + waterFactor + grassFactor) {
+                actualBiome = BIOME.GRASS;
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.GRASS_BASIC;
+            } else if (randomValue <= rockFactor + desertFactor + waterFactor + grassFactor + forestFactor) {
+                actualBiome = BIOME.FOREST;
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.FOREST_BASIC;
+            } else if (randomValue <= rockFactor + desertFactor + waterFactor + grassFactor + forestFactor + mountainFactor) {
+                actualBiome = BIOME.MOUNTAIN;
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.MOUNTAIN_BASIC;
+            } else if (randomValue <= rockFactor + desertFactor + waterFactor + grassFactor + forestFactor + mountainFactor + swampFactor) {
+                actualBiome = BIOME.SWAMP;
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.SWAMP_BASIC;
+            } else if (randomValue <= rockFactor + desertFactor + waterFactor + grassFactor + forestFactor + mountainFactor + swampFactor + crystalFactor) {
+                actualBiome = BIOME.CRYSTAL;
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_BASIC;
+            } else if (randomValue <= rockFactor + desertFactor + waterFactor + grassFactor + forestFactor + mountainFactor + swampFactor + crystalFactor + lavaFactor) {
+                actualBiome = BIOME.LAVA;
+                placedTileAsCastingUnlock = CASTING_UNLOCKS.LAVA_BASIC;
+            }
+        }
+        const border: number = DecideBorder(actualBiome, neighborBiomes);
+        const neighborPositions: Position[] = [
+            { x: position.x - 1, y: position.y },
+            { x: position.x + 1, y: position.y },
+            { x: position.x, y: position.y - 1 },
+            { x: position.x, y: position.y + 1 },
+        ];
+        for (const neighborPosition of neighborPositions) {
+            if (this.getTile(neighborPosition.x, neighborPosition.y) !== undefined) {
+                continue;
+            }
+
+            this.AddTile(new Tile({
+                tilenumber: neighborPosition,
+                biome: BIOME.VOID,
+            }));
         }
         let tile = new Tile({
             tilenumber: position,
             biome: actualBiome,
-            border: -1,
+            border: border,
             decoration: -1,
             blocking: -1,
             floating: -1,
         });
         this.AddTile(tile);
+        DataManager.instance.increaseTilesPlaced(placedTileAsCastingUnlock);
         this.addMissingVoidNeighbors(position);
+    }
+
+    public targetWithNeighborCountAndBiome(positions: Position[]): { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean }[] {
+        const result: { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean }[] = [];
+        for (const position of positions) {
+            const tile = this.getTile(position.x, position.y);
+            const biome = tile?.biome ?? BIOME.VOID;
+            const decorated = tile?.decoration !== undefined && tile.decoration >= 0;
+            const neighborTiles = this.get4NeighborTiles(position);
+            const neighborCount = neighborTiles.filter(n => 0 < n.biome).length;
+            result.push({ pos: position, neighborCount, biome, decorated });
+        }
+        return result;
     }
 
     public AddTile(tile: Tile): void {

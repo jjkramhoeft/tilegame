@@ -28,3 +28,5 @@ export type CreatureType = (typeof CREATURE_TYPES)[number];
 export type SpellType = keyof typeof SPELL_TYPES;
 
 export type CastingUnlocks = keyof typeof CASTING_UNLOCKS;
+
+export type UnlockCriteriaMap =  Map<CastingUnlocks, {requiredAmount: number, nextUnlock: CastingUnlocks[]}>;
