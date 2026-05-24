@@ -143,6 +143,14 @@ export const CREATURE_TYPES = [
   'lizardman',
 ] as const;
 
+export const SPELL_TYPES = {
+  BASIC: 'BASIC',
+  DECORATION: 'DECORATION',
+  BLOCKING: 'BLOCKING',
+  ANIMAL: 'ANIMAL',
+  CHEST: 'CHEST',
+} as const;
+
 export const CASTING_UNLOCKS = {
   ROCK_BASIC: 'ROCK_BASIC',
   ROCK_DECORATION: 'ROCK_DECORATION',

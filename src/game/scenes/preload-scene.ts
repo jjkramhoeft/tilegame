@@ -14,7 +14,7 @@ export class PreloadScene extends Phaser.Scene {
         this.load.pack(ASSET_PACK_KEYS.MAIN, 'assets/data/assets.json');
 
         this.load.image('tile-base', 'assets/tile-base.png');
-        this.load.image(ASSET_KEYS.MAP_BACKGROUND, 'assets/map-background.png');        
+        this.load.image(ASSET_KEYS.MAP_BACKGROUND, 'assets/map-background.png');
         this.load.image(ASSET_KEYS.MAP_CALF, 'assets/map-calf.png');
         this.load.image(ASSET_KEYS.MAP_BULL, 'assets/map-bull.png');
         this.load.image(ASSET_KEYS.MAP_SPIDER, 'assets/map-spider.png');
@@ -50,18 +50,45 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(ASSET_KEYS.MAP_PLANT, 'assets/map-plant.png');
         this.load.image(ASSET_KEYS.MAP_SNAKE, 'assets/map-snake.png');
         this.load.image(ASSET_KEYS.MAP_SKELETON, 'assets/map-skeleton.png');
-        this.load.image(ASSET_KEYS.MAP_LIZARDMAN, 'assets/map-lizard.png');        
+        this.load.image(ASSET_KEYS.MAP_LIZARDMAN, 'assets/map-lizard.png');
         this.load.image(ASSET_KEYS.MAP_STAR1, 'assets/map-star1.png');
         this.load.image(ASSET_KEYS.MAP_STAR2, 'assets/map-star2.png');
         this.load.image(ASSET_KEYS.MAP_STAR3, 'assets/map-star3.png');
         this.load.image(ASSET_KEYS.MAP_CONSTELLATIONS, 'assets/map-constellations.png');
 
+        //Spellcasting sfx
         this.load.audio('magic-audio-sprite', 'assets/magic-audio-sprite.mp3');
+        this.load.audio('magic-audio-sprite-bad', 'assets/magic-audio-sprite-bad.mp3');
+
+        this.load.spritesheet('magic-fx-holy-explosion', 'assets/magic-fx-holy-explosion.png', { frameWidth: 96, frameHeight: 96 });// 28 frames.
+        this.load.spritesheet('magic-fx-light-cast', 'assets/magic-fx-light-cast.png', { frameWidth: 96, frameHeight: 96 });// 28 frames.
+        this.load.spritesheet('magic-fx-blue-circleexplosion', 'assets/magic-fx-blue-circleexplosion.png', { frameWidth: 256, frameHeight: 256 });// 10 frames.
+        this.load.spritesheet('magic-fx-notes', 'assets/spell-music-11_grayscale.png', { frameWidth: 150, frameHeight: 150 });// 11 frames.
     }
 
     public create(): void {
 
         this.#createAnimations();
+
+        this.anims.create({
+            key: ASSET_KEYS.CAST_ORIGON,
+            frames: this.anims.generateFrameNumbers('magic-fx-holy-explosion', { start: 0, end: 27 }),
+            frameRate: 48,
+            repeat: 0
+        });
+        this.anims.create({
+            key: ASSET_KEYS.CAST_TARGET_A,
+            frames: this.anims.generateFrameNumbers('magic-fx-light-cast', { start: 0, end: 27 }),
+            frameRate: 48,
+            repeat: 0
+        });
+        this.anims.create({
+            key: ASSET_KEYS.CAST_TARGET_B,
+            frames: this.anims.generateFrameNumbers('magic-fx-blue-circleexplosion', { start: 0, end: 9 }),
+            frameRate: 48,
+            repeat: 0
+        });
+
 
         const fx = this.sound.add('magic-audio-sprite');
         fx.addMarker({ name: 'spell-cast-1', start: 0, duration: 1.5 });
@@ -69,13 +96,27 @@ export class PreloadScene extends Phaser.Scene {
         fx.addMarker({ name: 'spell-cast-3', start: 4, duration: 1.5 });
         fx.addMarker({ name: 'spell-cast-4', start: 6, duration: 1.5 });
         fx.addMarker({ name: 'spell-cast-5', start: 8, duration: 1.5 });
-        fx.addMarker({ name: 'spell-cast-6', start: 10, duration: 1.5 });        
+        fx.addMarker({ name: 'spell-cast-6', start: 10, duration: 1.5 });
         fx.addMarker({ name: 'spell-cast-7', start: 12, duration: 1.5 });
         fx.addMarker({ name: 'spell-cast-8', start: 14, duration: 1.5 });
         fx.addMarker({ name: 'spell-cast-9', start: 16, duration: 1.5 });
         fx.addMarker({ name: 'spell-cast-10', start: 18, duration: 1.5 });
         fx.addMarker({ name: 'spell-cast-11', start: 20, duration: 1.5 });
         fx.addMarker({ name: 'spell-cast-12', start: 22, duration: 1.5 });
+
+        const fxBad = this.sound.add('magic-audio-sprite-bad');
+        fxBad.addMarker({ name: 'spell-cast-1-bad', start: 0, duration: 1.5 });
+        fxBad.addMarker({ name: 'spell-cast-2-bad', start: 2, duration: 1.5 });
+        fxBad.addMarker({ name: 'spell-cast-3-bad', start: 4, duration: 1.5 });
+        fxBad.addMarker({ name: 'spell-cast-4-bad', start: 6, duration: 1.5 });
+        fxBad.addMarker({ name: 'spell-cast-5-bad', start: 8, duration: 1.5 });
+        fxBad.addMarker({ name: 'spell-cast-6-bad', start: 10, duration: 1.5 });
+        fxBad.addMarker({ name: 'spell-cast-7-bad', start: 12, duration: 1.5 });
+        fxBad.addMarker({ name: 'spell-cast-8-bad', start: 14, duration: 1.5 });
+        fxBad.addMarker({ name: 'spell-cast-9-bad', start: 16, duration: 1.5 });
+        fxBad.addMarker({ name: 'spell-cast-10-bad', start: 18, duration: 1.5 });
+        fxBad.addMarker({ name: 'spell-cast-11-bad', start: 20, duration: 1.5 });
+        fxBad.addMarker({ name: 'spell-cast-12-bad', start: 22, duration: 1.5 });
 
         this.scene.start(SCENE_KEYS.INTRO);
     }
@@ -86,7 +127,8 @@ export class PreloadScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('hearts16', { start: 4, end: 7 }),
             frameRate: 8,
             repeat: 2
-        }); this.anims.create({
+        });
+        this.anims.create({
             key: "JJK_LOOSE_FIRST_HALF",
             frames: this.anims.generateFrameNumbers('hearts16', { start: 8, end: 11 }),
             frameRate: 8,
@@ -169,7 +211,7 @@ export class PreloadScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('tile-animated', { start: 32, end: 39 }),
             frameRate: 4,
             repeat: -1
-        });        
+        });
         const BIG_TREE_ANIM_KEY = 'big-tree-growth';
         this.anims.create({
             key: BIG_TREE_ANIM_KEY,
@@ -267,7 +309,7 @@ export class PreloadScene extends Phaser.Scene {
         anims.create({ key: LAMB_ANIMATION_KEYS.IDLE_LEFT, frames: anims.generateFrameNumbers('Lamb', { start: 12, end: 15 }), frameRate: 4, repeat: -1 });
         anims.create({ key: LAMB_ANIMATION_KEYS.IDLE_DOWN, frames: anims.generateFrameNumbers('Lamb', { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
         anims.create({ key: LAMB_ANIMATION_KEYS.IDLE_RIGHT, frames: anims.generateFrameNumbers('Lamb', { start: 18, end: 21 }), frameRate: 4, repeat: -1 });
-        
+
         //Chicken sprite sheet layout: row 0 = down, row 1 = up, row 2 = left, row 3 = right. Each row has 6 frames for walking, followed by rows with 4 frames for idle.
         anims.create({ key: CHICKEN_ANIMATION_KEYS.WALK_UP, frames: anims.generateFrameNumbers('Chicken', { start: 6, end: 11 }), frameRate: 10, repeat: -1 });
         anims.create({ key: CHICKEN_ANIMATION_KEYS.WALK_LEFT, frames: anims.generateFrameNumbers('Chicken', { start: 12, end: 17 }), frameRate: 10, repeat: -1 });
@@ -337,7 +379,7 @@ export class PreloadScene extends Phaser.Scene {
         anims.create({ key: BULL_ANIMATION_KEYS.IDLE_LEFT, frames: anims.generateFrameNumbers('Bull', { start: 12, end: 15 }), frameRate: 4, repeat: -1 });
         anims.create({ key: BULL_ANIMATION_KEYS.IDLE_DOWN, frames: anims.generateFrameNumbers('Bull', { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
         anims.create({ key: BULL_ANIMATION_KEYS.IDLE_RIGHT, frames: anims.generateFrameNumbers('Bull', { start: 18, end: 21 }), frameRate: 4, repeat: -1 });
-        
+
         //Snake sprite sheet layout: row 0 = down, row 1 = up, row 2 = left, row 3 = right. Each row has 10 frames for walking and idle, followed by 3 rows with 10 frames for attack. (no down)
         anims.create({ key: SNAKE_ANIMATION_KEYS.WALK_DOWN, frames: anims.generateFrameNumbers('Snake', { start: 0, end: 9 }), frameRate: 6, repeat: -1 });
         anims.create({ key: SNAKE_ANIMATION_KEYS.WALK_UP, frames: anims.generateFrameNumbers('Snake', { start: 10, end: 19 }), frameRate: 6, repeat: -1 });

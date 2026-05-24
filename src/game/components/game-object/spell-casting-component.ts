@@ -5,7 +5,6 @@ import { CastingUnlocks, Direction, GameObject2 } from '../../common/types';
 import { GameScene } from '../../scenes/game-scene';
 import { SpellCastingService } from '../../spellcasting/spell-casting-service';
 import { BaseGameObjectComponent } from './base-game-object-component';
-import { WeaponComponent } from './weapon-component';
 
 /**
  * Per-caster facade for spellcasting. Owns "can this character cast right now?"
@@ -39,13 +38,12 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
    * currently on cooldown.
    */
   get canCast(): boolean {
+    // Tjeck cooldown
     if (this.isOnCooldown) {
+      console.log('No cast; On cooldown:');
       return false;
     }
-    const weaponComponent = WeaponComponent.getComponent<WeaponComponent>(this.gameObject2);
-    if (weaponComponent === undefined || weaponComponent.weapon === undefined) {
-      return false;
-    }
+    // Tjeck tile under caster
     const earth = (this.scene as GameScene).earth;
     if (earth === undefined) {
       return false;
@@ -53,8 +51,10 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
     const tilePos = earth.getTileXYFromScreenCoordinates(this.gameObject2.x, this.gameObject2.y, true);
     const tile = earth.getTile(tilePos.x, tilePos.y);
     if (tile === undefined || tile.biome === BIOME.WATER || tile.biome <= BIOME.VOID) {
+      console.log('No cast; Biome:'+tile?.biome);
       return false;
     }
+    // OK to cast
     return true;
   }
 
@@ -72,29 +72,13 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
   cast(direction: Direction): void {
     const service: SpellCastingService | undefined = (this.scene as GameScene).spellCasting;
     if (service === undefined) {
-      console.warn('[SpellCastingComponent] cast aborted: no SpellCastingService on scene');
+      console.warn('[SpellCastingComponent] cast aborted: no SpellCastingService on scene. This is an error!');
       return;
     }
     if (!this.canCast) {
-      console.log('[SpellCastingComponent] cast blocked by canCast', {
-        direction,
-        isOnCooldown: this.isOnCooldown,
-        cooldownRemainingMs: this.cooldownRemainingMs,
-      });
       return;
     }
     this.#nextCastReadyAt = this.scene.time.now + PLAYER_SPELL_CAST_COOLDOWN;
-    console.log('[SpellCastingComponent] cast', {
-      direction,
-      powerLevel: this.powerLevel,
-      unlocks: this.unlocks.size,
-      cooldownMs: PLAYER_SPELL_CAST_COOLDOWN,
-    });
     service.cast(this.gameObject2, direction);
-  }
-
-  /** Future cooldowns / channel timers. No-op for now. */
-  update(): void {
-    // intentionally empty
   }
 }

@@ -456,6 +456,10 @@ export class GameScene extends Phaser.Scene {
         return this.#earth.getBlockingGeometryGroup();
     }
 
+    get playerPosition(): Position {
+        return { x: this.#player.x, y: this.#player.y };
+    }
+
     get player(): Player {
         return this.#player;
     }
