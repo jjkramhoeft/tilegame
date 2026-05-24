@@ -41,10 +41,17 @@ export class SpellCastingService {
 
   #castCount = 0;
   #pendingHops: Phaser.Time.TimerEvent[] = [];
+  #spellSound: Phaser.Sound.BaseSound;
 
   constructor(scene: Phaser.Scene, earth: Earth) {
     this.scene = scene;
     this.earth = earth;
+    this.#spellSound = this.scene.sound.add('magic-audio-sprite');
+    // Register the 12 spell-cast markers on this sound instance (markers live on the
+      // BaseSound, not the cache, so they must be added to whichever instance plays them).
+      for (let i = 1; i <= 12; i++) {
+          this.#spellSound.addMarker({ name: `spell-cast-${i}`, start: (i - 1) * 2, duration: 1.5 });
+      }
   }
 
   /**
@@ -143,7 +150,7 @@ export class SpellCastingService {
     return { spellTiles: [position1, position2], spellType: SPELL_TYPES.BASIC };
   }
 
-  /** execute one part of the spell effect (tile changes, mob spawns, VFX, sounds).  */ 
+  /** execute one part of the staggeredspell effect (tile changes, mob spawns, VFX, sounds).  */ 
   executeSpellEffect(spellType: SpellType, biome: BIOME, startTile: Position, endTile: Position, isOrigon: boolean): void {
     if (ENABLE_LOGGING) {
       console.log('[SpellCastingService] executeSpellEffect (stub)', { spellType, biome, startTile, endTile, isOrigon });
@@ -154,6 +161,8 @@ export class SpellCastingService {
     // ToDo: swirtch on spellType.
 
     // play sound.
+    const markerIndex = Phaser.Math.Between(1, 12);
+    this.#spellSound.play(`spell-cast-${markerIndex}`);
 
     // spawn VFX at startTile if an origon.
     if (isOrigon) {
@@ -162,7 +171,7 @@ export class SpellCastingService {
       origonVFX.setDepth(DECORATION_DEPTH + 1);
       origonVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
       origonVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
-      origonVFX.play(ASSET_KEYS.CAST_ORIGON);
+      origonVFX.playReverse(ASSET_KEYS.CAST_ORIGON);
       origonVFX.on('animationcomplete', () => {
         origonVFX.destroy();
       });
@@ -204,7 +213,10 @@ export class SpellCastingService {
       impactVFX.on('animationcomplete', () => {
         impactVFX.destroy();
       });
+      // Add the tile, decoration, blocking, chest or animal here.
+
     });
+    
 
   }
 
