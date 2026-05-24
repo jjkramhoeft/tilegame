@@ -270,7 +270,7 @@ export class Earth {
             allTargets = allTargets.filter(targetTile => {
                 const maxXDistance = Math.abs(targetTile.x - firstTilePosition.x);
                 const maxYDistance = Math.abs(targetTile.y - firstTilePosition.y);
-                return maxXDistance <= 4 && 
+                return maxXDistance <= 4 &&
                     maxYDistance <= 4;
             });
         }
@@ -306,9 +306,9 @@ export class Earth {
                 allTargets = allTargets.filter(targetTile => {
                     const maxXDistance = Math.abs(targetTile.x - firstTilePosition.x);
                     const maxYDistance = Math.abs(targetTile.y - firstTilePosition.y);
-                    return maxXDistance <= 4 && maxYDistance <= 4 && 
-                    (targetTile.x != firstTilePosition.x || targetTile.y != firstTilePosition.y) && // Don't include the first tile itself as a target for limited casts blocking.
-                    (targetTile.x != firstTilePosition.x+1 || targetTile.y != firstTilePosition.y); // Don't include the tile to the right of the first tile as a target for limited casts, because that's where the fruit chest shall spawn.
+                    return maxXDistance <= 4 && maxYDistance <= 4 &&
+                        (targetTile.x != firstTilePosition.x || targetTile.y != firstTilePosition.y) && // Don't include the first tile itself as a target for limited casts blocking.
+                        (targetTile.x != firstTilePosition.x + 1 || targetTile.y != firstTilePosition.y); // Don't include the tile to the right of the first tile as a target for limited casts, because that's where the fruit chest shall spawn.
                 });
             }
             let numberOfPlacedBlockings = 0;
@@ -672,6 +672,26 @@ export class Earth {
             .play('void-marker-flow');
     }
 
+
+    AddBaseTile(position: Position, biome: BIOME, allowVariation: boolean) {
+        const existingTile = this.allTiles.get(this.key(position.x, position.y));
+        if (existingTile !== undefined && existingTile?.biome !== BIOME.VOID) return;
+        let actualBiome = biome;
+        if (allowVariation && BIOME.VOID < biome) {
+            //ToDo: Randomly change biome 
+        }
+        let tile = new Tile({
+            tilenumber: position,
+            biome: actualBiome,
+            border: -1,
+            decoration: -1,
+            blocking: -1,
+            floating: -1,
+        });
+        this.AddTile(tile);
+        this.addMissingVoidNeighbors(position);
+    }
+
     public AddTile(tile: Tile): void {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
@@ -887,20 +907,21 @@ export class Earth {
             if (currentPlayerTilePosition.x !== first.x + pos.x || currentPlayerTilePosition.y !== first.y + pos.y) {
                 const currentTile: Tile | undefined = this.getTile(first.x + pos.x, first.y + pos.y);
                 if (currentTile === undefined || currentTile.blocking < 0) {
-                    tilesToPlace.push(new Tile({ 
-                        tilenumber: { x: first.x + pos.x, y: first.y + pos.y }, 
-                        biome: BIOME.FOREST, 
-                        blocking: blokking, 
-                        decoration: docoration }));
+                    tilesToPlace.push(new Tile({
+                        tilenumber: { x: first.x + pos.x, y: first.y + pos.y },
+                        biome: BIOME.FOREST,
+                        blocking: blokking,
+                        decoration: docoration
+                    }));
                 }
             }
         };
         const tryPlaceVoid = (): void => {
             const currentTile: Tile | undefined = this.getTile(first.x + pos.x, first.y + pos.y);
             if (currentTile === undefined) {
-                tilesToPlace.push(new Tile({ 
-                    tilenumber: { x: first.x + pos.x, y: first.y + pos.y }, 
-                    biome: BIOME.VOID 
+                tilesToPlace.push(new Tile({
+                    tilenumber: { x: first.x + pos.x, y: first.y + pos.y },
+                    biome: BIOME.VOID
                 }));
             }
         };
@@ -947,7 +968,7 @@ export class Earth {
                 .setOrigin(0.25, 0.85)
                 .setDepth(first.y * this.tileSize + 32)
                 .play('big-tree-growth', true);
-            
+
             onComplete?.();
         };
 

@@ -13,8 +13,8 @@ type CastVector = {
   y: number;
 };
 const BIOME_COLOR_MAP: Record<number, number> = {
-  [BIOME.VOID]: 0x1a1a1a,      // dark gray
-  [BIOME.ROCK]: 0x8b7355,      // brown
+  [BIOME.VOID]: 0x8b7355,      // brown
+  [BIOME.ROCK]: 0x6a6a6a,      // dark gray
   [BIOME.DESERT]: 0xf4a460,    // sandy
   [BIOME.GRASS]: 0x6ba547,     // green
   [BIOME.FOREST]: 0x2d5016,    // dark green
@@ -41,17 +41,13 @@ export class SpellCastingService {
 
   #castCount = 0;
   #pendingHops: Phaser.Time.TimerEvent[] = [];
-  #spellSound: Phaser.Sound.BaseSound;
 
   constructor(scene: Phaser.Scene, earth: Earth) {
     this.scene = scene;
     this.earth = earth;
-    this.#spellSound = this.scene.sound.add('magic-audio-sprite');
-    // Register the 12 spell-cast markers on this sound instance (markers live on the
-      // BaseSound, not the cache, so they must be added to whichever instance plays them).
-      for (let i = 1; i <= 12; i++) {
-          this.#spellSound.addMarker({ name: `spell-cast-${i}`, start: (i - 1) * 2, duration: 1.5 });
-      }
+    // Spell-cast sounds are played as one-shots via `SoundManager.play(key, marker)`
+    // so each hop/cast produces an independent, concurrent playback that doesn't
+    // restart any in-flight sound. Marker info is passed inline at play time.
   }
 
   /**
@@ -158,11 +154,19 @@ export class SpellCastingService {
     const tile_size = 64;
     const half_tile = 32;
     const tintColor = BIOME_COLOR_MAP[biome] ?? BIOME_COLOR_MAP[BIOME.VOID];
-    // ToDo: swirtch on spellType.
 
-    // play sound.
-    const markerIndex = Phaser.Math.Between(1, 12);
-    this.#spellSound.play(`spell-cast-${markerIndex}`);
+    // play sound as a one-shot so concurrent hops/casts overlap instead of restarting
+    // a shared sound instance. Re-roll once if we'd repeat the previous marker.
+    let markerIndex = Phaser.Math.Between(1, 12);
+    let badTag = spellType===SPELL_TYPES.BASIC ? '-bad' : '';
+    let volume = spellType===SPELL_TYPES.BASIC ? 0.8 : 1.0;
+    this.scene.sound.play(`magic-audio-sprite${badTag}`, {
+      name: `spell-cast-${markerIndex}${badTag}`,
+      start: (markerIndex - 1) * 2,
+      duration: 1.5,
+      volume: volume,
+      config: {},
+    });
 
     // spawn VFX at startTile if an origon.
     if (isOrigon) {
@@ -190,6 +194,7 @@ export class SpellCastingService {
       .setScale(0.5)
       .setOrigin(0.5, 0.5);
     spell.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+    spell.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
     spell.play('spell-music-anim');
     this.scene.tweens.add({
       targets: spell,
@@ -214,7 +219,13 @@ export class SpellCastingService {
         impactVFX.destroy();
       });
       // Add the tile, decoration, blocking, chest or animal here.
-
+      switch (spellType) {
+        case SPELL_TYPES.BASIC:
+          // For now just add a tile of the same biome as the caster. Later...
+          this.earth.AddBaseTile(endTile, biome, true);
+          break;
+          //ToDo other spellTypes
+      }
     });
     
 
