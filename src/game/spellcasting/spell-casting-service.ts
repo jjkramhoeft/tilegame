@@ -6,10 +6,11 @@ import { Tile } from '../ground/tile';
 import { BIOME, DECORATION_DEPTH, SPELL_TYPES } from '../common/common';
 import { ENABLE_LOGGING, SPELL_STAGGER_MS } from '../common/config';
 import { GameScene } from '../scenes/game-scene';
+import { ASSET_KEYS } from '../common/assets';
 
 type CastVector = {
-    x: number;
-    y: number;
+  x: number;
+  y: number;
 };
 const BIOME_COLOR_MAP: Record<number, number> = {
   [BIOME.VOID]: 0x1a1a1a,      // dark gray
@@ -137,58 +138,73 @@ export class SpellCastingService {
     //     ...
 
     // Temporary placeholder logic until we have the above implemented. Just returns the first tile in the cast direction as the target and BASIC as the spell type.
-    const position1 = { x: _casterTile.tileX, y: _casterTile.tileY-1 };
-    const position2 = { x: _casterTile.tileX, y: _casterTile.tileY-2 };
-    return {spellTiles: [position1,position2], spellType: SPELL_TYPES.BASIC};
+    const position1 = { x: _casterTile.tileX, y: _casterTile.tileY - 1 };
+    const position2 = { x: _casterTile.tileX, y: _casterTile.tileY - 2 };
+    return { spellTiles: [position1, position2], spellType: SPELL_TYPES.BASIC };
   }
 
-  // Placeholder for the method that will actually execute the spell effect (tile changes, mob spawns, VFX, sounds). 
+  /** execute one part of the spell effect (tile changes, mob spawns, VFX, sounds).  */ 
   executeSpellEffect(spellType: SpellType, biome: BIOME, startTile: Position, endTile: Position, isOrigon: boolean): void {
     if (ENABLE_LOGGING) {
       console.log('[SpellCastingService] executeSpellEffect (stub)', { spellType, biome, startTile, endTile, isOrigon });
     }
     const tile_size = 64;
+    const half_tile = 32;
     const tintColor = BIOME_COLOR_MAP[biome] ?? BIOME_COLOR_MAP[BIOME.VOID];
+    // ToDo: swirtch on spellType.
+
     // play sound.
+
     // spawn VFX at startTile if an origon.
     if (isOrigon) {
       // spawn origon VFX at startTile center (not player).
-      const origonVFX = this.scene.add.sprite(startTile.x*tile_size+32, startTile.y*tile_size+32, 'magic-fx-holy-explosion');
-      origonVFX.setDepth(DECORATION_DEPTH+1);
+      const origonVFX = this.scene.add.sprite(startTile.x * tile_size + half_tile, startTile.y * tile_size + half_tile, 'magic-fx-holy-explosion');
+      origonVFX.setDepth(DECORATION_DEPTH + 1);
       origonVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
       origonVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
-      origonVFX.play('CAST_ORIGON');
+      origonVFX.play(ASSET_KEYS.CAST_ORIGON);
       origonVFX.on('animationcomplete', () => {
         origonVFX.destroy();
       });
     }
+
     // spawn VFX traveling from startTile to endTile along travelVector. (if origon start at player)
-    let travelVector: CastVector = { x: (endTile.x - startTile.x)*tile_size, y: (endTile.y - startTile.y)*tile_size };
-    let startVector: CastVector = { x: startTile.x*tile_size+32, y: startTile.y*tile_size+32 };
-    if(isOrigon) {
+    let travelVector: CastVector = { x: (endTile.x - startTile.x) * tile_size, y: (endTile.y - startTile.y) * tile_size };
+    let startVector: CastVector = { x: startTile.x * tile_size + half_tile, y: startTile.y * tile_size + half_tile };
+    if (isOrigon) {
       const player = (this.scene as GameScene).playerPosition;
       startVector = { x: player.x, y: player.y };
-      travelVector = { x: (endTile.x*tile_size+32 - startVector.x), y: (endTile.y*tile_size+32 - startVector.y) }
+      travelVector = { x: (endTile.x * tile_size + half_tile - startVector.x), y: (endTile.y * tile_size + half_tile - startVector.y) }
     }
-    
     const spell = this.scene.add
-                .sprite(startVector.x + travelVector.x / 10, startVector.y + travelVector.y / 10, 'spell-music-11_grayscale')
-                .setScale(0.5)
-                .setOrigin(0.5, 0.5);
-    
+      .sprite(startVector.x + travelVector.x / 10, startVector.y + travelVector.y / 10, 'spell-music-11_grayscale')
+      .setScale(0.5)
+      .setOrigin(0.5, 0.5);
     spell.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
     spell.play('spell-music-anim');
-            this.scene.tweens.add({
-                targets: spell,
-                x: spell.x + travelVector.x,
-                y: spell.y + travelVector.y,
-                duration: 1500,
-                ease: 'Sine.easeOut',
-                onComplete: () => spell.destroy(),
-            });
-            spell.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                spell.destroy();
-            });
+    this.scene.tweens.add({
+      targets: spell,
+      x: spell.x + travelVector.x,
+      y: spell.y + travelVector.y,
+      duration: 1500,
+      ease: 'Sine.easeOut',
+      onComplete: () => spell.destroy(),
+    });
+    spell.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      spell.destroy();
+    });
+
+    // spawn delayed VFX at endTile after travel time.
+     this.scene.time.delayedCall(1000, () => {
+      const impactVFX = this.scene.add.sprite(endTile.x * tile_size + half_tile, endTile.y * tile_size + half_tile, 'magic-fx-light-cast');
+      impactVFX.setDepth(DECORATION_DEPTH + 1);
+      impactVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
+      impactVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+      impactVFX.play(ASSET_KEYS.CAST_TARGET_A);
+      impactVFX.on('animationcomplete', () => {
+        impactVFX.destroy();
+      });
+    });
 
   }
 
