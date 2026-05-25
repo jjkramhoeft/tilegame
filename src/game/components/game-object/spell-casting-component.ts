@@ -9,10 +9,6 @@ import { BaseGameObjectComponent } from './base-game-object-component';
 /**
  * Per-caster facade for spellcasting. Owns "can this character cast right now?"
  * and forwards cast requests to the scene-level `SpellCastingService`.
- *
- * v1: the service is a no-op; the real cast pipeline still runs through
- * `DebugSpellcasting`. This component is attached but not yet driving casts
- * from the game loop.
  */
 export class SpellCastingComponent extends BaseGameObjectComponent {
 

@@ -26,6 +26,19 @@ import { GameProgression } from '../progression/game-progression';
 import { GAME_STATES } from '../components/state-machine/states/game/game-state-keys';
 
 export class GameScene extends Phaser.Scene {
+
+    //ToDo: Refactor addMob (enemy).
+    addMob(endTile: Position) {
+      //For now do nothing.
+      console.warn('addMob called but it is not implemented yet');
+    }
+
+    //ToDo: refactor chest placement so we can get rid of debug-chests.ts.
+    addChest(chestNumber: number) {
+        //For now do nothing.        
+        console.warn('addChest called but it is not implemented yet');
+    }
+
     #controls!: KeyboardComponent;
     #player!: Player;
     #enemyGroup?: Phaser.GameObjects.Group;
@@ -177,7 +190,7 @@ export class GameScene extends Phaser.Scene {
             currentLivingCreatures: 0,
             maxLivingCreaturesThisGame: 0,
             creaturesEverCreated: createEmptyCreaturesEverCreated(),
-            tilesPlaced: {} as Record<BIOME, number>,
+            tilesPlaced: {} as Record<CastingUnlocks, number>,
 
             lastDialogOptionSelected: 0,
             lastDialogResultInfo: undefined

@@ -69,6 +69,7 @@ export function setupDebugChests(
     return chests;
 }
 
+/** @deprecated  */
 export function addChest(position: Position, scene: Phaser.Scene, chests: ChestJJK[], chestGroup: Phaser.GameObjects.Group, chestNumber: number) {
     let chestGear: string = GEAR.NONE;
     let chestWeapon: string = WEAPON.NONE;

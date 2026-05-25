@@ -9,6 +9,8 @@ import { CHEST_CHANCE, ENABLE_LOGGING } from '../common/config';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../common/event-bus';
 import { DataManager } from '../common/data-manager';
 import { CastingUnlocks } from '../common/types';
+//import { addChest } from '../scenes/debug/debug-chests';
+import { GameScene } from '../scenes/game-scene';
 
 export type ChestPlacementHandler = (position: Position, chestNumber: number) => void;
 
@@ -674,10 +676,48 @@ export class Earth {
             .play('void-marker-flow');
     }
 
+    AddChesToTile(position: Position): void {
+        let existingTile = this.allTiles.get(this.key(position.x, position.y));
+        if (existingTile === undefined) return;
+        let chestNumber: number;
+        switch (existingTile.biome) {
+            case BIOME.ROCK: chestNumber = 1; break;
+            case BIOME.DESERT: chestNumber = 2; break;
+            case BIOME.GRASS: chestNumber = 3; break;
+            case BIOME.FOREST: chestNumber = 4; break;
+            case BIOME.SWAMP: chestNumber = 5; break;
+            case BIOME.CRYSTAL: chestNumber = 6; break;
+            default:
+                return;
+        }
+        existingTile.chest = chestNumber;
+        this.allTiles.set(this.key(position.x, position.y), existingTile);
+
+        //ToDo: Refactor chest placement.
+        (this.scene as GameScene).addChest( chestNumber);//empty function stub
+
+        DataManager.instance.data.unlockedSpellCasting.delete(CASTING_UNLOCKS['CHEST' + chestNumber as keyof typeof CASTING_UNLOCKS]);
+    }
+
+    AddBlockingToTile(position: Position): void {
+        let existingTile = this.allTiles.get(this.key(position.x, position.y));
+        if (existingTile === undefined || existingTile?.biome === BIOME.VOID) return;
+        if (existingTile.blocking !== undefined && existingTile.blocking >= 0) return; // Don't place blocking if there is already one.
+        const neighborTiles = this.get4NeighborTiles(position);
+        const countOfNeighborDecorations = neighborTiles.filter(n => n.decoration >= 0).length;
+        const casterGotDecoration = false; // The caster got decoration is not relevant for placing blocking on existing tiles, because the blocking placement on existing tiles is only used when no new tile can be placed, which means the caster tile doesn't have a decoration, because if it had one, the new tile would have been placed next to it and not the blocking on existing tile.
+        const countOfNeighborBlocking = neighborTiles.filter(n => n.blocking >= 0).length;
+        const [blocking, floating] = [1,-1];//TODO implement variation: DecideBlockingAndFloating(countOfNeighborDecorations, casterGotDecoration, countOfNeighborBlocking);   
+        if (blocking < 0) return;
+        existingTile.blocking = blocking;
+        existingTile.floating = floating;
+        this.allTiles.set(this.key(position.x, position.y), existingTile);
+    }
+
     AddDecorationToTile(position: Position): void {
         let existingTile = this.allTiles.get(this.key(position.x, position.y));
         if (existingTile === undefined || existingTile?.biome === BIOME.VOID) return;
-        if(existingTile.decoration !== undefined && existingTile.decoration >= 0) return; // Don't place a decoration if there is already one.
+        if (existingTile.decoration !== undefined && existingTile.decoration >= 0) return; // Don't place a decoration if there is already one.
         const decoration = PickDecoration(existingTile.biome);
         existingTile.decoration = decoration;
         this.decorationLayer.putTileAt(decoration, position.x, position.y);
@@ -821,15 +861,16 @@ export class Earth {
         this.addMissingVoidNeighbors(position);
     }
 
-    public targetWithNeighborCountAndBiome(positions: Position[]): { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean }[] {
-        const result: { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean }[] = [];
+    public targetWithInfo(positions: Position[]): { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean, blocking: boolean }[] {
+        const result: { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean, blocking: boolean }[] = [];
         for (const position of positions) {
             const tile = this.getTile(position.x, position.y);
             const biome = tile?.biome ?? BIOME.VOID;
             const decorated = tile?.decoration !== undefined && tile.decoration >= 0;
+            const blocking = tile?.blocking !== undefined && tile.blocking >= 0;
             const neighborTiles = this.get4NeighborTiles(position);
             const neighborCount = neighborTiles.filter(n => 0 < n.biome).length;
-            result.push({ pos: position, neighborCount, biome, decorated });
+            result.push({ pos: position, neighborCount, biome, decorated, blocking });
         }
         return result;
     }
