@@ -1,9 +1,9 @@
 import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
-import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../../../../common/event-bus';
-import { BIOME } from '../../../../common/common';
+import { CASTING_UNLOCKS } from '../../../../common/common';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { Position } from '../../../../common/types';
+import { DataManager } from '../../../../common/data-manager';
 
 /**
  * Active play state where the goal is to fill the target void area with at
@@ -14,11 +14,7 @@ import { Position } from '../../../../common/types';
  */
 export class BabyStepsState extends BaseGameState {
   #starterTilePosition?: Position;
-  #filledTargetTilesNeeded = 30;
-  #handler?: (payload: TilePlacedPayload) => void;
-  //Tracked to unlock progression to next gameState
-  #blockingRocksPlaced = 0;
-  #filledTargetTiles = 0;
+  #filledTargetTilesNeeded = 20;
 
   constructor(scene: GameScene) {
     super(GAME_STATES.BABY_STEPS, scene);
@@ -26,27 +22,20 @@ export class BabyStepsState extends BaseGameState {
 
   public onEnter(): void {
     console.debug('[GameProgression] BabyStepsState entered');
-    this.#blockingRocksPlaced = 0;
-    this.#filledTargetTiles = 0;
-    this.#starterTilePosition = this._scene.earth.getFirstTilePosition();
-    this.#handler = (payload: TilePlacedPayload) => this.#onTilePlaced(payload);
-    EVENT_BUS.on(CUSTOM_EVENTS.TILE_PLACED, this.#handler);
+    this.#starterTilePosition = DataManager.instance.data.startTile;
   }
 
   public onExit(): void {
-    //this._scene.setLimitedCast(false);
-    if (this.#handler) {
-      EVENT_BUS.off(CUSTOM_EVENTS.TILE_PLACED, this.#handler);
-      this.#handler = undefined;
-    }
     super.onExit();
   }
 
   public onUpdate(): void {
-    if (this.#blockingRocksPlaced < 2) {
+    const blockingRocksPlaced = DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BLOCKING] ?? 0;
+    if (blockingRocksPlaced < 2) {
       return; // Not enough blocking rocks placed yet.
     }
-    if (this.#filledTargetTiles < this.#filledTargetTilesNeeded) {
+    const basicRocksPlaced = DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BASIC] ?? 0;
+    if (basicRocksPlaced < this.#filledTargetTilesNeeded) {
       return; // Not enough target tiles filled yet.
     }
     // Player can not be in the center or right of it (those tiles are for the bigTree and the fruitChest to spawn on)
@@ -63,26 +52,5 @@ export class BabyStepsState extends BaseGameState {
       return; // Player stands on the tile where the fruit chest shall spawn.
     }
     this._transitionTo(GAME_STATES.GARDEN);
-  }
-
-  #onTilePlaced(payload: TilePlacedPayload): void {
-    const first = this._scene.earth.getFirstTilePosition();
-    if (!first) {
-      return;
-    }
-    const dx = payload.tileX - first.x;
-    const dy = payload.tileY - first.y;
-    const inTargetArea =
-      Math.abs(dx) <= 3 &&
-      Math.abs(dy) <= 3 &&
-      !(Math.abs(dx) === 3 && Math.abs(dy) === 3) &&
-      !(dx === 0 && dy === 0);
-
-    if (inTargetArea && payload.biome !== BIOME.VOID) {
-      this.#filledTargetTiles += 1;
-    }
-    if (payload.hasBlocking && payload.biome === BIOME.ROCK) {
-      this.#blockingRocksPlaced += 1;
-    }
   }
 }

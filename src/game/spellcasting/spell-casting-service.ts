@@ -9,6 +9,7 @@ import { GameScene } from '../scenes/game-scene';
 import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles } from '../ground/creator';
 import { DataManager } from '../common/data-manager';
+import { GAME_STATES } from '../components/state-machine/states/game/game-state-keys';
 
 type CastVector = {
   x: number;
@@ -132,7 +133,13 @@ export class SpellCastingService {
     const primeTargetPosition = this.findPrimeTargetPosition({ x: _casterTile.tileX, y: _casterTile.tileY }, _directions);
     const targets = findTargetTiles(primeTargetPosition, _directions, this.#powerLevel);
     const targetWithInfo = this.earth.targetWithInfo(targets);
-    const voidTargets = targetWithInfo.filter(t => t.biome === BIOME.VOID);
+    let voidTargets = targetWithInfo.filter(t => t.biome === BIOME.VOID);
+    const gameState = DataManager.instance.data.gameState;
+    if (gameState === GAME_STATES.BABY_STEPS || gameState === GAME_STATES.FIRST_TILE) {
+      // In these early states, only allow BASIC spell close to the firstTile.
+      const firstTile: Position = DataManager.instance.data.startTile;
+      voidTargets = voidTargets.filter(t => Math.abs(t.pos.x - firstTile.x) <= 2 && Math.abs(t.pos.y - firstTile.y) <= 2);
+    }
 
     // 1) SPELL_TYPES.BASIC, Base tile spell is cast if any void tiles in target. 
     if (voidTargets.length > 0) {
@@ -142,35 +149,43 @@ export class SpellCastingService {
 
     // 2) SPELL_TYPES.DECORATION, Decoration spell if ant undecorated targets exist.
     if (this.decorationIsUnlocked(_casterTile.biome)) {
-      const decorationTargets = targetWithInfo.filter(t => 0 < t.biome && !t.decorated);
+      const decorationTargets = targetWithInfo.filter(t =>
+        0 < t.biome && // not void or empty
+        !t.decorated && // not yet decorated
+        t.biome === _casterTile.biome); //only on tiles of same biome as caster is on      
       if (decorationTargets.length > 0) {
         return { spellTiles: decorationTargets.slice(0, Math.min(decorationTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.DECORATION };
       }
     }
     const firstTile: Position = DataManager.instance.data.startTile;
-    const blockingTargets = targetWithInfo.filter(t => t.biome === _casterTile.biome && t.decorated && !t.blocking && !t.chest && !(t.pos.x===firstTile.x && t.pos.y===firstTile.y));
-    //blocking spell can only be cast on tiles of same biome as caster is on, and only if decorated but not yet blocked or chest or center Big Tree tile.
+    const blockingTargets = targetWithInfo.filter(t =>
+      t.biome === _casterTile.biome && //only on tiles of same biome as caster is on
+      t.decorated && // is decorated
+      !t.blocking && // not yet blocked
+      !t.chest && // no chest
+      !(t.pos.x === firstTile.x && t.pos.y === firstTile.y) && // not at big tree
+      !(t.pos.x === firstTile.x + 1 && t.pos.y === firstTile.y)); // not at fruit chest
 
-    // 3) SPELL_TYPES.CHEST, Chest spawn spell (currently only 10% chance)
-    if (this.chestIsUnlockedAndUnplaced(_casterTile.biome) &&
-      blockingTargets.length > 0 &&
-      (Phaser.Math.Between(1, 100) <= 99)) {
-      const sortedBlockingTargets = blockingTargets.sort((a, b) => { return -b.neighborCount + a.neighborCount; });// Prioritize blocking tiles with least neighbors.
-      return { spellTiles: [sortedBlockingTargets[0].pos], spellType: SPELL_TYPES.CHEST };
+    if (gameState !== GAME_STATES.BABY_STEPS && gameState !== GAME_STATES.FIRST_TILE) {
+      // 3) SPELL_TYPES.CHEST, Chest spawn spell (currently only 10% chance)
+      if (this.chestIsUnlockedAndUnplaced(_casterTile.biome) &&
+        blockingTargets.length > 0 &&
+        (Phaser.Math.Between(1, 100) <= 99)) {
+        const sortedBlockingTargets = blockingTargets.sort((a, b) => { return -b.neighborCount + a.neighborCount; });// Prioritize blocking tiles with least neighbors.
+        return { spellTiles: [sortedBlockingTargets[0].pos], spellType: SPELL_TYPES.CHEST };
+      }
+
+      // 4) SPELL_TYPES.ANIMAL, Animal spawn spell (currently only 10% chance)
+      if (this.animalsIsUnlocked(_casterTile.biome) &&
+        blockingTargets.length > 0 &&
+        (Phaser.Math.Between(1, 100) <= 40)) {
+        const sortedBlockingTargets = blockingTargets.sort((a, b) => { return b.neighborCount - a.neighborCount; });// Prioritize blocking tiles with most neighbors.
+        return { spellTiles: [sortedBlockingTargets[0].pos], spellType: SPELL_TYPES.ANIMAL };
+      }
     }
-
-    // 4) SPELL_TYPES.ANIMAL, Animal spawn spell (currently only 10% chance)
-    if (this.animalsIsUnlocked(_casterTile.biome) &&
-      blockingTargets.length > 0 &&
-      (Phaser.Math.Between(1, 100) <= 5)) {
-      const sortedBlockingTargets = blockingTargets.sort((a, b) => { return b.neighborCount - a.neighborCount; });// Prioritize blocking tiles with most neighbors.
-      return { spellTiles: [sortedBlockingTargets[0].pos], spellType: SPELL_TYPES.ANIMAL };
-    }
-
     // 5) SPELL_TYPES.BLOCKING, Blocking spell if any decorated but not blocked tiles of same biome as caster is on in target and blocking this biome is unlocked.
     if (this.blockingIsUnlocked(_casterTile.biome) && (Phaser.Math.Between(1, 100) <= 99)) {//50% chance to cast blocking spell if criteria met.
       if (blockingTargets.length > 0) {
-        // ToDo: also handle animals here.
         return { spellTiles: blockingTargets.slice(0, Math.min(blockingTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.BLOCKING };
       }
     }
