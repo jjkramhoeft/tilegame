@@ -94,11 +94,10 @@ export const TILES_BEFORE_DECORATION_UNLOCK = 6;
 export const TILES_BEFORE_BLOCKING_UNLOCK = 10;
 export const TILES_BEFORE_ANIMAL_UNLOCK = 10;
 export const LEVEL_UP_TILE_THRESHOLDS: Record<number, number> = {
-	1: 9,//49,
-	2: 18,//80,
+	1: 49,
+	2: 80,
 	3: 150,
 	4: 300,
 	5: 500,
 	6: 750,
 };
-export const CHEST_CHANCE = 0.2
