@@ -5,7 +5,6 @@ export const ASSET_PACK_KEYS = {
 export const ASSET_KEYS = {
   PLAYER: 'PLAYER',
   SPIDER: 'SPIDER',
-  WISP: 'WISP',
   SNAKE: 'Snake',
   LAMB: 'Lamb',
   CHICKEN: 'Chicken',
@@ -234,10 +233,6 @@ export const SPIDER_ANIMATION_KEYS = {
   WALK: 'spider_walk',
   HIT: 'spider_hit',
   DEATH: ASSET_KEYS.ENEMY_DEATH,
-} as const;
-
-export const WISP_ANIMATION_KEYS = {
-  IDLE: 'wisp_idle',
 } as const;
 
 export const LAMB_ANIMATION_KEYS = {

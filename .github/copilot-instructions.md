@@ -34,7 +34,7 @@ Void → Rock → Desert → Water → Grass → Forest → Mountain → Swamp �
 ### Characters
 
 - **Player**: 8-direction movement, 4-direction facing. Animations: Idle, Walk, Attack/Cast, Swim, Die/Fall. Weapons: None → Dagger → Staff → Sword. Outfits: None → Bare → Basic → Armor.
-- **Enemies**: Spider, Wisp, Lamb, Chicken and Drow. Idle/Walk/Attack/Die animations. Require pathfinding.
+- **Enemies**: Spider, Lamb, Chicken and Snake. Idle/Walk/Attack/Die animations. Require pathfinding.
 - All characters have  blob shadows, are blocked by the Blocking layer, and fall from void/empty tiles.
 
 ### UI

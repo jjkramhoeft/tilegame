@@ -127,8 +127,6 @@ export const WEAPON = {
 
 export const CREATURE_TYPES = [
   'spider',
-  //'wisp',
-  //'drow',
   'lamb',
   'chicken',
   'sheep',

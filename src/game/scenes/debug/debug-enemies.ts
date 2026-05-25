@@ -170,17 +170,6 @@ export function spawnDebugEnemies(
     calf.enableObject();
     critterGroup.add(calf);
     DataManager.instance.increaseLivingCreatureCount();
-
-
-    /*
-    const wisp = new Wisp({
-        scene: scene,
-        position: { x: 32000 + 200, y: 32000 + 250 },
-    });
-    wisp.enableObject();
-    enemyGroup.add(wisp);
-    DataManager.instance.increaseLivingCreatureCount();
-    */
 }
 
 function addTileAndVoid(earth: Earth, tilenumber: Position): void {

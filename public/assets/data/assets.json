@@ -102,12 +102,6 @@
         "atlasURL": "spider.json"
       },
       {
-        "type": "aseprite",
-        "key": "WISP",
-        "textureURL": "wisp.png",
-        "atlasURL": "wisp.json"
-      },
-      {
         "type": "spritesheet",
         "key": "ENEMY_DEATH",
         "url": "enemy_death.png",
@@ -115,12 +109,6 @@
           "frameWidth": 16,
           "frameHeight": 16
         }
-      },
-      {
-        "type": "aseprite",
-        "key": "DROW",
-        "textureURL": "drow.png",
-        "atlasURL": "drow.json"
       }
     ]
   },

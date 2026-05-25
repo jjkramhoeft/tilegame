@@ -59,7 +59,7 @@ The animations for the Lamb is set up in PreloadScene and the key for the animat
 - Can move in four or eight direction
 - Can Face in four direction
 - Animated: Idle, Walking, Attack/Cast, Die/Fall
-- Options: Spider, Snake, Lizardman, Skeleton, Wisp
+- Options: Spider, Snake, Lizardman, Skeleton
 - Cast blob shadow (is included in sprite)
 - Blocked by blocking layer, void layer, water layer and mountain layer
 - Needs path finding and some simple chase mechanics 
