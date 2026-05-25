@@ -3,7 +3,7 @@ import { Tile } from './tile';
 import { Position, Direction } from '../common/types';
 import { BASE_DEPTH, CASTING_UNLOCKS, BIOME, BLOCKING_TILE_DEPTH, BORDER_DEPTH, CRYSTAL_GLIMTS_DEPTH, DECORATION_DEPTH, FLOATING_DEPTH, LAVA_DEPTH, VOID_ANIM_DEPTH, VOID_SOLID_DEPTH, WATER_DEPTH } from '../common/common';
 import { ASSET_KEYS } from '../common/assets';
-import { findTargetTiles, DecideBiome, DecideDecoration, DecideBlockingAndFloating, DecideBorder, PickDecoration } from './creator';
+import { findTargetTiles, DecideBiome, DecideDecoration, DecideBlockingAndFloating, DecideBorder, PickDecoration, PickBlocking, PickFloating } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
 import { CHEST_CHANCE, ENABLE_LOGGING } from '../common/config';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../common/event-bus';
@@ -108,12 +108,12 @@ export class Earth {
     private isInitialized = false;
     private blockingData: Map<number, TileCollisionObject> = new Map<number, TileCollisionObject>();
     private tileSize = 64;
-    private placeChest?: ChestPlacementHandler;
+    private placeChestHandler?: ChestPlacementHandler;
     private firstTilePosition?: Position;
 
-    constructor(scene: Phaser.Scene, placeChest?: ChestPlacementHandler) {
+    constructor(scene: Phaser.Scene, placeChestHandler?: ChestPlacementHandler) {
         this.scene = scene;
-        this.placeChest = placeChest;
+        this.placeChestHandler = placeChestHandler;
         this.allTiles = new Map<string, Tile>();
     }
 
@@ -691,22 +691,41 @@ export class Earth {
         existingTile.chest = chestNumber;
         this.allTiles.set(this.key(position.x, position.y), existingTile);
 
-        this.placeChest?.(position, chestNumber);
+        this.placeChestHandler?.(position, chestNumber);
     }
 
     AddBlockingToTile(position: Position): void {
         let existingTile = this.allTiles.get(this.key(position.x, position.y));
         if (existingTile === undefined || existingTile?.biome === BIOME.VOID) return;
         if (existingTile.blocking !== undefined && existingTile.blocking >= 0) return; // Don't place blocking if there is already one.
-        const neighborTiles = this.get4NeighborTiles(position);
-        const countOfNeighborDecorations = neighborTiles.filter(n => n.decoration >= 0).length;
-        const casterGotDecoration = false; // The caster got decoration is not relevant for placing blocking on existing tiles, because the blocking placement on existing tiles is only used when no new tile can be placed, which means the caster tile doesn't have a decoration, because if it had one, the new tile would have been placed next to it and not the blocking on existing tile.
-        const countOfNeighborBlocking = neighborTiles.filter(n => n.blocking >= 0).length;
-        const [blocking, floating] = [1,-1];//TODO implement variation: DecideBlockingAndFloating(countOfNeighborDecorations, casterGotDecoration, countOfNeighborBlocking);   
+        const blocking = PickBlocking(existingTile.biome);
+        const floating = PickFloating(existingTile.biome, blocking);
         if (blocking < 0) return;
         existingTile.blocking = blocking;
         existingTile.floating = floating;
+        this.blockingLayer.putTileAt(blocking, position.x, position.y);        
+        this.createBlockingGeometryBody(position.x, position.y, blocking);
+        const worldX = position.x * 64;
+        const worldY = position.y * 64;
+        const sprite = this.scene.add.image(worldX, worldY, ASSET_KEYS.TILESET_BLOCKING, blocking).setOrigin(0, 0);
+        sprite.setDepth(worldY + 64);
+        if (floating >= 0) {
+            if (floating > 15) {
+                console.warn(`Floating tile index ${floating} is out of expected range!`);
+            }
+            this.floatingLayer.putTileAt(floating, position.x, position.y - 1);
+        }
         this.allTiles.set(this.key(position.x, position.y), existingTile);
+        let placedBlockingAsCastingUnlock: CastingUnlocks | undefined = undefined;
+        switch (existingTile.biome) {
+            case BIOME.ROCK: placedBlockingAsCastingUnlock = CASTING_UNLOCKS.ROCK_BLOCKING; break;
+            case BIOME.DESERT: placedBlockingAsCastingUnlock = CASTING_UNLOCKS.DESERT_BLOCKING; break;
+            case BIOME.GRASS: placedBlockingAsCastingUnlock = CASTING_UNLOCKS.GRASS_BLOCKING; break;
+            case BIOME.FOREST: placedBlockingAsCastingUnlock = CASTING_UNLOCKS.FOREST_BLOCKING; break;
+            case BIOME.SWAMP: placedBlockingAsCastingUnlock = CASTING_UNLOCKS.SWAMP_BLOCKING; break;
+            case BIOME.CRYSTAL: placedBlockingAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_BLOCKING; break;
+        }
+        if (placedBlockingAsCastingUnlock) DataManager.instance.increaseTilesPlaced(placedBlockingAsCastingUnlock);
     }
 
     AddDecorationToTile(position: Position): void {
@@ -719,24 +738,12 @@ export class Earth {
         this.allTiles.set(this.key(position.x, position.y), existingTile);
         let placedTileAsCastingUnlock: CastingUnlocks | undefined = undefined;
         switch (existingTile.biome) {
-            case BIOME.ROCK:
-                placedTileAsCastingUnlock = CASTING_UNLOCKS.ROCK_DECORATION;
-                break;
-            case BIOME.DESERT:
-                placedTileAsCastingUnlock = CASTING_UNLOCKS.DESERT_DECORATION;
-                break;
-            case BIOME.GRASS:
-                placedTileAsCastingUnlock = CASTING_UNLOCKS.GRASS_DECORATION;
-                break;
-            case BIOME.FOREST:
-                placedTileAsCastingUnlock = CASTING_UNLOCKS.FOREST_DECORATION;
-                break;
-            case BIOME.SWAMP:
-                placedTileAsCastingUnlock = CASTING_UNLOCKS.SWAMP_DECORATION;
-                break;
-            case BIOME.CRYSTAL:
-                placedTileAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_DECORATION;
-                break;
+            case BIOME.ROCK: placedTileAsCastingUnlock = CASTING_UNLOCKS.ROCK_DECORATION; break;
+            case BIOME.DESERT: placedTileAsCastingUnlock = CASTING_UNLOCKS.DESERT_DECORATION; break;
+            case BIOME.GRASS: placedTileAsCastingUnlock = CASTING_UNLOCKS.GRASS_DECORATION; break;
+            case BIOME.FOREST: placedTileAsCastingUnlock = CASTING_UNLOCKS.FOREST_DECORATION; break;
+            case BIOME.SWAMP: placedTileAsCastingUnlock = CASTING_UNLOCKS.SWAMP_DECORATION; break;
+            case BIOME.CRYSTAL: placedTileAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_DECORATION; break;
         }
         if (placedTileAsCastingUnlock) DataManager.instance.increaseTilesPlaced(placedTileAsCastingUnlock);
     }
@@ -856,16 +863,17 @@ export class Earth {
         this.addMissingVoidNeighbors(position);
     }
 
-    public targetWithInfo(positions: Position[]): { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean, blocking: boolean }[] {
-        const result: { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean, blocking: boolean }[] = [];
+    public targetWithInfo(positions: Position[]): { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean, blocking: boolean, chest: boolean }[] {
+        const result: { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean, blocking: boolean, chest: boolean }[] = [];
         for (const position of positions) {
             const tile = this.getTile(position.x, position.y);
             const biome = tile?.biome ?? BIOME.VOID;
             const decorated = tile?.decoration !== undefined && tile.decoration >= 0;
             const blocking = tile?.blocking !== undefined && tile.blocking >= 0;
+            const chest = tile?.chest !== undefined && tile.chest >= 0;
             const neighborTiles = this.get4NeighborTiles(position);
             const neighborCount = neighborTiles.filter(n => 0 < n.biome).length;
-            result.push({ pos: position, neighborCount, biome, decorated, blocking });
+            result.push({ pos: position, neighborCount, biome, decorated, blocking, chest });
         }
         return result;
     }
@@ -950,7 +958,7 @@ export class Earth {
             this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY - 1);
         }
         if (0 < tile.chest) {
-            this.placeChest?.({ x: tile.tileX, y: tile.tileY }, tile.chest);
+            this.placeChestHandler?.({ x: tile.tileX, y: tile.tileY }, tile.chest);
         }
 
         // Notify listeners (game progression, etc.) that a tile was placed.

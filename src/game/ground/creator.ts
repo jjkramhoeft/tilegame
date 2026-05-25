@@ -120,6 +120,14 @@ const DECORATION_MAP = new Map<number, {minIndex: number, maxIndex: number}>([
     [BIOME.CRYSTAL, { minIndex: 0, maxIndex: 8}],
 ]);
 
+const BLOCKING_MAP = new Map<number, {minIndex: number, maxIndex: number}>([
+    [BIOME.ROCK, { minIndex: 0, maxIndex: 19, }],
+    [BIOME.DESERT, { minIndex: 84, maxIndex: 91}],
+    [BIOME.FOREST, { minIndex: 20, maxIndex: 46}],
+    [BIOME.SWAMP, { minIndex: 47, maxIndex: 58}],
+    [BIOME.CRYSTAL, { minIndex: 60, maxIndex: 83}],
+]);
+
 const BLOCKING_RULES = new Map<number, BlockingRule>([
     [BIOME.ROCK, { minIndex: 0, maxIndex: 19, baseChance: 0.2, casterDecorationBonus: 0.05, neighborDecorationBonus: 0.1, neighborBlockingBonus: -0.1, powerLevelBonus: 0.05, noDecorationBonus: 0.01 }],
     [BIOME.DESERT, { minIndex: 84, maxIndex: 91, baseChance: 0.01, casterDecorationBonus: 0.01, neighborDecorationBonus: 0.01, neighborBlockingBonus: 0.02, powerLevelBonus: 0.01 }],
@@ -204,6 +212,25 @@ export function PickDecoration(biome: number): number {
         return -1;
     }
     return Phaser.Math.RND.integerInRange(rule.minIndex, rule.maxIndex);
+}
+
+export function PickBlocking(biome: number): number {
+    const rule = BLOCKING_MAP.get(biome);
+    if (rule === undefined) {
+        return -1;
+    }
+    return Phaser.Math.RND.integerInRange(rule.minIndex, rule.maxIndex);
+}
+
+export function PickFloating(biome: number, blocking: number): number {
+    switch (biome) {
+        case BIOME.FOREST:
+            return blocking >= 37 ? blocking - 37 : -1;
+        case BIOME.SWAMP:
+            return blocking >= 53 ? blocking + 10 - 53 : -1;
+        default:
+            return -1;
+    }
 }
 
 export function DecideBlockingAndFloating(

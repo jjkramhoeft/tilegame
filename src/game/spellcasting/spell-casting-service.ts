@@ -147,7 +147,9 @@ export class SpellCastingService {
         return { spellTiles: decorationTargets.slice(0, Math.min(decorationTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.DECORATION };
       }
     }
-    const blockingTargets = targetWithInfo.filter(t => t.biome === _casterTile.biome && t.decorated && !t.blocking);
+    const firstTile: Position = DataManager.instance.data.startTile;
+    const blockingTargets = targetWithInfo.filter(t => t.biome === _casterTile.biome && t.decorated && !t.blocking && !t.chest && !(t.pos.x===firstTile.x && t.pos.y===firstTile.y));
+    //blocking spell can only be cast on tiles of same biome as caster is on, and only if decorated but not yet blocked or chest or center Big Tree tile.
 
     // 3) SPELL_TYPES.CHEST, Chest spawn spell (currently only 10% chance)
     if (this.chestIsUnlockedAndUnplaced(_casterTile.biome) &&
@@ -160,7 +162,7 @@ export class SpellCastingService {
     // 4) SPELL_TYPES.ANIMAL, Animal spawn spell (currently only 10% chance)
     if (this.animalsIsUnlocked(_casterTile.biome) &&
       blockingTargets.length > 0 &&
-      (Phaser.Math.Between(1, 100) <= 99)) {
+      (Phaser.Math.Between(1, 100) <= 5)) {
       const sortedBlockingTargets = blockingTargets.sort((a, b) => { return b.neighborCount - a.neighborCount; });// Prioritize blocking tiles with most neighbors.
       return { spellTiles: [sortedBlockingTargets[0].pos], spellType: SPELL_TYPES.ANIMAL };
     }

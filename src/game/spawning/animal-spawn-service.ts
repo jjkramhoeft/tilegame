@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import { BIOME } from '../common/common';
 import { DataManager } from '../common/data-manager';
 import { CreatureType, Position } from '../common/types';

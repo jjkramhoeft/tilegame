@@ -11,7 +11,7 @@ import {
   PlayerProgressUpdated,
   PlayerUpdateType,
 } from './event-bus';
-import { CastingUnlocks, CreatureType, UnlockCriteriaMap } from './types';
+import { CastingUnlocks, CreatureType, UnlockCriteriaMap, Position } from './types';
 
 export function createEmptyCreaturesEverCreated(): Record<CreatureType, boolean> {
   const result = {} as Record<CreatureType, boolean>;
@@ -41,6 +41,8 @@ export type PlayerData = {
 
   currentProgress: number;
   maxProgress: number;
+  startTile: Position;
+  gameState: string;
 
   currentLivingCreatures: number;
   maxLivingCreaturesThisGame: number;
@@ -106,6 +108,8 @@ export class DataManager {
 
       currentProgress: 0,
       maxProgress: 0,
+      startTile: { x: 0, y: 0 },
+      gameState: 'not-started',
 
       currentLivingCreatures: 0,
       maxLivingCreaturesThisGame: 0,

@@ -28,12 +28,12 @@ import { AnimalSpawnService } from '../spawning/animal-spawn-service';
 
 export class GameScene extends Phaser.Scene {
 
-        addMob(endTile: Position, biome: BIOME) {
-            this.#animalSpawn.spawnForBiome(endTile, biome);
+    addMob(endTile: Position, biome: BIOME) {
+        this.#animalSpawn.spawnForBiome(endTile, biome);
     }
 
-        addChest(position: Position, chestNumber: number) {
-                this.#chestSpawn.spawn(position, chestNumber);
+    addChest(position: Position, chestNumber: number) {
+        this.#chestSpawn.spawn(position, chestNumber);
     }
 
     #controls!: KeyboardComponent;
@@ -41,7 +41,7 @@ export class GameScene extends Phaser.Scene {
     #enemyGroup?: Phaser.GameObjects.Group;
     #critterGroup?: Phaser.GameObjects.Group;
     #earth!: Earth;
-    #playerStartPosition = { x: 32035, y: 32020 };
+    #playerStartWorldPosition = { x: 32035, y: 32020 };
     #chestJJKGroup!: Phaser.GameObjects.Group;
     #chestSpawn!: ChestSpawnService;
     #animalSpawn!: AnimalSpawnService;
@@ -59,40 +59,21 @@ export class GameScene extends Phaser.Scene {
 
     create() {
         this.#resetSceneState();
-
-        console.debug('[GameScene] create start', {
-            isDebugMode: DataManager.instance.data.isDebugMode,
-            uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE),
-            uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE),
-        });
-
-        if (!this.input.keyboard) {
-            console.warn('Phaser keyboard plugin is not setup properly.');
-            return;
-        }
+        console.debug('[GameScene] create start', { isDebugMode: DataManager.instance.data.isDebugMode, uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE), uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE), });
+        if (!this.input.keyboard) { console.warn('Phaser keyboard plugin is not setup properly.'); return; }
         this.#controls = new KeyboardComponent(this.input.keyboard);
-
         this.#chestJJKGroup = this.add.group([]);
-
-        this.#earth = new Earth(this, (position, chestNumber) => {
-            this.addChest(position, chestNumber);
-        });
+        this.#earth = new Earth(this, (position, chestNumber) => { this.addChest(position, chestNumber); });
         this.#earth.createMap(1000, 1000);
-
         this.#setupPlayer();
         this.#setupCamera();
-
         this.#enemyGroup = this.add.group();
         this.#critterGroup = this.add.group();
         this.#chestSpawn = new ChestSpawnService(this, this.#chestJJKGroup, this.#earth.getTileSize());
         this.#animalSpawn = new AnimalSpawnService(this, this.#enemyGroup, this.#critterGroup, this.#earth.getTileSize());
         this.#registerCustomEvents();
-
         this.scene.launch(SCENE_KEYS.UI_SCENE);
-        console.debug('[GameScene] UI scene launched', {
-            uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE),
-            uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE),
-        });
+        console.debug('[GameScene] UI scene launched', { uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE), uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE), });
 
         // Common setup that applies to both debug and progression paths.
         this.#registerColliders();
@@ -120,12 +101,9 @@ export class GameScene extends Phaser.Scene {
     }
 
     update() {
-        if (!this.#isGameplayReady) {
-            return;
-        }
+        if (!this.#isGameplayReady) { return; }
 
-        if (
-            this.#controls.isMapKeyJustDown &&
+        if (this.#controls.isMapKeyJustDown &&
             this.#progression?.isMapUnlocked &&
             !this.#controls.isMovementLocked
         ) {
@@ -174,13 +152,15 @@ export class GameScene extends Phaser.Scene {
             potion: POTION.NONE,
             currentHealth: 2,
             maxHealth: 2,
-            
+
             currentPower: 1,
             maxPower: 1,
             unlockedSpellCasting: currentData.unlockedSpellCasting ?? new Set<CastingUnlocks>([CASTING_UNLOCKS.ROCK_BASIC]),
 
             currentProgress: 0,
             maxProgress: 0,
+            startTile: { x: 0, y: 0 },
+            gameState: 'not-started',
 
             currentLivingCreatures: 0,
             maxLivingCreaturesThisGame: 0,
@@ -192,7 +172,7 @@ export class GameScene extends Phaser.Scene {
         };
         this.#player = new Player({
             scene: this,
-            position: this.#playerStartPosition,
+            position: this.#playerStartWorldPosition,
             controls: this.#controls,
             maxLife: 2,
             currentLife: 2
@@ -259,8 +239,8 @@ export class GameScene extends Phaser.Scene {
         const weapon = DataManager.instance.data.weapon;
         const soundKey = weapon === 'dagger' ? 'attack-dagger'
             : weapon === 'staff' ? 'attack-staff'
-            : weapon === 'sword' ? 'attack-sword'
-            : 'attack-punch';
+                : weapon === 'sword' ? 'attack-sword'
+                    : 'attack-punch';
         const sound = this.sound.get(soundKey) ?? this.sound.add(soundKey);
         if (!sound.isPlaying) {
             sound.play();
@@ -314,7 +294,12 @@ export class GameScene extends Phaser.Scene {
 
     /** Place the very first tile under the player start position. Returns its tile coordinates. */
     public placeStartingTile(): Position {
-        return this.#earth.placeStartingTile(this.#playerStartPosition);
+        const startTile = this.#earth.placeStartingTile(this.#playerStartWorldPosition);
+        DataManager.instance.data = {
+            ...DataManager.instance.data,
+            startTile,
+        };
+        return startTile;
     }
 
     /** Make the player visible and active in the world. Movement remains gated by `controls`. */
@@ -366,7 +351,7 @@ export class GameScene extends Phaser.Scene {
                 return;
             }
             // Handle fruit potion chest.
-            if(dialogResultInfo.chestNumber===7){
+            if (dialogResultInfo.chestNumber === 7) {
                 //console.debug('Applying potion result from chest dialog');
                 if (d.lastDialogOptionSelected === 0) {
                     d.potion = dialogResultInfo.option1PotionToPlayer;

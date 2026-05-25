@@ -92,6 +92,7 @@ export class UiScene extends Phaser.Scene {
   #uiMode = UiMode.HudOnly;
   #chestOpenSound!: Phaser.Sound.BaseSound;
   #chestCloseSound!: Phaser.Sound.BaseSound;
+  #levelUpSound!: Phaser.Sound.BaseSound;
 
   constructor() {
     super({
@@ -122,6 +123,7 @@ export class UiScene extends Phaser.Scene {
     this.#selectedSaveOptionIndex = 0;
     this.#chestOpenSound = this.sound.add('chest');
     this.#chestCloseSound = this.sound.add('chest2');
+    this.#levelUpSound = this.sound.add('levelup', { volume: 1.0 });
 
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
@@ -180,6 +182,9 @@ export class UiScene extends Phaser.Scene {
 
   public updatePowerInHud(data: PlayerPowerUpdated): void {
     this.#syncMeter(this.#power, DataManager.instance.data.maxPower, data.currentPower+2);
+    if (data.type === PLAYER_UPDATE_TYPE.INCREASE && !this.#levelUpSound.isPlaying) {
+      this.#levelUpSound.play();
+    }
   }
 
   public updateProgressInHud(data: PlayerProgressUpdated): void {
