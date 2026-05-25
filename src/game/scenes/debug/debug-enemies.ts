@@ -13,7 +13,6 @@ import { Rooster } from '../../game-objects/enemies/rooster';
 import { Turkey } from '../../game-objects/enemies/turkey';
 import { Bull } from '../../game-objects/enemies/bull';
 import { Calf } from '../../game-objects/enemies/calf';
-//import { Wisp } from '../../game-objects/enemies/wisp';
 
 export function spawnDebugEnemies(
     scene: Phaser.Scene,

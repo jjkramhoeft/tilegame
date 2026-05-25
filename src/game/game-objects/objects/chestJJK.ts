@@ -2,8 +2,6 @@ import * as Phaser from 'phaser';
 import { CHEST_STATE, INTERACTIVE_OBJECT_TYPE } from '../../common/common';
 import { ChestState, CustomGameObject, Position } from '../../common/types';
 import { InteractiveObjectComponent } from '../../components/game-object/interactive-object-component';
-//import { InventoryManager } from '../../components/inventory/inventory-manager';
-//import { DataManager } from '../../common/data-manager';
 
 
 export type ChestJJKConfig = {
