@@ -7,6 +7,7 @@
 - take less damage when wearing  armor
 - Alternative to bounce-movement
 - Fix unlocking animals in grass without blockings
+- Larger hit box's
 - Implement deferred gameStates
   - bossFightState
   - victoryState
@@ -27,20 +28,16 @@
 - implement swim speed (very low when wearing cloth)  
 - implement talking point scene
 - implement night sky scene
-- rework inputs
 - add control section to settings
 - repeat fruit chest sound put healt on max
 - fix animals walking on water
-- add magic fx
-- add new bad version of spell sound
 - Bounce-move-state -> follow-move-state (intaeract w. animal)
+- Implement boss; Lizard character with snake minions
 
 ## Implementations that require new asserts
 
-- Implement boss; Lizard character with snake minions
 - Find Mountain sprite sheet
 - Add water ponds to swamp as decorations
-- add monster (Zombie)
 - record voice-over for narrator. Nathan for english, Ulla, Taina or me for danish
 - Pair of animals
 - Bump sound when pushed by animals

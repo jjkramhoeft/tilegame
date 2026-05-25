@@ -1,7 +1,7 @@
 import { BIOME } from '../../common/common';
 import { PLAYER_SPELL_CAST_COOLDOWN } from '../../common/config';
 import { DataManager } from '../../common/data-manager';
-import { CastingUnlocks, Direction, GameObject2 } from '../../common/types';
+import { CastingUnlocks, GameObject2 } from '../../common/types';
 import { GameScene } from '../../scenes/game-scene';
 import { SpellCastingService } from '../../spellcasting/spell-casting-service';
 import { BaseGameObjectComponent } from './base-game-object-component';
@@ -38,12 +38,12 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
    * currently on cooldown.
    */
   get canCast(): boolean {
-    // Tjeck cooldown
+    // Check cooldown
     if (this.isOnCooldown) {
       console.log('No cast; On cooldown:');
       return false;
     }
-    // Tjeck tile under caster
+    // Check tile under caster
     const earth = (this.scene as GameScene).earth;
     if (earth === undefined) {
       return false;
@@ -69,7 +69,7 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
   }
 
   /** Delegate to the scene service. Stamps the cooldown when the cast actually fires. */
-  cast(direction: Direction): void {
+  cast(): void {
     const service: SpellCastingService | undefined = (this.scene as GameScene).spellCasting;
     if (service === undefined) {
       console.warn('[SpellCastingComponent] cast aborted: no SpellCastingService on scene. This is an error!');
@@ -79,6 +79,6 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
       return;
     }
     this.#nextCastReadyAt = this.scene.time.now + PLAYER_SPELL_CAST_COOLDOWN;
-    service.cast(this.gameObject2, direction);
+    service.cast(this.gameObject2);
   }
 }

@@ -54,7 +54,7 @@ export class CastingState extends BaseCharacterState {
     if (!this.#castFired) {
       this.#castFired = true;
       const castingComponent = SpellCastingComponent.getComponent<SpellCastingComponent>(this._gameObject);
-      castingComponent?.cast(this._gameObject.direction);
+      castingComponent?.cast();
     }
 
     // Wait for the weapon attack animation to finish before returning to idle,

@@ -57,7 +57,7 @@ export class SpellCastingService {
    * Entry point for "this caster casts a spell in this direction".
    * Under development; currently just logs the cast attempt and parameters for debugging
    */
-  public cast(caster: GameObject2, direction: Direction): void {
+  public cast(caster: GameObject2): void {
 
     this.#castCount += 1;
     const casterTilePosition = this.earth.getTileXYFromScreenCoordinates(caster.x, caster.y, true);
@@ -66,18 +66,6 @@ export class SpellCastingService {
     const directions = (caster as CharacterGameObject).getLastMoveDirections();
     this.#powerLevel = DataManager.instance.data.currentPower;
 
-    console.log(
-      `[SpellCastingService] cast #${this.#castCount}`,
-      {
-        caster: caster.name || (caster as Phaser.GameObjects.Sprite).texture?.key,
-        direction,
-        screenPos: { x: Math.round(caster.x), y: Math.round(caster.y) },
-        tilePos: casterTilePosition,
-        biome: casterTile?.biome,
-        lastMoveDirections: directions,
-      },
-    );
-
     // First get a list of target tiles and spell type
     const { spellTiles, spellType } = this.determineSpellTilesAndType(casterTile, directions);
 
@@ -85,12 +73,10 @@ export class SpellCastingService {
     // if more than one target tile, execute spell staggered on all tiles with small delay.
     // first spell: this.executeSpellEffect(spellType, casterTile.biome, casterTilePosition, spellTiles[0]);
     // second spell:this.executeSpellEffect(spellType, casterTile.biome, spellTiles[0], spellTiles[1]);
-
     if (spellTiles.length === 0) {
       console.log('No valid targets found.');
       return;
     }
-
     this.#scheduleHops(spellType, casterTile.biome, casterTilePosition, spellTiles);
   }
 
@@ -152,10 +138,9 @@ export class SpellCastingService {
       const sortedVoidTargets = voidTargets.sort((a, b) => { return b.neighborCount - a.neighborCount; });
       return { spellTiles: sortedVoidTargets.slice(0, Math.min(sortedVoidTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.BASIC };
     }
-    if(this.decorationIsUnlocked(_casterTile.biome))
-    {
+    if (this.decorationIsUnlocked(_casterTile.biome)) {
       const decorationTargets = targetWithInfo.filter(t => 0 < t.biome && !t.decorated);
-      if(decorationTargets.length > 0) {
+      if (decorationTargets.length > 0) {
         return { spellTiles: decorationTargets.slice(0, Math.min(decorationTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.DECORATION };
       }
     }
@@ -164,7 +149,7 @@ export class SpellCastingService {
   }
 
   private decorationIsUnlocked(biome: number): boolean {
-    switch(biome) {
+    switch (biome) {
       case BIOME.ROCK: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.ROCK_DECORATION);
       case BIOME.DESERT: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.DESERT_DECORATION);
       case BIOME.GRASS: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.GRASS_DECORATION);
@@ -223,10 +208,10 @@ export class SpellCastingService {
       });
     }
 
-    // spawn VFX traveling from startTile to endTile along travelVector. (if origon start at player)
+    // spawn VFX traveling from startTile to endTile along travelVector.
     let travelVector: CastVector = { x: (endTile.x - startTile.x) * tile_size, y: (endTile.y - startTile.y) * tile_size };
     let startVector: CastVector = { x: startTile.x * tile_size + half_tile, y: startTile.y * tile_size + half_tile };
-    if (isOrigon) {
+    if (isOrigon) {//if origon (first of staggered spell) start at player
       const player = (this.scene as GameScene).playerPosition;
       startVector = { x: player.x, y: player.y };
       travelVector = { x: (endTile.x * tile_size + half_tile - startVector.x), y: (endTile.y * tile_size + half_tile - startVector.y) }
@@ -246,9 +231,7 @@ export class SpellCastingService {
       ease: 'Sine.easeOut',
       onComplete: () => spell.destroy(),
     });
-    spell.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-      spell.destroy();
-    });
+    spell.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => { spell.destroy(); });
 
     // spawn delayed VFX at endTile after travel time.
     this.scene.time.delayedCall(1000, () => {
@@ -257,9 +240,7 @@ export class SpellCastingService {
       impactVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
       impactVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
       impactVFX.play(ASSET_KEYS.CAST_TARGET_A);
-      impactVFX.on('animationcomplete', () => {
-        impactVFX.destroy();
-      });
+      impactVFX.on('animationcomplete', () => { impactVFX.destroy(); });
       // Add the tile, decoration, blocking, chest or animal here.
       switch (spellType) {
         case SPELL_TYPES.BASIC:
@@ -268,13 +249,18 @@ export class SpellCastingService {
         case SPELL_TYPES.DECORATION:
           this.earth.AddDecorationToTile(endTile);
           break;
-        //Todo other spellTypes
+        case SPELL_TYPES.BLOCKING:
+          //ToDo: this.earth.AddBlockingToTile(endTile);
+          break;
+        case SPELL_TYPES.CHEST:
+          //todo: this.earth.AddChestoTile(endTile);
+          break;
+        case SPELL_TYPES.ANIMAL:
+          //Todo: this.earth.AddMobToTile(endTile);
+          break;
       }
     });
-
-
   }
-
 
   /** Future home for cooldowns / channel timers. No-op for now. */
   public update(): void {
