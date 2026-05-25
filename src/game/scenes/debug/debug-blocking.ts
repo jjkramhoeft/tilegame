@@ -114,7 +114,7 @@ export function setupDebugBlocking(
     earth.AddTile(new Tile({tilenumber: { x: x0+4, y: y0+22 }, biome: 2, blocking:88   }));    
     earth.AddTile(new Tile({tilenumber: { x: x0+6, y: y0+22 }, biome: 2, blocking:89   }));
 
-    //R0ck path
+    //Rock path
     let debugPathTile: Position[] = [];
     for (let dx = -1; dx < 16; dx++) {
         debugPathTile.push({ x: dx+x0, y: y0-1 });

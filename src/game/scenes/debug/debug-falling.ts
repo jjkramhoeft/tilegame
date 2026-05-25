@@ -2,6 +2,7 @@ import { BIOME } from '../../common/common';
 import { Player } from '../../game-objects/player/player';
 import { Earth } from '../../ground/earth';
 
+/** @deprecated  */
 export function updateFallingLogic(player: Player, earth: Earth): void {
     if (player.stateMachine.currentStateName !== 'MOVE_STATE') {
         return;
