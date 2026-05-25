@@ -16,15 +16,15 @@ import { Turkey } from '../../game-objects/enemies/turkey';
 import { Piglet } from '../../game-objects/enemies/piglet';
 import { Snake } from '../../game-objects/enemies/snake';
 
-type MagicFlagKey = {
+type MagicFlagKeyXXX = {
     [Key in keyof EarthCastingConfig]: EarthCastingConfig[Key] extends boolean ? Key : never;
 }[keyof EarthCastingConfig];
 
-type FeedbackCountKey = {
+type FeedbackCountKeyXXX = {
     [Key in keyof CastingFeedback]: CastingFeedback[Key] extends number ? Key : never;
 }[keyof CastingFeedback];
 
-type CastVector = {
+type CastVectorXXX = {
     x: number;
     y: number;
 };
@@ -33,7 +33,7 @@ type CastVector = {
 /**
  * @deprecated This constant will be replaced with the Datamanager instance's unlockedSpellCasting in combination with the SpellCastingService.
  */
-type BiomeProgressionRule = {
+type BiomeProgressionRuleXXX = {
     unlockedKey?: MagicFlagKey;
     tilesPlacedKey: FeedbackCountKey;
     decorationUnlockedKey: MagicFlagKey;
@@ -137,7 +137,7 @@ const BIOME_PROGRESSIONS: BiomeProgressionRule[] = [
  * It has served as a testing ground for spellcasting-related features and mechanics
  * When the SpellCastingComponent is done this class will be deleted.
  */
-export class DebugSpellcasting {
+export class DebugSpellcastingXXX {
 
     #playerCurrentMagic: EarthCastingConfig = {
         isRockDecorationUnlocked: false,

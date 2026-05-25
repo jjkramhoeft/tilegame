@@ -27,7 +27,7 @@ export class FirstTileState extends BaseGameState {
     this.#moved = false;
     this.#attacked = false;
     // Limited cast: silent-ish sound, no tile or mob placement.
-    this._scene.setLimitedCast(true);
+    //this._scene.setLimitedCast(true);
   }
 
   public onUpdate(): void {

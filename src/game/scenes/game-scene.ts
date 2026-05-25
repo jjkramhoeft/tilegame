@@ -17,7 +17,6 @@ import { spawnDebugEnemies } from './debug/debug-enemies';
 import { updateFallingLogic } from './debug/debug-falling';
 import { updateLavaDamageLogic } from './debug/debug-lava';
 import { updateSwimmingLogic } from './debug/debug-swimming';
-import { DebugSpellcasting } from './debug/debug-spellcasting';
 import { SpellCastingService } from '../spellcasting/spell-casting-service';
 import { setupDebugBlocking } from './debug/debug-blocking';
 import { SCENE_KEYS } from './scene-keys';
@@ -46,7 +45,6 @@ export class GameScene extends Phaser.Scene {
     #chestJJKGroup!: Phaser.GameObjects.Group;
     #chestSpawn!: ChestSpawnService;
     #animalSpawn!: AnimalSpawnService;
-    #debugSpellcasting!: DebugSpellcasting;
     #spellCasting!: SpellCastingService;
     #progression!: GameProgression;
     #playerMapCollider!: Phaser.Physics.Arcade.Collider;
@@ -98,7 +96,6 @@ export class GameScene extends Phaser.Scene {
 
         // Common setup that applies to both debug and progression paths.
         this.#registerColliders();
-        this.#debugSpellcasting = new DebugSpellcasting(this, this.#enemyGroup!, this.#critterGroup!);
         this.#spellCasting = new SpellCastingService(this, this.#earth);
         this.#isGameplayReady = true;
 
@@ -148,8 +145,6 @@ export class GameScene extends Phaser.Scene {
         updateFallingLogic(this.#player, this.#earth);
         updateSwimmingLogic(this.#player, this.#earth);
         updateLavaDamageLogic(this.#player, this.#earth);
-
-        this.#debugSpellcasting.update(this, this.#player, this.#earth);
     }
 
     #resetSceneState(): void {
@@ -342,12 +337,6 @@ export class GameScene extends Phaser.Scene {
         this.scene.pause();
     }
 
-    /** When enabled, casting plays a quieter cue + animation but places no
-     *  tiles or mobs. Used by the FirstTileState during the scripted intro. */
-    public setLimitedCast(enabled: boolean): void {
-        this.#debugSpellcasting.isLimitedCastEnabled = enabled;
-    }
-
     /** Place the fruit potion chest (chest #7) on a forest tile near the big tree. */
     public placeFruitChestNearBigTree(): void {
         const first = this.#earth.getFirstTilePosition();
@@ -495,10 +484,6 @@ export class GameScene extends Phaser.Scene {
 
     get progression(): GameProgression {
         return this.#progression;
-    }
-
-    get debugSpellcasting(): DebugSpellcasting {
-        return this.#debugSpellcasting;
     }
 
     get spellCasting(): SpellCastingService {

@@ -1,4 +1,5 @@
-import { CHEST_STATE, GEAR, POTION, WEAPON } from '../common/common';
+import { CASTING_UNLOCKS, CHEST_STATE, GEAR, POTION, WEAPON } from '../common/common';
+import { DataManager } from '../common/data-manager';
 import { Position } from '../common/types';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 
@@ -49,6 +50,7 @@ export class ChestSpawnService {
 
     this.#chests.push(chest);
     this.#chestGroup.add(chest);
+    DataManager.instance.increaseTilesPlaced(CASTING_UNLOCKS['CHEST' + chestNumber as keyof typeof CASTING_UNLOCKS]);
     return chest;
   }
 

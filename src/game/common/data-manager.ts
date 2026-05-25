@@ -1,6 +1,6 @@
 import type { ChestDialogInfo } from './chest-dialog';
 import { CASTING_UNLOCKS, CREATURE_TYPES, DIFFICULTY } from './common';
-import { PLAYER_START_MAX_HEALTH } from './config';
+import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
   EVENT_BUS,
@@ -55,30 +55,34 @@ export class DataManager {
   static #instance: DataManager;
 
   #data: PlayerData;
+  #totalWeightedTilesPlaced: number = 0;
+
+  #BIG: number = 4;
+  #SMALL: number = 2;
   //In this MAP we define how many tiles of each casting unlock needs to be placed before the next unlock(s) is achieved.
   #unlockCriteriaMap: UnlockCriteriaMap = new Map<CastingUnlocks, { requiredAmount: number; nextUnlock: CastingUnlocks[] }>([
-    [CASTING_UNLOCKS.ROCK_BASIC, { requiredAmount: 10, nextUnlock: [CASTING_UNLOCKS.ROCK_DECORATION] }],
-    [CASTING_UNLOCKS.ROCK_DECORATION, { requiredAmount: 10, nextUnlock: [CASTING_UNLOCKS.ROCK_BLOCKING, CASTING_UNLOCKS.CHEST1] }],
-    [CASTING_UNLOCKS.ROCK_BLOCKING, { requiredAmount: 5, nextUnlock: [CASTING_UNLOCKS.ROCK_ANIMALS, CASTING_UNLOCKS.DESERT_BASIC] }],
+    [CASTING_UNLOCKS.ROCK_BASIC, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.ROCK_DECORATION] }],
+    [CASTING_UNLOCKS.ROCK_DECORATION, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.ROCK_BLOCKING, CASTING_UNLOCKS.CHEST1] }],
+    [CASTING_UNLOCKS.ROCK_BLOCKING, { requiredAmount: this.#SMALL, nextUnlock: [CASTING_UNLOCKS.ROCK_ANIMALS, CASTING_UNLOCKS.DESERT_BASIC] }],
     //ROCK_ANIMALS & CHEST1 has no unlocks after them.
-    [CASTING_UNLOCKS.DESERT_BASIC, { requiredAmount: 10, nextUnlock: [CASTING_UNLOCKS.DESERT_DECORATION] }],
-    [CASTING_UNLOCKS.DESERT_DECORATION, { requiredAmount: 10, nextUnlock: [CASTING_UNLOCKS.DESERT_BLOCKING, CASTING_UNLOCKS.CHEST2] }],
-    [CASTING_UNLOCKS.DESERT_BLOCKING, { requiredAmount: 5, nextUnlock: [CASTING_UNLOCKS.DESERT_ANIMALS, CASTING_UNLOCKS.WATER_BASIC, CASTING_UNLOCKS.GRASS_BASIC] }],
+    [CASTING_UNLOCKS.DESERT_BASIC, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.DESERT_DECORATION] }],
+    [CASTING_UNLOCKS.DESERT_DECORATION, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.DESERT_BLOCKING, CASTING_UNLOCKS.CHEST2] }],
+    [CASTING_UNLOCKS.DESERT_BLOCKING, { requiredAmount: this.#SMALL, nextUnlock: [CASTING_UNLOCKS.DESERT_ANIMALS, CASTING_UNLOCKS.WATER_BASIC, CASTING_UNLOCKS.GRASS_BASIC] }],
     //DESERT_ANIMALS, WATER_BASIC & CHEST2 has no unlocks after them.    
-    [CASTING_UNLOCKS.GRASS_BASIC, { requiredAmount: 10, nextUnlock: [CASTING_UNLOCKS.GRASS_DECORATION] }],
-    [CASTING_UNLOCKS.GRASS_DECORATION, { requiredAmount: 15, nextUnlock: [CASTING_UNLOCKS.GRASS_BLOCKING, CASTING_UNLOCKS.CHEST3,CASTING_UNLOCKS.GRASS_ANIMALS, CASTING_UNLOCKS.FOREST_BASIC] }],
+    [CASTING_UNLOCKS.GRASS_BASIC, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.GRASS_DECORATION] }],
+    [CASTING_UNLOCKS.GRASS_DECORATION, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.GRASS_BLOCKING, CASTING_UNLOCKS.CHEST3, CASTING_UNLOCKS.GRASS_ANIMALS, CASTING_UNLOCKS.FOREST_BASIC] }],
     //GRASS_BLOCKING, GRASS_ANIMALS & CHEST3 has no unlocks after them.
-    [CASTING_UNLOCKS.FOREST_BASIC, { requiredAmount: 10, nextUnlock: [CASTING_UNLOCKS.FOREST_DECORATION] }],
-    [CASTING_UNLOCKS.FOREST_DECORATION, { requiredAmount: 10, nextUnlock: [CASTING_UNLOCKS.FOREST_BLOCKING, CASTING_UNLOCKS.CHEST4] }],
-    [CASTING_UNLOCKS.FOREST_BLOCKING, { requiredAmount: 5, nextUnlock: [CASTING_UNLOCKS.FOREST_ANIMALS, CASTING_UNLOCKS.MOUNTAIN_BASIC, CASTING_UNLOCKS.SWAMP_BASIC] }],
+    [CASTING_UNLOCKS.FOREST_BASIC, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.FOREST_DECORATION] }],
+    [CASTING_UNLOCKS.FOREST_DECORATION, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.FOREST_BLOCKING, CASTING_UNLOCKS.CHEST4] }],
+    [CASTING_UNLOCKS.FOREST_BLOCKING, { requiredAmount: this.#SMALL, nextUnlock: [CASTING_UNLOCKS.FOREST_ANIMALS, CASTING_UNLOCKS.MOUNTAIN_BASIC, CASTING_UNLOCKS.SWAMP_BASIC] }],
     //FOREST_ANIMALS, MOUNTAIN_BASIC & CHEST4 has no unlocks after them.    
-    [CASTING_UNLOCKS.SWAMP_BASIC, { requiredAmount: 10, nextUnlock: [CASTING_UNLOCKS.SWAMP_DECORATION] }],
-    [CASTING_UNLOCKS.SWAMP_DECORATION, { requiredAmount: 10, nextUnlock: [CASTING_UNLOCKS.SWAMP_BLOCKING, CASTING_UNLOCKS.CHEST5] }],
-    [CASTING_UNLOCKS.SWAMP_BLOCKING, { requiredAmount: 5, nextUnlock: [CASTING_UNLOCKS.SWAMP_ANIMALS, CASTING_UNLOCKS.MOUNTAIN_BASIC, CASTING_UNLOCKS.CRYSTAL_BASIC] }],
+    [CASTING_UNLOCKS.SWAMP_BASIC, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.SWAMP_DECORATION] }],
+    [CASTING_UNLOCKS.SWAMP_DECORATION, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.SWAMP_BLOCKING, CASTING_UNLOCKS.CHEST5] }],
+    [CASTING_UNLOCKS.SWAMP_BLOCKING, { requiredAmount: this.#SMALL, nextUnlock: [CASTING_UNLOCKS.SWAMP_ANIMALS, CASTING_UNLOCKS.MOUNTAIN_BASIC, CASTING_UNLOCKS.CRYSTAL_BASIC] }],
     //SWAMP_ANIMALS, MOUNTAIN_BASIC & CHEST5 has no unlocks after them.   
-    [CASTING_UNLOCKS.CRYSTAL_BASIC, { requiredAmount: 10, nextUnlock: [CASTING_UNLOCKS.CRYSTAL_DECORATION] }],
-    [CASTING_UNLOCKS.CRYSTAL_DECORATION, { requiredAmount: 10, nextUnlock: [CASTING_UNLOCKS.CRYSTAL_BLOCKING, CASTING_UNLOCKS.CHEST6] }],
-    [CASTING_UNLOCKS.CRYSTAL_BLOCKING, { requiredAmount: 5, nextUnlock: [CASTING_UNLOCKS.CRYSTAL_ANIMALS, CASTING_UNLOCKS.LAVA_BASIC] }],
+    [CASTING_UNLOCKS.CRYSTAL_BASIC, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.CRYSTAL_DECORATION] }],
+    [CASTING_UNLOCKS.CRYSTAL_DECORATION, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.CRYSTAL_BLOCKING, CASTING_UNLOCKS.CHEST6] }],
+    [CASTING_UNLOCKS.CRYSTAL_BLOCKING, { requiredAmount: this.#SMALL, nextUnlock: [CASTING_UNLOCKS.CRYSTAL_ANIMALS, CASTING_UNLOCKS.LAVA_BASIC] }],
     //CRYSTAL_ANIMALS, LAVA_BASIC & CHEST6 has no unlocks after them.   
   ]);
 
@@ -177,12 +181,58 @@ export class DataManager {
     }
     this.#data.tilesPlaced[castingUnlock] += 1;
 
+    //test powerlevel for upgrade.
+    switch (castingUnlock) {
+      case CASTING_UNLOCKS.ROCK_BASIC: this.#totalWeightedTilesPlaced += 1; break;
+      case CASTING_UNLOCKS.DESERT_BASIC: this.#totalWeightedTilesPlaced += 1; break;
+      case CASTING_UNLOCKS.GRASS_BASIC: this.#totalWeightedTilesPlaced += 1; break;
+      case CASTING_UNLOCKS.FOREST_BASIC: this.#totalWeightedTilesPlaced += 1; break;
+      case CASTING_UNLOCKS.SWAMP_BASIC: this.#totalWeightedTilesPlaced += 1; break;
+      case CASTING_UNLOCKS.CRYSTAL_BASIC: this.#totalWeightedTilesPlaced += 1; break;
+      case CASTING_UNLOCKS.WATER_BASIC: this.#totalWeightedTilesPlaced += 10; break;
+      case CASTING_UNLOCKS.MOUNTAIN_BASIC: this.#totalWeightedTilesPlaced += 10; break;
+      case CASTING_UNLOCKS.LAVA_BASIC: this.#totalWeightedTilesPlaced += 10; break;
+      case CASTING_UNLOCKS.ROCK_DECORATION: this.#totalWeightedTilesPlaced += 2; break;
+      case CASTING_UNLOCKS.DESERT_DECORATION: this.#totalWeightedTilesPlaced += 2; break;
+      case CASTING_UNLOCKS.GRASS_DECORATION: this.#totalWeightedTilesPlaced += 2; break;
+      case CASTING_UNLOCKS.FOREST_DECORATION: this.#totalWeightedTilesPlaced += 2; break;
+      case CASTING_UNLOCKS.SWAMP_DECORATION: this.#totalWeightedTilesPlaced += 2; break;
+      case CASTING_UNLOCKS.CRYSTAL_DECORATION: this.#totalWeightedTilesPlaced += 2; break;
+      case CASTING_UNLOCKS.ROCK_BLOCKING: this.#totalWeightedTilesPlaced += 3; break;
+      case CASTING_UNLOCKS.DESERT_BLOCKING: this.#totalWeightedTilesPlaced += 3; break;
+      case CASTING_UNLOCKS.GRASS_BLOCKING: this.#totalWeightedTilesPlaced += 3; break;
+      case CASTING_UNLOCKS.FOREST_BLOCKING: this.#totalWeightedTilesPlaced += 3; break;
+      case CASTING_UNLOCKS.SWAMP_BLOCKING: this.#totalWeightedTilesPlaced += 3; break;
+      case CASTING_UNLOCKS.CRYSTAL_BLOCKING: this.#totalWeightedTilesPlaced += 3; break;
+    }
+    const levelUpThreshold = LEVEL_UP_TILE_THRESHOLDS[this.#data.currentPower];
+    const debugDivider = DataManager.instance.data.isDebugMode ? 10 : 1;
+    if (this.#totalWeightedTilesPlaced >= levelUpThreshold / debugDivider) {
+      //Power up player.
+      this.updatePlayerCurrentPower(this.#data.currentPower + 1);
+    }
+
     //Test if unlock next is achieved.
     const unlockCriteria = this.#unlockCriteriaMap.get(castingUnlock);
-    if (unlockCriteria && this.#data.tilesPlaced[castingUnlock] >= unlockCriteria.requiredAmount) {
+    if (!unlockCriteria) { return; }
+    const nextUnlocks = unlockCriteria?.nextUnlock ?? [];
+    if (nextUnlocks.length === 0) { console.log('Nothing to unlock', { castingUnlock }); return; }
+    //Tests if all next unlocks are achieved, if so return softly.
+    if (nextUnlocks.every(unlock => this.#data.unlockedSpellCasting.has(unlock))) {
+      console.log('Unlocks already achieved', { castingUnlock, nextUnlocks });
+      return;
+    } else {
+      console.log('Pending unlockc', { nextUnlocks });
+    }
+
+    if (unlockCriteria &&
+      this.#data.tilesPlaced[castingUnlock] >= unlockCriteria.requiredAmount) {
       for (const nextUnlock of unlockCriteria.nextUnlock) {
         this.#data.unlockedSpellCasting.add(nextUnlock);
+        console.log(`Unlock achieved: ${nextUnlock}`);
       }
+    } else {
+      console.log('No unlock', { castingUnlock, tilesPlaced: this.#data.tilesPlaced[castingUnlock], unlockCriteria });
     }
   }
 

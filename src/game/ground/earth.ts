@@ -674,7 +674,7 @@ export class Earth {
             .play('void-marker-flow');
     }
 
-    AddChesToTile(position: Position): void {
+    AddChestToTile(position: Position): void {
         let existingTile = this.allTiles.get(this.key(position.x, position.y));
         if (existingTile === undefined) return;
         let chestNumber: number;
@@ -692,8 +692,6 @@ export class Earth {
         this.allTiles.set(this.key(position.x, position.y), existingTile);
 
         this.placeChest?.(position, chestNumber);
-
-        DataManager.instance.data.unlockedSpellCasting.delete(CASTING_UNLOCKS['CHEST' + chestNumber as keyof typeof CASTING_UNLOCKS]);
     }
 
     AddBlockingToTile(position: Position): void {

@@ -135,7 +135,7 @@ export class SpellCastingService {
     const voidTargets = targetWithInfo.filter(t => t.biome === BIOME.VOID);
 
     // 1) SPELL_TYPES.BASIC, Base tile spell is cast if any void tiles in target. 
-    if (voidTargets.length > 0) { 
+    if (voidTargets.length > 0) {
       const sortedVoidTargets = voidTargets.sort((a, b) => { return b.neighborCount - a.neighborCount; });// Prioritize void tiles with most neighbors.
       return { spellTiles: sortedVoidTargets.slice(0, Math.min(sortedVoidTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.BASIC };
     }
@@ -146,23 +146,27 @@ export class SpellCastingService {
       if (decorationTargets.length > 0) {
         return { spellTiles: decorationTargets.slice(0, Math.min(decorationTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.DECORATION };
       }
-    }    
-    const blockingTargets = targetWithInfo.filter(t => t.biome === _casterTile.biome && t.decorated && !t.blocking);  
+    }
+    const blockingTargets = targetWithInfo.filter(t => t.biome === _casterTile.biome && t.decorated && !t.blocking);
 
     // 3) SPELL_TYPES.CHEST, Chest spawn spell (currently only 10% chance)
-    if(this.chestIsUnlocked(_casterTile.biome) && blockingTargets.length > 0 && (Phaser.Math.Between(1, 100) <= 10)){
+    if (this.chestIsUnlockedAndUnplaced(_casterTile.biome) &&
+      blockingTargets.length > 0 &&
+      (Phaser.Math.Between(1, 100) <= 99)) {
       const sortedBlockingTargets = blockingTargets.sort((a, b) => { return -b.neighborCount + a.neighborCount; });// Prioritize blocking tiles with least neighbors.
       return { spellTiles: [sortedBlockingTargets[0].pos], spellType: SPELL_TYPES.CHEST };
     }
 
     // 4) SPELL_TYPES.ANIMAL, Animal spawn spell (currently only 10% chance)
-    if(this.animalsIsUnlocked(_casterTile.biome) && blockingTargets.length > 0 && (Phaser.Math.Between(1, 100) <= 10)){
+    if (this.animalsIsUnlocked(_casterTile.biome) &&
+      blockingTargets.length > 0 &&
+      (Phaser.Math.Between(1, 100) <= 99)) {
       const sortedBlockingTargets = blockingTargets.sort((a, b) => { return b.neighborCount - a.neighborCount; });// Prioritize blocking tiles with most neighbors.
       return { spellTiles: [sortedBlockingTargets[0].pos], spellType: SPELL_TYPES.ANIMAL };
     }
 
     // 5) SPELL_TYPES.BLOCKING, Blocking spell if any decorated but not blocked tiles of same biome as caster is on in target and blocking this biome is unlocked.
-    if(this.blockingIsUnlocked(_casterTile.biome)&& (Phaser.Math.Between(1, 100) <= 50)){//50% chance to cast blocking spell if criteria met.
+    if (this.blockingIsUnlocked(_casterTile.biome) && (Phaser.Math.Between(1, 100) <= 99)) {//50% chance to cast blocking spell if criteria met.
       if (blockingTargets.length > 0) {
         // ToDo: also handle animals here.
         return { spellTiles: blockingTargets.slice(0, Math.min(blockingTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.BLOCKING };
@@ -206,16 +210,28 @@ export class SpellCastingService {
       case BIOME.CRYSTAL: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CRYSTAL_ANIMALS);
     }
     return false;;
-  }  
+  }
 
-  private chestIsUnlocked(biome: number): boolean {
+  private chestIsUnlockedAndUnplaced(biome: number): boolean {
     switch (biome) {
-      case BIOME.ROCK: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST1);
-      case BIOME.DESERT: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST2);
-      case BIOME.GRASS: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST3);
-      case BIOME.FOREST: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST4);
-      case BIOME.SWAMP: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST5);
-      case BIOME.CRYSTAL: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST6);
+      case BIOME.ROCK:
+        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST1) &&
+          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST1] > 0);
+      case BIOME.DESERT:
+        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST2) &&
+          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST2] > 0);
+      case BIOME.GRASS:
+        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST3) &&
+          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST3] > 0);
+      case BIOME.FOREST:
+        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST4) &&
+          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST4] > 0);
+      case BIOME.SWAMP:
+        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST5) &&
+          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST5] > 0);
+      case BIOME.CRYSTAL:
+        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST6) &&
+          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST6] > 0);
     }
     return false;;
   }
@@ -313,7 +329,7 @@ export class SpellCastingService {
           this.earth.AddBlockingToTile(endTile);
           break;
         case SPELL_TYPES.CHEST:
-          this.earth.AddChesToTile(endTile);
+          this.earth.AddChestToTile(endTile);
           break;
         case SPELL_TYPES.ANIMAL:
           (this.scene as GameScene).addMob(endTile, biome);
