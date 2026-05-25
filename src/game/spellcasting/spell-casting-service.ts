@@ -150,13 +150,13 @@ export class SpellCastingService {
     const blockingTargets = targetWithInfo.filter(t => t.biome === _casterTile.biome && t.decorated && !t.blocking);  
 
     // 3) SPELL_TYPES.CHEST, Chest spawn spell (currently only 10% chance)
-    if(this.chestIsUnlocked(_casterTile.biome) && (Phaser.Math.Between(1, 100) <= 10)){
+    if(this.chestIsUnlocked(_casterTile.biome) && blockingTargets.length > 0 && (Phaser.Math.Between(1, 100) <= 10)){
       const sortedBlockingTargets = blockingTargets.sort((a, b) => { return -b.neighborCount + a.neighborCount; });// Prioritize blocking tiles with least neighbors.
       return { spellTiles: [sortedBlockingTargets[0].pos], spellType: SPELL_TYPES.CHEST };
     }
 
     // 4) SPELL_TYPES.ANIMAL, Animal spawn spell (currently only 10% chance)
-    if(this.animalsIsUnlocked(_casterTile.biome) && (Phaser.Math.Between(1, 100) <= 10)){
+    if(this.animalsIsUnlocked(_casterTile.biome) && blockingTargets.length > 0 && (Phaser.Math.Between(1, 100) <= 10)){
       const sortedBlockingTargets = blockingTargets.sort((a, b) => { return b.neighborCount - a.neighborCount; });// Prioritize blocking tiles with most neighbors.
       return { spellTiles: [sortedBlockingTargets[0].pos], spellType: SPELL_TYPES.ANIMAL };
     }
@@ -316,7 +316,7 @@ export class SpellCastingService {
           this.earth.AddChesToTile(endTile);
           break;
         case SPELL_TYPES.ANIMAL:
-          (this.scene as GameScene).addMob(endTile);
+          (this.scene as GameScene).addMob(endTile, biome);
           break;
       }
     });

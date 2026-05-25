@@ -9,8 +9,6 @@ import { CHEST_CHANCE, ENABLE_LOGGING } from '../common/config';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../common/event-bus';
 import { DataManager } from '../common/data-manager';
 import { CastingUnlocks } from '../common/types';
-//import { addChest } from '../scenes/debug/debug-chests';
-import { GameScene } from '../scenes/game-scene';
 
 export type ChestPlacementHandler = (position: Position, chestNumber: number) => void;
 
@@ -693,8 +691,7 @@ export class Earth {
         existingTile.chest = chestNumber;
         this.allTiles.set(this.key(position.x, position.y), existingTile);
 
-        //ToDo: Refactor chest placement.
-        (this.scene as GameScene).addChest( chestNumber);//empty function stub
+        this.placeChest?.(position, chestNumber);
 
         DataManager.instance.data.unlockedSpellCasting.delete(CASTING_UNLOCKS['CHEST' + chestNumber as keyof typeof CASTING_UNLOCKS]);
     }

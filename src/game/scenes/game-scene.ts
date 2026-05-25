@@ -12,7 +12,7 @@ import { CharacterGameObject } from '../game-objects/common/character-game-objec
 import { CastingUnlocks, GameObject2, Position } from '../common/types';
 import { DataManager, createEmptyCreaturesEverCreated } from '../common/data-manager';
 import { writeChestDialogInfo } from '../common/chest-dialog';
-import { addChest, setupDebugChests } from './debug/debug-chests';
+import { setupDebugChests } from './debug/debug-chests';
 import { spawnDebugEnemies } from './debug/debug-enemies';
 import { updateFallingLogic } from './debug/debug-falling';
 import { updateLavaDamageLogic } from './debug/debug-lava';
@@ -24,19 +24,17 @@ import { SCENE_KEYS } from './scene-keys';
 import { Tile } from '../ground/tile';
 import { GameProgression } from '../progression/game-progression';
 import { GAME_STATES } from '../components/state-machine/states/game/game-state-keys';
+import { ChestSpawnService } from '../spawning/chest-spawn-service';
+import { AnimalSpawnService } from '../spawning/animal-spawn-service';
 
 export class GameScene extends Phaser.Scene {
 
-    //ToDo: Refactor addMob (enemy).
-    addMob(endTile: Position) {
-      //For now do nothing.
-      console.warn('addMob called but it is not implemented yet');
+        addMob(endTile: Position, biome: BIOME) {
+            this.#animalSpawn.spawnForBiome(endTile, biome);
     }
 
-    //ToDo: refactor chest placement so we can get rid of debug-chests.ts.
-    addChest(chestNumber: number) {
-        //For now do nothing.        
-        console.warn('addChest called but it is not implemented yet');
+        addChest(position: Position, chestNumber: number) {
+                this.#chestSpawn.spawn(position, chestNumber);
     }
 
     #controls!: KeyboardComponent;
@@ -45,8 +43,9 @@ export class GameScene extends Phaser.Scene {
     #critterGroup?: Phaser.GameObjects.Group;
     #earth!: Earth;
     #playerStartPosition = { x: 32035, y: 32020 };
-    #chests: ChestJJK[] = [];
     #chestJJKGroup!: Phaser.GameObjects.Group;
+    #chestSpawn!: ChestSpawnService;
+    #animalSpawn!: AnimalSpawnService;
     #debugSpellcasting!: DebugSpellcasting;
     #spellCasting!: SpellCastingService;
     #progression!: GameProgression;
@@ -78,7 +77,7 @@ export class GameScene extends Phaser.Scene {
         this.#chestJJKGroup = this.add.group([]);
 
         this.#earth = new Earth(this, (position, chestNumber) => {
-            addChest(position, this, this.#chests, this.#chestJJKGroup, chestNumber);
+            this.addChest(position, chestNumber);
         });
         this.#earth.createMap(1000, 1000);
 
@@ -87,6 +86,8 @@ export class GameScene extends Phaser.Scene {
 
         this.#enemyGroup = this.add.group();
         this.#critterGroup = this.add.group();
+        this.#chestSpawn = new ChestSpawnService(this, this.#chestJJKGroup, this.#earth.getTileSize());
+        this.#animalSpawn = new AnimalSpawnService(this, this.#enemyGroup, this.#critterGroup, this.#earth.getTileSize());
         this.#registerCustomEvents();
 
         this.scene.launch(SCENE_KEYS.UI_SCENE);
@@ -154,7 +155,6 @@ export class GameScene extends Phaser.Scene {
     #resetSceneState(): void {
         this.#enemyGroup = undefined;
         this.#critterGroup = undefined;
-        this.#chests = [];
         this.#isGameplayReady = false;
     }
 
@@ -296,7 +296,7 @@ export class GameScene extends Phaser.Scene {
         const firstTilePosition = this.placeStartingTile();
         //console.debug('[GameScene] starting tile placed', firstTilePosition);
 
-        this.#chests = setupDebugChests(this, this.#earth, firstTilePosition, this.#chestJJKGroup);
+        setupDebugChests(this.#earth, firstTilePosition, (position, chestNumber) => this.addChest(position, chestNumber));
         setupDebugBlocking(this, this.#earth, firstTilePosition);
         spawnDebugEnemies(this, this.#enemyGroup!, this.#critterGroup!, this.#earth, firstTilePosition);
         this.#earth.AddVoidMarkerTile(firstTilePosition.x + 5, firstTilePosition.y + 3);
@@ -309,7 +309,7 @@ export class GameScene extends Phaser.Scene {
             biome: BIOME.FOREST,
         });
         this.#earth.AddTile(fruitChestTile);
-        addChest({ x: firstTilePosition.x + 7, y: firstTilePosition.y }, this, this.#chests, this.#chestJJKGroup, 7);
+        this.addChest({ x: firstTilePosition.x + 7, y: firstTilePosition.y }, 7);
         //Tmp test of bigTree
         //this.#earth.placeGardenTiles();
 
@@ -358,7 +358,7 @@ export class GameScene extends Phaser.Scene {
         const tilePos = { x: first.x + 1, y: first.y };
         const tile = new Tile({ tilenumber: tilePos, biome: BIOME.FOREST });
         this.#earth.AddTile(tile);
-        addChest(tilePos, this, this.#chests, this.#chestJJKGroup, 7);
+        this.addChest(tilePos, 7);
     }
 
     #handlePlayerDefeatedEvent(): void {
@@ -454,7 +454,7 @@ export class GameScene extends Phaser.Scene {
     // Getters  ------------------------------------
 
     #getChestById(chestId: number | undefined): ChestJJK | undefined {
-        return this.#chests.find((chest) => chest.id === chestId);
+        return this.#chestSpawn.getById(chestId);
     }
 
     public getChestGroup(): Phaser.GameObjects.Group {
@@ -462,7 +462,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     public getChestArray(): ChestJJK[] {
-        return this.#chests;
+        return this.#chestSpawn.getAll();
     }
 
     public getBlockingGeometryGroup(): Phaser.GameObjects.Group {
@@ -486,7 +486,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     get chestArray(): ChestJJK[] {
-        return this.#chests;
+        return this.#chestSpawn.getAll();
     }
 
     get chestJJKGroup(): Phaser.GameObjects.Group {

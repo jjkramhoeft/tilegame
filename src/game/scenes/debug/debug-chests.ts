@@ -5,13 +5,10 @@ import { ChestJJK } from '../../game-objects/objects/chestJJK';
 import { Position } from '../../common/types';
 
 export function setupDebugChests(
-    scene: Phaser.Scene,
     earth: Earth,
     firstTilePosition: Position,
-    chestGroup: Phaser.GameObjects.Group,
-): ChestJJK[] {
-
-    const chests: ChestJJK[] = [];
+    placeChest: (position: Position, chestNumber: number) => void,
+): void {
 
     const debugTileOffsets: Position[] = [
         { x: 0, y: -1 },
@@ -49,7 +46,7 @@ export function setupDebugChests(
                 tilenumber: { x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y },
                 biome: 1,
             }));
-            addChest({ x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y }, scene, chests, chestGroup, debugChestNumber);
+            placeChest({ x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y }, debugChestNumber);
         } else {
             earth.AddTile(new Tile({
                 tilenumber: { x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y },
@@ -65,8 +62,6 @@ export function setupDebugChests(
         });
         earth.AddTile(tile);
     });
-
-    return chests;
 }
 
 /** @deprecated  */
