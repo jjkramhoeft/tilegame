@@ -345,3 +345,61 @@ The game has a page/scene with points to talk about to encourage thinking about 
 - A Second Chance
 
   Starting over, Save game? Game Over, Trial and error, How do we learn?, How do we stay good friends?
+
+## Music
+
+  Title Scene, Credits & Talking Points got background music
+  
+## Sound
+
+### UI
+
+- Up [menu_006.wav]*
+- Down [menu_024.wav]*
+- Select [Blip_Select7.wav]*
+- game state dialog shown [sucess1.mp3]*
+- Left (Settings only) [menu_018.wav]*
+- Right (Settings only) [menu_023.wav]*
+
+### Game
+
+- footsteps [shortfootsteps.wav]
+- watersplash [water-splash.mp3]
+  
+  --------
+
+- sword hit [attack-sword.mp3]
+- staff hit [attack-staff.mp3]
+- dagger hit [attack-dagger.mp3]
+- hands hit [attack-punch.mp3]
+- attack no hit [no-hit.wav]
+- female player hurt [female-ow.mp3]
+- male player hurt [male-ow.mp3]
+- player bounced/bumped [bump.wav]
+
+  --------
+
+- open chest [chest.mp3]
+- close chest [chest2.mp3]
+
+  --------
+
+- good magic x 12 [magic-audio-sprite.mp3]
+- bad magic x 12 [magic-audio-sprite-bad.mp3]
+- failed magic (no target) [magic-down.mp3]*
+- [magic-down-2.mp3] irretating to listens to
+- [shortspell1.wav] old deprecated spell sound
+
+  --------
+
+- magic powerlevel up [levelup.mp3]
+- (max) health up [levelup2.mp3]*
+- progression up (animal spawn) [powerup.mp3]*
+- progression down (animal died) [duii-laser.mp3]*
+- new unlock -> game state dialog shown [sucess1.mp3]*
+  
+  --------
+
+- game over by falling [game-over.mp3]*
+- game over killed [game-over2.mp3]*
+- game won [win.mp3]*
