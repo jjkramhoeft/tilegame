@@ -354,8 +354,8 @@ The game has a page/scene with points to talk about to encourage thinking about 
 
 ### UI
 
-- Up [menu_006.wav]*
-- Down [menu_024.wav]*
+- Up [menu_006.wav]*+
+- Down [menu_024.wav]*+
 - Select [Blip_Select7.wav]*
 - game state dialog shown [sucess1.mp3]*
 - Left (Settings only) [menu_018.wav]*
@@ -363,37 +363,37 @@ The game has a page/scene with points to talk about to encourage thinking about 
 
 ### Game
 
-- footsteps [shortfootsteps.wav]
-- watersplash [water-splash.mp3]
+- footsteps [shortfootsteps.wav]+
+- watersplash [water-splash.mp3]+
   
   --------
 
-- sword hit [attack-sword.mp3]
-- staff hit [attack-staff.mp3]
-- dagger hit [attack-dagger.mp3]
-- hands hit [attack-punch.mp3]
+- sword hit [attack-sword.mp3]+
+- staff hit [attack-staff.mp3]+
+- dagger hit [attack-dagger.mp3]+
+- hands hit [attack-punch.mp3]+
 - attack no hit [no-hit.wav]
-- female player hurt [female-ow.mp3]
-- male player hurt [male-ow.mp3]
+- female player hurt [female-ow.mp3]+
+- male player hurt [male-ow.mp3]+
 - player bounced/bumped [bump.wav]
 
   --------
 
-- open chest [chest.mp3]
-- close chest [chest2.mp3]
+- open chest [chest.mp3]+
+- close chest [chest2.mp3]+
 
   --------
 
 - good magic x 12 [magic-audio-sprite.mp3]
 - bad magic x 12 [magic-audio-sprite-bad.mp3]
 - failed magic (no target) [magic-down.mp3]*
-- [magic-down-2.mp3] irretating to listens to
-- [shortspell1.wav] old deprecated spell sound
+- [magic-down-2.mp3] irretating to listens to+
+- [shortspell1.wav] old deprecated spell sound+
 
   --------
 
-- magic powerlevel up [levelup.mp3]
-- (max) health up [levelup2.mp3]*
+- magic powerlevel up [levelup.mp3]+
+- (max) health up [levelup2.mp3]*+
 - progression up (animal spawn) [powerup.mp3]*
 - progression down (animal died) [duii-laser.mp3]*
 - new unlock -> game state dialog shown [sucess1.mp3]*
