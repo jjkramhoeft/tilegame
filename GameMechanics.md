@@ -47,6 +47,7 @@ The tile map consist of six layers
 - Blocked by blocking layer, void layer, water layer and mountain layer
 
 #### Lamb
+
 Can be used as a template for implementing the other animals.
 
 Main class is lamb.ts in src/game/game-objets/enemies
@@ -62,7 +63,7 @@ The animations for the Lamb is set up in PreloadScene and the key for the animat
 - Options: Spider, Snake, Lizardman, Skeleton
 - Cast blob shadow (is included in sprite)
 - Blocked by blocking layer, void layer, water layer and mountain layer
-- Needs path finding and some simple chase mechanics 
+- Needs path finding and some simple chase mechanics
 
 ## Biomes
 
@@ -109,6 +110,7 @@ consist of the fowwing ellements
 - Story Dialog (used for story driven text)
 
 ## Game Map
+
 I want to introduce a map into the game. The player can choose to look at it instead of the normal view (the map fills the entire screen, i.e. it is NOT just a small part of the HUD). The player can switch back and forth between the map and gameplay.
 
 Pressing the map key (the 'm' key) during gameplay pauses the game and only shows the map scene. When the player then presses the action key (the 'x' key), the map scene is hidden and the regular play area with HUD is shown, and the game resumes.
@@ -174,6 +176,7 @@ The game play progression is implemented using StateMachine, a BaseGameState and
 
 A narrator game state, Player is passive.
 The events in this gameState is as following:
+
 1) empty screen (no player and no tiles)
 2) text: "...In the beginning the earth was formless and empty..."
 3) 1 sec pause
@@ -197,6 +200,7 @@ After player movement and an attack/cast transition to Assignment State
 
 A narrator game state, Player is passive.
 No player movement
+
 1) 1 sec pause
 2) Text: "...And you shall help in the creating, make the land, fill it with green forest and then animals"
 3) 1 sec pause
@@ -215,6 +219,7 @@ when target are filled and 2 blocking rocks are placed in tiles, and player is b
 
 A narrator game state, Player is passive.
 No player movement
+
 1) 1 sec pause
 2) Text: "...Not just barren rock and wasteland, no green fields, flowing rivers and trees..."
 3) Change tiles one by one to a more fertile and green, add water like a river, add bushes and small trees, and then add the big tree. (use placeGardenTiles() in earth)
@@ -234,6 +239,7 @@ Can transition to many game states (firstTree, firstAnimal, eve, bossFight, game
 A narrator game state, Player is passive.
 No player movement.
 Triggered by first blocking forest tree, desert palm/cacti, swamp tree, from regular state. This transition will be implemented later.
+
 1) 1 sec pause
 2) Text "You added you first tree, fine here can animal thrive..."
 3) Transition to regular game state
@@ -242,6 +248,7 @@ Triggered by first blocking forest tree, desert palm/cacti, swamp tree, from reg
 
 A narrator game state, Player is passive.
 Triggered by first Chicken, Lamb etc. This transition will be implemented later.
+
 1) 1 sec pause
 2) Text "You are not alone! let life multiply..."
 3) Transition to regular Game State
@@ -255,11 +262,13 @@ Trigger by ??? (to be defined)
 Adam or Eve depending on what play play as. (will pick the opposite sex as the player)
 Same gear and weapon as player, but can not be changed.
 The main features of the companion character type should be:
+
 - Following player.
 - Auto attacks
 - Multiply animals
 - Adds to max health to player, when introduced
 The narrator game state should have these elements:
+
 1) Text: "It is not good to be alone..."
 2) Place Eve(or Adam) companion
 3) Text: ", Here is a companion fitting for you..."
@@ -277,6 +286,7 @@ Lizardman boss, do timed minions (small snakes) attack starting with sound.
 A narrator game state, Player is passive.
 Triggered by player death
 Simple Game Over
+
 1) Text: "Game Over..."
 2) on exit then exit to main menu (intro-scene)
 
@@ -285,6 +295,7 @@ Simple Game Over
 To be implemented later. Needs further refinement.
 A narrator game state, Player is passive.
 Trigger by boss fight end or animal progression maxed
+
 - Text: "You have won!.."
 - on exit then exit to main menu (intro-scene)
 
@@ -345,3 +356,61 @@ The game has a page/scene with points to talk about to encourage thinking about 
 - A Second Chance
 
   Starting over, Save game? Game Over, Trial and error, How do we learn?, How do we stay good friends?
+
+## Music
+
+  Title Scene, Credits & Talking Points got background music
+  
+## Sound
+
+### UI
+
+- Up [menu_006.wav]*+
+- Down [menu_024.wav]*+
+- Select [Blip_Select7.wav]*
+- game state dialog shown [sucess1.mp3]*
+- Left (Settings only) [menu_018.wav]*
+- Right (Settings only) [menu_023.wav]*
+
+### Game
+
+- footsteps [shortfootsteps.wav]+
+- watersplash [water-splash.mp3]+
+  
+  --------
+
+- sword hit [attack-sword.mp3]+
+- staff hit [attack-staff.mp3]+
+- dagger hit [attack-dagger.mp3]+
+- hands hit [attack-punch.mp3]+
+- attack no hit [no-hit.wav]
+- female player hurt [female-ow.mp3]+
+- male player hurt [male-ow.mp3]+
+- player bounced/bumped [bump.wav]
+
+  --------
+
+- open chest [chest.mp3]+
+- close chest [chest2.mp3]+
+
+  --------
+
+- good magic x 12 [magic-audio-sprite.mp3]
+- bad magic x 12 [magic-audio-sprite-bad.mp3]
+- failed magic (no target) [magic-down.mp3]*
+- [magic-down-2.mp3] irretating to listens to+
+- [shortspell1.wav] old deprecated spell sound+
+
+  --------
+
+- magic powerlevel up [levelup.mp3]+
+- (max) health up [levelup2.mp3]*+
+- progression up (animal spawn) [powerup.mp3]*
+- progression down (animal died) [duii-laser.mp3]*
+- new unlock -> game state dialog shown [sucess1.mp3]*
+  
+  --------
+
+- game over by falling [game-over.mp3]*
+- game over killed [game-over2.mp3]*
+- game won [win.mp3]*

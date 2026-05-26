@@ -64,6 +64,21 @@ export class PreloadScene extends Phaser.Scene {
         this.load.spritesheet('magic-fx-light-cast', 'assets/magic-fx-light-cast.png', { frameWidth: 96, frameHeight: 96 });// 28 frames.
         this.load.spritesheet('magic-fx-blue-circleexplosion', 'assets/magic-fx-blue-circleexplosion.png', { frameWidth: 256, frameHeight: 256 });// 10 frames.
         this.load.spritesheet('magic-fx-notes', 'assets/spell-music-11_grayscale.png', { frameWidth: 150, frameHeight: 150 });// 11 frames.
+
+        //Sound effects
+        this.load.audio('menu_006', 'assets/menu_006.wav');
+        this.load.audio('menu_018', 'assets/menu_018.wav');
+        this.load.audio('menu_023', 'assets/menu_023.wav');
+        this.load.audio('menu_024', 'assets/menu_024.wav');
+        this.load.audio('success1', 'assets/success1.mp3');
+        this.load.audio('Blip_Select7', 'assets/Blip_Select7.wav');
+        this.load.audio('no-hit', 'assets/no-hit.wav');
+        this.load.audio('bump', 'assets/bump.wav');
+        this.load.audio('powerup', 'assets/powerup.mp3');
+        this.load.audio('duii-laser', 'assets/duii-laser.mp3');
+        this.load.audio('game-over', 'assets/game-over.mp3');
+        this.load.audio('game-over2', 'assets/game-over2.mp3');
+        this.load.audio('win', 'assets/win.mp3');
     }
 
     public create(): void {
