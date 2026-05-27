@@ -111,7 +111,7 @@ consist of the fowwing ellements
 
 ## Game Map
 
-I want to introduce a map into the game. The player can choose to look at it instead of the normal view (the map fills the entire screen, i.e. it is NOT just a small part of the HUD). The player can switch back and forth between the map and gameplay.
+The player can choose to look at it instead of the normal view (the map fills the entire screen, i.e. it is NOT just a small part of the HUD). The player can switch back and forth between the map and gameplay.
 
 Pressing the map key (the 'm' key) during gameplay pauses the game and only shows the map scene. When the player then presses the action key (the 'x' key), the map scene is hidden and the regular play area with HUD is shown, and the game resumes.
 
