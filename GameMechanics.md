@@ -365,12 +365,17 @@ The game has a page/scene with points to talk about to encourage thinking about 
 
 ### UI
 
-- Up [menu_006.wav]*+
-- Down [menu_024.wav]*+
-- Select [Blip_Select7.wav]*
-- Narrator (game state dialog shown) [sucess1.mp3]*
-- Left (Settings only) [menu_018.wav]*
-- Right (Settings only) [menu_023.wav]*
+- Up [menu_006.wav]
+- Down [menu_024.wav]
+- Select [Blip_Select7.wav]
+- Narrator (game state dialog shown) [sucess1.mp3]
+- open chest [chest.mp3]
+- close chest [chest2.mp3]
+- game over by falling [game-over.mp3]*
+- game over killed [game-over2.mp3]*
+- game won [win.mp3]*
+- [menu_018.wav]*
+- [menu_023.wav]*
 
 ### Game
 
@@ -390,11 +395,6 @@ The game has a page/scene with points to talk about to encourage thinking about 
 
   --------
 
-- open chest [chest.mp3]+
-- close chest [chest2.mp3]+
-
-  --------
-
 - good magic x 12 [magic-audio-sprite.mp3]
 - bad magic x 12 [magic-audio-sprite-bad.mp3]
 - failed magic (no target) [magic-down.mp3]*
@@ -409,8 +409,3 @@ The game has a page/scene with points to talk about to encourage thinking about 
 - progression down (animal died) [duii-laser.mp3]*
 - new unlock -> game state dialog shown [sucess1.mp3]*
   
-  --------
-
-- game over by falling [game-over.mp3]*
-- game over killed [game-over2.mp3]*
-- game won [win.mp3]*
