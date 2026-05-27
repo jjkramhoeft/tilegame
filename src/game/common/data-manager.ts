@@ -59,8 +59,8 @@ export class DataManager {
   #data: PlayerData;
   #totalWeightedTilesPlaced: number = 0;
 
-  #BIG: number = 4;
-  #SMALL: number = 2;
+  #BIG: number = 10;
+  #SMALL: number = 4;
   //In this MAP we define how many tiles of each casting unlock needs to be placed before the next unlock(s) is achieved.
   #unlockCriteriaMap: UnlockCriteriaMap = new Map<CastingUnlocks, { requiredAmount: number; nextUnlock: CastingUnlocks[] }>([
     [CASTING_UNLOCKS.ROCK_BASIC, { requiredAmount: this.#BIG, nextUnlock: [CASTING_UNLOCKS.ROCK_DECORATION] }],

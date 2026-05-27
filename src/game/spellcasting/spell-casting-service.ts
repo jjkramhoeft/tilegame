@@ -291,11 +291,26 @@ export class SpellCastingService {
     // spawn VFX at startTile if an origon.
     if (isOrigon) {
       // spawn origon VFX at startTile center (not player).
-      const origonVFX = this.scene.add.sprite(startTile.x * tile_size + half_tile, startTile.y * tile_size + half_tile, 'magic-fx-holy-explosion');
+      // spawn VFX traveling from startTile center to player travelGVector.
+      const player = (this.scene as GameScene).playerPosition;
+      let travelGVector: CastVector = { x: (player.x-32 - startTile.x * tile_size), y: (player.y - startTile.y * tile_size) };
+      //let startGVector: CastVector = { x: startTile.x * tile_size + half_tile, y: startTile.y * tile_size + half_tile };
+      const origonVFX = this.scene.add
+        .sprite(startTile.x * tile_size + half_tile, startTile.y * tile_size + half_tile, 'magic-fx-holy-explosion')
+        .setScale(0.6, 0.35)
+        .setOrigin(0.5, 0.5);
       origonVFX.setDepth(DECORATION_DEPTH + 1);
       origonVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
       origonVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
       origonVFX.playReverse(ASSET_KEYS.CAST_ORIGON);
+      this.scene.tweens.add({
+        targets: origonVFX,
+        x: origonVFX.x + travelGVector.x/2,
+        y: origonVFX.y + travelGVector.y/2,
+        duration: 1000,
+        ease: 'Sine.easeOut',
+        onComplete: () => spell.destroy(),
+      });
       origonVFX.on('animationcomplete', () => {
         origonVFX.destroy();
       });
@@ -328,7 +343,9 @@ export class SpellCastingService {
 
     // spawn delayed VFX at endTile after travel time.
     this.scene.time.delayedCall(1000, () => {
-      const impactVFX = this.scene.add.sprite(endTile.x * tile_size + half_tile, endTile.y * tile_size + half_tile, 'magic-fx-light-cast');
+      const impactVFX = this.scene.add
+        .sprite(endTile.x * tile_size + half_tile, endTile.y * tile_size + half_tile, 'magic-fx-light-cast')
+        .setScale(1.0, 0.6);
       impactVFX.setDepth(DECORATION_DEPTH + 1);
       impactVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
       impactVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
