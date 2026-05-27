@@ -93,7 +93,10 @@ export class UiScene extends Phaser.Scene {
   #chestOpenSound!: Phaser.Sound.BaseSound;
   #chestCloseSound!: Phaser.Sound.BaseSound;
   #levelUpSound!: Phaser.Sound.BaseSound;
-
+  #uiDownSound!: Phaser.Sound.BaseSound;
+  #uiUpSound!: Phaser.Sound.BaseSound;
+  #uiSelectSound!: Phaser.Sound.BaseSound;
+  #narratorSound!:Phaser.Sound.BaseSound;
   constructor() {
     super({
       key: SCENE_KEYS.UI_SCENE,
@@ -124,6 +127,10 @@ export class UiScene extends Phaser.Scene {
     this.#chestOpenSound = this.sound.add('chest');
     this.#chestCloseSound = this.sound.add('chest2');
     this.#levelUpSound = this.sound.add('levelup', { volume: 1.0 });
+    this.#uiDownSound =this.sound.add('menu_006');
+    this.#uiUpSound =this.sound.add('menu_024');
+    this.#uiSelectSound =this.sound.add('Blip_Select7');
+    this.#narratorSound = this.sound.add('sucess1');
 
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
@@ -220,6 +227,9 @@ export class UiScene extends Phaser.Scene {
     this.#narratorDialogText.setText(getText(payload.textKey));
     this.#narratorDialogContainer.visible = true;
     //console.debug('[UiScene] narrator dialog visible', {mode: this.#getUiModeName(), closeAction: this.#narratorDialogCloseAction, });
+    if (!this.#narratorSound.isPlaying) {
+      this.#narratorSound.play();
+    }
   }
 
   public update(): void {
@@ -235,16 +245,25 @@ export class UiScene extends Phaser.Scene {
 
     if ( narratorConfirmWithActionKey) {
       this.#confirmSelectedOption();
+      if (!this.#uiSelectSound.isPlaying) {
+        this.#uiSelectSound.play();
+      }
       return;
     }
 
     if (this.#controls.isUpJustDown) {
       this.#moveSelection(-1);
+      if (!this.#uiUpSound.isPlaying) {
+        this.#uiUpSound.play();
+      }
       return;
     }
 
     if (this.#controls.isDownJustDown) {
       this.#moveSelection(1);
+      if (!this.#uiDownSound.isPlaying) {
+        this.#uiDownSound.play();
+      }
     }
   }
 

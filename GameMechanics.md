@@ -368,7 +368,7 @@ The game has a page/scene with points to talk about to encourage thinking about 
 - Up [menu_006.wav]*+
 - Down [menu_024.wav]*+
 - Select [Blip_Select7.wav]*
-- game state dialog shown [sucess1.mp3]*
+- Narrator (game state dialog shown) [sucess1.mp3]*
 - Left (Settings only) [menu_018.wav]*
 - Right (Settings only) [menu_023.wav]*
 
