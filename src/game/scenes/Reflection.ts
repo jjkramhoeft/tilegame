@@ -62,6 +62,7 @@ export class Reflection extends Scene
     private controls?: KeyboardComponent;
     private scrollOffset = 0;
     private maxScrollOffset = 0;
+    #uiSelectSound!: Phaser.Sound.BaseSound;
 
     constructor ()
     {
@@ -74,6 +75,7 @@ export class Reflection extends Scene
         const centerX = this.cameras.main.centerX;
         const registryVolume = this.registry.get('musicVolume');
         const musicVolume = typeof registryVolume === 'number' ? registryVolume : 0.1;
+        this.#uiSelectSound = this.sound.add('Blip_Select7');
 
         this.registry.set('musicVolume', musicVolume);
 
@@ -100,7 +102,8 @@ export class Reflection extends Scene
         });
         exit_text.setOrigin(1);
         exit_text.setInteractive({ useHandCursor: true });
-        exit_text.on('pointerdown', () => {
+        exit_text.on('pointerdown', () => {         
+            this.#uiSelectSound.play();
             this.returnToIntro();
         });
 
@@ -120,7 +123,8 @@ export class Reflection extends Scene
 
     update (_time: number, delta: number)
     {
-        if (this.controls && (this.controls.isActionKeyJustDown)) {
+        if (this.controls && (this.controls.isActionKeyJustDown)) {     
+            this.#uiSelectSound.play();
             this.returnToIntro();
             return;
         }
