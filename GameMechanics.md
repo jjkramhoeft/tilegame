@@ -111,7 +111,7 @@ consist of the fowwing ellements
 
 ## Game Map
 
-I want to introduce a map into the game. The player can choose to look at it instead of the normal view (the map fills the entire screen, i.e. it is NOT just a small part of the HUD). The player can switch back and forth between the map and gameplay.
+The player can choose to look at it instead of the normal view (the map fills the entire screen, i.e. it is NOT just a small part of the HUD). The player can switch back and forth between the map and gameplay.
 
 Pressing the map key (the 'm' key) during gameplay pauses the game and only shows the map scene. When the player then presses the action key (the 'x' key), the map scene is hidden and the regular play area with HUD is shown, and the game resumes.
 
@@ -365,12 +365,17 @@ The game has a page/scene with points to talk about to encourage thinking about 
 
 ### UI
 
-- Up [menu_006.wav]*+
-- Down [menu_024.wav]*+
-- Select [Blip_Select7.wav]*
-- Narrator (game state dialog shown) [sucess1.mp3]*
-- Left (Settings only) [menu_018.wav]*
-- Right (Settings only) [menu_023.wav]*
+- Up [menu_006.wav]
+- Down [menu_024.wav]
+- Select [Blip_Select7.wav]
+- Narrator (game state dialog shown) [sucess1.mp3]
+- open chest [chest.mp3]
+- close chest [chest2.mp3]
+- game over by falling [game-over.mp3]*
+- game over killed [game-over2.mp3]*
+- game won [win.mp3]*
+- [menu_018.wav]*
+- [menu_023.wav]*
 
 ### Game
 
@@ -390,11 +395,6 @@ The game has a page/scene with points to talk about to encourage thinking about 
 
   --------
 
-- open chest [chest.mp3]+
-- close chest [chest2.mp3]+
-
-  --------
-
 - good magic x 12 [magic-audio-sprite.mp3]
 - bad magic x 12 [magic-audio-sprite-bad.mp3]
 - failed magic (no target) [magic-down.mp3]*
@@ -409,8 +409,3 @@ The game has a page/scene with points to talk about to encourage thinking about 
 - progression down (animal died) [duii-laser.mp3]*
 - new unlock -> game state dialog shown [sucess1.mp3]*
   
-  --------
-
-- game over by falling [game-over.mp3]*
-- game over killed [game-over2.mp3]*
-- game won [win.mp3]*

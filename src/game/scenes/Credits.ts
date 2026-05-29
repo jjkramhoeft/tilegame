@@ -44,7 +44,8 @@ export class Credits extends Scene
     private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
     private controls?: KeyboardComponent;
     private scrollOffset = 0;
-    private maxScrollOffset = 0;
+    private maxScrollOffset = 0;    
+    #uiSelectSound!: Phaser.Sound.BaseSound;
 
     constructor ()
     {
@@ -57,6 +58,7 @@ export class Credits extends Scene
         const centerX = this.cameras.main.centerX;
         const registryVolume = this.registry.get('musicVolume');
         const musicVolume = typeof registryVolume === 'number' ? registryVolume : 0.1;
+        this.#uiSelectSound = this.sound.add('Blip_Select7');
 
         this.registry.set('musicVolume', musicVolume);
 
@@ -86,7 +88,8 @@ export class Credits extends Scene
         });
         exit_text.setOrigin(1);
         exit_text.setInteractive({ useHandCursor: true });
-        exit_text.on('pointerdown', () => {
+        exit_text.on('pointerdown', () => {                     
+            this.#uiSelectSound.play();
             this.returnToIntro();
         });
 
@@ -105,7 +108,8 @@ export class Credits extends Scene
 
     update (_time: number, delta: number)
     {
-        if (this.controls && (this.controls.isActionKeyJustDown)) {
+        if (this.controls && (this.controls.isActionKeyJustDown)) {         
+            this.#uiSelectSound.play();
             this.returnToIntro();
             return;
         }

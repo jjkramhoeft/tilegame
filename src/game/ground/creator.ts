@@ -7,25 +7,25 @@ type TargetPattern = readonly (readonly Offset[])[];
 
 const TARGET_PATTERNS: Partial<Record<string, TargetPattern>> = {
     UP: [
-        [[-1, 0], [1, 0]],
+        [[-1, 0], [1, 0], [-1, 1], [1, 1]],
         [[0, -1], [-1, -1], [1, -1]],
         [[0, -2], [-1, -2], [1, -2], [-2, -2], [2, -2]],
         [[0, -3], [-1, -3], [1, -3], [-2, -3], [2, -3]],
     ],
     DOWN: [
-        [[-1, 0], [1, 0]],
+        [[-1, 0], [1, 0], [-1, -1], [1, -1]],
         [[0, 1], [-1, 1], [1, 1]],
         [[0, 2], [-1, 2], [1, 2], [-2, 2], [2, 2]],
         [[0, 3], [-1, 3], [1, 3], [-2, 3], [2, 3]],
     ],
     LEFT: [
-        [[0, -1], [0, 1]],
+        [[0, -1], [0, 1], [1, -1], [1, 1]],
         [[-1, 0], [-1, -1], [-1, 1]],
         [[-2, 0], [-2, -1], [-2, 1], [-2, -2], [-2, 2]],
         [[-3, 0], [-3, -1], [-3, 1], [-3, -2], [-3, 2]],
     ],
     RIGHT: [
-        [[0, -1], [0, 1]],
+        [[0, -1], [0, 1], [-1, -1], [-1, 1]],
         [[1, 0], [1, -1], [1, 1]],
         [[2, 0], [2, -1], [2, 1], [2, -2], [2, 2]],
         [[3, 0], [3, -1], [3, 1], [3, -2], [3, 2]],
@@ -56,21 +56,21 @@ const TARGET_PATTERNS: Partial<Record<string, TargetPattern>> = {
     ],
 };
 
-const DECORATION_MAP = new Map<number, {minIndex: number, maxIndex: number}>([
-    [BIOME.ROCK, { minIndex: 18, maxIndex: 32}],
-    [BIOME.DESERT, { minIndex: 30, maxIndex: 34}],
-    [BIOME.GRASS, { minIndex: 35, maxIndex: 48}],
-    [BIOME.FOREST, { minIndex: 49, maxIndex: 55}],
-    [BIOME.SWAMP, { minIndex: 9, maxIndex: 17}],
-    [BIOME.CRYSTAL, { minIndex: 0, maxIndex: 8}],
+const DECORATION_MAP = new Map<number, { minIndex: number, maxIndex: number }>([
+    [BIOME.ROCK, { minIndex: 18, maxIndex: 32 }],
+    [BIOME.DESERT, { minIndex: 30, maxIndex: 34 }],
+    [BIOME.GRASS, { minIndex: 35, maxIndex: 48 }],
+    [BIOME.FOREST, { minIndex: 49, maxIndex: 55 }],
+    [BIOME.SWAMP, { minIndex: 9, maxIndex: 17 }],
+    [BIOME.CRYSTAL, { minIndex: 0, maxIndex: 8 }],
 ]);
 
-const BLOCKING_MAP = new Map<number, {minIndex: number, maxIndex: number}>([
+const BLOCKING_MAP = new Map<number, { minIndex: number, maxIndex: number }>([
     [BIOME.ROCK, { minIndex: 0, maxIndex: 19, }],
-    [BIOME.DESERT, { minIndex: 84, maxIndex: 91}],
-    [BIOME.FOREST, { minIndex: 20, maxIndex: 46}],
-    [BIOME.SWAMP, { minIndex: 47, maxIndex: 58}],
-    [BIOME.CRYSTAL, { minIndex: 60, maxIndex: 83}],
+    [BIOME.DESERT, { minIndex: 84, maxIndex: 91 }],
+    [BIOME.FOREST, { minIndex: 20, maxIndex: 46 }],
+    [BIOME.SWAMP, { minIndex: 47, maxIndex: 58 }],
+    [BIOME.CRYSTAL, { minIndex: 60, maxIndex: 83 }],
 ]);
 
 const BORDER_SKIP_CHANCE = 0.002;

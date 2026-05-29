@@ -96,7 +96,7 @@ export class UiScene extends Phaser.Scene {
   #uiDownSound!: Phaser.Sound.BaseSound;
   #uiUpSound!: Phaser.Sound.BaseSound;
   #uiSelectSound!: Phaser.Sound.BaseSound;
-  #narratorSound!:Phaser.Sound.BaseSound;
+  #narratorSound!: Phaser.Sound.BaseSound;
   constructor() {
     super({
       key: SCENE_KEYS.UI_SCENE,
@@ -127,9 +127,9 @@ export class UiScene extends Phaser.Scene {
     this.#chestOpenSound = this.sound.add('chest');
     this.#chestCloseSound = this.sound.add('chest2');
     this.#levelUpSound = this.sound.add('levelup', { volume: 1.0 });
-    this.#uiDownSound =this.sound.add('menu_006');
-    this.#uiUpSound =this.sound.add('menu_024');
-    this.#uiSelectSound =this.sound.add('Blip_Select7');
+    this.#uiDownSound = this.sound.add('menu_006');
+    this.#uiUpSound = this.sound.add('menu_024');
+    this.#uiSelectSound = this.sound.add('Blip_Select7');
     this.#narratorSound = this.sound.add('sucess1');
 
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
@@ -188,7 +188,7 @@ export class UiScene extends Phaser.Scene {
   }
 
   public updatePowerInHud(data: PlayerPowerUpdated): void {
-    this.#syncMeter(this.#power, DataManager.instance.data.maxPower, data.currentPower+2);
+    this.#syncMeter(this.#power, DataManager.instance.data.maxPower, data.currentPower + 2);
     if (data.type === PLAYER_UPDATE_TYPE.INCREASE && !this.#levelUpSound.isPlaying) {
       this.#levelUpSound.play();
     }
@@ -240,28 +240,24 @@ export class UiScene extends Phaser.Scene {
       return;
     }
 
-    const narratorConfirmWithActionKey = this.#controls.isActionKeyJustDown && 
+    const narratorConfirmWithActionKey = this.#controls.isActionKeyJustDown &&
       (this.#uiMode === UiMode.NarratorDialog || this.#uiMode === UiMode.ChestDialog);
 
-    if ( narratorConfirmWithActionKey) {
+    if (narratorConfirmWithActionKey) {
       this.#confirmSelectedOption();
-      if (!this.#uiSelectSound.isPlaying) {
-        this.#uiSelectSound.play();
-      }
+      this.#uiSelectSound.play();
       return;
     }
 
-    if (this.#controls.isUpJustDown) {
-      this.#moveSelection(-1);
-      if (!this.#uiUpSound.isPlaying) {
+    if (this.#uiMode !== UiMode.HudOnly) {
+      if (this.#controls.isUpJustDown) {
+        this.#moveSelection(-1);
         this.#uiUpSound.play();
+        return;
       }
-      return;
-    }
 
-    if (this.#controls.isDownJustDown) {
-      this.#moveSelection(1);
-      if (!this.#uiDownSound.isPlaying) {
+      if (this.#controls.isDownJustDown) {
+        this.#moveSelection(1);
         this.#uiDownSound.play();
       }
     }
@@ -377,7 +373,7 @@ export class UiScene extends Phaser.Scene {
       .setDisplaySize(DIALOG_CURSOR_SIZE, DIALOG_CURSOR_SIZE);
     this.#chestDialogContainer.add(this.#cursorGameObject);
 
-    const navigationHelpText = this.add.text(DIALOG_HEADING_X+50, DIALOG_FIRST_OPTION_Y + 3 * DIALOG_OPTION_SPACING, getText('ui.dialog_navigation_help'), DEFAULT_UI_HEADING_STYLE).setOrigin(0);
+    const navigationHelpText = this.add.text(DIALOG_HEADING_X + 50, DIALOG_FIRST_OPTION_Y + 3 * DIALOG_OPTION_SPACING, getText('ui.dialog_navigation_help'), DEFAULT_UI_HEADING_STYLE).setOrigin(0);
     this.#chestDialogContainer.add(navigationHelpText);
 
     this.#chestDialogContainer.visible = false;

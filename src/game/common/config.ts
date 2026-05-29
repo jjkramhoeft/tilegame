@@ -14,7 +14,7 @@ export const PLAYER_ATTACK_DAMAGE = 1;
 export const PLAYER_LAVA_DAMAGE = 1;
 export const IDLE_SLOWDOWN_FACTOR = 0.9;
 export const IDLE_STOP_SPEED = 5;
-export const PLAYER_SPELL_CAST_COOLDOWN = 1000;
+export const PLAYER_SPELL_CAST_COOLDOWN = 500;
 export const SPELL_STAGGER_MS = 500;
 
 export const ENEMY_SPIDER_SPEED = 60; // 80

@@ -46,8 +46,7 @@ type PickerRow = {
     onNext: () => void;
 };
 
-export class Settings extends Scene
-{
+export class Settings extends Scene {
     private musicIndex = 1;
     private languageIndex = 1;
     private playerIndex = 0;
@@ -58,18 +57,23 @@ export class Settings extends Scene
     private cursor!: Phaser.GameObjects.Image;
     private cursorOutline!: Phaser.GameObjects.Image;
     private controls?: KeyboardComponent;
+    #uiDownSound!: Phaser.Sound.BaseSound;
+    #uiUpSound!: Phaser.Sound.BaseSound;
+    #uiSelectSound!: Phaser.Sound.BaseSound;
 
-    constructor ()
-    {
+    constructor() {
         super('settings');
     }
 
-    create ()
-    {
+    create() {
         this.localizedTextObjects = [];
         this.rows = [];
         this.selectedRowIndex = 0;
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'credit-bg');
+
+        this.#uiDownSound = this.sound.add('menu_006');
+        this.#uiUpSound = this.sound.add('menu_024');
+        this.#uiSelectSound = this.sound.add('Blip_Select7');
 
         const savedDifficulty = this.registry.get('difficulty');
         const hasSavedDifficulty = savedDifficulty === DIFFICULTY.EASY || savedDifficulty === DIFFICULTY.HARD || savedDifficulty === DIFFICULTY.DEBUG;
@@ -172,12 +176,12 @@ export class Settings extends Scene
 
         this.cursorOutline = this.add.image(0, 0, ASSET_KEYS.UI_CURSOR, 0)
             .setOrigin(0.5)
-            .setDisplaySize(CURSOR_SIZE*2 + 6, CURSOR_SIZE*2 + 6)
+            .setDisplaySize(CURSOR_SIZE * 2 + 6, CURSOR_SIZE * 2 + 6)
             .setDepth(100)
             .setTint(0x000010);
         this.cursor = this.add.image(0, 0, ASSET_KEYS.UI_CURSOR, 0)
             .setOrigin(0.56, 0.5)
-            .setDisplaySize(CURSOR_SIZE*2-4, CURSOR_SIZE*2-2)
+            .setDisplaySize(CURSOR_SIZE * 2 - 4, CURSOR_SIZE * 2 - 2)
             .setDepth(101)
             .setTint(0x5eb1da);
         this.updateCursorPosition();
@@ -195,18 +199,19 @@ export class Settings extends Scene
         this.trackLocalizedText(backText, () => getText('settings.back'));
         backText.setOrigin(1);
         backText.setInteractive({ useHandCursor: true });
-        backText.on('pointerdown', () => {
+        backText.on('pointerdown', () => {         
+            this.#uiSelectSound.play();
             this.scene.start(SCENE_KEYS.INTRO);
         });
     }
 
-    update (): void
-    {
+    update(): void {
         if (!this.controls || this.rows.length === 0) {
             return;
         }
 
-        if (this.controls.isEscapeKeyJustDown || this.controls.isActionKeyJustDown) {
+        if (this.controls.isEscapeKeyJustDown || this.controls.isActionKeyJustDown) {            
+            this.#uiSelectSound.play();
             this.scene.start(SCENE_KEYS.INTRO);
             return;
         }
@@ -214,12 +219,14 @@ export class Settings extends Scene
         if (this.controls.isUpJustDown) {
             this.selectedRowIndex = Phaser.Math.Clamp(this.selectedRowIndex - 1, 0, this.rows.length - 1);
             this.updateCursorPosition();
+            this.#uiUpSound.play();
             return;
         }
 
         if (this.controls.isDownJustDown) {
             this.selectedRowIndex = Phaser.Math.Clamp(this.selectedRowIndex + 1, 0, this.rows.length - 1);
             this.updateCursorPosition();
+            this.#uiDownSound.play();
             return;
         }
 
@@ -227,16 +234,17 @@ export class Settings extends Scene
         if (this.controls.isLeftJustDown) {
             activeRow.onPrevious();
             activeRow.valueText.setText(activeRow.getValueText());
+            this.#uiDownSound.play();
             return;
         }
         if (this.controls.isRightJustDown) {
             activeRow.onNext();
-            activeRow.valueText.setText(activeRow.getValueText());
+            activeRow.valueText.setText(activeRow.getValueText());            
+            this.#uiUpSound.play();
         }
     }
 
-    private updateCursorPosition (): void
-    {
+    private updateCursorPosition(): void {
         if (!this.cursor || this.rows.length === 0) {
             return;
         }
@@ -246,18 +254,17 @@ export class Settings extends Scene
         this.cursorOutline.setPosition(cursorX, row.y);
     }
 
-    private createPickerRow (config: {
+    private createPickerRow(config: {
         x: number;
         y: number;
         getLabelText: () => string;
         getValueText: () => string;
         onPrevious: () => void;
         onNext: () => void;
-    }): void
-    {
-        let x1= 80;
-        let x2=700;
-        const labelText = this.add.text(x1, config.y -25 , config.getLabelText(), {
+    }): void {
+        let x1 = 80;
+        let x2 = 700;
+        const labelText = this.add.text(x1, config.y - 25, config.getLabelText(), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 5,
         }).setOrigin(0);
@@ -268,13 +275,13 @@ export class Settings extends Scene
             stroke: COLORS.uiTextBorder, strokeThickness: 5,
         }).setOrigin(0.5);
 
-        const valueText = this.add.text(x2-50, config.y, config.getValueText(), {
+        const valueText = this.add.text(x2 - 50, config.y, config.getValueText(), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
             stroke: COLORS.titleStroke, strokeThickness: 5,
         }).setOrigin(0.5);
         this.trackLocalizedText(valueText, config.getValueText);
 
-        const nextText = this.add.text(x2 + 170-100, config.y, '>', {
+        const nextText = this.add.text(x2 + 170 - 100, config.y, '>', {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.uiText,
             stroke: COLORS.uiTextBorder, strokeThickness: 5,
         }).setOrigin(0.5);
@@ -301,45 +308,38 @@ export class Settings extends Scene
         });
     }
 
-    private changeMusicVolume (direction: number): void
-    {
+    private changeMusicVolume(direction: number): void {
         this.musicIndex = Phaser.Math.Wrap(this.musicIndex + direction, 0, MUSIC_LEVELS.length);
         this.applyMusicVolume();
     }
 
-    private changeLanguage (direction: number): void
-    {
+    private changeLanguage(direction: number): void {
         this.languageIndex = Phaser.Math.Wrap(this.languageIndex + direction, 0, LANGUAGE_OPTIONS.length);
         this.applyLanguage();
         this.refreshLocalizedTexts();
     }
 
-    private trackLocalizedText (text: Phaser.GameObjects.Text, getValue: () => string): void
-    {
+    private trackLocalizedText(text: Phaser.GameObjects.Text, getValue: () => string): void {
         this.localizedTextObjects.push({ text, getValue });
     }
 
-    private refreshLocalizedTexts (): void
-    {
+    private refreshLocalizedTexts(): void {
         this.localizedTextObjects.forEach(({ text, getValue }) => {
             text.setText(getValue());
         });
     }
 
-    private changePlayer (direction: number): void
-    {
+    private changePlayer(direction: number): void {
         this.playerIndex = Phaser.Math.Wrap(this.playerIndex + direction, 0, PLAYER_OPTIONS.length);
         this.applyPlayer();
     }
 
-    private applyMusicVolume (): void
-    {
+    private applyMusicVolume(): void {
         const value = MUSIC_LEVELS[this.musicIndex];
         this.registry.set('musicVolume', value);
     }
 
-    private applyLanguage (): void
-    {
+    private applyLanguage(): void {
         const languageIsDanish = LANGUAGE_OPTIONS[this.languageIndex].isDanish;
         this.registry.set('languageIsDanish', languageIsDanish);
         DataManager.instance.data = {
@@ -348,8 +348,7 @@ export class Settings extends Scene
         };
     }
 
-    private applyPlayer (): void
-    {
+    private applyPlayer(): void {
         const playerSex = PLAYER_OPTIONS[this.playerIndex].sex;
         this.registry.set('playerSex', playerSex);
         DataManager.instance.data = {
@@ -358,20 +357,18 @@ export class Settings extends Scene
         };
     }
 
-    private changeDifficulty (direction: number): void
-    {
+    private changeDifficulty(direction: number): void {
         this.debugIndex = Phaser.Math.Wrap(this.debugIndex + direction, 0, DEBUG_OPTIONS.length);
         this.applyDifficulty();
     }
 
-    private applyDifficulty (): void
-    {
+    private applyDifficulty(): void {
         const difficulty = DEBUG_OPTIONS[this.debugIndex].value;
         const debugEnabled = difficulty === DIFFICULTY.DEBUG;
         this.registry.set('difficulty', difficulty);
         this.registry.set('physicsDebug', debugEnabled);
         setEnableLogging(debugEnabled);
-        
+
         const gameScene = this.scene.get('GameScene');
         if (gameScene?.physics?.world) {
             const world = gameScene.physics.world;

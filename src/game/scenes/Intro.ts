@@ -31,6 +31,10 @@ export class Intro extends Scene {
     private cursorOutline!: Phaser.GameObjects.Image;
     private controls?: KeyboardComponent;
 
+    #uiDownSound!: Phaser.Sound.BaseSound;
+    #uiUpSound!: Phaser.Sound.BaseSound;
+    #uiSelectSound!: Phaser.Sound.BaseSound;
+
     constructor() {
         super('intro');
     }
@@ -38,6 +42,10 @@ export class Intro extends Scene {
     create() {
         this.menuItems = [];
         this.selectedMenuIndex = 0;
+
+        this.#uiDownSound = this.sound.add('menu_006');
+        this.#uiUpSound = this.sound.add('menu_024');
+        this.#uiSelectSound = this.sound.add('Blip_Select7');
 
         let musicVolume = this.registry.get('musicVolume');
         if (typeof musicVolume !== 'number') {
@@ -62,23 +70,27 @@ export class Intro extends Scene {
 
         this.exit_text = this.createMenuText(550, getText('intro.newGame'), () => {
             this.introMusic?.stop();
+            this.#uiSelectSound.play();
             this.scene.stop(SCENE_KEYS.UI_SCENE);
             this.scene.stop(SCENE_KEYS.GAME_SCENE);
             this.scene.start(SCENE_KEYS.GAME_SCENE);
         });
 
         this.createMenuText(600, getText('intro.settings'), () => {
-            this.introMusic?.stop();
+            this.introMusic?.stop();         
+            this.#uiSelectSound.play();
             this.scene.start(SCENE_KEYS.SETTINGS);
         });
 
         this.createMenuText(650, getText('intro.credits'), () => {
-            this.introMusic?.stop();
+            this.introMusic?.stop();         
+            this.#uiSelectSound.play();
             this.scene.start(SCENE_KEYS.CREDITS);
         });
 
         this.createMenuText(700, getText('intro.reflection'), () => {
-            this.introMusic?.stop();
+            this.introMusic?.stop();                     
+            this.#uiSelectSound.play();
             this.scene.start(SCENE_KEYS.REFLECTION);
         });
 
@@ -115,16 +127,21 @@ export class Intro extends Scene {
         if (this.controls.isUpJustDown) {
             this.selectedMenuIndex = Phaser.Math.Clamp(this.selectedMenuIndex - 1, 0, this.menuItems.length - 1);
             this.updateCursorPosition();
+            this.#uiUpSound.play();
             return;
         }
 
         if (this.controls.isDownJustDown) {
             this.selectedMenuIndex = Phaser.Math.Clamp(this.selectedMenuIndex + 1, 0, this.menuItems.length - 1);
             this.updateCursorPosition();
+            this.#uiDownSound.play();
             return;
         }
 
         if (this.controls.isActionKeyJustDown) {
+            if (!this.#uiSelectSound.isPlaying) {
+                this.#uiSelectSound.play();
+            }
             this.menuItems[this.selectedMenuIndex].onSelect();
         }
     }

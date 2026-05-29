@@ -72,7 +72,7 @@ export class PreloadScene extends Phaser.Scene {
         this.load.audio('menu_018', 'assets/menu_018.wav');
         this.load.audio('menu_023', 'assets/menu_023.wav');
         this.load.audio('menu_024', 'assets/menu_024.wav');
-        this.load.audio('success1', 'assets/success1.mp3');
+        this.load.audio('sucess1', 'assets/sucess1.mp3');
         this.load.audio('Blip_Select7', 'assets/Blip_Select7.wav');
         this.load.audio('no-hit', 'assets/no-hit.wav');
         this.load.audio('bump', 'assets/bump.wav');

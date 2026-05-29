@@ -2,6 +2,10 @@
 
 ## A Phaser Typescript game
 
+### The 1st Garden - The Gardener's Apprentice
+
+This game is a top-down RPG game. The player creates the map while playing
+
 ### Initial Setup
 
 - create template: `npm create @phaserjs/game@latest`
@@ -120,15 +124,3 @@ After:
 ```
 
 Either of these will stop `log.js` from running. If you do decide to do this, please could you at least join our Discord and tell us which template you're using! Or send us a quick email. Either will be super-helpful, thank you.
-
-## Phaser Community
-
-**Play:** Some of the amazing games [#madewithphaser](https://twitter.com/search?q=%23madewithphaser&src=typed_query&f=live)
-
-**Learn:** [API Docs](https://newdocs.phaser.io), [Support Forum](https://phaser.discourse.group/) and [StackOverflow](https://stackoverflow.com/questions/tagged/phaser-framework)
-
-**Discord:** Join us on [Discord](https://discord.gg/phaser)
-
-**Code:** 2000+ [Examples](https://labs.phaser.io)
-
-**Read:** The [Phaser World](https://phaser.io/community/newsletter) Newsletter
