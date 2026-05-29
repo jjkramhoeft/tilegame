@@ -56,6 +56,8 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(ASSET_KEYS.MAP_STAR3, 'assets/map-star3.png');
         this.load.image(ASSET_KEYS.MAP_CONSTELLATIONS, 'assets/map-constellations.png');
 
+        this.load.spritesheet(ASSET_KEYS.PLANT1+'-ATTACK', 'assets/Plant1_Attack_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
+
         //Spellcasting sfx
         this.load.audio('magic-audio-sprite', 'assets/magic-audio-sprite.mp3');
         this.load.audio('magic-audio-sprite-bad', 'assets/magic-audio-sprite-bad.mp3');
@@ -407,5 +409,7 @@ export class PreloadScene extends Phaser.Scene {
         anims.create({ key: SNAKE_ANIMATION_KEYS.ATTACK_UP, frames: anims.generateFrameNumbers('Snake', { start: 60, end: 69 }), frameRate: 10, repeat: -1 });
         anims.create({ key: SNAKE_ANIMATION_KEYS.ATTACK_LEFT, frames: anims.generateFrameNumbers('Snake', { start: 40, end: 49 }), frameRate: 10, repeat: -1 });
         anims.create({ key: SNAKE_ANIMATION_KEYS.ATTACK_RIGHT, frames: anims.generateFrameNumbers('Snake', { start: 50, end: 59 }), frameRate: 10, repeat: -1 });
+
+        anims.create({key: '', frames: anims.generateFrameNumbers('kk',{start:1,end: 2}), frameRate: 1, repeat: 0});
     }
 }
