@@ -296,7 +296,7 @@ export class Earth {
         this.allTiles.set(this.key(tileX, tileY), voidMarkerTile);
         //voidMarkerTile?.setCollision(true, true, true, true); collision not need on maker void tiles, they are use early in the game when there are no animals, so no bounce is needed.
         this.scene.add
-            .sprite(voidMarkerTile.tileX * this.tileSize + this.tileSize / 2, voidMarkerTile.tileY * this.tileSize + this.tileSize / 2, 'tile-animated')
+            .sprite(voidMarkerTile.tileX * this.tileSize + this.tileSize / 2, voidMarkerTile.tileY * this.tileSize + this.tileSize / 2, ASSET_KEYS.TILESET_ANIMATED)
             .setOrigin(0.5, 0.5)
             .setAngle(Phaser.Math.RND.pick([0, 90, 180, 270]))
             .setDepth(VOID_ANIM_DEPTH)
@@ -522,13 +522,13 @@ export class Earth {
             }
             if (tile.biome === BIOME.WATER) {
                 this.scene.add
-                    .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
+                    .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, ASSET_KEYS.TILESET_ANIMATED)
                     .setOrigin(0, 0)
                     .setDepth(WATER_DEPTH)
                     .play('water-flow');
             } else if (tile.biome === BIOME.LAVA) {
                 this.scene.add
-                    .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, 'tile-animated')
+                    .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, ASSET_KEYS.TILESET_ANIMATED)
                     .setOrigin(0, 0)
                     .setDepth(LAVA_DEPTH)
                     .play('lava-flow');
@@ -536,7 +536,7 @@ export class Earth {
                 const crystalAnimationChance = 0.7;
                 if (Phaser.Math.RND.realInRange(0, 1) < crystalAnimationChance) {
                     this.scene.add
-                        .sprite(tile.tileX * this.tileSize + this.tileSize / 2, tile.tileY * this.tileSize + this.tileSize / 2, 'tile-animated')
+                        .sprite(tile.tileX * this.tileSize + this.tileSize / 2, tile.tileY * this.tileSize + this.tileSize / 2, ASSET_KEYS.TILESET_ANIMATED)
                         .setOrigin(0.5, 0.5)
                         .setAngle(Phaser.Math.RND.pick([0, 90, 180, 270]))
                         .setDepth(CRYSTAL_GLIMTS_DEPTH)
@@ -545,7 +545,7 @@ export class Earth {
             } else if (tile.biome === BIOME.VOID) {
                 {
                     this.scene.add
-                        .sprite(tile.tileX * this.tileSize + this.tileSize / 2, tile.tileY * this.tileSize + this.tileSize / 2, 'tile-animated')
+                        .sprite(tile.tileX * this.tileSize + this.tileSize / 2, tile.tileY * this.tileSize + this.tileSize / 2, ASSET_KEYS.TILESET_ANIMATED)
                         .setOrigin(0.5, 0.5)
                         .setAngle(Phaser.Math.RND.pick([0, 90, 180, 270]))
                         .setDepth(VOID_ANIM_DEPTH)
@@ -779,7 +779,7 @@ export class Earth {
 
         const spawnBigTree = (): void => {
             this.scene.add
-                .sprite(first.x * this.tileSize, first.y * this.tileSize, 'big-tree')
+                .sprite(first.x * this.tileSize, first.y * this.tileSize, ASSET_KEYS.BIG_TREE)
                 .setOrigin(0.25, 0.85)
                 .setDepth(first.y * this.tileSize + 32)
                 .play('big-tree-growth', true);

@@ -280,7 +280,7 @@ export class SpellCastingService {
     let markerIndex = Phaser.Math.Between(1, 12);
     let badTag = spellType === SPELL_TYPES.BASIC ? '-bad' : '';
     let volume = spellType === SPELL_TYPES.BASIC ? 0.8 : 1.0;
-    this.scene.sound.play(`magic-audio-sprite${badTag}`, {
+    this.scene.sound.play(`${ASSET_KEYS.MAGIC_AUDIO_SPRITE}${badTag}`, {
       name: `spell-cast-${markerIndex}${badTag}`,
       start: (markerIndex - 1) * 2,
       duration: 1.5,
@@ -296,7 +296,7 @@ export class SpellCastingService {
       let travelGVector: CastVector = { x: (player.x-32 - startTile.x * tile_size), y: (player.y - startTile.y * tile_size) };
       //let startGVector: CastVector = { x: startTile.x * tile_size + half_tile, y: startTile.y * tile_size + half_tile };
       const origonVFX = this.scene.add
-        .sprite(startTile.x * tile_size + half_tile, startTile.y * tile_size + half_tile, 'magic-fx-holy-explosion')
+        .sprite(startTile.x * tile_size + half_tile, startTile.y * tile_size + half_tile, ASSET_KEYS.MAGIC_FX_HOLY_EXPLOSION)
         .setScale(0.6, 0.35)
         .setOrigin(0.5, 0.5);
       origonVFX.setDepth(DECORATION_DEPTH + 1);
@@ -325,7 +325,7 @@ export class SpellCastingService {
       travelVector = { x: (endTile.x * tile_size + half_tile - startVector.x), y: (endTile.y * tile_size + half_tile - startVector.y) }
     }
     const spell = this.scene.add
-      .sprite(startVector.x + travelVector.x / 10, startVector.y + travelVector.y / 10, 'spell-music-11_grayscale')
+      .sprite(startVector.x + travelVector.x / 10, startVector.y + travelVector.y / 10, ASSET_KEYS.MAGIC_FX_NOTES)
       .setScale(0.5)
       .setOrigin(0.5, 0.5);
     spell.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
@@ -344,7 +344,7 @@ export class SpellCastingService {
     // spawn delayed VFX at endTile after travel time.
     this.scene.time.delayedCall(1000, () => {
       const impactVFX = this.scene.add
-        .sprite(endTile.x * tile_size + half_tile, endTile.y * tile_size + half_tile, 'magic-fx-light-cast')
+        .sprite(endTile.x * tile_size + half_tile, endTile.y * tile_size + half_tile, ASSET_KEYS.MAGIC_FX_LIGHT_CAST)
         .setScale(1.0, 0.6);
       impactVFX.setDepth(DECORATION_DEPTH + 1);
       impactVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);

@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { BaseWeapon, WeaponAttackAnimationConfig } from './base-weapon';
 import { DIRECTION } from '../../common/common';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
-import { ASSET_KEYS } from '../../common/assets';
+//import { ASSET_KEYS } from '../../common/assets';
 
 export class Dagger extends BaseWeapon {
   #weaponSprite: Phaser.GameObjects.Sprite;
@@ -17,11 +17,7 @@ export class Dagger extends BaseWeapon {
   ) {
     super(sprite, weaponComponent, animationConfig, baseDamage);
 
-    this.#weaponSprite = sprite.scene.add
-      .sprite(0, 0, ASSET_KEYS.DAGGER, 0)
-      .setVisible(false)
-      .setOrigin(0, 1)
-      .play(ASSET_KEYS.DAGGER);
+    this.#weaponSprite = sprite.scene.add.sprite(0, 0, '-not used', 0).setVisible(false).setOrigin(0, 1).play('-not used');
     this.#weaponSpeed = weaponSpeed;
     this._weaponComponent.body.setSize(this.#weaponSprite.width, this.#weaponSprite.height);
   }

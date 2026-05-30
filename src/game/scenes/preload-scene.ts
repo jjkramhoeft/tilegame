@@ -1,8 +1,9 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
-import { ASSET_KEYS, ASSET_PACK_KEYS, SNAKE_ANIMATION_KEYS, LAMB_ANIMATION_KEYS, CHICKEN_ANIMATION_KEYS, 
+import { ASSET_KEYS, SNAKE_ANIMATION_KEYS, LAMB_ANIMATION_KEYS, CHICKEN_ANIMATION_KEYS, 
     SHEEP_ANIMATION_KEYS, TURKEY_ANIMATION_KEYS, PIGLET_ANIMATION_KEYS, ROOSTER_ANIMATION_KEYS, 
     CALF_ANIMATION_KEYS, BULL_ANIMATION_KEYS, PLANT1_ANIMATION_KEYS, PLANT2_ANIMATION_KEYS, PLANT3_ANIMATION_KEYS} from '../common/assets';
+import { loadGameAssets } from '../common/asset-loader';
 
 export class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -12,87 +13,7 @@ export class PreloadScene extends Phaser.Scene {
     }
 
     public preload(): void {
-        // load asset pack that has assets for the rest of the game
-        this.load.pack(ASSET_PACK_KEYS.MAIN, 'assets/data/assets.json');
-
-        this.load.image('tile-base', 'assets/tile-base.png');
-        this.load.image(ASSET_KEYS.MAP_BACKGROUND, 'assets/map-background.png');
-        this.load.image(ASSET_KEYS.MAP_CALF, 'assets/map-calf.png');
-        this.load.image(ASSET_KEYS.MAP_BULL, 'assets/map-bull.png');
-        this.load.image(ASSET_KEYS.MAP_SPIDER, 'assets/map-spider.png');
-        this.load.image(ASSET_KEYS.MAP_BIG_TREE, 'assets/map-big-tree.png');
-        this.load.image(ASSET_KEYS.MAP_EVE, 'assets/map-eve.png');
-        this.load.image(ASSET_KEYS.MAP_ADAM, 'assets/map-adam.png');
-        this.load.image(ASSET_KEYS.MAP_ROCK, 'assets/map-rock.png');
-        this.load.image(ASSET_KEYS.MAP_ROCK_DECO, 'assets/map-rock-deco.png');
-        this.load.image(ASSET_KEYS.MAP_ROCK_BLOCKING, 'assets/map-rock-blocking.png');
-        this.load.image(ASSET_KEYS.MAP_DESERT, 'assets/map-desert.png');
-        this.load.image(ASSET_KEYS.MAP_DESERT_DECO, 'assets/map-desert-deco.png');
-        this.load.image(ASSET_KEYS.MAP_DESERT_BLOCKING, 'assets/map-desert-blocking.png');
-        this.load.image(ASSET_KEYS.MAP_GRASS, 'assets/map-grass.png');
-        this.load.image(ASSET_KEYS.MAP_GRASS_DECO, 'assets/map-grass-deco.png');
-        this.load.image(ASSET_KEYS.MAP_FOREST, 'assets/map-forest.png');
-        this.load.image(ASSET_KEYS.MAP_FOREST_DECO, 'assets/map-forest-deco.png');
-        this.load.image(ASSET_KEYS.MAP_FOREST_BLOCKING, 'assets/map-forest-blocking.png');
-        this.load.image(ASSET_KEYS.MAP_WATER, 'assets/map-water.png');
-        this.load.image(ASSET_KEYS.MAP_SWAMP, 'assets/map-swamp.png');
-        this.load.image(ASSET_KEYS.MAP_SWAMP_DECO, 'assets/map-swamp-deco.png');
-        this.load.image(ASSET_KEYS.MAP_SWAMP_BLOCKING, 'assets/map-swamp-blocking.png');
-        this.load.image(ASSET_KEYS.MAP_CRYSTAL, 'assets/map-crystal.png');
-        this.load.image(ASSET_KEYS.MAP_CRYSTAL_DECO, 'assets/map-crystal-deco.png');
-        this.load.image(ASSET_KEYS.MAP_CRYSTAL_BLOCKING, 'assets/map-crystal-blocking.png');
-        this.load.image(ASSET_KEYS.MAP_LAVA, 'assets/map-lava.png');
-        this.load.image(ASSET_KEYS.MAP_MOUNTAIN, 'assets/map-mountain.png');
-        this.load.image(ASSET_KEYS.MAP_CHICKEN, 'assets/map-chicken.png');
-        this.load.image(ASSET_KEYS.MAP_LAMB, 'assets/map-lamb.png');
-        this.load.image(ASSET_KEYS.MAP_SHEEP, 'assets/map-sheep.png');
-        this.load.image(ASSET_KEYS.MAP_ROOSTER, 'assets/map-rooster.png');
-        this.load.image(ASSET_KEYS.MAP_TURKEY, 'assets/map-turkey.png');
-        this.load.image(ASSET_KEYS.MAP_PIGLET, 'assets/map-piglet.png');
-        this.load.image(ASSET_KEYS.MAP_PLANT, 'assets/map-plant.png');
-        this.load.image(ASSET_KEYS.MAP_SNAKE, 'assets/map-snake.png');
-        this.load.image(ASSET_KEYS.MAP_SKELETON, 'assets/map-skeleton.png');
-        this.load.image(ASSET_KEYS.MAP_LIZARDMAN, 'assets/map-lizard.png');
-        this.load.image(ASSET_KEYS.MAP_STAR1, 'assets/map-star1.png');
-        this.load.image(ASSET_KEYS.MAP_STAR2, 'assets/map-star2.png');
-        this.load.image(ASSET_KEYS.MAP_STAR3, 'assets/map-star3.png');
-        this.load.image(ASSET_KEYS.MAP_CONSTELLATIONS, 'assets/map-constellations.png');
-
-        this.load.spritesheet(ASSET_KEYS.PLANT1_ATTACK, 'assets/Plant1_Attack_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet(ASSET_KEYS.PLANT1_IDLE, 'assets/Plant1_Idle_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet(ASSET_KEYS.PLANT1_DEATH, 'assets/Plant1_Death_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
-
-        this.load.spritesheet(ASSET_KEYS.PLANT2_ATTACK, 'assets/Plant2_Attack_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet(ASSET_KEYS.PLANT2_IDLE, 'assets/Plant2_Idle_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet(ASSET_KEYS.PLANT2_DEATH, 'assets/Plant2_Death_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
-
-        this.load.spritesheet(ASSET_KEYS.PLANT3_ATTACK, 'assets/Plant3_Attack_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet(ASSET_KEYS.PLANT3_IDLE, 'assets/Plant3_Idle_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet(ASSET_KEYS.PLANT3_DEATH, 'assets/Plant3_Death_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
-
-        //Spellcasting sfx
-        this.load.audio('magic-audio-sprite', 'assets/magic-audio-sprite.mp3');
-        this.load.audio('magic-audio-sprite-bad', 'assets/magic-audio-sprite-bad.mp3');
-
-        this.load.spritesheet('magic-fx-holy-explosion', 'assets/magic-fx-holy-explosion.png', { frameWidth: 96, frameHeight: 96 });// 28 frames.
-        this.load.spritesheet('magic-fx-light-cast', 'assets/magic-fx-light-cast.png', { frameWidth: 96, frameHeight: 96 });// 28 frames.
-        this.load.spritesheet('magic-fx-blue-circleexplosion', 'assets/magic-fx-blue-circleexplosion.png', { frameWidth: 256, frameHeight: 256 });// 10 frames.
-        this.load.spritesheet('magic-fx-notes', 'assets/spell-music-11_grayscale.png', { frameWidth: 150, frameHeight: 150 });// 11 frames.
-
-        //Sound effects
-        this.load.audio('menu_006', 'assets/menu_006.wav');
-        this.load.audio('menu_018', 'assets/menu_018.wav');
-        this.load.audio('menu_023', 'assets/menu_023.wav');
-        this.load.audio('menu_024', 'assets/menu_024.wav');
-        this.load.audio('sucess1', 'assets/sucess1.mp3');
-        this.load.audio('Blip_Select7', 'assets/Blip_Select7.wav');
-        this.load.audio('no-hit', 'assets/no-hit.wav');
-        this.load.audio('bump', 'assets/bump.wav');
-        this.load.audio('powerup', 'assets/powerup.mp3');
-        this.load.audio('duii-laser', 'assets/duii-laser.mp3');
-        this.load.audio('game-over', 'assets/game-over.mp3');
-        this.load.audio('game-over2', 'assets/game-over2.mp3');
-        this.load.audio('win', 'assets/win.mp3');
+        loadGameAssets(this);
     }
 
     public create(): void {
@@ -101,25 +22,25 @@ export class PreloadScene extends Phaser.Scene {
 
         this.anims.create({
             key: ASSET_KEYS.CAST_ORIGON,
-            frames: this.anims.generateFrameNumbers('magic-fx-holy-explosion', { start: 0, end: 27 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.MAGIC_FX_HOLY_EXPLOSION, { start: 0, end: 27 }),
             frameRate: 48,
             repeat: 0
         });
         this.anims.create({
             key: ASSET_KEYS.CAST_TARGET_A,
-            frames: this.anims.generateFrameNumbers('magic-fx-light-cast', { start: 0, end: 27 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.MAGIC_FX_LIGHT_CAST, { start: 0, end: 27 }),
             frameRate: 48,
             repeat: 0
         });
         this.anims.create({
             key: ASSET_KEYS.CAST_TARGET_B,
-            frames: this.anims.generateFrameNumbers('magic-fx-blue-circleexplosion', { start: 0, end: 9 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.MAGIC_FX_BLUE_CIRCLE_EXPLOSION, { start: 0, end: 9 }),
             frameRate: 48,
             repeat: 0
         });
 
 
-        const fx = this.sound.add('magic-audio-sprite');
+        const fx = this.sound.add(ASSET_KEYS.MAGIC_AUDIO_SPRITE);
         fx.addMarker({ name: 'spell-cast-1', start: 0, duration: 1.5 });
         fx.addMarker({ name: 'spell-cast-2', start: 2, duration: 1.5 });
         fx.addMarker({ name: 'spell-cast-3', start: 4, duration: 1.5 });
@@ -133,7 +54,7 @@ export class PreloadScene extends Phaser.Scene {
         fx.addMarker({ name: 'spell-cast-11', start: 20, duration: 1.5 });
         fx.addMarker({ name: 'spell-cast-12', start: 22, duration: 1.5 });
 
-        const fxBad = this.sound.add('magic-audio-sprite-bad');
+        const fxBad = this.sound.add(ASSET_KEYS.MAGIC_AUDIO_SPRITE_BAD);
         fxBad.addMarker({ name: 'spell-cast-1-bad', start: 0, duration: 1.5 });
         fxBad.addMarker({ name: 'spell-cast-2-bad', start: 2, duration: 1.5 });
         fxBad.addMarker({ name: 'spell-cast-3-bad', start: 4, duration: 1.5 });
@@ -153,55 +74,55 @@ export class PreloadScene extends Phaser.Scene {
     #createAnimations(): void {
         this.anims.create({
             key: "JJK_LOOSE_FULL_HEART",
-            frames: this.anims.generateFrameNumbers('hearts16', { start: 4, end: 7 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.HEARTS_16, { start: 4, end: 7 }),
             frameRate: 8,
             repeat: 2
         });
         this.anims.create({
             key: "JJK_LOOSE_FIRST_HALF",
-            frames: this.anims.generateFrameNumbers('hearts16', { start: 8, end: 11 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.HEARTS_16, { start: 8, end: 11 }),
             frameRate: 8,
             repeat: 2
         });
         this.anims.create({
             key: "JJK_LOOSE_SECOND_HALF",
-            frames: this.anims.generateFrameNumbers('hearts16', { start: 12, end: 15 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.HEARTS_16, { start: 12, end: 15 }),
             frameRate: 8,
             repeat: 2
         });
 
         this.anims.create({
             key: "JJK_LOOSE_FULL_POWER",
-            frames: this.anims.generateFrameNumbers('power16', { start: 4, end: 7 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.POWER_16, { start: 4, end: 7 }),
             frameRate: 8,
             repeat: 2
         }); this.anims.create({
             key: "JJK_LOOSE_FIRST_HALF_POWER",
-            frames: this.anims.generateFrameNumbers('power16', { start: 8, end: 11 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.POWER_16, { start: 8, end: 11 }),
             frameRate: 8,
             repeat: 2
         });
         this.anims.create({
             key: "JJK_LOOSE_SECOND_HALF_POWER",
-            frames: this.anims.generateFrameNumbers('power16', { start: 12, end: 15 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.POWER_16, { start: 12, end: 15 }),
             frameRate: 8,
             repeat: 2
         });
 
         this.anims.create({
             key: "JJK_LOOSE_FULL_PROGRESS",
-            frames: this.anims.generateFrameNumbers('progress16', { start: 4, end: 7 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.PROGRESS_16, { start: 4, end: 7 }),
             frameRate: 8,
             repeat: 2
         }); this.anims.create({
             key: "JJK_LOOSE_FIRST_HALF_PROGRESS",
-            frames: this.anims.generateFrameNumbers('progress16', { start: 8, end: 11 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.PROGRESS_16, { start: 8, end: 11 }),
             frameRate: 8,
             repeat: 2
         });
         this.anims.create({
             key: "JJK_LOOSE_SECOND_HALF_PROGRESS",
-            frames: this.anims.generateFrameNumbers('progress16', { start: 12, end: 15 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.PROGRESS_16, { start: 12, end: 15 }),
             frameRate: 8,
             repeat: 2
         });
@@ -209,61 +130,53 @@ export class PreloadScene extends Phaser.Scene {
         const WATER_ANIM_KEY = 'water-flow';
         this.anims.create({
             key: WATER_ANIM_KEY,
-            frames: this.anims.generateFrameNumbers('tile-animated', { start: 8, end: 15 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.TILESET_ANIMATED, { start: 8, end: 15 }),
             frameRate: 8,
             repeat: -1
         });
         const LAVA_ANIM_KEY = 'lava-flow';
         this.anims.create({
             key: LAVA_ANIM_KEY,
-            frames: this.anims.generateFrameNumbers('tile-animated', { start: 40, end: 47 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.TILESET_ANIMATED, { start: 40, end: 47 }),
             frameRate: 8,
             repeat: -1
         });
         const CRYSTAL_ANIM_KEY = 'crystal-flow';
         this.anims.create({
             key: CRYSTAL_ANIM_KEY,
-            frames: this.anims.generateFrameNumbers('tile-animated', { start: 0, end: 7 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.TILESET_ANIMATED, { start: 0, end: 7 }),
             frameRate: 8,
             repeat: -1
         });
         const VOID_ANIM_KEY = 'void-marker-flow';
         this.anims.create({
             key: VOID_ANIM_KEY,
-            frames: this.anims.generateFrameNumbers('tile-animated', { start: 24, end: 31 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.TILESET_ANIMATED, { start: 24, end: 31 }),
             frameRate: 8,
             repeat: -1
         });
         const VOID_BORDER_ANIM_KEY = 'void-border-flow';
         this.anims.create({
             key: VOID_BORDER_ANIM_KEY,
-            frames: this.anims.generateFrameNumbers('tile-animated', { start: 32, end: 39 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.TILESET_ANIMATED, { start: 32, end: 39 }),
             frameRate: 4,
             repeat: -1
         });
         const BIG_TREE_ANIM_KEY = 'big-tree-growth';
         this.anims.create({
             key: BIG_TREE_ANIM_KEY,
-            frames: this.anims.generateFrameNumbers('big-tree', { start: 0, end: 5 }),
+            frames: this.anims.generateFrameNumbers(ASSET_KEYS.BIG_TREE, { start: 0, end: 5 }),
             frameRate: 3,
             repeat: 0
         });
 
         this.anims.createFromAseprite(ASSET_KEYS.HUD_NUMBERS);
-        this.anims.createFromAseprite(ASSET_KEYS.PLAYER);
         this.anims.createFromAseprite(ASSET_KEYS.SPIDER);
         this.anims.create({
             key: ASSET_KEYS.ENEMY_DEATH,
             frames: this.anims.generateFrameNumbers(ASSET_KEYS.ENEMY_DEATH),
             frameRate: 6,
             repeat: 0,
-            delay: 0,
-        });
-        this.anims.create({
-            key: ASSET_KEYS.DAGGER,
-            frames: this.anims.generateFrameNumbers(ASSET_KEYS.DAGGER),
-            frameRate: 16,
-            repeat: -1,
             delay: 0,
         });
 
@@ -324,7 +237,7 @@ export class PreloadScene extends Phaser.Scene {
             });
         });
 
-        anims.create({ key: 'spell-music-anim', frames: anims.generateFrameNumbers('spell-music-11_grayscale', { start: 0, end: 10 }), frameRate: 9, repeat: 0 });
+        anims.create({ key: 'spell-music-anim', frames: anims.generateFrameNumbers(ASSET_KEYS.MAGIC_FX_NOTES, { start: 0, end: 10 }), frameRate: 9, repeat: 0 });
 
         //Critter animations (currently only Lamb and Chicken)
 

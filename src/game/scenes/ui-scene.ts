@@ -124,13 +124,13 @@ export class UiScene extends Phaser.Scene {
     this.#controls = new KeyboardComponent(this.input.keyboard);
     this.#selectedMenuOptionIndex = 0;
     this.#selectedSaveOptionIndex = 0;
-    this.#chestOpenSound = this.sound.add('chest');
-    this.#chestCloseSound = this.sound.add('chest2');
-    this.#levelUpSound = this.sound.add('levelup', { volume: 1.0 });
-    this.#uiDownSound = this.sound.add('menu_006');
-    this.#uiUpSound = this.sound.add('menu_024');
-    this.#uiSelectSound = this.sound.add('Blip_Select7');
-    this.#narratorSound = this.sound.add('sucess1');
+    this.#chestOpenSound = this.sound.add(ASSET_KEYS.CHEST);
+    this.#chestCloseSound = this.sound.add(ASSET_KEYS.CHEST_2);
+    this.#levelUpSound = this.sound.add(ASSET_KEYS.LEVELUP, { volume: 1.0 });
+    this.#uiDownSound = this.sound.add(ASSET_KEYS.MENU_006);
+    this.#uiUpSound = this.sound.add(ASSET_KEYS.MENU_024);
+    this.#uiSelectSound = this.sound.add(ASSET_KEYS.BLIP_SELECT_7);
+    this.#narratorSound = this.sound.add(ASSET_KEYS.SUCCESS_1);
 
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
@@ -275,20 +275,20 @@ export class UiScene extends Phaser.Scene {
       currentValue: playerData.currentHealth,
       maxValue: playerData.maxHealth,
       startX: HUD_HEALTH_X,
-      textureKey: 'hearts16',
+      textureKey: ASSET_KEYS.HEARTS_16,
     });
     this.#power = this.#createMeter({
       currentValue: playerData.currentPower,
       maxValue: playerData.maxPower,
       startX: HUD_POWER_X,
-      textureKey: 'power16',
+      textureKey: ASSET_KEYS.POWER_16,
       horizontalSpacing: 2,
     });
     this.#progress = this.#createMeter({
       currentValue: this.#getLivingCreaturesMeterValue(playerData.currentLivingCreatures),
       maxValue: this.#getLivingCreaturesMeterValue(playerData.maxLivingCreaturesThisGame),
       startX: HUD_PROGRESS_X,
-      textureKey: 'progress16',
+      textureKey: ASSET_KEYS.PROGRESS_16,
     });
 
     this.#hudContainer.add(this.#hearts);

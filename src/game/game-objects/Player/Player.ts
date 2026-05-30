@@ -69,7 +69,7 @@ export class Player extends CharacterGameObject {
     super({
       scene: config.scene,
       position: config.position,
-      assetKey: ASSET_KEYS.PLAYER,
+      assetKey: '-not used',
       frame: 0,
       id: 'player',
       isPlayer: true,
