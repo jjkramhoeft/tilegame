@@ -31,6 +31,8 @@
 - fix animals walking on water
 - Bounce-move-state -> follow-move-state (intaeract w. animal)
 - Implement boss; Lizard character with snake minions
+- Add clouds to first few game states
+- Add animals (on parade to title and settings scene)
 
 ## Implementations that require new asserts
 
@@ -39,3 +41,4 @@
 - record voice-over for narrator. Nathan for english, Ulla, Taina or me for danish
 - Pair of animals
 - Bump sound when pushed by animals
+- Break a tile when an animal is killed
