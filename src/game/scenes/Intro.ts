@@ -1,7 +1,15 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
-import { ASSET_KEYS } from '../common/assets';
+import {
+    ASSET_KEYS,
+    BULL_ANIMATION_KEYS,
+    PIGLET_ANIMATION_KEYS,
+    CHICKEN_ANIMATION_KEYS,
+    SHEEP_ANIMATION_KEYS,
+    LAMB_ANIMATION_KEYS,
+    TURKEY_ANIMATION_KEYS,
+} from '../common/assets';
 import { getText } from '../common/texts';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 
@@ -15,12 +23,83 @@ const COLORS = {
 const CURSOR_SIZE = 16;
 const CURSOR_X = 20;
 const CURSOR_Y_OFFSET = 20; // vertically center cursor on the menu text
+const INTRO_ANIMAL_SPAWN_DELAY_MS = 1_000;
+const INTRO_ANIMAL_MIN_IDLE_DELAY_MS = 2_000;
+const INTRO_ANIMAL_MAX_IDLE_DELAY_MS = 6_000;
+const INTRO_ANIMAL_MIN_IDLE_DURATION_MS = 2_000;
+const INTRO_ANIMAL_MAX_IDLE_DURATION_MS = 4_000;
+const INTRO_ANIMAL_Y_VALUES = [260, 540];
+const INTRO_ANIMAL_DEPTH = [5, 25];
+const INTRO_ANIMAL_OFFSCREEN_PADDING = 80;
+const INTRO_ANIMAL_SPEED = 80;
+const INTRO_ANIMAL_SCALE = 2.5;
+
+type IntroAnimalConfig = {
+    assetKey: string;
+    walkLeft: string;
+    walkRight: string;
+    idleLeft: string;
+    idleRight: string;
+    speed: number;
+};
+
+type IntroAnimalDirection = 'left' | 'right';
 
 type MenuItem = {
     text: Phaser.GameObjects.Text;
     y: number;
     onSelect: () => void;
 };
+
+const INTRO_ANIMALS: IntroAnimalConfig[] = [
+    {
+        assetKey: ASSET_KEYS.LAMB,
+        walkLeft: LAMB_ANIMATION_KEYS.WALK_LEFT,
+        walkRight: LAMB_ANIMATION_KEYS.WALK_RIGHT,
+        idleLeft: LAMB_ANIMATION_KEYS.IDLE_LEFT,
+        idleRight: LAMB_ANIMATION_KEYS.IDLE_RIGHT,
+        speed: 80
+    }, {
+        assetKey: ASSET_KEYS.SHEEP,
+        walkLeft: SHEEP_ANIMATION_KEYS.WALK_LEFT,
+        walkRight: SHEEP_ANIMATION_KEYS.WALK_RIGHT,
+        idleLeft: SHEEP_ANIMATION_KEYS.IDLE_LEFT,
+        idleRight: SHEEP_ANIMATION_KEYS.IDLE_RIGHT,
+        speed: 80
+    },
+    {
+        assetKey: ASSET_KEYS.BULL,
+        walkLeft: BULL_ANIMATION_KEYS.WALK_LEFT,
+        walkRight: BULL_ANIMATION_KEYS.WALK_RIGHT,
+        idleLeft: BULL_ANIMATION_KEYS.IDLE_LEFT,
+        idleRight: BULL_ANIMATION_KEYS.IDLE_RIGHT,
+        speed: 80
+    },
+    {
+        assetKey: ASSET_KEYS.TURKEY,
+        walkLeft: TURKEY_ANIMATION_KEYS.WALK_LEFT,
+        walkRight: TURKEY_ANIMATION_KEYS.WALK_RIGHT,
+        idleLeft: TURKEY_ANIMATION_KEYS.IDLE_LEFT,
+        idleRight: TURKEY_ANIMATION_KEYS.IDLE_RIGHT,
+        speed: 80
+    },
+    {
+        assetKey: ASSET_KEYS.PIGLET,
+        walkLeft: PIGLET_ANIMATION_KEYS.WALK_LEFT,
+        walkRight: PIGLET_ANIMATION_KEYS.WALK_RIGHT,
+        idleLeft: PIGLET_ANIMATION_KEYS.IDLE_LEFT,
+        idleRight: PIGLET_ANIMATION_KEYS.IDLE_RIGHT,
+        speed: 80
+    },
+    {
+        assetKey: ASSET_KEYS.CHICKEN,
+        walkLeft: CHICKEN_ANIMATION_KEYS.WALK_LEFT,
+        walkRight: CHICKEN_ANIMATION_KEYS.WALK_RIGHT,
+        idleLeft: CHICKEN_ANIMATION_KEYS.IDLE_LEFT,
+        idleRight: CHICKEN_ANIMATION_KEYS.IDLE_RIGHT,
+        speed: 80
+    },
+];
 
 export class Intro extends Scene {
     exit_text: Phaser.GameObjects.Text;
@@ -30,6 +109,8 @@ export class Intro extends Scene {
     private cursor!: Phaser.GameObjects.Image;
     private cursorOutline!: Phaser.GameObjects.Image;
     private controls?: KeyboardComponent;
+    private animalSpawnEvent?: Phaser.Time.TimerEvent;
+    private backgroundAnimals: Phaser.GameObjects.Sprite[] = [];
 
     #uiDownSound!: Phaser.Sound.BaseSound;
     #uiUpSound!: Phaser.Sound.BaseSound;
@@ -54,10 +135,11 @@ export class Intro extends Scene {
         }
 
         this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND).setDepth(0);
-        this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_2).setDepth(10).setTint(0xff0000);
+        this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_2).setDepth(10);
         this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_1).setDepth(20);
-        this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_0).setDepth(30).setTint(0x0000ff);
+        this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_0).setDepth(30);
         this.add.image(512, 150, ASSET_KEYS.LOGO).setDepth(100).setScale(2.5);
+        this.startBackgroundAnimalSpawning();
 
         this.introMusic = this.sound.add('introMusic', {
             loop: true,
@@ -116,6 +198,7 @@ export class Intro extends Scene {
         }
 
         this.events.once('shutdown', () => {
+            this.cleanupBackgroundAnimals();
             this.introMusic?.stop();
             this.introMusic?.destroy();
             this.introMusic = undefined;
@@ -160,6 +243,100 @@ export class Intro extends Scene {
         text.setDepth(100);
         this.menuItems.push({ text, y, onSelect });
         return text;
+    }
+
+    private startBackgroundAnimalSpawning(): void {
+        this.animalSpawnEvent?.destroy();
+        this.animalSpawnEvent = this.time.addEvent({
+            delay: INTRO_ANIMAL_SPAWN_DELAY_MS,
+            callback: this.spawnBackgroundAnimal,
+            callbackScope: this,
+            loop: true,
+        });
+    }
+
+    private spawnBackgroundAnimal(): void {
+        const lane = Phaser.Utils.Array.GetRandom([0,1]);// 0 is top lane, 1 is bottom lane
+        const animalIndex = lane*3 + Phaser.Math.Between(0, 2);
+        const animal = INTRO_ANIMALS[animalIndex];
+        const y = INTRO_ANIMAL_Y_VALUES[lane];
+        const direction: IntroAnimalDirection = Phaser.Math.Between(0, 1) === 0 ? 'right' : 'left';
+        const screenWidth = this.scale.width;
+        const startX = direction === 'right' ? -INTRO_ANIMAL_OFFSCREEN_PADDING : screenWidth + INTRO_ANIMAL_OFFSCREEN_PADDING;
+        const animalSprite = this.add.sprite(startX, y, animal.assetKey, 0)
+            .setDepth(INTRO_ANIMAL_DEPTH[lane])
+            .setScale(INTRO_ANIMAL_SCALE);
+
+        this.backgroundAnimals.push(animalSprite);
+        animalSprite.play(direction === 'right' ? animal.walkRight : animal.walkLeft);
+        this.moveBackgroundAnimal(animalSprite, animal, direction);
+    }
+
+    private moveBackgroundAnimal(
+        animalSprite: Phaser.GameObjects.Sprite,
+        animal: IntroAnimalConfig,
+        direction: IntroAnimalDirection,
+    ): void {
+        const screenWidth = this.scale.width;
+        const endX = direction === 'right' ? screenWidth + INTRO_ANIMAL_OFFSCREEN_PADDING : -INTRO_ANIMAL_OFFSCREEN_PADDING;
+        const totalDistance = Math.abs(endX - animalSprite.x);
+        const totalDuration = totalDistance / INTRO_ANIMAL_SPEED * 1000;
+        const idleDelay = Phaser.Math.Between(INTRO_ANIMAL_MIN_IDLE_DELAY_MS, INTRO_ANIMAL_MAX_IDLE_DELAY_MS);
+        const firstMoveDuration = Math.min(idleDelay, Math.max(totalDuration - 1000, 1000));
+        const travelProgress = firstMoveDuration / totalDuration;
+        const pauseX = Phaser.Math.Linear(animalSprite.x, endX, travelProgress);
+
+        this.tweens.add({
+            targets: animalSprite,
+            x: pauseX,
+            duration: firstMoveDuration,
+            ease: 'Linear',
+            onComplete: () => {
+                if (!animalSprite.active) {
+                    return;
+                }
+                animalSprite.play(direction === 'right' ? animal.idleRight : animal.idleLeft);
+                this.time.delayedCall(
+                    Phaser.Math.Between(INTRO_ANIMAL_MIN_IDLE_DURATION_MS, INTRO_ANIMAL_MAX_IDLE_DURATION_MS),
+                    () => this.moveBackgroundAnimalOut(animalSprite, animal, direction, endX),
+                );
+            },
+        });
+    }
+
+    private moveBackgroundAnimalOut(
+        animalSprite: Phaser.GameObjects.Sprite,
+        animal: IntroAnimalConfig,
+        direction: IntroAnimalDirection,
+        endX: number,
+    ): void {
+        if (!animalSprite.active) {
+            return;
+        }
+
+        animalSprite.play(direction === 'right' ? animal.walkRight : animal.walkLeft);
+        this.tweens.add({
+            targets: animalSprite,
+            x: endX,
+            duration: Math.abs(endX - animalSprite.x) / INTRO_ANIMAL_SPEED * 1000,
+            ease: 'Linear',
+            onComplete: () => this.destroyBackgroundAnimal(animalSprite),
+        });
+    }
+
+    private destroyBackgroundAnimal(animalSprite: Phaser.GameObjects.Sprite): void {
+        this.backgroundAnimals = this.backgroundAnimals.filter((backgroundAnimal) => backgroundAnimal !== animalSprite);
+        animalSprite.destroy();
+    }
+
+    private cleanupBackgroundAnimals(): void {
+        this.animalSpawnEvent?.destroy();
+        this.animalSpawnEvent = undefined;
+        this.backgroundAnimals.forEach((backgroundAnimal) => {
+            this.tweens.killTweensOf(backgroundAnimal);
+            backgroundAnimal.destroy();
+        });
+        this.backgroundAnimals = [];
     }
 
     private updateCursorPosition(): void {
