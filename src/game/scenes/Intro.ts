@@ -24,22 +24,19 @@ const CURSOR_SIZE = 16;
 const CURSOR_X = 20;
 const CURSOR_Y_OFFSET = 20; // vertically center cursor on the menu text
 const INTRO_ANIMAL_SPAWN_DELAY_MS = 1_000;
-const INTRO_ANIMAL_MIN_IDLE_DELAY_MS = 2_000;
-const INTRO_ANIMAL_MAX_IDLE_DELAY_MS = 6_000;
-const INTRO_ANIMAL_MIN_IDLE_DURATION_MS = 2_000;
-const INTRO_ANIMAL_MAX_IDLE_DURATION_MS = 4_000;
+const INTRO_ANIMAL_MIN_TURN_DELAY_MS = 2_000;
+const INTRO_ANIMAL_MAX_TURN_DELAY_MS = 6_000;
+const INTRO_ANIMAL_MIN_REVERSE_DURATION_MS = 2_000;
+const INTRO_ANIMAL_MAX_REVERSE_DURATION_MS = 4_000;
 const INTRO_ANIMAL_Y_VALUES = [260, 540];
 const INTRO_ANIMAL_DEPTH = [5, 25];
 const INTRO_ANIMAL_OFFSCREEN_PADDING = 80;
-const INTRO_ANIMAL_SPEED = 80;
 const INTRO_ANIMAL_SCALE = 2.5;
 
 type IntroAnimalConfig = {
     assetKey: string;
     walkLeft: string;
     walkRight: string;
-    idleLeft: string;
-    idleRight: string;
     speed: number;
 };
 
@@ -56,47 +53,35 @@ const INTRO_ANIMALS: IntroAnimalConfig[] = [
         assetKey: ASSET_KEYS.LAMB,
         walkLeft: LAMB_ANIMATION_KEYS.WALK_LEFT,
         walkRight: LAMB_ANIMATION_KEYS.WALK_RIGHT,
-        idleLeft: LAMB_ANIMATION_KEYS.IDLE_LEFT,
-        idleRight: LAMB_ANIMATION_KEYS.IDLE_RIGHT,
         speed: 80
     }, {
         assetKey: ASSET_KEYS.SHEEP,
         walkLeft: SHEEP_ANIMATION_KEYS.WALK_LEFT,
         walkRight: SHEEP_ANIMATION_KEYS.WALK_RIGHT,
-        idleLeft: SHEEP_ANIMATION_KEYS.IDLE_LEFT,
-        idleRight: SHEEP_ANIMATION_KEYS.IDLE_RIGHT,
         speed: 80
     },
     {
         assetKey: ASSET_KEYS.BULL,
         walkLeft: BULL_ANIMATION_KEYS.WALK_LEFT,
         walkRight: BULL_ANIMATION_KEYS.WALK_RIGHT,
-        idleLeft: BULL_ANIMATION_KEYS.IDLE_LEFT,
-        idleRight: BULL_ANIMATION_KEYS.IDLE_RIGHT,
         speed: 80
     },
     {
         assetKey: ASSET_KEYS.TURKEY,
         walkLeft: TURKEY_ANIMATION_KEYS.WALK_LEFT,
         walkRight: TURKEY_ANIMATION_KEYS.WALK_RIGHT,
-        idleLeft: TURKEY_ANIMATION_KEYS.IDLE_LEFT,
-        idleRight: TURKEY_ANIMATION_KEYS.IDLE_RIGHT,
         speed: 80
     },
     {
         assetKey: ASSET_KEYS.PIGLET,
         walkLeft: PIGLET_ANIMATION_KEYS.WALK_LEFT,
         walkRight: PIGLET_ANIMATION_KEYS.WALK_RIGHT,
-        idleLeft: PIGLET_ANIMATION_KEYS.IDLE_LEFT,
-        idleRight: PIGLET_ANIMATION_KEYS.IDLE_RIGHT,
         speed: 80
     },
     {
         assetKey: ASSET_KEYS.CHICKEN,
         walkLeft: CHICKEN_ANIMATION_KEYS.WALK_LEFT,
         walkRight: CHICKEN_ANIMATION_KEYS.WALK_RIGHT,
-        idleLeft: CHICKEN_ANIMATION_KEYS.IDLE_LEFT,
-        idleRight: CHICKEN_ANIMATION_KEYS.IDLE_RIGHT,
         speed: 80
     },
 ];
@@ -280,27 +265,48 @@ export class Intro extends Scene {
         const screenWidth = this.scale.width;
         const endX = direction === 'right' ? screenWidth + INTRO_ANIMAL_OFFSCREEN_PADDING : -INTRO_ANIMAL_OFFSCREEN_PADDING;
         const totalDistance = Math.abs(endX - animalSprite.x);
-        const totalDuration = totalDistance / INTRO_ANIMAL_SPEED * 1000;
-        const idleDelay = Phaser.Math.Between(INTRO_ANIMAL_MIN_IDLE_DELAY_MS, INTRO_ANIMAL_MAX_IDLE_DELAY_MS);
-        const firstMoveDuration = Math.min(idleDelay, Math.max(totalDuration - 1000, 1000));
+        const totalDuration = totalDistance / animal.speed * 1000;
+        const turnDelay = Phaser.Math.Between(INTRO_ANIMAL_MIN_TURN_DELAY_MS, INTRO_ANIMAL_MAX_TURN_DELAY_MS);
+        const firstMoveDuration = Math.min(turnDelay, Math.max(totalDuration - 1000, 1000));
         const travelProgress = firstMoveDuration / totalDuration;
-        const pauseX = Phaser.Math.Linear(animalSprite.x, endX, travelProgress);
+        const turnX = Phaser.Math.Linear(animalSprite.x, endX, travelProgress);
 
         this.tweens.add({
             targets: animalSprite,
-            x: pauseX,
+            x: turnX,
             duration: firstMoveDuration,
             ease: 'Linear',
             onComplete: () => {
                 if (!animalSprite.active) {
                     return;
                 }
-                animalSprite.play(direction === 'right' ? animal.idleRight : animal.idleLeft);
-                this.time.delayedCall(
-                    Phaser.Math.Between(INTRO_ANIMAL_MIN_IDLE_DURATION_MS, INTRO_ANIMAL_MAX_IDLE_DURATION_MS),
-                    () => this.moveBackgroundAnimalOut(animalSprite, animal, direction, endX),
-                );
+                this.moveBackgroundAnimalBack(animalSprite, animal, direction, endX);
             },
+        });
+    }
+
+    private moveBackgroundAnimalBack(
+        animalSprite: Phaser.GameObjects.Sprite,
+        animal: IntroAnimalConfig,
+        direction: IntroAnimalDirection,
+        endX: number,
+    ): void {
+        const reverseDuration = Phaser.Math.Between(
+            INTRO_ANIMAL_MIN_REVERSE_DURATION_MS,
+            INTRO_ANIMAL_MAX_REVERSE_DURATION_MS,
+        );
+        const reverseDistance = animal.speed * reverseDuration / 1000;
+        const reverseX = direction === 'right'
+            ? animalSprite.x - reverseDistance
+            : animalSprite.x + reverseDistance;
+
+        animalSprite.play(direction === 'right' ? animal.walkLeft : animal.walkRight);
+        this.tweens.add({
+            targets: animalSprite,
+            x: reverseX,
+            duration: reverseDuration,
+            ease: 'Linear',
+            onComplete: () => this.moveBackgroundAnimalOut(animalSprite, animal, direction, endX),
         });
     }
 
@@ -318,7 +324,7 @@ export class Intro extends Scene {
         this.tweens.add({
             targets: animalSprite,
             x: endX,
-            duration: Math.abs(endX - animalSprite.x) / INTRO_ANIMAL_SPEED * 1000,
+            duration: Math.abs(endX - animalSprite.x) / animal.speed * 1000,
             ease: 'Linear',
             onComplete: () => this.destroyBackgroundAnimal(animalSprite),
         });
