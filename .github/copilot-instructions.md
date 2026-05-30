@@ -48,8 +48,8 @@ All assets are preloaded in `PreloadScene`.
 
 Aseprite is only used for the spider and some few HUD elements. Animations are createded by `PreloadScene` using these five functions
 
-- `createUiAnimations`
-- `createAdamAndEveAnimations`
-- `createMobAnimations`
-- `createTileAnimations`
-- `createOtherAnimations`
+- `createUiAnimations` ( for the HUD and other animation for non game scenes)
+- `createAdamAndEveAnimations` (the male and female player characters)
+- `createMobAnimations` (for all animals and enemies)
+- `createTileAnimations` (for the animated tiles)
+- `createOtherAnimations` (for all animation that do not fall into the other categories. E.g. Magic fx, Narrator's Big tree)

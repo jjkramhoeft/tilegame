@@ -26,7 +26,11 @@ export const ASSET_KEYS = {
   FONT_PIXEL_SERIF_16PX: 'FONT_PIXEL_SERIF_16PX',
 
   INTRO_BACKGROUND: 'background',
+  INTRO_BACKGROUND_LAYER_0: 'background_l0',
+  INTRO_BACKGROUND_LAYER_1: 'background_l1',
+  INTRO_BACKGROUND_LAYER_2: 'background_l2',
   CREDITS_BACKGROUND: 'credit-bg',
+  CREDITS_BACKGROUND_LAYER_1: 'credit-bg-l1',
   LOGO: 'logo',
   CONTAINERS: 'containers',
   BIG_TREE: 'big-tree',
