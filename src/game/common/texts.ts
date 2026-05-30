@@ -244,12 +244,12 @@ const TEXTS = {
         da: '...I begyndelsen var jorden tomhed og øde...',
     },
     'narrator.start.youCreated': {
-        en: '...God created the earth and the heavens, and you. Move carefully... (Use the arrow keys)',
-        da: '...Gud skabte jorden og himlen, og dig. Bevæg dig forsigtigt... (Brug piletasterne)',
+        en: '...God created the earth and the heavens, and you. Move carefully... (Use the arrow keys) Try an attack punch (z-key) And try your first music magic (c-key)',
+        da: '...Gud skabte jorden og himlen, og dig. Bevæg dig forsigtigt... (Brug piletasterne) Prøv at slå (z-tast) Og prøv at kaste din første musik-magi (c-tast)',
     },
     'narrator.assignment': {
-        en: '...And you shall help create!, make the land, fill it with green forest and then animals. Do not let it be empty... (Use \'z\' key to cast magic & to attack)',
-        da: '...Og du skal hjælpe med at skabe; frembring landet, fyld det med grøn skov og så dyr. Lad det ikke være tomt... (\'z\'-tasten bruges til magi og til at angribe)',
+        en: '...And you shall help create!, make the land, fill it with green forest and then animals. Do not let it be empty... fill the surrounding void with rocks',
+        da: '...Og du skal hjælpe med at skabe; frembring landet, fyld det med grøn skov og så dyr. Lad det ikke være tomt... fyld den omkringliggende tomhed med klipper',
     },
     'narrator.garden.lush': {
         en: 'Fine! Your first rocks and pebbles. Practice and grow your skills. We need more than this wasteland. In time you will bring forth green fields, flowing rivers and trees.',
