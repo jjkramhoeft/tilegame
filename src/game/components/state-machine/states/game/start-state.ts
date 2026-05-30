@@ -21,6 +21,10 @@ const START_CLOUD_MIN_ALPHA = 0.7;
 const START_CLOUD_MAX_ALPHA = 0.95;
 const START_CLOUD_MIN_SCALE = 1.1;
 const START_CLOUD_MAX_SCALE = 2.1;
+const START_SOUND_EFFECT_COUNT = 7;
+const START_SOUND_EFFECT_STAGGER_MS = 150;
+const START_SOUND_EFFECT_DURATION = 1.5;
+const START_SOUND_EFFECT_VOLUME = 1.0;
 
 const START_CLOUD_KEYS = [
   ASSET_KEYS.CLOUD_DARK_SHAPE2_1,
@@ -120,7 +124,17 @@ export class StartState extends BaseGameState {
   }
 
   #startPlayingSoundEffect(): void {
-    //ToDo: Play 7 sound effects with a small delay (100 ms) between them. Use key spell-cast-1 to spell-cast-7.
+    for (let markerIndex = 1; markerIndex <= START_SOUND_EFFECT_COUNT; markerIndex += 1) {
+      this._pause((markerIndex - 1) * START_SOUND_EFFECT_STAGGER_MS, () => {
+        this._scene.sound.play(ASSET_KEYS.MAGIC_AUDIO_SPRITE, {
+          name: `spell-cast-${markerIndex}`,
+          start: (markerIndex - 1) * 2,
+          duration: START_SOUND_EFFECT_DURATION,
+          volume: START_SOUND_EFFECT_VOLUME,
+          config: {},
+        });
+      });
+    }
   }
 
   #playVisualEffectAtCenter1(): void {
