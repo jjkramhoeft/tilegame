@@ -56,7 +56,7 @@ export class Intro extends Scene {
         this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND).setDepth(0);
         this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_2).setDepth(10).setTint(0xff0000);
         this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_1).setDepth(20);
-        this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_0).setDepth(30);
+        this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_0).setDepth(30).setTint(0x0000ff);
         this.add.image(512, 150, ASSET_KEYS.LOGO).setDepth(100).setScale(2.5);
 
         this.introMusic = this.sound.add('introMusic', {
