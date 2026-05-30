@@ -245,7 +245,7 @@ export function createOtherAnimations(anims: AnimationManager): void {
     repeat: 0,
   });
   anims.create({
-    key: ASSET_KEYS.CAST_ORIGON,
+    key: ASSET_KEYS.CAST_ORIGIN,
     frames: anims.generateFrameNumbers(ASSET_KEYS.MAGIC_FX_HOLY_EXPLOSION, { start: 0, end: 27 }),
     frameRate: 48,
     repeat: 0,

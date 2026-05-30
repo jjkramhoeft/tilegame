@@ -1,18 +1,18 @@
 {
-    "name": "template-vite-ts",
-    "description": "A Phaser 4 TypeScript template using Vite.",
-    "version": "1.4.0",
+    "name": "the-first-garden",
+    "description": "A vibe-coded game. Inspired by Genesis and C.S. Lewis' The Magician's Nephew.",
+    "version": "0.9.0",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/phaserjs/template-vite-ts.git"
+        "url": "git+https://github.com/jjkramhoeft/tilegame"
     },
-    "author": "Phaser Studio <support@phaser.io> (https://phaser.io/)",
-    "license": "MIT",
-    "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
+    "author": "Jakob Kramhøft <jjkramhoeft@hotmail.com> (https://jjkramhoeft.dk/)",
+    "license": "None",
+    "licenseUrl": "",
     "bugs": {
-        "url": "https://github.com/phaserjs/template-vite-ts/issues"
+        "url": "https://github.com/jjkramhoeft/tilegame/issues"
     },
-    "homepage": "https://github.com/phaserjs/template-vite-ts#readme",
+    "homepage": "https://jjkramhoeft.dk/the-first-garden",
     "scripts": {
         "dev": "node log.js dev & vite --config vite/config.dev.mjs",
         "build": "node log.js build & vite build --config vite/config.prod.mjs",
@@ -20,11 +20,11 @@
         "build-nolog": "vite build --config vite/config.prod.mjs"
     },
     "devDependencies": {
+        "terser": "^5.48.0",
         "typescript": "5.7.3",
-        "vite": "^6.3.1"
+        "vite": "^6.3.5"
     },
     "dependencies": {
-        "phaser": "^4.0.0",
-        "terser": "^5.39.0"
+        "phaser": "^4.1.0"
     }
 }

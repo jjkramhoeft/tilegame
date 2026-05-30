@@ -71,8 +71,5 @@ export class Calf extends CharacterGameObject {
     this._stateMachine.addState(new HurtState(this, ENEMY_CALF_HURT_PUSH_BACK_SPEED));
     this._stateMachine.addState(new DeathState(this));
     this._stateMachine.setState(CHARACTER_STATES.BOUNCE_MOVE_STATE);
-
-    // make the calf 50% larger than its base 32x32 sprite
-    this.setScale(1.5);
   }
 }

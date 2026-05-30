@@ -1,9 +1,9 @@
 import * as Phaser from 'phaser';
 import { Earth } from '../ground/earth';
-import { Direction, GameObject2, SpellType, Position } from '../common/types';
+import { CastingUnlocks, Direction, GameObject2, SpellType, Position } from '../common/types';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
 import { Tile } from '../ground/tile';
-import { BIOME, CASTING_UNLOCKS, DECORATION_DEPTH, SPELL_TYPES } from '../common/common';
+import { BIOME, BIOME_COLOR_MAP, CASTING_UNLOCKS, DECORATION_DEPTH, SPELL_TYPES } from '../common/common';
 import { ENABLE_LOGGING, SPELL_STAGGER_MS } from '../common/config';
 import { GameScene } from '../scenes/game-scene';
 import { ASSET_KEYS } from '../common/assets';
@@ -15,17 +15,51 @@ type CastVector = {
   x: number;
   y: number;
 };
-const BIOME_COLOR_MAP: Record<number, number> = {
-  [BIOME.VOID]: 0x8b7355,      // brown
-  [BIOME.ROCK]: 0x6a6a6a,      // dark gray
-  [BIOME.DESERT]: 0xf4a460,    // sandy
-  [BIOME.GRASS]: 0x6ba547,     // green
-  [BIOME.FOREST]: 0x2d5016,    // dark green
-  [BIOME.WATER]: 0x1e90ff,     // blue
-  [BIOME.SWAMP]: 0x556b2f,     // olive
-  [BIOME.CRYSTAL]: 0x00d9ff,   // cyan
-  [BIOME.LAVA]: 0xff4500,      // red-orange
-  [BIOME.MOUNTAIN]: 0x808080,  // gray
+
+type BiomeSpellUnlocks = {
+  decoration?: CastingUnlocks;
+  blocking?: CastingUnlocks;
+  animals?: CastingUnlocks;
+  chest?: CastingUnlocks;
+};
+
+const BIOME_SPELL_UNLOCKS: Partial<Record<BIOME, BiomeSpellUnlocks>> = {
+  [BIOME.ROCK]: {
+    decoration: CASTING_UNLOCKS.ROCK_DECORATION,
+    blocking: CASTING_UNLOCKS.ROCK_BLOCKING,
+    animals: CASTING_UNLOCKS.ROCK_ANIMALS,
+    chest: CASTING_UNLOCKS.CHEST1,
+  },
+  [BIOME.DESERT]: {
+    decoration: CASTING_UNLOCKS.DESERT_DECORATION,
+    blocking: CASTING_UNLOCKS.DESERT_BLOCKING,
+    animals: CASTING_UNLOCKS.DESERT_ANIMALS,
+    chest: CASTING_UNLOCKS.CHEST2,
+  },
+  [BIOME.GRASS]: {
+    decoration: CASTING_UNLOCKS.GRASS_DECORATION,
+    blocking: CASTING_UNLOCKS.GRASS_BLOCKING,
+    animals: CASTING_UNLOCKS.GRASS_ANIMALS,
+    chest: CASTING_UNLOCKS.CHEST3,
+  },
+  [BIOME.FOREST]: {
+    decoration: CASTING_UNLOCKS.FOREST_DECORATION,
+    blocking: CASTING_UNLOCKS.FOREST_BLOCKING,
+    animals: CASTING_UNLOCKS.FOREST_ANIMALS,
+    chest: CASTING_UNLOCKS.CHEST4,
+  },
+  [BIOME.SWAMP]: {
+    decoration: CASTING_UNLOCKS.SWAMP_DECORATION,
+    blocking: CASTING_UNLOCKS.SWAMP_BLOCKING,
+    animals: CASTING_UNLOCKS.SWAMP_ANIMALS,
+    chest: CASTING_UNLOCKS.CHEST5,
+  },
+  [BIOME.CRYSTAL]: {
+    decoration: CASTING_UNLOCKS.CRYSTAL_DECORATION,
+    blocking: CASTING_UNLOCKS.CRYSTAL_BLOCKING,
+    animals: CASTING_UNLOCKS.CRYSTAL_ANIMALS,
+    chest: CASTING_UNLOCKS.CHEST6,
+  },
 };
 
 /**
@@ -194,63 +228,33 @@ export class SpellCastingService {
   }
 
   private decorationIsUnlocked(biome: number): boolean {
-    switch (biome) {
-      case BIOME.ROCK: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.ROCK_DECORATION);
-      case BIOME.DESERT: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.DESERT_DECORATION);
-      case BIOME.GRASS: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.GRASS_DECORATION);
-      case BIOME.FOREST: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.FOREST_DECORATION);
-      case BIOME.SWAMP: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.SWAMP_DECORATION);
-      case BIOME.CRYSTAL: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CRYSTAL_DECORATION);
-    }
-    return false;;
+    return this.spellUnlockIsUnlocked(biome, 'decoration');
   }
 
   private blockingIsUnlocked(biome: number): boolean {
-    switch (biome) {
-      case BIOME.ROCK: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.ROCK_BLOCKING);
-      case BIOME.DESERT: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.DESERT_BLOCKING);
-      case BIOME.GRASS: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.GRASS_BLOCKING);
-      case BIOME.FOREST: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.FOREST_BLOCKING);
-      case BIOME.SWAMP: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.SWAMP_BLOCKING);
-      case BIOME.CRYSTAL: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CRYSTAL_BLOCKING);
-    }
-    return false;;
+    return this.spellUnlockIsUnlocked(biome, 'blocking');
   }
 
   private animalsIsUnlocked(biome: number): boolean {
-    switch (biome) {
-      case BIOME.ROCK: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.ROCK_ANIMALS);
-      case BIOME.DESERT: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.DESERT_ANIMALS);
-      case BIOME.GRASS: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.GRASS_ANIMALS);
-      case BIOME.FOREST: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.FOREST_ANIMALS);
-      case BIOME.SWAMP: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.SWAMP_ANIMALS);
-      case BIOME.CRYSTAL: return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CRYSTAL_ANIMALS);
-    }
-    return false;;
+    return this.spellUnlockIsUnlocked(biome, 'animals');
   }
 
   private chestIsUnlockedAndUnplaced(biome: number): boolean {
-    switch (biome) {
-      case BIOME.ROCK:
-        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST1) &&
-          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST1] > 0);
-      case BIOME.DESERT:
-        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST2) &&
-          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST2] > 0);
-      case BIOME.GRASS:
-        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST3) &&
-          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST3] > 0);
-      case BIOME.FOREST:
-        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST4) &&
-          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST4] > 0);
-      case BIOME.SWAMP:
-        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST5) &&
-          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST5] > 0);
-      case BIOME.CRYSTAL:
-        return DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CHEST6) &&
-          !(DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.CHEST6] > 0);
+    const chestUnlock = this.getBiomeSpellUnlock(biome, 'chest');
+    if (!chestUnlock) {
+      return false;
     }
-    return false;;
+    const data = DataManager.instance.data;
+    return data.unlockedSpellCasting.has(chestUnlock) && !(data.tilesPlaced[chestUnlock] > 0);
+  }
+
+  private spellUnlockIsUnlocked(biome: number, unlockType: keyof BiomeSpellUnlocks): boolean {
+    const unlock = this.getBiomeSpellUnlock(biome, unlockType);
+    return unlock !== undefined && DataManager.instance.data.unlockedSpellCasting.has(unlock);
+  }
+
+  private getBiomeSpellUnlock(biome: number, unlockType: keyof BiomeSpellUnlocks): CastingUnlocks | undefined {
+    return BIOME_SPELL_UNLOCKS[biome as BIOME]?.[unlockType];
   }
 
   private findPrimeTargetPosition(casterPosition: Position, directions: Direction[]): Position {
@@ -267,9 +271,9 @@ export class SpellCastingService {
   }
 
   /** execute one part of the staggeredspell effect (tile changes, mob spawns, VFX, sounds).  */
-  executeSpellEffect(spellType: SpellType, biome: BIOME, startTile: Position, endTile: Position, isOrigon: boolean): void {
+  executeSpellEffect(spellType: SpellType, biome: BIOME, startTile: Position, endTile: Position, isOrigin: boolean): void {
     if (ENABLE_LOGGING) {
-      console.log('[SpellCastingService] executeSpellEffect (stub)', { spellType, biome, startTile, endTile, isOrigon });
+      console.log('[SpellCastingService] executeSpellEffect (stub)', { spellType, biome, startTile, endTile, isOrigon: isOrigin });
     }
     const tile_size = 64;
     const half_tile = 32;
@@ -289,37 +293,37 @@ export class SpellCastingService {
     });
 
     // spawn VFX at startTile if an origon.
-    if (isOrigon) {
+    if (isOrigin) {
       // spawn origon VFX at startTile center (not player).
       // spawn VFX traveling from startTile center to player travelGVector.
       const player = (this.scene as GameScene).playerPosition;
       let travelGVector: CastVector = { x: (player.x-32 - startTile.x * tile_size), y: (player.y - startTile.y * tile_size) };
       //let startGVector: CastVector = { x: startTile.x * tile_size + half_tile, y: startTile.y * tile_size + half_tile };
-      const origonVFX = this.scene.add
+      const originVFX = this.scene.add
         .sprite(startTile.x * tile_size + half_tile, startTile.y * tile_size + half_tile, ASSET_KEYS.MAGIC_FX_HOLY_EXPLOSION)
         .setScale(0.6, 0.35)
         .setOrigin(0.5, 0.5);
-      origonVFX.setDepth(DECORATION_DEPTH + 1);
-      origonVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
-      origonVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
-      origonVFX.playReverse(ASSET_KEYS.CAST_ORIGON);
+      originVFX.setDepth(DECORATION_DEPTH + 1);
+      originVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
+      originVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+      originVFX.playReverse(ASSET_KEYS.CAST_ORIGIN);
       this.scene.tweens.add({
-        targets: origonVFX,
-        x: origonVFX.x + travelGVector.x/2,
-        y: origonVFX.y + travelGVector.y/2,
+        targets: originVFX,
+        x: originVFX.x + travelGVector.x/2,
+        y: originVFX.y + travelGVector.y/2,
         duration: 1000,
         ease: 'Sine.easeOut',
-        onComplete: () => spell.destroy(),
+        onComplete: () => originVFX.destroy(),
       });
-      origonVFX.on('animationcomplete', () => {
-        origonVFX.destroy();
+      originVFX.on('animationcomplete', () => {
+        originVFX.destroy();
       });
     }
 
     // spawn VFX traveling from startTile to endTile along travelVector.
     let travelVector: CastVector = { x: (endTile.x - startTile.x) * tile_size, y: (endTile.y - startTile.y) * tile_size };
     let startVector: CastVector = { x: startTile.x * tile_size + half_tile, y: startTile.y * tile_size + half_tile };
-    if (isOrigon) {//if origon (first of staggered spell) start at player
+    if (isOrigin) {//if origon (first of staggered spell) start at player
       const player = (this.scene as GameScene).playerPosition;
       startVector = { x: player.x, y: player.y };
       travelVector = { x: (endTile.x * tile_size + half_tile - startVector.x), y: (endTile.y * tile_size + half_tile - startVector.y) }

@@ -725,8 +725,8 @@ export class Earth {
                     tilesToPlace.push(new Tile({
                         tilenumber: { x: first.x + pos.x, y: first.y + pos.y },
                         biome: BIOME.FOREST,
-                        blocking: blokking,
-                        decoration: docoration
+                        blocking: blocking,
+                        decoration: decoration
                     }));
                 }
             }
@@ -742,17 +742,17 @@ export class Earth {
         };
 
         // Now again with blocking (if not on players tile)
-        let pos = { x: -1, y: 1 }; let blokking = 20; let docoration = 49;// center 1
+        let pos = { x: -1, y: 1 }; let blocking = 20; let decoration = 49;// center 1
         tryPlaceTree();
-        pos = { x: -1, y: 0 }; blokking = 22; docoration = 51;// center 3
+        pos = { x: -1, y: 0 }; blocking = 22; decoration = 51;// center 3
         tryPlaceTree();
-        pos = { x: 0, y: 3 }; blokking = 24; docoration = 54;// next 7
+        pos = { x: 0, y: 3 }; blocking = 24; decoration = 54;// next 7
         tryPlaceTree();
-        pos = { x: 2, y: -2 }; blokking = 26; docoration = 54;// outer 9
+        pos = { x: 2, y: -2 }; blocking = 26; decoration = 54;// outer 9
         tryPlaceTree();
-        pos = { x: -2, y: -2 }; blokking = 27; docoration = 50;// outer 5
+        pos = { x: -2, y: -2 }; blocking = 27; decoration = 50;// outer 5
         tryPlaceTree();
-        pos = { x: 2, y: 2 }; blokking = 32; docoration = 55;// outer 3
+        pos = { x: 2, y: 2 }; blocking = 32; decoration = 55;// outer 3
         tryPlaceTree();
 
         // Now place void at the edges of the garden if needed.
