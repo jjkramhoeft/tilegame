@@ -41,3 +41,15 @@ Void → Rock → Desert → Water → Grass → Forest → Mountain → Swamp �
 
 - Hearts (health), Magic Level indicator, Animal progression indicator.
 - Chest dialog, Save/Exit dialog, Story dialog.
+
+## Assets
+
+All assets are preloaded in `PreloadScene`. 
+
+Aseprite is only used for the spider and some few HUD elements. Animations are createded by `PreloadScene` using these five functions
+
+- `createUiAnimations`
+- `createAdamAndEveAnimations`
+- `createMobAnimations`
+- `createTileAnimations`
+- `createOtherAnimations`
