@@ -23,9 +23,9 @@ const COLORS = {
 const CURSOR_SIZE = 16;
 const CURSOR_X = 20;
 const CURSOR_Y_OFFSET = 20; // vertically center cursor on the menu text
-const INTRO_ANIMAL_SPAWN_DELAY_MS = 8_000;
+const INTRO_ANIMAL_SPAWN_DELAY_MS = 9_000;
 const INTRO_ANIMAL_MIN_TURN_DELAY_MS = 2_000;
-const INTRO_ANIMAL_MAX_TURN_DELAY_MS = 8_000;
+const INTRO_ANIMAL_MAX_TURN_DELAY_MS = 7_000;
 const INTRO_ANIMAL_MIN_REVERSE_DURATION_MS = 500;
 const INTRO_ANIMAL_MAX_REVERSE_DURATION_MS = 1_500;
 const INTRO_ANIMAL_Y_VALUES = [260, 540];
@@ -260,7 +260,9 @@ export class Intro extends Scene {
             .setScale(INTRO_ANIMAL_SCALE);
         if(lane==0){
             animalSprite.setTint(0x333333)
-            .setTintMode(Phaser.TintModes.ADD);;
+            .setTintMode(Phaser.TintModes.ADD);
+            animalSprite.enableFilters();
+            animalSprite.filters?.internal.addBlur(0, 1.1, 1.1, 0.3334, 0xcccccc, 1);
         }
         this.backgroundAnimals.push(animalSprite);
         animalSprite.play(direction === 'right' ? animal.walkRight : animal.walkLeft);
