@@ -53,8 +53,11 @@ export class Intro extends Scene {
             musicVolume = 0.05
         }
 
-        this.add.image(512, 384, 'background');
-        this.add.image(512, 150, 'logo').setDepth(100).setScale(2.5);
+        this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND).setDepth(0);
+        this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_2).setDepth(10).setTint(0xff0000);
+        this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_1).setDepth(20);
+        this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_0).setDepth(30);
+        this.add.image(512, 150, ASSET_KEYS.LOGO).setDepth(100).setScale(2.5);
 
         this.introMusic = this.sound.add('introMusic', {
             loop: true,
@@ -154,6 +157,7 @@ export class Intro extends Scene {
         text.setOrigin(0);
         text.setInteractive({ useHandCursor: true });
         text.on('pointerdown', onSelect);
+        text.setDepth(100);
         this.menuItems.push({ text, y, onSelect });
         return text;
     }
