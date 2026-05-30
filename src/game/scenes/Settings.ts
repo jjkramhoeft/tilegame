@@ -69,11 +69,11 @@ export class Settings extends Scene {
         this.localizedTextObjects = [];
         this.rows = [];
         this.selectedRowIndex = 0;
-        this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'credit-bg');
+        this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, ASSET_KEYS.CREDITS_BACKGROUND);
 
-        this.#uiDownSound = this.sound.add('menu_006');
-        this.#uiUpSound = this.sound.add('menu_024');
-        this.#uiSelectSound = this.sound.add('Blip_Select7');
+        this.#uiDownSound = this.sound.add(ASSET_KEYS.MENU_006);
+        this.#uiUpSound = this.sound.add(ASSET_KEYS.MENU_024);
+        this.#uiSelectSound = this.sound.add(ASSET_KEYS.BLIP_SELECT_7);
 
         const savedDifficulty = this.registry.get('difficulty');
         const hasSavedDifficulty = savedDifficulty === DIFFICULTY.EASY || savedDifficulty === DIFFICULTY.HARD || savedDifficulty === DIFFICULTY.DEBUG;
@@ -369,7 +369,7 @@ export class Settings extends Scene {
         this.registry.set('physicsDebug', debugEnabled);
         setEnableLogging(debugEnabled);
 
-        const gameScene = this.scene.get('GameScene');
+        const gameScene = this.scene.get(SCENE_KEYS.GAME_SCENE);
         if (gameScene?.physics?.world) {
             const world = gameScene.physics.world;
             if (debugEnabled && !world.debugGraphic) {
