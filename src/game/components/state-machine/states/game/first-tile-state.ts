@@ -15,6 +15,7 @@ export class FirstTileState extends BaseGameState {
   #startY = 0;
   #moved = false;
   #attacked = false;
+  #casted = false;
 
   constructor(scene: GameScene) {
     super(GAME_STATES.FIRST_TILE, scene);
@@ -41,12 +42,16 @@ export class FirstTileState extends BaseGameState {
         this.#moved = true;
       }
     }
-    /*
+    
     if (!this.#attacked && player.currentState === CHARACTER_STATES.ATTACK_STATE) {
       this.#attacked = true;
-    }*/
+    }
+    
+    if (!this.#casted && player.currentState === CHARACTER_STATES.CASTING_STATE) {
+      this.#casted = true;
+    }
 
-    if (this.#moved ){//&& this.#attacked) {
+    if (this.#moved && this.#attacked && this.#casted) {
       this._transitionTo(GAME_STATES.ASSIGNMENT);
     }
   }

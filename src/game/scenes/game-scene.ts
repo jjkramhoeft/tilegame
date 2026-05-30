@@ -187,6 +187,10 @@ export class GameScene extends Phaser.Scene {
         this.cameras.main.startFollow(this.#player);
     }
 
+    public getPlayerStartWorldPosition(): Position {
+        return { ...this.#playerStartWorldPosition };
+    }
+
     #registerColliders(): void {
         // collision between player and blocking map geometry (treetrunks, stones, etc.)
         const blockingGeometryGroup = this.#earth.getBlockingGeometryGroup();

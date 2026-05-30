@@ -177,9 +177,9 @@ The game play progression is implemented using StateMachine, a BaseGameState and
 A narrator game state, Player is passive.
 The events in this gameState is as following:
 
-1) empty screen (no player and no tiles)
+1) empty screen (no player and no tiles) only 25 dark clouds moving around for 2 seconds
 2) text: "...In the beginning the earth was formless and empty..."
-3) 1 sec pause
+3) ½ sec pause, then the clouds move away from the center and
 4) Place 1st tile
 5) 1 sec pause
 6) Place player (movement disabled)
