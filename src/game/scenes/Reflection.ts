@@ -22,6 +22,19 @@ const REFLECTION_HEADING_TOP_SPACING = 24;
 const REFLECTION_KEYBOARD_SCROLL_SPEED = 420;
 const REFLECTION_MOUSE_WHEEL_SCROLL_SPEED = 0.7;
 const REFLECTION_MUSIC_PAUSE_MS = 3000;
+const REFLECTION_CLOUD_DEPTH = 25;
+const REFLECTION_CLOUD_MIN_Y = 0;
+const REFLECTION_CLOUD_MAX_Y = 200;
+const REFLECTION_CLOUD_SPAWN_DELAY_MS = 1500;
+const REFLECTION_INITIAL_CLOUD_COUNT = 10;
+const REFLECTION_MAX_ACTIVE_CLOUDS = 18;
+const REFLECTION_CLOUD_OFFSCREEN_PADDING = 180;
+const REFLECTION_CLOUD_MIN_SPEED = 10;
+const REFLECTION_CLOUD_MAX_SPEED = 35;
+const REFLECTION_CLOUD_MIN_ALPHA = 0.7;
+const REFLECTION_CLOUD_MAX_ALPHA = 0.9;
+const REFLECTION_CLOUD_MIN_SCALE = 0.9;
+const REFLECTION_CLOUD_MAX_SCALE = 1.15;
 
 type ReflectionTextConfig = {
     textKey: Parameters<typeof getText>[0];
@@ -56,6 +69,19 @@ const REFLECTION_MUSIC_KEYS = [
     ASSET_KEYS.REFLECTION_MUSIC_3,
 ];
 
+const REFLECTION_CLOUD_KEYS = [
+    ASSET_KEYS.CLOUD_SHAPE2_1,
+    ASSET_KEYS.CLOUD_SHAPE2_2,
+    ASSET_KEYS.CLOUD_SHAPE2_3,
+    ASSET_KEYS.CLOUD_SHAPE2_4,
+    ASSET_KEYS.CLOUD_SHAPE2_5,
+    ASSET_KEYS.CLOUD_SHAPE3_1,
+    ASSET_KEYS.CLOUD_SHAPE3_2,
+    ASSET_KEYS.CLOUD_SHAPE3_3,
+    ASSET_KEYS.CLOUD_SHAPE3_4,
+    ASSET_KEYS.CLOUD_SHAPE3_5,
+];
+
 export class Reflection extends Scene {
     reflectionMusic?: Phaser.Sound.BaseSound;
     private reflectionMusicIndex = 0;
@@ -63,6 +89,8 @@ export class Reflection extends Scene {
     private reflectionScrollContainer?: Phaser.GameObjects.Container;
     private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
     private controls?: KeyboardComponent;
+    private backgroundClouds: Phaser.GameObjects.Image[] = [];
+    private cloudSpawnEvent?: Phaser.Time.TimerEvent;
     private scrollOffset = 0;
     private maxScrollOffset = 0;
     #uiSelectSound!: Phaser.Sound.BaseSound;
@@ -84,6 +112,7 @@ export class Reflection extends Scene {
 
         this.add.image(0, 0, ASSET_KEYS.CREDITS_BACKGROUND).setOrigin(0).setDisplaySize(this.scale.width, this.scale.height).setDepth(0);
         this.add.image(0, 0, ASSET_KEYS.CREDITS_BACKGROUND_LAYER_1).setOrigin(0).setDisplaySize(this.scale.width, this.scale.height).setDepth(40);
+        this.createBackgroundClouds();
         this.add.image(centerX + 355, 95, ASSET_KEYS.LOGO).setDepth(100).setScale(1.5);
 
         this.add.text(50, 90, getText('reflection.title'), {
@@ -101,6 +130,7 @@ export class Reflection extends Scene {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 28, color: COLORS.body,
             stroke: COLORS.textStroke, strokeThickness: 8,
         });
+        exit_text.setDepth(100);
         exit_text.setOrigin(1);
         exit_text.setInteractive({ useHandCursor: true });
         exit_text.on('pointerdown', () => {
@@ -115,6 +145,7 @@ export class Reflection extends Scene {
         }
 
         this.events.once('shutdown', () => {
+            this.clearBackgroundClouds();
             this.clearReflectionMusicPauseEvent();
             this.reflectionMusic?.stop();
             this.reflectionMusic?.destroy();
@@ -175,6 +206,58 @@ export class Reflection extends Scene {
             });
         });
         this.reflectionMusic.play();
+    }
+
+    private createBackgroundClouds() {
+        this.clearBackgroundClouds();
+
+        for (let index = 0; index < REFLECTION_INITIAL_CLOUD_COUNT; index += 1) {
+            this.spawnCloud(Phaser.Math.Between(-REFLECTION_CLOUD_OFFSCREEN_PADDING, this.scale.width));
+        }
+
+        this.cloudSpawnEvent = this.time.addEvent({
+            delay: REFLECTION_CLOUD_SPAWN_DELAY_MS,
+            callback: () => this.spawnCloud(),
+            loop: true,
+        });
+    }
+
+    private spawnCloud(initialX = -REFLECTION_CLOUD_OFFSCREEN_PADDING) {
+        if (this.backgroundClouds.length >= REFLECTION_MAX_ACTIVE_CLOUDS) {
+            return;
+        }
+
+        const cloudKey = Phaser.Utils.Array.GetRandom(REFLECTION_CLOUD_KEYS);
+        const cloud = this.add.image(initialX, Phaser.Math.Between(REFLECTION_CLOUD_MIN_Y, REFLECTION_CLOUD_MAX_Y), cloudKey)
+            .setDepth(REFLECTION_CLOUD_DEPTH)
+            .setAlpha(Phaser.Math.FloatBetween(REFLECTION_CLOUD_MIN_ALPHA, REFLECTION_CLOUD_MAX_ALPHA))
+            .setScale(Phaser.Math.FloatBetween(REFLECTION_CLOUD_MIN_SCALE, REFLECTION_CLOUD_MAX_SCALE))
+            .setTint(0x111).setTintMode(Phaser.TintModes.ADD);
+        const targetX = this.scale.width + REFLECTION_CLOUD_OFFSCREEN_PADDING;
+        const speed = Phaser.Math.Between(REFLECTION_CLOUD_MIN_SPEED, REFLECTION_CLOUD_MAX_SPEED);
+        const duration = ((targetX - initialX) / speed) * 1000;
+
+        this.backgroundClouds.push(cloud);
+        this.tweens.add({
+            targets: cloud,
+            x: targetX,
+            duration,
+            ease: 'Linear',
+            onComplete: () => this.destroyCloud(cloud),
+        });
+    }
+
+    private destroyCloud(cloud: Phaser.GameObjects.Image) {
+        this.backgroundClouds = this.backgroundClouds.filter((backgroundCloud) => backgroundCloud !== cloud);
+        this.tweens.killTweensOf(cloud);
+        cloud.destroy();
+    }
+
+    private clearBackgroundClouds() {
+        this.cloudSpawnEvent?.remove(false);
+        this.cloudSpawnEvent = undefined;
+        [...this.backgroundClouds].forEach((cloud) => this.destroyCloud(cloud));
+        this.backgroundClouds = [];
     }
 
     private createScrollableReflectionText() {
