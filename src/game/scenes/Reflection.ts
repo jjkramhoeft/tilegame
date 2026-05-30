@@ -50,10 +50,13 @@ const REFLECTION_TEXTS: ReflectionTextConfig[] = [
     { textKey: 'reflection.point18', width: 800 },
 ];
 
-const REFLECTION_MUSIC_KEYS = ['reflectionMusic1', 'reflectionMusic2', 'reflectionMusic3'];
+const REFLECTION_MUSIC_KEYS = [
+    ASSET_KEYS.REFLECTION_MUSIC_1,
+    ASSET_KEYS.REFLECTION_MUSIC_2,
+    ASSET_KEYS.REFLECTION_MUSIC_3,
+];
 
-export class Reflection extends Scene
-{
+export class Reflection extends Scene {
     reflectionMusic?: Phaser.Sound.BaseSound;
     private reflectionMusicIndex = 0;
     private reflectionMusicPauseEvent?: Phaser.Time.TimerEvent;
@@ -64,26 +67,24 @@ export class Reflection extends Scene
     private maxScrollOffset = 0;
     #uiSelectSound!: Phaser.Sound.BaseSound;
 
-    constructor ()
-    {
+    constructor() {
         super('reflection');
     }
 
-    create ()
-    {
-        const centerY = this.cameras.main.centerY;
+    create() {
         const centerX = this.cameras.main.centerX;
         const registryVolume = this.registry.get('musicVolume');
         const musicVolume = typeof registryVolume === 'number' ? registryVolume : 0.1;
-        this.#uiSelectSound = this.sound.add('Blip_Select7');
+        this.#uiSelectSound = this.sound.add(ASSET_KEYS.BLIP_SELECT_7);
 
         this.registry.set('musicVolume', musicVolume);
 
         this.reflectionMusicIndex = 0;
         this.playNextReflectionMusic();
 
-        this.add.image(centerX, centerY, 'credit-bg');
-        this.add.image(centerX+355, 95, 'logo').setDepth(100).setScale(1.5);
+        this.add.image(0, 0, ASSET_KEYS.CREDITS_BACKGROUND).setOrigin(0).setDisplaySize(this.scale.width, this.scale.height).setDepth(0);
+        this.add.image(0, 0, ASSET_KEYS.CREDITS_BACKGROUND_LAYER_1).setOrigin(0).setDisplaySize(this.scale.width, this.scale.height).setDepth(40);
+        this.add.image(centerX + 355, 95, ASSET_KEYS.LOGO).setDepth(100).setScale(1.5);
 
         this.add.text(50, 90, getText('reflection.title'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 58, color: COLORS.title,
@@ -102,7 +103,7 @@ export class Reflection extends Scene
         });
         exit_text.setOrigin(1);
         exit_text.setInteractive({ useHandCursor: true });
-        exit_text.on('pointerdown', () => {         
+        exit_text.on('pointerdown', () => {
             this.#uiSelectSound.play();
             this.returnToIntro();
         });
@@ -121,9 +122,8 @@ export class Reflection extends Scene
         });
     }
 
-    update (_time: number, delta: number)
-    {
-        if (this.controls && (this.controls.isActionKeyJustDown)) {     
+    update(_time: number, delta: number) {
+        if (this.controls && (this.controls.isActionKeyJustDown)) {
             this.#uiSelectSound.play();
             this.returnToIntro();
             return;
@@ -144,21 +144,18 @@ export class Reflection extends Scene
         }
     }
 
-    private returnToIntro ()
-    {
+    private returnToIntro() {
         this.clearReflectionMusicPauseEvent();
         this.reflectionMusic?.stop();
         this.scene.start(SCENE_KEYS.INTRO);
     }
 
-    private clearReflectionMusicPauseEvent ()
-    {
+    private clearReflectionMusicPauseEvent() {
         this.reflectionMusicPauseEvent?.remove(false);
         this.reflectionMusicPauseEvent = undefined;
     }
 
-    private playNextReflectionMusic ()
-    {
+    private playNextReflectionMusic() {
         this.clearReflectionMusicPauseEvent();
         this.reflectionMusic?.stop();
         this.reflectionMusic?.destroy();
@@ -180,8 +177,7 @@ export class Reflection extends Scene
         this.reflectionMusic.play();
     }
 
-    private createScrollableReflectionText ()
-    {
+    private createScrollableReflectionText() {
         this.reflectionScrollContainer = this.add.container(0, REFLECTION_SCROLL_TOP).setDepth(50);
         this.scrollOffset = 0;
         this.maxScrollOffset = 0;
@@ -221,8 +217,7 @@ export class Reflection extends Scene
         });
     }
 
-    private scrollReflection (amount: number)
-    {
+    private scrollReflection(amount: number) {
         if (!this.reflectionScrollContainer) {
             return;
         }
