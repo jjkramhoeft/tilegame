@@ -67,4 +67,5 @@ export type TilePlacedPayload = {
   tileY: number;
   biome: number;
   hasBlocking: boolean;
+  hasDecoration: boolean;
 };

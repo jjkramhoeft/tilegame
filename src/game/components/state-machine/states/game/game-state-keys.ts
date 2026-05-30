@@ -11,6 +11,7 @@ export const GAME_STATES = {
   BOSS_FIGHT: 'bossFightState',
   GAME_OVER: 'gameOverState',
   VICTORY: 'victoryState',
+  HELP_WITH_TILECASTING: 'helpWithTileCastingState',
 } as const;
 
 export type GameStateName = typeof GAME_STATES[keyof typeof GAME_STATES];

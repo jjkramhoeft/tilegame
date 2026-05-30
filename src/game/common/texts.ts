@@ -271,6 +271,10 @@ const TEXTS = {
         en: 'Game Over...',
         da: 'Spillet er slut...',
     },
+    'narrator.helpWithTileCasting': {
+        en: 'Go back to your first basic rock tiles and keep casting music on them to they have both pepples and rocks!',
+        da: 'Gå tilbage til dine første grundlæggende klippesten og fortsæt med at kaste musik på dem, så de har både småsten og klipper!',
+    },
     //Chest Dialog
     'chest.empty': {
         en: 'You opened an empty chest.',

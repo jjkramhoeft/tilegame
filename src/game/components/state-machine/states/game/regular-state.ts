@@ -1,9 +1,10 @@
 import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
-import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../../../../common/event-bus';
-import { BIOME } from '../../../../common/common';
+import { CUSTOM_EVENTS, EVENT_BUS, ProgressionHelpPayload, type TilePlacedPayload } from '../../../../common/event-bus';
+import { BIOME, CASTING_UNLOCKS } from '../../../../common/common';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { ENABLE_LOGGING } from '../../../../common/config';
+import { DataManager } from '../../../../common/data-manager';
 
 /**
  * Main play state. Watches for triggers that pull the game into a scripted
@@ -57,16 +58,28 @@ export class RegularState extends BaseGameState {
   }
 
   #onTilePlaced(payload: TilePlacedPayload): void {
-    if (!payload.hasBlocking) {
-      return;
-    }
-    if (
-      payload.biome === BIOME.FOREST ||
-      payload.biome === BIOME.SWAMP ||
-      payload.biome === BIOME.DESERT
-    ) {
-      RegularState.#firstTreeFired = true;
-      this._transitionTo(GAME_STATES.FIRST_TREE);
+    //Test for only basic tiles
+    if (!payload.hasBlocking && !payload.hasDecoration) {
+      const baseTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BASIC] ??0) + 
+        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_BASIC] ??0);
+      const decorationTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_DECORATION] ??0) + 
+        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_DECORATION] ??0);
+      const blockingTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BLOCKING] ??0) + 
+        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_BLOCKING] ??0);
+      if ((decorationTileCount + blockingTileCount) * 2.5 < baseTileCount) {
+        this._transitionTo(GAME_STATES.HELP_WITH_TILECASTING, { textKey: 'narrator.helpWithTileCasting' } as ProgressionHelpPayload);
+      }
+      if (!payload.hasBlocking) {
+        return;
+      }
+      if (
+        payload.biome === BIOME.FOREST ||
+        payload.biome === BIOME.SWAMP ||
+        payload.biome === BIOME.DESERT
+      ) {
+        RegularState.#firstTreeFired = true;
+        this._transitionTo(GAME_STATES.FIRST_TREE);
+      }
     }
   }
 

@@ -596,6 +596,7 @@ export class Earth {
             tileY: tile.tileY,
             biome: tile.biome,
             hasBlocking: tile.blocking >= 0,
+            hasDecoration: tile.decoration >= 0,
         };
         EVENT_BUS.emit(CUSTOM_EVENTS.TILE_PLACED, payload);
     }
@@ -645,9 +646,9 @@ export class Earth {
         if (!this.firstTilePosition) {
             return;
         }
-        for (let dx = -3; dx <= 3; dx++) {
-            for (let dy = -3; dy <= 3; dy++) {
-                if (Math.abs(dx) === 3 && Math.abs(dy) === 3) continue; // Skip the 4 outermost corners
+        for (let dx = -2; dx <= 2; dx++) {
+            for (let dy = -2; dy <= 2; dy++) {
+                if (Math.abs(dx) === 2 && Math.abs(dy) === 2) continue; // Skip the 4 outermost corners
                 if (dx === 0 && dy === 0) continue; // Skip the center tile (already the starting tile)
                 this.AddVoidMarkerTile(this.firstTilePosition.x + dx, this.firstTilePosition.y + dy);
             }
