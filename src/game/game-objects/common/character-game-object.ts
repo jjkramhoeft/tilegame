@@ -15,6 +15,9 @@ import { GEAR, DIFFICULTY } from '../../common/common';
 import {
   PLAYER_ARMOR_AS_GEAR_SPEED_PENALTY,
   PLAYER_NORMAL_AS_GEAR_SPEED_PENALTY,
+  PLAYER_SWIM_ARMOR_AS_GEAR_SPEED_PENALTY,
+  PLAYER_SWIM_NORMAL_AS_GEAR_SPEED_PENALTY,
+  PLAYER_SWIM_SPEED,
   DIFFICULTY_HARD_SPEED_MULTIPLIER,
 } from '../../common/config';
 
@@ -115,17 +118,22 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
   }
 
   get speed(): number {
-    const baseSpeed = this._speedComponent.speed;
     const difficultySpeedMultiplyer = DataManager.instance.data.difficulty === DIFFICULTY.HARD 
       ? DIFFICULTY_HARD_SPEED_MULTIPLIER 
       : 1;
     if (!this._isPlayer) {// Animals, Critter & Enemies
-      return baseSpeed*difficultySpeedMultiplyer;
+      return this._speedComponent.speed*difficultySpeedMultiplyer;
     }
     // Player
-    const speedPenalty = DataManager.instance.data.gear === GEAR.ARMOR
-      ? PLAYER_ARMOR_AS_GEAR_SPEED_PENALTY
-      : PLAYER_NORMAL_AS_GEAR_SPEED_PENALTY;
+    const isSwimming = this._stateMachine.currentStateName === CHARACTER_STATES.SWIM_STATE;
+    const baseSpeed = isSwimming ? PLAYER_SWIM_SPEED : this._speedComponent.speed;
+    const speedPenalty = isSwimming
+      ? DataManager.instance.data.gear === GEAR.ARMOR
+        ? PLAYER_SWIM_ARMOR_AS_GEAR_SPEED_PENALTY
+        : PLAYER_SWIM_NORMAL_AS_GEAR_SPEED_PENALTY
+      : DataManager.instance.data.gear === GEAR.ARMOR
+        ? PLAYER_ARMOR_AS_GEAR_SPEED_PENALTY
+        : PLAYER_NORMAL_AS_GEAR_SPEED_PENALTY;
     return Math.max(0, (baseSpeed - speedPenalty) * difficultySpeedMultiplyer);
   }
 

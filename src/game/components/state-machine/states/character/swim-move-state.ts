@@ -18,7 +18,7 @@ export class SwimMoveState extends BaseMoveState {
     this._gameObject.setCrop(0, 0, this._gameObject.width, this._gameObject.height / 1.5);
 
     if (this._gameObject.isPlayer) {
-      this.#swimSound = this._gameObject.scene.sound.add('water-splash', { loop: true, volume: 1.0 });
+      this.#swimSound = this._gameObject.scene.sound.add('water-splash', { loop: true, volume: 0.9 });
     }
   }
 

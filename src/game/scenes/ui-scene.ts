@@ -138,6 +138,9 @@ export class UiScene extends Phaser.Scene {
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, this.updateLivingCreaturesInHud, this);
+    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_HEALTH_HUD, this.showHealthHud, this);
+    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_POWER_HUD, this.showPowerHud, this);
+    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_PROGRESS_HUD, this.showProgressHud, this);
     EVENT_BUS.on(CUSTOM_EVENTS.SHOW_CHEST_DIALOG, this.showDialog, this);
     EVENT_BUS.on(CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, this.showNarratorDialog, this);
 
@@ -154,6 +157,9 @@ export class UiScene extends Phaser.Scene {
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, this.updateLivingCreaturesInHud, this);
+      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_HEALTH_HUD, this.showHealthHud, this);
+      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_POWER_HUD, this.showPowerHud, this);
+      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_PROGRESS_HUD, this.showProgressHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.SHOW_CHEST_DIALOG, this.showDialog, this);
       EVENT_BUS.off(CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, this.showNarratorDialog, this);
     });
@@ -205,6 +211,18 @@ export class UiScene extends Phaser.Scene {
 
   public updateLivingCreaturesInHud(data: LivingCreaturesUpdated): void {
     this.#syncLivingCreaturesMeter(data.currentLivingCreatures, data.maxLivingCreaturesThisGame);
+  }
+
+  public showHealthHud(): void {
+    this.#setMeterVisible(this.#hearts, true);
+  }
+
+  public showPowerHud(): void {
+    this.#setMeterVisible(this.#power, true);
+  }
+
+  public showProgressHud(): void {
+    this.#setMeterVisible(this.#progress, true);
   }
 
   public showDialog(dialog: DialogPayload): void {
@@ -296,6 +314,10 @@ export class UiScene extends Phaser.Scene {
       textureKey: ASSET_KEYS.PROGRESS_16,
     });
 
+    this.#setMeterVisible(this.#hearts, false);
+    this.#setMeterVisible(this.#power, false);
+    this.#setMeterVisible(this.#progress, false);
+
     this.#hudContainer.add(this.#hearts);
     this.#hudContainer.add(this.#power);
     this.#hudContainer.add(this.#progress);
@@ -314,6 +336,12 @@ export class UiScene extends Phaser.Scene {
   #syncMeter(meter: Phaser.GameObjects.Sprite[], maxValue: number, currentValue: number): void {
     meter.forEach((sprite, index) => {
       sprite.setFrame(this.#getMeterFrame(index, maxValue, currentValue));
+    });
+  }
+
+  #setMeterVisible(meter: Phaser.GameObjects.Sprite[], visible: boolean): void {
+    meter.forEach((sprite) => {
+      sprite.visible = visible;
     });
   }
 

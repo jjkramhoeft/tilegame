@@ -5,6 +5,7 @@ import type { GameScene } from '../../../../scenes/game-scene';
 import { Position } from '../../../../common/types';
 import { DataManager } from '../../../../common/data-manager';
 import { ENABLE_LOGGING } from '../../../../common/config';
+import { CUSTOM_EVENTS, EVENT_BUS, TilePlacedPayload } from '../../../../common/event-bus';
 
 /**
  * Active play state where the goal is to fill the target void area with at
@@ -16,6 +17,8 @@ import { ENABLE_LOGGING } from '../../../../common/config';
 export class BabyStepsState extends BaseGameState {
   #starterTilePosition?: Position;
   #filledTargetTilesNeeded = 20;
+  #tileHandler?: (payload: TilePlacedPayload) => void;
+  static #hudShown = false;
 
   constructor(scene: GameScene) {
     super(GAME_STATES.BABY_STEPS, scene);
@@ -24,9 +27,17 @@ export class BabyStepsState extends BaseGameState {
   public onEnter(): void {
     if (ENABLE_LOGGING) { console.debug('[GameProgression] BabyStepsState entered'); }
     this.#starterTilePosition = DataManager.instance.data.startTile;
+    if (!BabyStepsState.#hudShown) {
+      this.#tileHandler = (payload) => this.#onTilePlaced(payload);
+      EVENT_BUS.on(CUSTOM_EVENTS.TILE_PLACED, this.#tileHandler);
+    }
   }
 
   public onExit(): void {
+    if (this.#tileHandler) {
+      EVENT_BUS.off(CUSTOM_EVENTS.TILE_PLACED, this.#tileHandler);
+      this.#tileHandler = undefined;
+    }
     super.onExit();
   }
 
@@ -53,5 +64,13 @@ export class BabyStepsState extends BaseGameState {
       return; // Player stands on the tile where the fruit chest shall spawn.
     }
     this._transitionTo(GAME_STATES.GARDEN);
+  }
+
+  #onTilePlaced(payload: TilePlacedPayload): void {
+    if (payload.hasDecoration && !BabyStepsState.#hudShown) {
+      EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_HEALTH_HUD);
+      EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_POWER_HUD);
+      BabyStepsState.#hudShown = true;
+    }
   }
 }

@@ -375,6 +375,15 @@ export class Earth {
             case BIOME.CRYSTAL: placedTileAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_DECORATION; break;
         }
         if (placedTileAsCastingUnlock) DataManager.instance.increaseTilesPlaced(placedTileAsCastingUnlock);
+        // Notify listeners (game progression, etc.) that a tile was placed.
+        const payload: TilePlacedPayload = {
+            tileX: position.x,
+            tileY: position.y,
+            biome: existingTile.biome,
+            hasBlocking: false,
+            hasDecoration: decoration >= 0,
+        };
+        EVENT_BUS.emit(CUSTOM_EVENTS.TILE_PLACED, payload);
     }
 
     AddBaseTile(position: Position, biome: BIOME, allowVariation: boolean): void {

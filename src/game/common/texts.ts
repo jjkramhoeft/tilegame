@@ -244,20 +244,20 @@ const TEXTS = {
         da: '...I begyndelsen var jorden tomhed og øde...',
     },
     'narrator.start.youCreated': {
-        en: '...God created the earth and the heavens, and you. Move carefully... (Use the arrow keys)\nTry an attack punch (z-key)\nAnd try your first music magic (c-key)',
-        da: '...Gud skabte jorden og himlen, og dig. Bevæg dig forsigtigt... (Brug piletasterne)\nPrøv at slå (z-tast)\nOg prøv at kaste din første musik-magi (c-tast)',
+        en: '...And God created the earth and the heavens, and you. Move carefully... (Use the arrow keys)\nTry an attack punch (z-key)\nAnd try your first music magic (c-key)',
+        da: '...Og Gud skabte jorden og himlen, og dig. Bevæg dig forsigtigt... (Brug piletasterne)\nPrøv at slå (z-tast)\nOg prøv at kaste din første musik-magi (c-tast)',
     },
     'narrator.assignment': {
-        en: '...And you shall help create!, make the land, fill it with green forest and then animals. Do not let it be empty... fill the surrounding void with rocks',
-        da: '...Og du skal hjælpe med at skabe; frembring landet, fyld det med grøn skov og så dyr. Lad det ikke være tomt... fyld den omkringliggende tomhed med klipper',
+        en: '...And you shall help create!, make the land, fill it with green forest and then animals. Do not let it be empty, fill the surrounding void with rocks and upgrade it!',
+        da: '...Og du skal hjælpe med at skabe; frembring landet, fyld det med grøn skov og så dyr. Lad det ikke være tomt, fyld den omkringliggende tomhed med klipper og opgrader den!',
     },
     'narrator.garden.lush': {
         en: 'Fine! Your first rocks and pebbles. Practice and grow your skills. We need more than this wasteland. In time you will bring forth green fields, flowing rivers and trees.',
         da: 'Fint! Dine første klipper og småsten. Øv dig og udvikl dine færdigheder. Vi har brug for mere end denne ødemark. Med tiden vil du frembringe grønne marker, strømmende floder og træer.',
     },
     'narrator.garden.assignment': {
-        en: 'Let me give you the first garden. Your assignment is to create a lush forest with many animals. If you pick an evil path you will have to face the demon.',
-        da: 'Lad mig give dig den første have. Din opgave er at skabe en frodig skov med mange dyr. Hvis du vælger en ond vej, bliver du nødt til at stå ansigt til ansigt med dæmonen.',
+        en: 'Let me give you the first garden. Your assignment is to create a lush forest with many animals. To do that, you must upgrade most of the land. Turn rock to desert, and desert to fertile land. If you pick an evil path you will have to face the demon.',
+        da: 'Lad mig give dig den første have. Din opgave er at skabe en frodig skov med mange dyr. For at gøre det, skal du opgradere det meste af landet. Forvandl klipper til ørken, og ørken til frugtbar jord. Hvis du vælger en ond vej, bliver du nødt til at stå ansigt til ansigt med dæmonen.',
     },
     'narrator.firstTree': {
         en: 'You added your first tree. Here, animals can thrive. Look to the night sky, the stars and the moon. They will guide you. (press \'m\' to look at map)',
