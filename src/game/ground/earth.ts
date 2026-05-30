@@ -777,8 +777,9 @@ export class Earth {
         this.createBlockingGeometryBody(first.x, first.y, 42);// The big tree trunk blocking. (Currently hardcoded at nor ready for Save Game). ToDo: Fix blocking bigTree.
 
         const placeTileAt = (tile: Tile): void => { this.AddTile(tile); };
-
+        
         const spawnBigTree = (): void => {
+            this.scene.sound.play(ASSET_KEYS.WHOOSH);
             this.scene.add
                 .sprite(first.x * this.tileSize, first.y * this.tileSize, ASSET_KEYS.BIG_TREE)
                 .setOrigin(0.25, 0.85)

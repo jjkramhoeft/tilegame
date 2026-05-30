@@ -66,7 +66,7 @@ export class RegularState extends BaseGameState {
         (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_DECORATION] ?? 0);
       const blockingTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BLOCKING] ?? 0) +
         (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_BLOCKING] ?? 0);
-      if ((decorationTileCount + blockingTileCount) * 0.1 < baseTileCount) {
+      if ((decorationTileCount + blockingTileCount) * 2.1 < baseTileCount) {
         this._transitionTo(GAME_STATES.HELP_WITH_TILECASTING);
       }
     }
