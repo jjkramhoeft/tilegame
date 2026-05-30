@@ -2,7 +2,12 @@ import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { DataManager } from '../common/data-manager';
 import { setEnableLogging } from '../common/config';
-import { ASSET_KEYS } from '../common/assets';
+import {
+    ASSET_KEYS,
+    PLANT1_ANIMATION_KEYS,
+    PLANT2_ANIMATION_KEYS,
+    PLANT3_ANIMATION_KEYS,
+} from '../common/assets';
 import { getText, type TextKey } from '../common/texts';
 import { SCENE_KEYS } from './scene-keys';
 import { DIFFICULTY } from '../common/common';
@@ -19,6 +24,9 @@ const COLORS = {
 };
 
 const MUSIC_LEVELS = [0, 0.05, 0.1, 0.25, 0.5, 0.75, 1];
+const PLANT_POSITION = { x: 750, y: 500 } as const;
+const PLANT_IDLE_CHANGE_DELAY_MIN = 5000;
+const PLANT_IDLE_CHANGE_DELAY_MAX = 8000;
 const LANGUAGE_OPTIONS = [
     { textKey: 'settings.language.danish', isDanish: true },
     { textKey: 'settings.language.english', isDanish: false }
@@ -46,6 +54,26 @@ type PickerRow = {
     onNext: () => void;
 };
 
+type DecorativePlantConfig = {
+    textureKey: string;
+    idleAnimationKeys: string[];
+};
+
+const DECORATIVE_PLANTS: DecorativePlantConfig[] = [
+    {
+        textureKey: ASSET_KEYS.PLANT1_IDLE,
+        idleAnimationKeys: [PLANT1_ANIMATION_KEYS.IDLE_LEFT, PLANT1_ANIMATION_KEYS.IDLE_RIGHT, PLANT1_ANIMATION_KEYS.IDLE_DOWN],
+    },
+    {
+        textureKey: ASSET_KEYS.PLANT2_IDLE,
+        idleAnimationKeys: [PLANT2_ANIMATION_KEYS.IDLE_LEFT, PLANT2_ANIMATION_KEYS.IDLE_RIGHT, PLANT2_ANIMATION_KEYS.IDLE_DOWN],
+    },
+    {
+        textureKey: ASSET_KEYS.PLANT3_IDLE,
+        idleAnimationKeys: [PLANT3_ANIMATION_KEYS.IDLE_LEFT, PLANT3_ANIMATION_KEYS.IDLE_RIGHT, PLANT3_ANIMATION_KEYS.IDLE_DOWN],
+    },
+];
+
 export class Settings extends Scene {
     private musicIndex = 1;
     private languageIndex = 1;
@@ -57,6 +85,8 @@ export class Settings extends Scene {
     private cursor!: Phaser.GameObjects.Image;
     private cursorOutline!: Phaser.GameObjects.Image;
     private controls?: KeyboardComponent;
+    private decorativePlant?: Phaser.GameObjects.Sprite;
+    private decorativePlantTimer?: Phaser.Time.TimerEvent;
     #uiDownSound!: Phaser.Sound.BaseSound;
     #uiUpSound!: Phaser.Sound.BaseSound;
     #uiSelectSound!: Phaser.Sound.BaseSound;
@@ -70,6 +100,8 @@ export class Settings extends Scene {
         this.rows = [];
         this.selectedRowIndex = 0;
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, ASSET_KEYS.CREDITS_BACKGROUND);
+        this.createDecorativePlant();
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanupDecorativePlantTimer());
 
         this.#uiDownSound = this.sound.add(ASSET_KEYS.MENU_006);
         this.#uiUpSound = this.sound.add(ASSET_KEYS.MENU_024);
@@ -252,6 +284,39 @@ export class Settings extends Scene {
         const cursorX = 700 - 170 - CURSOR_X_OFFSET;
         this.cursor.setPosition(cursorX, row.y);
         this.cursorOutline.setPosition(cursorX, row.y);
+    }
+
+    private createDecorativePlant(): void {
+        const plantConfig = Phaser.Utils.Array.GetRandom(DECORATIVE_PLANTS);
+        this.decorativePlant = this.add.sprite(PLANT_POSITION.x + Phaser.Math.Between(0, 150), PLANT_POSITION.y, plantConfig.textureKey)
+            .setScale(2)
+            .setOrigin(0.5)
+            .setDepth(1);
+        this.playRandomDecorativePlantIdle(plantConfig);
+        this.scheduleDecorativePlantIdleChange(plantConfig);
+    }
+
+    private playRandomDecorativePlantIdle(plantConfig: DecorativePlantConfig): void {
+        if (!this.decorativePlant?.active) {
+            return;
+        }
+        this.decorativePlant.play(Phaser.Utils.Array.GetRandom(plantConfig.idleAnimationKeys), true);
+    }
+
+    private scheduleDecorativePlantIdleChange(plantConfig: DecorativePlantConfig): void {
+        this.cleanupDecorativePlantTimer();
+        this.decorativePlantTimer = this.time.delayedCall(
+            Phaser.Math.Between(PLANT_IDLE_CHANGE_DELAY_MIN, PLANT_IDLE_CHANGE_DELAY_MAX),
+            () => {
+                this.playRandomDecorativePlantIdle(plantConfig);
+                this.scheduleDecorativePlantIdleChange(plantConfig);
+            },
+        );
+    }
+
+    private cleanupDecorativePlantTimer(): void {
+        this.decorativePlantTimer?.remove(false);
+        this.decorativePlantTimer = undefined;
     }
 
     private createPickerRow(config: {
