@@ -13,6 +13,7 @@ const START_CLOUD_DRIFT_MIN_DISTANCE = 24;
 const START_CLOUD_DRIFT_MAX_DISTANCE = 96;
 const START_CLOUD_DRIFT_MIN_DURATION_MS = 900;
 const START_CLOUD_DRIFT_MAX_DURATION_MS = 2000;
+const START_CLOUD_CENTER_PULL_MARGIN = 100;
 const START_CLOUD_ESCAPE_PADDING = 360;
 const START_CLOUD_ESCAPE_MIN_DURATION_MS = 1750;
 const START_CLOUD_ESCAPE_MAX_DURATION_MS = 2300;
@@ -64,11 +65,14 @@ export class StartState extends BaseGameState {
         this._pause(defaultWaitTime, () => {
           this.#scatterCloudsFromCenter();
           // 4) Place the first tile.
+          this.#startPlayingSoundEffect();
+          this.#playVisualEffectAtCenter1();
           this._scene.placeStartingTile();
           // 5) small pause
           this._pause(defaultWaitTime, () => {
             // 6) Place the player (movement still disabled).
             this._scene.revealPlayer();
+            this.#playVisualEffectAtCenter2();
             // 7) small pause
             this._pause(defaultWaitTime, () => {
               // 8) Second narrator beat.
@@ -115,12 +119,41 @@ export class StartState extends BaseGameState {
     }
   }
 
+  #startPlayingSoundEffect(): void {
+    //ToDo: Play 7 sound effects with a small delay (100 ms) between them. Use key spell-cast-1 to spell-cast-7.
+  }
+
+  #playVisualEffectAtCenter1(): void {
+    const center = this._scene.getPlayerStartWorldPosition();
+    const originVFX = this._scene.add
+      .sprite(center.x, center.y, ASSET_KEYS.MAGIC_FX_HOLY_EXPLOSION)
+      .setScale(3, 2.5)
+      .setOrigin(0.5, 0.5);
+    originVFX.setDepth(10);
+    //originVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
+    originVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+    originVFX.playReverse(ASSET_KEYS.CAST_ORIGIN);
+    originVFX.on('animationcomplete', () => { originVFX.destroy(); });
+  }
+
+  #playVisualEffectAtCenter2(): void {
+    const center = this._scene.getPlayerStartWorldPosition();
+    const impactVFX = this._scene.add
+      .sprite(center.x, center.y, ASSET_KEYS.MAGIC_FX_LIGHT_CAST)
+      .setScale(3, 2.8);
+    impactVFX.setDepth(10);
+    //impactVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
+    impactVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+    impactVFX.play(ASSET_KEYS.CAST_TARGET_A);
+    impactVFX.on('animationcomplete', () => { impactVFX.destroy(); });
+  }
+
   #startCloudDrift(cloud: Phaser.GameObjects.Image): void {
     if (!cloud.active || !cloud.scene) {
       return;
     }
 
-    const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
+    const angle = this.#getCloudDriftAngle(cloud);
     const distance = Phaser.Math.FloatBetween(START_CLOUD_DRIFT_MIN_DISTANCE, START_CLOUD_DRIFT_MAX_DISTANCE);
 
     this._scene.tweens.add({
@@ -131,6 +164,22 @@ export class StartState extends BaseGameState {
       ease: 'Sine.easeInOut',
       onComplete: () => this.#startCloudDrift(cloud),
     });
+  }
+
+  #getCloudDriftAngle(cloud: Phaser.GameObjects.Image): number {
+    const center = this._scene.getPlayerStartWorldPosition();
+    const camera = this._scene.cameras.main;
+    const safeHalfWidth = Math.max(START_CLOUD_DRIFT_MAX_DISTANCE, camera.width / 2 - START_CLOUD_CENTER_PULL_MARGIN);
+    const safeHalfHeight = Math.max(START_CLOUD_DRIFT_MAX_DISTANCE, camera.height / 2 - START_CLOUD_CENTER_PULL_MARGIN);
+    const offsetX = cloud.x - center.x;
+    const offsetY = cloud.y - center.y;
+    const isFarFromCenter = Math.abs(offsetX) > safeHalfWidth || Math.abs(offsetY) > safeHalfHeight;
+
+    if (isFarFromCenter) {
+      return Math.atan2(center.y - cloud.y, center.x - cloud.x);
+    }
+
+    return Phaser.Math.FloatBetween(0, Math.PI * 2);
   }
 
   #scatterCloudsFromCenter(): void {
