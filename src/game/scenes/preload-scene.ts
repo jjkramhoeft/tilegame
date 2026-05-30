@@ -62,6 +62,14 @@ export class PreloadScene extends Phaser.Scene {
         this.load.spritesheet(ASSET_KEYS.PLANT1_IDLE, 'assets/Plant1_Idle_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet(ASSET_KEYS.PLANT1_DEATH, 'assets/Plant1_Death_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
 
+        this.load.spritesheet(ASSET_KEYS.PLANT2_ATTACK, 'assets/Plant2_Attack_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet(ASSET_KEYS.PLANT2_IDLE, 'assets/Plant2_Idle_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet(ASSET_KEYS.PLANT2_DEATH, 'assets/Plant2_Death_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
+
+        this.load.spritesheet(ASSET_KEYS.PLANT3_ATTACK, 'assets/Plant3_Attack_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet(ASSET_KEYS.PLANT3_IDLE, 'assets/Plant3_Idle_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet(ASSET_KEYS.PLANT3_DEATH, 'assets/Plant3_Death_with_shadow.png', { frameWidth: 64, frameHeight: 64 });
+
         //Spellcasting sfx
         this.load.audio('magic-audio-sprite', 'assets/magic-audio-sprite.mp3');
         this.load.audio('magic-audio-sprite-bad', 'assets/magic-audio-sprite-bad.mp3');
