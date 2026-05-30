@@ -98,6 +98,7 @@ export const ASSET_KEYS = {
   MALE_OW: 'male-ow',
   MAGIC_DOWN: 'magic-down',
   MAGIC_DOWN_2: 'magic-down-2',
+  WHOOSH: 'whoosh',
   
   MAP_BACKGROUND: 'MAP_BACKGROUND',  
   MAP_BIG_TREE: 'MAP_BIG_TREE',

@@ -168,6 +168,7 @@ const audioAssets: readonly AudioAsset[] = [
   { key: ASSET_KEYS.MALE_OW, path: 'assets/sound/male-ow.mp3' },
   { key: ASSET_KEYS.MAGIC_DOWN, path: 'assets/sound/magic-down.mp3' },
   { key: ASSET_KEYS.MAGIC_DOWN_2, path: 'assets/sound/magic-down-2.mp3' },
+  { key: ASSET_KEYS.WHOOSH, path: 'assets/sound/whoosh.mp3' },
 ];
 
 const playerSexes = Object.values(SEX);

@@ -58,29 +58,32 @@ export class RegularState extends BaseGameState {
   }
 
   #onTilePlaced(payload: TilePlacedPayload): void {
-    //Test for only basic tiles
+    //Test for only basic tiles and help with tilecasting.
     if (!payload.hasBlocking && !payload.hasDecoration) {
-      const baseTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BASIC] ??0) + 
-        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_BASIC] ??0);
-      const decorationTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_DECORATION] ??0) + 
-        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_DECORATION] ??0);
-      const blockingTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BLOCKING] ??0) + 
-        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_BLOCKING] ??0);
-      if ((decorationTileCount + blockingTileCount) * 2.5 < baseTileCount) {
-        this._transitionTo(GAME_STATES.HELP_WITH_TILECASTING, { textKey: 'narrator.helpWithTileCasting' } as ProgressionHelpPayload);
-      }
-      if (!payload.hasBlocking) {
-        return;
-      }
-      if (
-        payload.biome === BIOME.FOREST ||
-        payload.biome === BIOME.SWAMP ||
-        payload.biome === BIOME.DESERT
-      ) {
-        RegularState.#firstTreeFired = true;
-        this._transitionTo(GAME_STATES.FIRST_TREE);
+      const baseTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BASIC] ?? 0) +
+        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_BASIC] ?? 0);
+      const decorationTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_DECORATION] ?? 0) +
+        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_DECORATION] ?? 0);
+      const blockingTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BLOCKING] ?? 0) +
+        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_BLOCKING] ?? 0);
+      if ((decorationTileCount + blockingTileCount) * 0.1 < baseTileCount) {
+        this._transitionTo(GAME_STATES.HELP_WITH_TILECASTING);
       }
     }
+
+    //Test for first tree placed
+    if (!payload.hasBlocking) {
+      return;
+    }
+    if (
+      payload.biome === BIOME.FOREST ||
+      payload.biome === BIOME.SWAMP ||
+      payload.biome === BIOME.DESERT
+    ) {
+      RegularState.#firstTreeFired = true;
+      this._transitionTo(GAME_STATES.FIRST_TREE);
+    }
+
   }
 
   #onFirstAnimalSpawned(): void {

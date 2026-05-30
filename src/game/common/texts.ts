@@ -272,8 +272,8 @@ const TEXTS = {
         da: 'Spillet er slut...',
     },
     'narrator.helpWithTileCasting': {
-        en: 'Go back to your first basic rock tiles and keep casting music on them to they have both pepples and rocks!',
-        da: 'Gå tilbage til dine første grundlæggende klippesten og fortsæt med at kaste musik på dem, så de har både småsten og klipper!',
+        en: 'Go back to your first basic rock or desert tiles and keep casting music on them to they have both pepples and rocks and palmtrees!',
+        da: 'Gå tilbage til dine første simple klippe eller ørken stykker og fortsæt med at kaste musik på dem, til de har både småsten og klipper og ørkenen har palmer!',
     },
     //Chest Dialog
     'chest.empty': {

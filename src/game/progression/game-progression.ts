@@ -13,6 +13,7 @@ import { EveState } from '../components/state-machine/states/game/eve-state';
 import { BossFightState } from '../components/state-machine/states/game/boss-fight-state';
 import { GameOverState } from '../components/state-machine/states/game/game-over-state';
 import { VictoryState } from '../components/state-machine/states/game/victory-state';
+import { HelpWithTileCastingState } from '../components/state-machine/states/game/help-with-tilecasting-state';
 import { CUSTOM_EVENTS, EVENT_BUS } from '../common/event-bus';
 import type { GameScene } from '../scenes/game-scene';
 
@@ -39,6 +40,7 @@ export class GameProgression {
     this.#stateMachine.addState(new BossFightState(scene));
     this.#stateMachine.addState(new GameOverState(scene));
     this.#stateMachine.addState(new VictoryState(scene));
+    this.#stateMachine.addState(new HelpWithTileCastingState(scene));
 
     // Reset once-per-game flags so subsequent runs trigger narrator beats again.
     RegularState.resetFlags();

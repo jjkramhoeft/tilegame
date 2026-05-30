@@ -68,25 +68,28 @@ export class StartState extends BaseGameState {
         // 3) small pause
         this._pause(defaultWaitTime, () => {
           this.#scatterCloudsFromCenter();
-          // 4) Place the first tile.
-          this.#startPlayingSoundEffect();
-          this.#playVisualEffectAtCenter1();
-          this._scene.placeStartingTile();
-          // 5) small pause
-          this._pause(defaultWaitTime, () => {
-            // 6) Place the player (movement still disabled).
-            this._scene.revealPlayer();
-            this.#playVisualEffectAtCenter2();
-            // 7) small pause
-            this._pause(defaultWaitTime, () => {
-              // 8) Second narrator beat.
-              this._showNarrator('narrator.start.youCreated', () => {
-                // 9) Enable player movement.
-                this._scene.unlockPlayerMovement();
-                // 10) Transition to the First Tile state.
-                this._transitionTo(GAME_STATES.FIRST_TILE);
+          this._pause(defaultWaitTime*3, () => {
+            // 4) Place the first tile.
+            this.#startPlayingSoundEffect();
+            this.#playVisualEffectAtCenter1();
+            this._scene.placeStartingTile();
+            // 5) small pause
+            this._pause(defaultWaitTime*3, () => {
+              // 6) Place the player (movement still disabled).
+              this._scene.revealPlayer();
+              this.#playVisualEffectAtCenter2();
+              // 7) small pause
+              this._pause(defaultWaitTime*3, () => {
+                // 8) Second narrator beat.
+                this._showNarrator('narrator.start.youCreated', () => {
+                  // 9) Enable player movement.
+                  this._scene.unlockPlayerMovement();
+                  // 10) Transition to the First Tile state.
+                  this._transitionTo(GAME_STATES.FIRST_TILE);
+                });
               });
             });
+
           });
         });
       });
@@ -144,7 +147,6 @@ export class StartState extends BaseGameState {
       .setScale(3, 2.5)
       .setOrigin(0.5, 0.5);
     originVFX.setDepth(10);
-    //originVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
     originVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
     originVFX.playReverse(ASSET_KEYS.CAST_ORIGIN);
     originVFX.on('animationcomplete', () => { originVFX.destroy(); });
@@ -156,7 +158,6 @@ export class StartState extends BaseGameState {
       .sprite(center.x, center.y, ASSET_KEYS.MAGIC_FX_LIGHT_CAST)
       .setScale(3, 2.8);
     impactVFX.setDepth(10);
-    //impactVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
     impactVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
     impactVFX.play(ASSET_KEYS.CAST_TARGET_A);
     impactVFX.on('animationcomplete', () => { impactVFX.destroy(); });
@@ -197,6 +198,7 @@ export class StartState extends BaseGameState {
   }
 
   #scatterCloudsFromCenter(): void {
+    this._scene.sound.play(ASSET_KEYS.WHOOSH);
     const center = this._scene.getPlayerStartWorldPosition();
     const camera = this._scene.cameras.main;
     const escapeDistance = Math.max(camera.width, camera.height) + START_CLOUD_ESCAPE_PADDING;
