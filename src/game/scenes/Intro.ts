@@ -23,11 +23,11 @@ const COLORS = {
 const CURSOR_SIZE = 16;
 const CURSOR_X = 20;
 const CURSOR_Y_OFFSET = 20; // vertically center cursor on the menu text
-const INTRO_ANIMAL_SPAWN_DELAY_MS = 1_000;
+const INTRO_ANIMAL_SPAWN_DELAY_MS = 8_000;
 const INTRO_ANIMAL_MIN_TURN_DELAY_MS = 2_000;
-const INTRO_ANIMAL_MAX_TURN_DELAY_MS = 6_000;
-const INTRO_ANIMAL_MIN_REVERSE_DURATION_MS = 2_000;
-const INTRO_ANIMAL_MAX_REVERSE_DURATION_MS = 4_000;
+const INTRO_ANIMAL_MAX_TURN_DELAY_MS = 8_000;
+const INTRO_ANIMAL_MIN_REVERSE_DURATION_MS = 500;
+const INTRO_ANIMAL_MAX_REVERSE_DURATION_MS = 1_500;
 const INTRO_ANIMAL_Y_VALUES = [260, 540];
 const INTRO_ANIMAL_DEPTH = [5, 25];
 const INTRO_ANIMAL_OFFSCREEN_PADDING = 80;
@@ -53,12 +53,12 @@ const INTRO_ANIMALS: IntroAnimalConfig[] = [
         assetKey: ASSET_KEYS.LAMB,
         walkLeft: LAMB_ANIMATION_KEYS.WALK_LEFT,
         walkRight: LAMB_ANIMATION_KEYS.WALK_RIGHT,
-        speed: 80
+        speed: 60
     }, {
         assetKey: ASSET_KEYS.SHEEP,
         walkLeft: SHEEP_ANIMATION_KEYS.WALK_LEFT,
         walkRight: SHEEP_ANIMATION_KEYS.WALK_RIGHT,
-        speed: 80
+        speed: 70
     },
     {
         assetKey: ASSET_KEYS.BULL,
@@ -70,13 +70,13 @@ const INTRO_ANIMALS: IntroAnimalConfig[] = [
         assetKey: ASSET_KEYS.TURKEY,
         walkLeft: TURKEY_ANIMATION_KEYS.WALK_LEFT,
         walkRight: TURKEY_ANIMATION_KEYS.WALK_RIGHT,
-        speed: 80
+        speed: 60
     },
     {
         assetKey: ASSET_KEYS.PIGLET,
         walkLeft: PIGLET_ANIMATION_KEYS.WALK_LEFT,
         walkRight: PIGLET_ANIMATION_KEYS.WALK_RIGHT,
-        speed: 80
+        speed: 70
     },
     {
         assetKey: ASSET_KEYS.CHICKEN,
@@ -244,14 +244,24 @@ export class Intro extends Scene {
         const lane = Phaser.Utils.Array.GetRandom([0,1]);// 0 is top lane, 1 is bottom lane
         const animalIndex = lane*3 + Phaser.Math.Between(0, 2);
         const animal = INTRO_ANIMALS[animalIndex];
-        const y = INTRO_ANIMAL_Y_VALUES[lane];
+        let y = INTRO_ANIMAL_Y_VALUES[lane];
+        let depthAdd =0;
+        if(lane==1){
+
+            const variance =Phaser.Utils.Array.GetRandom([0,1,2,3]);
+            y -= variance*5;
+            depthAdd = -variance;
+        }
         const direction: IntroAnimalDirection = Phaser.Math.Between(0, 1) === 0 ? 'right' : 'left';
         const screenWidth = this.scale.width;
         const startX = direction === 'right' ? -INTRO_ANIMAL_OFFSCREEN_PADDING : screenWidth + INTRO_ANIMAL_OFFSCREEN_PADDING;
         const animalSprite = this.add.sprite(startX, y, animal.assetKey, 0)
-            .setDepth(INTRO_ANIMAL_DEPTH[lane])
+            .setDepth(INTRO_ANIMAL_DEPTH[lane] + depthAdd)
             .setScale(INTRO_ANIMAL_SCALE);
-
+        if(lane==0){
+            animalSprite.setTint(0x333333)
+            .setTintMode(Phaser.TintModes.ADD);;
+        }
         this.backgroundAnimals.push(animalSprite);
         animalSprite.play(direction === 'right' ? animal.walkRight : animal.walkLeft);
         this.moveBackgroundAnimal(animalSprite, animal, direction);
