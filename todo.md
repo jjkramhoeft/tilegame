@@ -6,26 +6,20 @@
 - no swimming when wearing  armor (take damage if player is trying to swim in armor)
 - take less damage when wearing  armor
 - Alternative to bounce-movement
-- Fix unlocking animals in grass without blockings
 - Implement deferred gameStates
   - bossFightState
   - victoryState
   - eveState
 - More uniform tile creation, to get larger area of the same biome
-- Emmit FIRST_ANIMAL_SPAWNED for the FirstAnimalState
 - Add animal and enemies from included sprite sheets
   - Skeleton (as Player)
   - Lizard w. dagger  (as Player)
   - Plant1
   - Plant2
   - Plant3
-  - Lamb is 192x256 [32], 6 columns, 8 rows: walk down, walk up, walk left, walk right, idle down, idle up, idle left, idle right  
-- Register sound effects
   
-  levelup2.mp3 (heath of animal progression??)
-- implement swim speed (very low when wearing cloth)  
-- implement talking point scene
-- implement night sky scene
+  levelup2.mp3 (heath or animal progression??)
+- implement swim speed (very low when wearing cloth) 
 - add control section to settings
 - repeat fruit chest sound put healt on max
 - fix animals walking on water
