@@ -1,29 +1,13 @@
 import * as Phaser from 'phaser';
 import { ASSET_KEYS } from './assets';
+import { SEX, GEAR, WEAPON } from './common';
 
 type FrameConfig = Phaser.Types.Loader.FileTypes.ImageFrameConfig;
 
-type ImageAsset = {
-  key: string;
-  path: string;
-};
-
-type SpritesheetAsset = ImageAsset & {
-  frameConfig: FrameConfig;
-};
-
-type AsepriteAsset = {
-  key: string;
-  texturePath: string;
-  atlasPath: string;
-};
-
-type AtlasAsset = AsepriteAsset;
-
+type ImageAsset = { key: string; path: string; };
+type SpritesheetAsset = ImageAsset & { frameConfig: FrameConfig; };
+type AsepriteAsset = { key: string; texturePath: string; atlasPath: string; };
 type FontAsset = ImageAsset;
-
-type TilemapAsset = ImageAsset;
-
 type AudioAsset = ImageAsset;
 
 const ROOT_ASSET_PATH = 'assets';
@@ -120,12 +104,6 @@ const asepriteAssets: readonly AsepriteAsset[] = [
   { key: ASSET_KEYS.SPIDER, texturePath: 'assets/images/enemies/spider.png', atlasPath: 'assets/images/enemies/spider.json' },
 ];
 
-const atlasAssets: readonly AtlasAsset[] = [
-];
-
-const tilemapAssets: readonly TilemapAsset[] = [
-];
-
 const fontAssets: readonly FontAsset[] = [
   { key: ASSET_KEYS.FONT_PRESS_START_2P, path: 'assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf' },
   { key: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, path: 'assets/fonts/PixelSerif_16px_v02.ttf' },
@@ -169,17 +147,15 @@ const audioAssets: readonly AudioAsset[] = [
   { key: ASSET_KEYS.MAGIC_DOWN_2, path: 'assets/magic-down-2.mp3' },
 ];
 
-const playerSexes = ['male', 'female'] as const;
-const playerGears = ['nude', 'bare', 'basic', 'armor'] as const;
-const playerWeapons = ['none', 'dagger', 'staff', 'sword'] as const;
+const playerSexes = Object.values(SEX);
+const playerGears = Object.values(GEAR);
+const playerWeapons = Object.values(WEAPON);
 const playerActions = ['walk', 'idle', 'hurt', 'fall'] as const;
 
 export function loadGameAssets(scene: Phaser.Scene): void {
   fontAssets.forEach(({ key, path }) => scene.load.font(key, path));
   imageAssets.forEach(({ key, path }) => scene.load.image(key, path));
   asepriteAssets.forEach(({ key, texturePath, atlasPath }) => scene.load.aseprite(key, texturePath, atlasPath));
-  atlasAssets.forEach(({ key, texturePath, atlasPath }) => scene.load.atlas(key, texturePath, atlasPath));
-  tilemapAssets.forEach(({ key, path }) => scene.load.tilemapTiledJSON(key, path));
   spritesheetAssets.forEach(({ key, path, frameConfig }) => scene.load.spritesheet(key, path, frameConfig));
   audioAssets.forEach(({ key, path }) => scene.load.audio(key, path));
   loadGeneratedPlayerSpritesheets(scene);
