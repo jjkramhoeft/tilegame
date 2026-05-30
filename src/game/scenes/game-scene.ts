@@ -25,6 +25,7 @@ import { GameProgression } from '../progression/game-progression';
 import { GAME_STATES } from '../components/state-machine/states/game/game-state-keys';
 import { ChestSpawnService } from '../spawning/chest-spawn-service';
 import { AnimalSpawnService } from '../spawning/animal-spawn-service';
+import { ENABLE_LOGGING } from '../common/config';
 
 export class GameScene extends Phaser.Scene {
 
@@ -59,7 +60,7 @@ export class GameScene extends Phaser.Scene {
 
     create() {
         this.#resetSceneState();
-        console.debug('[GameScene] create start', { isDebugMode: DataManager.instance.data.isDebugMode, uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE), uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE), });
+        if (ENABLE_LOGGING) { console.debug('[GameScene] create start', { isDebugMode: DataManager.instance.data.isDebugMode, uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE), uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE), }); }
         if (!this.input.keyboard) { console.warn('Phaser keyboard plugin is not setup properly.'); return; }
         this.#controls = new KeyboardComponent(this.input.keyboard);
         this.#chestJJKGroup = this.add.group([]);
@@ -73,7 +74,7 @@ export class GameScene extends Phaser.Scene {
         this.#animalSpawn = new AnimalSpawnService(this, this.#enemyGroup, this.#critterGroup, this.#earth.getTileSize());
         this.#registerCustomEvents();
         this.scene.launch(SCENE_KEYS.UI_SCENE);
-        console.debug('[GameScene] UI scene launched', { uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE), uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE), });
+        if (ENABLE_LOGGING) { console.debug('[GameScene] UI scene launched', { uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE), uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE), }); }
 
         // Common setup that applies to both debug and progression paths.
         this.#registerColliders();
@@ -83,7 +84,7 @@ export class GameScene extends Phaser.Scene {
         this.#progression = new GameProgression(this);
 
         if (DataManager.instance.data.isDebugMode) {
-            console.debug('[GameScene] debug mode detected, bypassing progression help');
+            if (ENABLE_LOGGING) { console.debug('[GameScene] debug mode detected, bypassing progression help'); }
             // Debug bypass: GameProgression is constructed (so PLAYER_DEFEATED
             // routing exists if ever needed) but `start()` is never called, so
             // no game state is active and no narrator/listener side-effects fire.
@@ -248,7 +249,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     #registerCustomEvents(): void {
-        console.debug('[GameScene] registering custom events');
+        if (ENABLE_LOGGING) { console.debug('[GameScene] registering custom events'); }
 
         EVENT_BUS.on(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
         //EVENT_BUS.on(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
@@ -256,7 +257,7 @@ export class GameScene extends Phaser.Scene {
         EVENT_BUS.on(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, this.#handleChestDialogClosed, this);
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-            console.debug('[GameScene] shutdown cleanup');
+            if (ENABLE_LOGGING) { console.debug('[GameScene] shutdown cleanup'); }
             EVENT_BUS.off(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
             //EVENT_BUS.off(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
             EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);

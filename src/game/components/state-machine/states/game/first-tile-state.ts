@@ -2,6 +2,7 @@ import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import { CHARACTER_STATES } from '../character/character-states';
 import type { GameScene } from '../../../../scenes/game-scene';
+import { ENABLE_LOGGING } from '../../../../common/config';
 
 /**
  * First active play state. Player can move and attack. Casting is meant to be
@@ -20,7 +21,7 @@ export class FirstTileState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] FirstTileState entered');
+    if (ENABLE_LOGGING) { console.debug('[GameProgression] FirstTileState entered'); }
     const player = this._scene.player;
     this.#startX = player.x;
     this.#startY = player.y;

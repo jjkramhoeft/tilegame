@@ -4,6 +4,7 @@ import { CASTING_UNLOCKS } from '../../../../common/common';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { Position } from '../../../../common/types';
 import { DataManager } from '../../../../common/data-manager';
+import { ENABLE_LOGGING } from '../../../../common/config';
 
 /**
  * Active play state where the goal is to fill the target void area with at
@@ -21,7 +22,7 @@ export class BabyStepsState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] BabyStepsState entered');
+    if (ENABLE_LOGGING) { console.debug('[GameProgression] BabyStepsState entered'); }
     this.#starterTilePosition = DataManager.instance.data.startTile;
   }
 

@@ -1,6 +1,7 @@
 import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import type { GameScene } from '../../../../scenes/game-scene';
+import { ENABLE_LOGGING } from '../../../../common/config';
 
 export class FirstTreeState extends BaseGameState {
   constructor(scene: GameScene) {
@@ -8,7 +9,7 @@ export class FirstTreeState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] FirstTreeState entered');
+    if (ENABLE_LOGGING) { console.debug('[GameProgression] FirstTreeState entered'); }
     this._scene.progression.unlockMap();
     this._scene.lockPlayerMovement();
     this._pause(this.defaultWaitTime, () => {

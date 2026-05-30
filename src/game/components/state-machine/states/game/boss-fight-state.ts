@@ -1,6 +1,7 @@
 import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import type { GameScene } from '../../../../scenes/game-scene';
+import { ENABLE_LOGGING } from '../../../../common/config';
 
 /**
  * Deferred. See game-state.md -> Boss Fight State.
@@ -20,7 +21,7 @@ export class BossFightState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] BossFightState entered (stub - deferred)');
+    if (ENABLE_LOGGING) { console.debug('[GameProgression] BossFightState entered (stub - deferred)'); }
     // No-op: real fight logic lands with the boss enemy type.
   }
 }

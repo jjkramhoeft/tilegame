@@ -2,7 +2,7 @@ import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { DataManager } from '../../../../common/data-manager';
-import { DIFFICULTY_HARD_WAIT_FACTOR } from '../../../../common/config';
+import { DIFFICULTY_HARD_WAIT_FACTOR, ENABLE_LOGGING } from '../../../../common/config';
 
 /**
  * Scripted intro that goes from an empty screen to a player standing on the
@@ -14,7 +14,7 @@ export class StartState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] StartState entered');
+    if (ENABLE_LOGGING) { console.debug('[GameProgression] StartState entered'); }
     let defaultWaitTime = 500;
     if(DataManager.instance.data.difficulty === 'Hard') {
       defaultWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;

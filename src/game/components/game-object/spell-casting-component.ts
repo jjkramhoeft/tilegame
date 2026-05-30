@@ -36,7 +36,6 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
   get canCast(): boolean {
     // Check cooldown
     if (this.isOnCooldown) {
-      console.log('No cast; On cooldown:');
       return false;
     }
     // Check tile under caster
@@ -47,7 +46,6 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
     const tilePos = earth.getTileXYFromScreenCoordinates(this.gameObject2.x, this.gameObject2.y, true);
     const tile = earth.getTile(tilePos.x, tilePos.y);
     if (tile === undefined || tile.biome === BIOME.WATER || tile.biome <= BIOME.VOID) {
-      console.log('No cast; Biome:'+tile?.biome);
       return false;
     }
     // OK to cast

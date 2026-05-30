@@ -109,7 +109,6 @@ export class SpellCastingService {
     // first spell: this.executeSpellEffect(spellType, casterTile.biome, casterTilePosition, spellTiles[0]);
     // second spell:this.executeSpellEffect(spellType, casterTile.biome, spellTiles[0], spellTiles[1]);
     if (spellTiles.length === 0) {
-      console.log('No valid targets found.');
       return;
     }
     this.#scheduleHops(spellType, casterTile.biome, casterTilePosition, spellTiles);

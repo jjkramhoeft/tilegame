@@ -1,6 +1,7 @@
 import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import type { GameScene } from '../../../../scenes/game-scene';
+import { ENABLE_LOGGING } from '../../../../common/config';
 
 /**
  * Deferred. See game-state.md -> Eve State.
@@ -25,7 +26,7 @@ export class EveState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] EveState entered (stub - deferred)');
+    if (ENABLE_LOGGING) { console.debug('[GameProgression] EveState entered (stub - deferred)'); }
     // No-op: transitions back to RegularState are wired when the companion
     // character type ships.
   }

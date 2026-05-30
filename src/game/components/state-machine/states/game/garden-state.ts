@@ -1,7 +1,7 @@
 import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import type { GameScene } from '../../../../scenes/game-scene';
-import { DIFFICULTY_HARD_WAIT_FACTOR } from '../../../../common/config';
+import { DIFFICULTY_HARD_WAIT_FACTOR, ENABLE_LOGGING } from '../../../../common/config';
 import { DataManager } from '../../../../common/data-manager';
 
 export class GardenState extends BaseGameState {
@@ -10,7 +10,7 @@ export class GardenState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] GardenState entered');
+    if (ENABLE_LOGGING) { console.debug('[GameProgression] GardenState entered'); }
     this._scene.lockPlayerMovement();
     const currentPlayerTilePosition = this._scene.earth.getTileXYFromScreenCoordinates(
       this._scene.player.x,

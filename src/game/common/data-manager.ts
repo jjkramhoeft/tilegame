@@ -1,6 +1,6 @@
 import type { ChestDialogInfo } from './chest-dialog';
 import { CASTING_UNLOCKS, CREATURE_TYPES, DIFFICULTY } from './common';
-import { LEVEL_UP_TILE_THRESHOLDS, PLAYER_START_MAX_HEALTH } from './config';
+import { ENABLE_LOGGING, LEVEL_UP_TILE_THRESHOLDS, PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
   EVENT_BUS,
@@ -220,23 +220,23 @@ export class DataManager {
     const unlockCriteria = this.#unlockCriteriaMap.get(castingUnlock);
     if (!unlockCriteria) { return; }
     const nextUnlocks = unlockCriteria?.nextUnlock ?? [];
-    if (nextUnlocks.length === 0) { console.log('Nothing to unlock', { castingUnlock }); return; }
+    if (nextUnlocks.length === 0) { if (ENABLE_LOGGING) { console.log('Nothing to unlock', { castingUnlock }); } return; }
     //Tests if all next unlocks are achieved, if so return softly.
     if (nextUnlocks.every(unlock => this.#data.unlockedSpellCasting.has(unlock))) {
-      console.log('Unlocks already achieved', { castingUnlock, nextUnlocks });
+      if (ENABLE_LOGGING) { console.log('Unlocks already achieved', { castingUnlock, nextUnlocks }); }
       return;
     } else {
-      console.log('Pending unlockc', { nextUnlocks });
+      if (ENABLE_LOGGING) { console.log('Pending unlocks', { nextUnlocks }); }
     }
 
     if (unlockCriteria &&
       this.#data.tilesPlaced[castingUnlock] >= unlockCriteria.requiredAmount) {
       for (const nextUnlock of unlockCriteria.nextUnlock) {
         this.#data.unlockedSpellCasting.add(nextUnlock);
-        console.log(`Unlock achieved: ${nextUnlock}`);
+        if (ENABLE_LOGGING) { console.log(`Unlock achieved: ${nextUnlock}`); }
       }
     } else {
-      console.log('No unlock', { castingUnlock, tilesPlaced: this.#data.tilesPlaced[castingUnlock], unlockCriteria });
+      if (ENABLE_LOGGING) { console.log('No unlock', { castingUnlock, tilesPlaced: this.#data.tilesPlaced[castingUnlock], unlockCriteria }); }
     }
   }
 

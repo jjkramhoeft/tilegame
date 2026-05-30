@@ -18,6 +18,7 @@ import { DEFAULT_UI_HEADING_STYLE, DEFAULT_UI_OPTION_STYLE } from '../common/com
 import type { DialogPayload } from '../common/chest-dialog';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { getText } from '../common/texts';
+import { ENABLE_LOGGING } from '../common/config';
 
 const HUD_ICON_SIZE = 16;
 const HUD_ROW_LENGTH = 10;
@@ -106,10 +107,12 @@ export class UiScene extends Phaser.Scene {
   public create(): void {
     this.#resetSceneState();
 
-    console.debug('[UiScene] create start', {
-      isDebugMode: DataManager.instance.data.isDebugMode,
-      initialMode: this.#getUiModeName(),
-    });
+    if (ENABLE_LOGGING) {
+      console.debug('[UiScene] create start', {
+        isDebugMode: DataManager.instance.data.isDebugMode,
+        initialMode: this.#getUiModeName(),
+      });
+    }
 
     if (!this.input.keyboard) {
       console.warn('[UiScene] keyboard plugin is not setup properly');
@@ -139,12 +142,14 @@ export class UiScene extends Phaser.Scene {
     EVENT_BUS.on(CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, this.showNarratorDialog, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      console.debug('[UiScene] shutdown cleanup', {
-        mode: this.#getUiModeName(),
-        narratorDialogVisible: this.#narratorDialogContainer?.visible,
-        saveDialogVisible: this.#saveDialogContainer?.visible,
-        dialogVisible: this.#chestDialogContainer?.visible,
-      });
+      if (ENABLE_LOGGING) {
+        console.debug('[UiScene] shutdown cleanup', {
+          mode: this.#getUiModeName(),
+          narratorDialogVisible: this.#narratorDialogContainer?.visible,
+          saveDialogVisible: this.#saveDialogContainer?.visible,
+          dialogVisible: this.#chestDialogContainer?.visible,
+        });
+      }
 
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
       EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
@@ -436,7 +441,7 @@ export class UiScene extends Phaser.Scene {
     if (this.#uiMode === UiMode.ChestDialog) {
       return;
     }
-    console.debug('Escape key just down, opening escape and save dialog');
+    if (ENABLE_LOGGING) { console.debug('Escape key just down, opening escape and save dialog'); }
     this.#selectedSaveOptionIndex = 0;
     this.#saveDialogContainer.visible = true;
     this.#uiMode = UiMode.SaveDialog;

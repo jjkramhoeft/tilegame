@@ -3,6 +3,7 @@ import { GAME_STATES } from './game-state-keys';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../../../../common/event-bus';
 import { BIOME } from '../../../../common/common';
 import type { GameScene } from '../../../../scenes/game-scene';
+import { ENABLE_LOGGING } from '../../../../common/config';
 
 /**
  * Main play state. Watches for triggers that pull the game into a scripted
@@ -23,7 +24,7 @@ export class RegularState extends BaseGameState {
   }
 
   public onEnter(): void {
-    console.debug('[GameProgression] RegularState entered');
+    if (ENABLE_LOGGING) { console.debug('[GameProgression] RegularState entered'); }
     this._scene.unlockPlayerMovement();
 
     if (!RegularState.#firstTreeFired) {
