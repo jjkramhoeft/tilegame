@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { CHEST_STATE, INTERACTIVE_OBJECT_TYPE } from '../../common/common';
+import { CHEST_OPEN_CLOSE_DELAY_MS } from '../../common/config';
 import type { Gear, Potion, Weapon } from '../../common/common';
 import { ChestState, CustomGameObject, Position } from '../../common/types';
 import { InteractiveObjectComponent } from '../../components/game-object/interactive-object-component';
@@ -22,6 +23,7 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
   #state: ChestState;
   #id: number;
   #contents: ChestReward;
+  #nextOpenAt = 0;
 
   constructor(scene: Phaser.Scene, config: ChestJJKConfig, chestState: ChestState) {
     super(scene, config.worldPosition.x, config.worldPosition.y, 'containers', (config.id-1) * 2);
@@ -40,8 +42,7 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
       this,
       INTERACTIVE_OBJECT_TYPE.OPEN,
       () => {
-        // JJK chest can always be opened
-        return true;
+        return this.#state === CHEST_STATE.REVEALED && this.scene.time.now >= this.#nextOpenAt;
       },
       () => {
         this.open();
@@ -63,7 +64,7 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
   }
 
   public open(): void {
-    if (this.#state !== CHEST_STATE.REVEALED) {
+    if (this.#state !== CHEST_STATE.REVEALED || this.scene.time.now < this.#nextOpenAt) {
       return;
     }
 
@@ -79,6 +80,7 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
 
     this.#state = CHEST_STATE.REVEALED;
     this.setFrame((this.#id-1)*2);
+    this.#nextOpenAt = this.scene.time.now + CHEST_OPEN_CLOSE_DELAY_MS;
   }
 
   public disableObject(): void {

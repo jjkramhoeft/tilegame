@@ -4,6 +4,7 @@ import { CharacterGameObject } from '../../../../game-objects/common/character-g
 import { isArcadePhysicsBody } from '../../../../common/utils';
 import { IDLE_SLOWDOWN_FACTOR, IDLE_STOP_SPEED } from '../../../../common/config';
 import { SpellCastingComponent } from '../../../game-object/spell-casting-component';
+import { tryOpenNearestChest } from './interaction-state-utils';
 
 export class IdleState extends BaseCharacterState {
   constructor(gameObject: CharacterGameObject) {
@@ -40,6 +41,10 @@ export class IdleState extends BaseCharacterState {
         this._stateMachine.setState(CHARACTER_STATES.CASTING_STATE);
         return;
       }
+    }
+
+    if (controls.isActionKeyJustDown && tryOpenNearestChest(this._gameObject, this._stateMachine)) {
+      return;
     }
 
     // if no other input is provided, do nothing

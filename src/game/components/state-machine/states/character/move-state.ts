@@ -1,11 +1,8 @@
-import { INTERACTIVE_OBJECT_TYPE } from '../../../../common/common';
 import { CHARACTER_STATES } from './character-states';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
-import { CollidingObjectsComponent } from '../../../game-object/colliding-objects-component';
-import { InteractiveObjectComponent } from '../../../game-object/interactive-object-component';
-import { InputComponent } from '../../../input/input-component';
 import { SpellCastingComponent } from '../../../game-object/spell-casting-component';
 import { BaseMoveState } from './base-move-state';
+import { tryOpenNearestChest } from './interaction-state-utils';
 
 export class MoveState extends BaseMoveState {
   #footstepSound: Phaser.Sound.BaseSound | undefined;
@@ -48,7 +45,7 @@ export class MoveState extends BaseMoveState {
     }
 
     // if we interacted with an object and switched states, stop processing
-    if (this.#checkIfObjectWasInteractedWith(controls)) {
+    if (controls.isActionKeyJustDown && tryOpenNearestChest(this._gameObject, this._stateMachine)) {
       return;
     }
 
@@ -60,42 +57,5 @@ export class MoveState extends BaseMoveState {
 
     // handle character movement
     this.handleCharacterMovement();
-  }
-
-  #checkIfObjectWasInteractedWith(controls: InputComponent): boolean {
-    const collideComponent = CollidingObjectsComponent.getComponent<CollidingObjectsComponent>(this._gameObject);
-    if (collideComponent === undefined || collideComponent.objects.length === 0) {
-      return false;
-    }
-
-    const collisionObject = collideComponent.objects[0];
-    const interactiveObjectComponent =
-      InteractiveObjectComponent.getComponent<InteractiveObjectComponent>(collisionObject);
-    if (interactiveObjectComponent === undefined) {
-      return false;
-    }
-
-    if (!controls.isActionKeyJustDown) {
-      return false;
-    }
-
-    // check if game object can be interacted with
-    if (!interactiveObjectComponent.canInteractWith()) {
-      return false;
-    }
-
-    // we can open this item
-    if (interactiveObjectComponent.objectType === INTERACTIVE_OBJECT_TYPE.OPEN) {
-      this._stateMachine.setState(CHARACTER_STATES.OPEN_CHEST_STATE, collisionObject);
-      return true;
-    }
-    
-    interactiveObjectComponent.interact();
-
-    if (interactiveObjectComponent.objectType === INTERACTIVE_OBJECT_TYPE.AUTO) {
-      return false;
-    }
-
-    return false;
   }
 }

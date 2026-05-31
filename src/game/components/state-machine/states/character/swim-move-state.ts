@@ -1,10 +1,7 @@
-import { INTERACTIVE_OBJECT_TYPE } from '../../../../common/common';
 import { CHARACTER_STATES } from './character-states';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
-import { CollidingObjectsComponent } from '../../../game-object/colliding-objects-component';
-import { InteractiveObjectComponent } from '../../../game-object/interactive-object-component';
-import { InputComponent } from '../../../input/input-component';
 import { BaseMoveState } from './base-move-state';
+import { tryOpenNearestChest } from './interaction-state-utils';
 
 export class SwimMoveState extends BaseMoveState {
   #swimSound: Phaser.Sound.BaseSound | undefined;
@@ -35,7 +32,7 @@ export class SwimMoveState extends BaseMoveState {
     const controls = this._gameObject.controls;
 
     // if we interacted with an object and switched states, stop processing
-    if (this.#checkIfObjectWasInteractedWith(controls)) {
+    if (controls.isActionKeyJustDown && tryOpenNearestChest(this._gameObject, this._stateMachine)) {
       return;
     }
 
@@ -64,34 +61,5 @@ export class SwimMoveState extends BaseMoveState {
     if (this.#swimSound?.isPlaying) {
       this.#swimSound.stop();
     }
-  }
-
-  #checkIfObjectWasInteractedWith(controls: InputComponent): boolean {
-    const collideComponent = CollidingObjectsComponent.getComponent<CollidingObjectsComponent>(this._gameObject);
-    if (collideComponent === undefined || collideComponent.objects.length === 0) {
-      return false;
-    }
-
-    const collisionObject = collideComponent.objects[0];
-    const interactiveObjectComponent =
-      InteractiveObjectComponent.getComponent<InteractiveObjectComponent>(collisionObject);
-    if (interactiveObjectComponent === undefined) {
-      return false;
-    }
-
-    if (!controls.isActionKeyJustDown) {
-      return false;
-    }
-
-    if (!interactiveObjectComponent.canInteractWith()) {
-      return false;
-    }
-
-    if (interactiveObjectComponent.objectType === INTERACTIVE_OBJECT_TYPE.OPEN) {
-      this._stateMachine.setState(CHARACTER_STATES.OPEN_CHEST_STATE, collisionObject);
-      return true;
-    }
-
-    return false;
   }
 }
