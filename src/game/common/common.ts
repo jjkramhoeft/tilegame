@@ -102,27 +102,46 @@ export const  DIFFICULTY = {
   DEBUG:'Debug'
 } as const;
 
+export type Difficulty = (typeof DIFFICULTY)[keyof typeof DIFFICULTY];
+
 export const  GEAR = {
   NONE :'nude',
   BARE :'bare',
   BASIC:'basic',
   ARMOR :'armor'
-}
+} as const;
+
+export type Gear = (typeof GEAR)[keyof typeof GEAR];
+
 export const  POTION = {
   NONE :'none',
   FRUIT :'fruit',
-}
+} as const;
+
+export type Potion = (typeof POTION)[keyof typeof POTION];
 
 export const SEX = {
   MALE : 'male',
   FEMALE : 'female',
-}
+} as const;
+
+export type Sex = (typeof SEX)[keyof typeof SEX];
 
 export const WEAPON = {
   NONE : 'none',
   DAGGER : 'dagger',
   STAFF : 'staff',
   SWORD : 'sword',
+} as const;
+
+export type Weapon = (typeof WEAPON)[keyof typeof WEAPON];
+
+export function isDifficulty(value: unknown): value is Difficulty {
+  return Object.values(DIFFICULTY).includes(value as Difficulty);
+}
+
+export function isSex(value: unknown): value is Sex {
+  return Object.values(SEX).includes(value as Sex);
 }
 
 export const CREATURE_TYPES = [

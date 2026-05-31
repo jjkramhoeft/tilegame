@@ -1,12 +1,13 @@
 import { CASTING_UNLOCKS, CHEST_STATE, GEAR, POTION, WEAPON } from '../common/common';
+import type { Gear, Potion, Weapon } from '../common/common';
 import { GameDataManager } from '../common/game-data-manager';
 import { CastingUnlocks, Position } from '../common/types';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 
 type ChestContents = {
-  gear: string;
-  weapon: string;
-  potion: string;
+  gear: Gear;
+  weapon: Weapon;
+  potion: Potion;
 };
 
 type ChestCastingUnlock = Extract<keyof typeof CASTING_UNLOCKS, `CHEST${number}`>;

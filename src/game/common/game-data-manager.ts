@@ -1,5 +1,6 @@
 import type { ChestDialogInfo } from './chest-dialog';
 import { CASTING_UNLOCKS, CREATURE_TYPES, DIFFICULTY, GEAR, POTION, SEX, WEAPON } from './common';
+import type { Difficulty, Gear, Potion, Sex, Weapon } from './common';
 import { ENABLE_LOGGING, LEVEL_UP_TILE_THRESHOLDS, PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
@@ -23,15 +24,15 @@ export function createEmptyCreaturesEverCreated(): Record<CreatureType, boolean>
 
 export type PlayerData = {
 
-  sex: string;
-  gear: string;
-  weapon: string;
+  sex: Sex;
+  gear: Gear;
+  weapon: Weapon;
 
   languageIsDanish: boolean;
   isDebugMode: boolean;
-  difficulty: string;
+  difficulty: Difficulty;
 
-  potion: string;
+  potion: Potion;
   currentHealth: number;
   maxHealth: number;
 
@@ -204,11 +205,11 @@ export class GameDataManager {
     this.#data.languageIsDanish = languageIsDanish;
   }
 
-  public setSex(sex: string): void {
+  public setSex(sex: Sex): void {
     this.#data.sex = sex;
   }
 
-  public setDifficulty(difficulty: string, isDebugMode: boolean): void {
+  public setDifficulty(difficulty: Difficulty, isDebugMode: boolean): void {
     this.#data.difficulty = difficulty;
     this.#data.isDebugMode = isDebugMode;
   }
@@ -221,27 +222,27 @@ export class GameDataManager {
     return this.#data.maxHealth;
   }
 
-  public getGear(): string {
+  public getGear(): Gear {
     return this.#data.gear;
   }
 
-  public getWeapon(): string {
+  public getWeapon(): Weapon {
     return this.#data.weapon;
   }
 
-  public getPotion(): string {
+  public getPotion(): Potion {
     return this.#data.potion;
   }
 
-  public updatePlayerGear(gear: string): void {
+  public updatePlayerGear(gear: Gear): void {
     this.#data.gear = gear;
   }
 
-  public updatePlayerWeapon(weapon: string): void {
+  public updatePlayerWeapon(weapon: Weapon): void {
     this.#data.weapon = weapon;
   }
 
-  public updatePlayerPotion(potion: string): void {
+  public updatePlayerPotion(potion: Potion): void {
     this.#data.potion = potion;
   }
 

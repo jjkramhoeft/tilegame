@@ -10,7 +10,8 @@ import {
 } from '../common/assets';
 import { getText, type TextKey } from '../common/texts';
 import { SCENE_KEYS } from './scene-keys';
-import { DIFFICULTY } from '../common/common';
+import { DIFFICULTY, SEX, isDifficulty, isSex } from '../common/common';
+import type { Difficulty, Sex } from '../common/common';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 
 const CURSOR_SIZE = 16;
@@ -32,14 +33,14 @@ const LANGUAGE_OPTIONS = [
     { textKey: 'settings.language.english', isDanish: false }
 ];
 const PLAYER_OPTIONS = [
-    { textKey: 'settings.player.adam', sex: 'male' },
-    { textKey: 'settings.player.eve', sex: 'female' }
-];
+    { textKey: 'settings.player.adam', sex: SEX.MALE },
+    { textKey: 'settings.player.eve', sex: SEX.FEMALE }
+] satisfies readonly { textKey: TextKey; sex: Sex }[];
 const DEBUG_OPTIONS = [
     { textKey: 'settings.difficulty.easy', value: DIFFICULTY.EASY },
     { textKey: 'settings.difficulty.hard', value: DIFFICULTY.HARD },
     { textKey: 'settings.difficulty.debug', value: DIFFICULTY.DEBUG },
-];
+] satisfies readonly { textKey: TextKey; value: Difficulty }[];
 
 type LocalizedTextObject = {
     text: Phaser.GameObjects.Text;
@@ -108,7 +109,7 @@ export class Settings extends Scene {
         this.#uiSelectSound = this.sound.add(ASSET_KEYS.BLIP_SELECT_7);
 
         const savedDifficulty = this.registry.get('difficulty');
-        const hasSavedDifficulty = savedDifficulty === DIFFICULTY.EASY || savedDifficulty === DIFFICULTY.HARD || savedDifficulty === DIFFICULTY.DEBUG;
+        const hasSavedDifficulty = isDifficulty(savedDifficulty);
         if (hasSavedDifficulty) {
             const index = DEBUG_OPTIONS.findIndex((option) => option.value === savedDifficulty);
             if (index >= 0) {
@@ -139,7 +140,7 @@ export class Settings extends Scene {
         }
 
         const savedPlayerSex = this.registry.get('playerSex');
-        if (typeof savedPlayerSex === 'string') {
+        if (isSex(savedPlayerSex)) {
             const index = PLAYER_OPTIONS.findIndex((option) => option.sex === savedPlayerSex);
             if (index >= 0) {
                 this.playerIndex = index;

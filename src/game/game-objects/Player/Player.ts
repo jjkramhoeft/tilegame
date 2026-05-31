@@ -3,7 +3,7 @@ import { GameObject2, Position } from '../../common/types';
 import { InputComponent } from '../../components/input/input-component';
 import { CharacterGameObject } from '../common/character-game-object';
 import { AnimationConfig } from '../../components/game-object/animation-component';
-import { ASSET_KEYS, PLAYER_ANIMATION_KEYS } from '../../common/assets';
+import { PLAYER_ANIMATION_KEYS } from '../../common/assets';
 import {
   PLAYER_HURT_PUSH_BACK_SPEED,
   PLAYER_INVULNERABLE_AFTER_HIT_DURATION,
@@ -25,6 +25,7 @@ import { FallingState } from '../../components/state-machine/states/character/fa
 import { SwimMoveState } from '../../components/state-machine/states/character/swim-move-state';
 import { GameDataManager } from '../../common/game-data-manager';
 import { CastingState } from '../../components/state-machine/states/character/casting-state';
+import { SEX } from '../../common/common';
 
 
 export type PlayerConfig = {
@@ -84,7 +85,7 @@ export class Player extends CharacterGameObject {
 
     // Play sex-specific "ow" sound when the player takes damage or dies.
     const playOwSound = (): void => {
-      const owSoundKey = GameDataManager.instance.data.sex === 'female' ? 'female-ow' : 'male-ow';
+      const owSoundKey = GameDataManager.instance.data.sex === SEX.FEMALE ? 'female-ow' : 'male-ow';
       const owSound = config.scene.sound.get(owSoundKey) ?? config.scene.sound.add(owSoundKey);
       if (!owSound.isPlaying) {
         owSound.play();

@@ -5,6 +5,7 @@ import type { GameScene } from '../../../../scenes/game-scene';
 import { GameDataManager } from '../../../../common/game-data-manager';
 import { DIFFICULTY_HARD_WAIT_FACTOR, ENABLE_LOGGING } from '../../../../common/config';
 import { ASSET_KEYS } from '../../../../common/assets';
+import { DIFFICULTY } from '../../../../common/common';
 
 const START_CLOUD_COUNT = 35;
 const START_CLOUD_DEPTH = 1000;
@@ -53,7 +54,7 @@ export class StartState extends BaseGameState {
   public onEnter(): void {
     if (ENABLE_LOGGING) { console.debug('[GameProgression] StartState entered'); }
     let defaultWaitTime = 500;
-    if (GameDataManager.instance.data.difficulty === 'Hard') {
+    if (GameDataManager.instance.data.difficulty === DIFFICULTY.HARD) {
       defaultWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
     }
 

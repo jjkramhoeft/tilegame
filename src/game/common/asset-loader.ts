@@ -194,10 +194,10 @@ function loadGeneratedPlayerSpritesheets(scene: Phaser.Scene): void {
           scene.load.spritesheet(key, `${PLAYER_ROOT_ASSET_PATH}/${key}.png`, { frameWidth: 64, frameHeight: 64 });
         });
 
-        const thrustKey = weapon === 'sword'
+        const thrustKey = weapon === WEAPON.SWORD
           ? `${sex}-${gear}-${weapon}-thrust128`
           : `${sex}-${gear}-${weapon}-thrust`;
-        const frameSize = weapon === 'sword' ? 128 : 64;
+        const frameSize = weapon === WEAPON.SWORD ? 128 : 64;
         scene.load.spritesheet(thrustKey, `${PLAYER_ROOT_ASSET_PATH}/${thrustKey}.png`, { frameWidth: frameSize, frameHeight: frameSize });
       });
     });

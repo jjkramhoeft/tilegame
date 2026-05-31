@@ -4,6 +4,7 @@ import type { TextKey } from '../../../../common/texts';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { DIFFICULTY_HARD_WAIT_FACTOR } from '../../../../common/config';
 import { GameDataManager } from '../../../../common/game-data-manager';
+import { DIFFICULTY } from '../../../../common/common';
 
 /**
  * Base class for the game progression states. Concrete states extend this and
@@ -29,7 +30,7 @@ export abstract class BaseGameState implements State {
     this.#name = name;
     this._scene = scene;
     this.defaultWaitTime = 500;
-    if(GameDataManager.instance.data.difficulty === 'Hard') {
+    if(GameDataManager.instance.data.difficulty === DIFFICULTY.HARD) {
       this.defaultWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
     }
   }

@@ -1,4 +1,5 @@
 import { GEAR, POTION, WEAPON } from './common';
+import type { Gear, Potion, Weapon } from './common';
 import { GameDataManager } from './game-data-manager';
 
 export type LanguageCode = 'en' | 'da';
@@ -410,6 +411,12 @@ export type TextKey = keyof typeof TEXTS;
 type GearDisplayContext = 'found' | 'option' | 'current';
 type WeaponDisplayContext = 'found' | 'option' | 'current';
 
+export type ChestTextContents = {
+    potion: Potion;
+    gear: Gear;
+    weapon: Weapon;
+};
+
 export function getCurrentLanguage(): LanguageCode {
     return GameDataManager.instance.data.languageIsDanish ? 'da' : 'en';
 }
@@ -422,14 +429,14 @@ export function getText(key: TextKey, params: TextParams = {}, language: Languag
     return text;
 }
 
-export function getPotionText(potion: string, language: LanguageCode = getCurrentLanguage()): string {
+export function getPotionText(potion: Potion, language: LanguageCode = getCurrentLanguage()): string {
     switch (potion) {
         case POTION.FRUIT: return getText('potion.fruit.found', {}, language);
         default: return '';
     }
 }
 
-export function getGearText(gear: string, context: GearDisplayContext, language: LanguageCode = getCurrentLanguage()): string {
+export function getGearText(gear: Gear, context: GearDisplayContext, language: LanguageCode = getCurrentLanguage()): string {
     switch (gear) {
         case GEAR.BARE: return getText(`gear.bare.${context}`, {}, language);
         case GEAR.BASIC: return getText(`gear.basic.${context}`, {}, language);
@@ -438,7 +445,7 @@ export function getGearText(gear: string, context: GearDisplayContext, language:
     }
 }
 
-export function getWeaponText(weapon: string, context: WeaponDisplayContext, language: LanguageCode = getCurrentLanguage()): string {
+export function getWeaponText(weapon: Weapon, context: WeaponDisplayContext, language: LanguageCode = getCurrentLanguage()): string {
     switch (weapon) {
         case WEAPON.DAGGER: return getText(`weapon.dagger.${context}`, {}, language);
         case WEAPON.STAFF: return getText(`weapon.staff.${context}`, {}, language);
@@ -447,7 +454,7 @@ export function getWeaponText(weapon: string, context: WeaponDisplayContext, lan
     }
 }
 
-export function formatChestHeading(contents: { potion: string; gear: string; weapon: string }, language: LanguageCode = getCurrentLanguage()): string {
+export function formatChestHeading(contents: ChestTextContents, language: LanguageCode = getCurrentLanguage()): string {
     const foundItems = [
         getPotionText(contents.potion, language),
         getGearText(contents.gear, 'found', language),
@@ -463,7 +470,7 @@ export function formatChestHeading(contents: { potion: string; gear: string; wea
     }, language);
 }
 
-export function formatChestPotionOption(chestPotion: string, currentPotion: string, language: LanguageCode = getCurrentLanguage()): string {
+export function formatChestPotionOption(chestPotion: Potion, currentPotion: Potion, language: LanguageCode = getCurrentLanguage()): string {
     const repeat = chestPotion === currentPotion && chestPotion.length > 0;
     if (repeat) {
         return getText('potion.fruit.repeat', {}, language);
@@ -471,7 +478,7 @@ export function formatChestPotionOption(chestPotion: string, currentPotion: stri
     return getText('potion.fruit.take', {}, language);
 }
 
-export function formatChestWeaponOption(chestWeapon: string, currentWeapon: string, language: LanguageCode = getCurrentLanguage()): string {
+export function formatChestWeaponOption(chestWeapon: Weapon, currentWeapon: Weapon, language: LanguageCode = getCurrentLanguage()): string {
     const item = getWeaponText(chestWeapon, 'option', language);
     const currentItem = getWeaponText(currentWeapon, 'current', language);
 
@@ -487,7 +494,7 @@ export function formatChestWeaponOption(chestWeapon: string, currentWeapon: stri
     return '';
 }
 
-export function formatChestGearOption(chestGear: string, currentGear: string, language: LanguageCode = getCurrentLanguage()): string {
+export function formatChestGearOption(chestGear: Gear, currentGear: Gear, language: LanguageCode = getCurrentLanguage()): string {
     const item = getGearText(chestGear, 'option', language);
     const currentItem = getGearText(currentGear, 'current', language);
 

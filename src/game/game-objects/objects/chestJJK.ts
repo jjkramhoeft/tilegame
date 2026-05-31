@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { CHEST_STATE, INTERACTIVE_OBJECT_TYPE } from '../../common/common';
+import type { Gear, Potion, Weapon } from '../../common/common';
 import { ChestState, CustomGameObject, Position } from '../../common/types';
 import { InteractiveObjectComponent } from '../../components/game-object/interactive-object-component';
 
@@ -12,9 +13,9 @@ export type ChestJJKConfig = {
 }
 
 export type ChestReward = {
-  gear: string;
-  weapon: string;
-  potion: string;
+  gear: Gear;
+  weapon: Weapon;
+  potion: Potion;
 }
 
 export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameObject {

@@ -228,9 +228,9 @@ export class GameScene extends Phaser.Scene {
 
     #playWeaponHitSound(): void {
         const weapon = GameDataManager.instance.data.weapon;
-        const soundKey = weapon === 'dagger' ? 'attack-dagger'
-            : weapon === 'staff' ? 'attack-staff'
-                : weapon === 'sword' ? 'attack-sword'
+        const soundKey = weapon === WEAPON.DAGGER ? 'attack-dagger'
+            : weapon === WEAPON.STAFF ? 'attack-staff'
+                : weapon === WEAPON.SWORD ? 'attack-sword'
                     : 'attack-punch';
         const sound = this.sound.get(soundKey) ?? this.sound.add(soundKey);
         if (!sound.isPlaying) {

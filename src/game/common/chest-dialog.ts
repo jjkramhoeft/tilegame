@@ -1,4 +1,5 @@
 import { GEAR, POTION, WEAPON } from './common';
+import type { Gear, Potion, Weapon } from './common';
 import { GameDataManager } from './game-data-manager';
 import { formatChestGearOption, formatChestHeading, formatChestWeaponOption, formatChestPotionOption, getText } from './texts';
 import type { ChestJJK } from '../game-objects/objects/chestJJK';
@@ -9,13 +10,13 @@ export type DialogPayload = {
 };
 
 export interface ChestDialogInfo {
-  option1GearToPlayer: string,
-  option1WeaponToPlayer: string,
-  option1GearToLeave: string,
-  option1WeaponToLeave: string,
-  option2GearToPlayer: string,
-  option2GearToLeave: string,
-  option1PotionToPlayer: string,
+  option1GearToPlayer: Gear,
+  option1WeaponToPlayer: Weapon,
+  option1GearToLeave: Gear,
+  option1WeaponToLeave: Weapon,
+  option2GearToPlayer: Gear,
+  option2GearToLeave: Gear,
+  option1PotionToPlayer: Potion,
   chestNumber?: number,
   dialog: DialogPayload,
 }
