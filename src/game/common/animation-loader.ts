@@ -11,6 +11,7 @@ import {
   PLANT3_ANIMATION_KEYS,
   ROOSTER_ANIMATION_KEYS,
   SHEEP_ANIMATION_KEYS,
+  SKELETON_ANIMATION_KEYS,
   SNAKE_ANIMATION_KEYS,
   TURKEY_ANIMATION_KEYS,
 } from './assets';
@@ -202,6 +203,8 @@ export function createMobAnimations(anims: AnimationManager): void {
   createPlantAnimations(anims, PLANT1_ANIMATION_KEYS, ASSET_KEYS.PLANT1_ATTACK, ASSET_KEYS.PLANT1_IDLE, ASSET_KEYS.PLANT1_DEATH);
   createPlantAnimations(anims, PLANT2_ANIMATION_KEYS, ASSET_KEYS.PLANT2_ATTACK, ASSET_KEYS.PLANT2_IDLE, ASSET_KEYS.PLANT2_DEATH);
   createPlantAnimations(anims, PLANT3_ANIMATION_KEYS, ASSET_KEYS.PLANT3_ATTACK, ASSET_KEYS.PLANT3_IDLE, ASSET_KEYS.PLANT3_DEATH);
+  
+  createSkeletonAnimations(anims);
 }
 
 export function createTileAnimations(anims: AnimationManager): void {
@@ -306,4 +309,17 @@ function createPlantAnimations(
   anims.create({ key: keys.DEATH_UP, frames: anims.generateFrameNumbers(deathAssetKey, { start: 10, end: 19 }), frameRate: 3, repeat: -1 });
   anims.create({ key: keys.DEATH_LEFT, frames: anims.generateFrameNumbers(deathAssetKey, { start: 20, end: 29 }), frameRate: 3, repeat: -1 });
   anims.create({ key: keys.DEATH_RIGHT, frames: anims.generateFrameNumbers(deathAssetKey, { start: 30, end: 29 }), frameRate: 3, repeat: -1 });
+}
+
+function createSkeletonAnimations(
+  anims: AnimationManager
+): void {
+  anims.create({ key: SKELETON_ANIMATION_KEYS.ATTACK_UP, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_ATTACK, { start: 0, end: 7 }), frameRate: 9, repeat: -1 });
+  anims.create({ key: SKELETON_ANIMATION_KEYS.ATTACK_LEFT, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_ATTACK, { start: 8, end: 15 }), frameRate: 9, repeat: -1 });
+  anims.create({ key: SKELETON_ANIMATION_KEYS.ATTACK_DOWN, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_ATTACK, { start: 16, end: 23 }), frameRate: 9, repeat: -1 });
+  anims.create({ key: SKELETON_ANIMATION_KEYS.ATTACK_RIGHT, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_ATTACK, { start: 24, end: 31 }), frameRate: 9, repeat: -1 });
+  anims.create({ key: SKELETON_ANIMATION_KEYS.WALK_UP, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_MOVE, { start: 0, end: 8 }), frameRate: 8, repeat: -1 });
+  anims.create({ key: SKELETON_ANIMATION_KEYS.WALK_LEFT, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_MOVE, { start: 9, end: 17 }), frameRate: 8, repeat: -1 });
+  anims.create({ key: SKELETON_ANIMATION_KEYS.WALK_DOWN, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_MOVE, { start: 18, end: 26 }), frameRate: 8, repeat: -1 });
+  anims.create({ key: SKELETON_ANIMATION_KEYS.WALK_RIGHT, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_MOVE, { start: 27, end: 35 }), frameRate: 8, repeat: -1 });
 }

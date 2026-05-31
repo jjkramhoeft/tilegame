@@ -9,6 +9,8 @@ export const ASSET_KEYS = {
   ROOSTER: 'Rooster',
   CALF: 'Calf',
   BULL: 'Bull',
+  SKELETON_ATTACK: 'skeleton-attack',
+  SKELETON_MOVE: 'skeleton-move',
   PLANT1_ATTACK: 'plant1-attack',
   PLANT1_IDLE: 'plant1-idle',
   PLANT1_DEATH: 'plant1-death',
@@ -413,6 +415,17 @@ export const SNAKE_ANIMATION_KEYS = {
   IDLE_UP: 'snake-idle-up',
   IDLE_LEFT: 'snake-idle-left',
   IDLE_RIGHT: 'snake-idle-right',
+} as const;
+
+export const SKELETON_ANIMATION_KEYS = {
+  WALK_DOWN: 'skeleton-walk-down',
+  WALK_UP: 'skeleton-walk-up',
+  WALK_LEFT: 'skeleton-walk-left',
+  WALK_RIGHT: 'skeleton-walk-right',
+  ATTACK_DOWN: 'skeleton-attack-down',
+  ATTACK_UP: 'skeleton-attack-up',
+  ATTACK_LEFT: 'skeleton-attack-left',
+  ATTACK_RIGHT: 'skeleton-attack-right',
 } as const;
 
 export const CHARACTER_ANIMATIONS = {
