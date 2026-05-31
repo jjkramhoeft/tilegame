@@ -4,6 +4,7 @@ import { ASSET_KEYS } from '../common/assets';
 import { getText } from '../common/texts';
 import { SCENE_KEYS } from './scene-keys';
 import { KeyboardComponent } from '../components/input/keyboard-component';
+import { ScrollableTextPanel } from '../common/scrollable-text-panel';
 
 const COLORS = {
     title: '#5eb1da',
@@ -14,7 +15,6 @@ const COLORS = {
 
 const CREDIT_SCROLL_TOP = 220;
 const CREDIT_SCROLL_BOTTOM = 700;
-const CREDIT_SCROLL_HEIGHT = CREDIT_SCROLL_BOTTOM - CREDIT_SCROLL_TOP;
 const CREDIT_TEXT_X = 60;
 const CREDIT_TEXT_SPACING = 34;
 const CREDIT_KEYBOARD_SCROLL_SPEED = 420;
@@ -40,11 +40,8 @@ const CREDIT_TEXTS: CreditTextConfig[] = [
 export class Credits extends Scene
 {
     creditsMusic?: Phaser.Sound.BaseSound;
-    private creditsScrollContainer?: Phaser.GameObjects.Container;
-    private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
+    private creditsScrollPanel?: ScrollableTextPanel;
     private controls?: KeyboardComponent;
-    private scrollOffset = 0;
-    private maxScrollOffset = 0;    
     #uiSelectSound!: Phaser.Sound.BaseSound;
 
     constructor ()
@@ -99,7 +96,9 @@ export class Credits extends Scene
             console.warn('[Credits] keyboard plugin is not setup properly');
         }
 
-        this.events.once('shutdown', () => {
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.creditsScrollPanel?.destroy();
+            this.creditsScrollPanel = undefined;
             this.creditsMusic?.stop();
             this.creditsMusic?.destroy();
             this.creditsMusic = undefined;
@@ -114,19 +113,7 @@ export class Credits extends Scene
             return;
         }
 
-        if (!this.cursorKeys) {
-            return;
-        }
-
-        const scrollAmount = CREDIT_KEYBOARD_SCROLL_SPEED * (delta / 1000);
-
-        if (this.cursorKeys.up.isDown) {
-            this.scrollCredits(-scrollAmount);
-        }
-
-        if (this.cursorKeys.down.isDown) {
-            this.scrollCredits(scrollAmount);
-        }
+        this.creditsScrollPanel?.update(delta);
     }
 
     private returnToIntro ()
@@ -137,45 +124,24 @@ export class Credits extends Scene
 
     private createScrollableCreditsText ()
     {
-        this.creditsScrollContainer = this.add.container(0, CREDIT_SCROLL_TOP).setDepth(50);
-        this.scrollOffset = 0;
-        this.maxScrollOffset = 0;
-
-        let currentY = 0;
-        CREDIT_TEXTS.forEach((creditText) => {
-            const text = this.add.text(CREDIT_TEXT_X, currentY, getText(creditText.textKey), {
+        this.creditsScrollPanel = new ScrollableTextPanel(this, {
+            top: CREDIT_SCROLL_TOP,
+            bottom: CREDIT_SCROLL_BOTTOM,
+            textX: CREDIT_TEXT_X,
+            textSpacing: CREDIT_TEXT_SPACING,
+            keyboardScrollSpeed: CREDIT_KEYBOARD_SCROLL_SPEED,
+            wheelScrollSpeed: CREDIT_MOUSE_WHEEL_SCROLL_SPEED,
+            depth: 50,
+            entries: CREDIT_TEXTS.map((creditText) => ({
+                text: getText(creditText.textKey),
+                width: creditText.width,
+                style: {
                 fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 32, color: COLORS.title,
                 stroke: COLORS.titleStroke, strokeThickness: 6,
                 align: 'left',
-                wordWrap: { width: creditText.width },
                 lineSpacing: 4,
-            });
-
-            this.creditsScrollContainer?.add(text);
-            currentY += text.height + CREDIT_TEXT_SPACING;
+                },
+            })),
         });
-
-        const contentHeight = Math.max(0, currentY - CREDIT_TEXT_SPACING);
-        this.maxScrollOffset = Math.max(0, contentHeight - CREDIT_SCROLL_HEIGHT);
-
-        Phaser.Actions.AddMaskShape(this.creditsScrollContainer, {
-            shape: 'rectangle',
-            region: new Phaser.Geom.Rectangle(0, CREDIT_SCROLL_TOP, this.scale.width, CREDIT_SCROLL_HEIGHT),
-        });
-
-        this.cursorKeys = this.input.keyboard?.createCursorKeys();
-        this.input.on('wheel', (_pointer: Phaser.Input.Pointer, _gameObjects: Phaser.GameObjects.GameObject[], _deltaX: number, deltaY: number) => {
-            this.scrollCredits(deltaY * CREDIT_MOUSE_WHEEL_SCROLL_SPEED);
-        });
-    }
-
-    private scrollCredits (amount: number)
-    {
-        if (!this.creditsScrollContainer) {
-            return;
-        }
-
-        this.scrollOffset = Phaser.Math.Clamp(this.scrollOffset + amount, 0, this.maxScrollOffset);
-        this.creditsScrollContainer.y = CREDIT_SCROLL_TOP - this.scrollOffset;
     }
 }

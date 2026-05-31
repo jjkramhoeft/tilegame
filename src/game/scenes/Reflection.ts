@@ -4,6 +4,7 @@ import { ASSET_KEYS } from '../common/assets';
 import { getText } from '../common/texts';
 import { SCENE_KEYS } from './scene-keys';
 import { KeyboardComponent } from '../components/input/keyboard-component';
+import { ScrollableTextPanel } from '../common/scrollable-text-panel';
 
 const COLORS = {
     title: '#5eb1da',
@@ -15,7 +16,6 @@ const COLORS = {
 
 const REFLECTION_SCROLL_TOP = 180;
 const REFLECTION_SCROLL_BOTTOM = 710;
-const REFLECTION_SCROLL_HEIGHT = REFLECTION_SCROLL_BOTTOM - REFLECTION_SCROLL_TOP;
 const REFLECTION_TEXT_X = 60;
 const REFLECTION_TEXT_SPACING = 18;
 const REFLECTION_HEADING_TOP_SPACING = 24;
@@ -86,13 +86,10 @@ export class Reflection extends Scene {
     reflectionMusic?: Phaser.Sound.BaseSound;
     private reflectionMusicIndex = 0;
     private reflectionMusicPauseEvent?: Phaser.Time.TimerEvent;
-    private reflectionScrollContainer?: Phaser.GameObjects.Container;
-    private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
+    private reflectionScrollPanel?: ScrollableTextPanel;
     private controls?: KeyboardComponent;
     private backgroundClouds: Phaser.GameObjects.Image[] = [];
     private cloudSpawnEvent?: Phaser.Time.TimerEvent;
-    private scrollOffset = 0;
-    private maxScrollOffset = 0;
     #uiSelectSound!: Phaser.Sound.BaseSound;
 
     constructor() {
@@ -144,7 +141,9 @@ export class Reflection extends Scene {
             console.warn('[Reflection] keyboard plugin is not setup properly');
         }
 
-        this.events.once('shutdown', () => {
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.reflectionScrollPanel?.destroy();
+            this.reflectionScrollPanel = undefined;
             this.clearBackgroundClouds();
             this.clearReflectionMusicPauseEvent();
             this.reflectionMusic?.stop();
@@ -160,19 +159,7 @@ export class Reflection extends Scene {
             return;
         }
 
-        if (!this.cursorKeys) {
-            return;
-        }
-
-        const scrollAmount = REFLECTION_KEYBOARD_SCROLL_SPEED * (delta / 1000);
-
-        if (this.cursorKeys.up.isDown) {
-            this.scrollReflection(-scrollAmount);
-        }
-
-        if (this.cursorKeys.down.isDown) {
-            this.scrollReflection(scrollAmount);
-        }
+        this.reflectionScrollPanel?.update(delta);
     }
 
     private returnToIntro() {
@@ -261,51 +248,28 @@ export class Reflection extends Scene {
     }
 
     private createScrollableReflectionText() {
-        this.reflectionScrollContainer = this.add.container(0, REFLECTION_SCROLL_TOP).setDepth(50);
-        this.scrollOffset = 0;
-        this.maxScrollOffset = 0;
-
-        let currentY = 0;
-        REFLECTION_TEXTS.forEach((reflectionText, index) => {
-            if (reflectionText.isHeading && index > 0) {
-                currentY += REFLECTION_HEADING_TOP_SPACING;
-            }
-
-            const text = this.add.text(REFLECTION_TEXT_X, currentY, getText(reflectionText.textKey), {
-                fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX,
-                fontSize: reflectionText.isHeading ? 38 : 28,
-                color: reflectionText.isHeading ? COLORS.heading : COLORS.body,
-                stroke: COLORS.textStroke,
-                strokeThickness: reflectionText.isHeading ? 6 : 5,
-                align: 'left',
-                wordWrap: { width: reflectionText.width },
-                lineSpacing: 4,
-            });
-
-            this.reflectionScrollContainer?.add(text);
-            currentY += text.height + REFLECTION_TEXT_SPACING;
+        this.reflectionScrollPanel = new ScrollableTextPanel(this, {
+            top: REFLECTION_SCROLL_TOP,
+            bottom: REFLECTION_SCROLL_BOTTOM,
+            textX: REFLECTION_TEXT_X,
+            textSpacing: REFLECTION_TEXT_SPACING,
+            keyboardScrollSpeed: REFLECTION_KEYBOARD_SCROLL_SPEED,
+            wheelScrollSpeed: REFLECTION_MOUSE_WHEEL_SCROLL_SPEED,
+            depth: 50,
+            entries: REFLECTION_TEXTS.map((reflectionText, index) => ({
+                text: getText(reflectionText.textKey),
+                width: reflectionText.width,
+                topSpacing: reflectionText.isHeading && index > 0 ? REFLECTION_HEADING_TOP_SPACING : 0,
+                style: {
+                    fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX,
+                    fontSize: reflectionText.isHeading ? 38 : 28,
+                    color: reflectionText.isHeading ? COLORS.heading : COLORS.body,
+                    stroke: COLORS.textStroke,
+                    strokeThickness: reflectionText.isHeading ? 6 : 5,
+                    align: 'left',
+                    lineSpacing: 4,
+                },
+            })),
         });
-
-        const contentHeight = Math.max(0, currentY - REFLECTION_TEXT_SPACING);
-        this.maxScrollOffset = Math.max(0, contentHeight - REFLECTION_SCROLL_HEIGHT);
-
-        Phaser.Actions.AddMaskShape(this.reflectionScrollContainer, {
-            shape: 'rectangle',
-            region: new Phaser.Geom.Rectangle(0, REFLECTION_SCROLL_TOP, this.scale.width, REFLECTION_SCROLL_HEIGHT),
-        });
-
-        this.cursorKeys = this.input.keyboard?.createCursorKeys();
-        this.input.on('wheel', (_pointer: Phaser.Input.Pointer, _gameObjects: Phaser.GameObjects.GameObject[], _deltaX: number, deltaY: number) => {
-            this.scrollReflection(deltaY * REFLECTION_MOUSE_WHEEL_SCROLL_SPEED);
-        });
-    }
-
-    private scrollReflection(amount: number) {
-        if (!this.reflectionScrollContainer) {
-            return;
-        }
-
-        this.scrollOffset = Phaser.Math.Clamp(this.scrollOffset + amount, 0, this.maxScrollOffset);
-        this.reflectionScrollContainer.y = REFLECTION_SCROLL_TOP - this.scrollOffset;
     }
 }

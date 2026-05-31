@@ -48,10 +48,8 @@ export class GameScene extends Phaser.Scene {
     #animalSpawn!: AnimalSpawnService;
     #spellCasting!: SpellCastingService;
     #progression!: GameProgression;
-    #playerMapCollider!: Phaser.Physics.Arcade.Collider;
-    #playerChestCollider!: Phaser.Physics.Arcade.Collider;
-    #playerMobCollider!: Phaser.Physics.Arcade.Collider;
-    #playerCritterCollider!: Phaser.Physics.Arcade.Collider;
+    #colliders: Phaser.Physics.Arcade.Collider[] = [];
+    #playerColliders: Phaser.Physics.Arcade.Collider[] = [];
     #isGameplayReady = false;
 
     constructor() {
@@ -127,16 +125,33 @@ export class GameScene extends Phaser.Scene {
     }
 
     #resetSceneState(): void {
+        this.#removeAllColliders();
         this.#enemyGroup = undefined;
         this.#critterGroup = undefined;
         this.#isGameplayReady = false;
     }
 
     public removePlayerColliders(): void {
-        this.physics.world.removeCollider(this.#playerMapCollider);
-        this.physics.world.removeCollider(this.#playerChestCollider);
-        this.physics.world.removeCollider(this.#playerMobCollider);
-        this.physics.world.removeCollider(this.#playerCritterCollider);
+        this.#destroyColliders(this.#playerColliders);
+        this.#colliders = this.#colliders.filter((collider) => !this.#playerColliders.includes(collider));
+        this.#playerColliders = [];
+    }
+
+    #trackCollider(collider: Phaser.Physics.Arcade.Collider, removeWithPlayer = false): void {
+        this.#colliders.push(collider);
+        if (removeWithPlayer) {
+            this.#playerColliders.push(collider);
+        }
+    }
+
+    #removeAllColliders(): void {
+        this.#destroyColliders(this.#colliders);
+        this.#colliders = [];
+        this.#playerColliders = [];
+    }
+
+    #destroyColliders(colliders: Phaser.Physics.Arcade.Collider[]): void {
+        colliders.forEach((collider) => collider.destroy());
     }
 
     #setupPlayer(): void {
@@ -194,50 +209,50 @@ export class GameScene extends Phaser.Scene {
     #registerColliders(): void {
         // collision between player and blocking map geometry (treetrunks, stones, etc.)
         const blockingGeometryGroup = this.#earth.getBlockingGeometryGroup();
-        this.#playerMapCollider = this.physics.add.collider(this.#player, blockingGeometryGroup);
+        this.#trackCollider(this.physics.add.collider(this.#player, blockingGeometryGroup), true);
 
         // register collisions between player and JJKChest game objects
-        this.#playerChestCollider = this.physics.add.collider(this.#player, this.#chestJJKGroup, (_player, chest) => {
+        this.#trackCollider(this.physics.add.collider(this.#player, this.#chestJJKGroup, (_player, chest) => {
             // add chest game object to players collision list
             this.#player.collidedWithGameObject(chest as GameObject2);
-        });
+        }), true);
 
         // register collisions between enemies and the player.
-        this.#playerMobCollider = this.physics.add.overlap(this.#player, this.#enemyGroup!, (_player, enemy) => {
+        this.#trackCollider(this.physics.add.overlap(this.#player, this.#enemyGroup!, (_player, enemy) => {
             const enemyObj = enemy as CharacterGameObject;
             this.#player.hit(DIRECTION.DOWN, enemyObj.contactDamage);
-        });
+        }), true);
 
         // critters (passive animals) collide with the player and bounce away without damaging the player.
-        this.#playerCritterCollider = this.physics.add.collider(this.#player, this.#critterGroup!);
+        this.#trackCollider(this.physics.add.collider(this.#player, this.#critterGroup!), true);
 
         // register overlap between player weapon and enemies
-        this.physics.add.overlap(this.#player.weaponBody, this.#enemyGroup!, (_weaponBody, enemy) => {
+        this.#trackCollider(this.physics.add.overlap(this.#player.weaponBody, this.#enemyGroup!, (_weaponBody, enemy) => {
             const enemyObj = enemy as CharacterGameObject;
             if (enemyObj.hit(this.#player.direction, this.#player.weaponDamage)) {
                 this.#playWeaponHitSound();
             }
-        });
+        }), true);
 
         // critters (passive mobs) can be hit by the player's weapon but do not damage the player on contact.
-        this.physics.add.overlap(this.#player.weaponBody, this.#critterGroup!, (_weaponBody, critter) => {
+        this.#trackCollider(this.physics.add.overlap(this.#player.weaponBody, this.#critterGroup!, (_weaponBody, critter) => {
             const critterObj = critter as CharacterGameObject;
             if (critterObj.hit(this.#player.direction, this.#player.weaponDamage)) {
                 this.#playWeaponHitSound();
             }
-        });
+        }), true);
 
         // enemies and critters bounce against blocking map geometry.
-        this.physics.add.collider(this.#enemyGroup!, blockingGeometryGroup);
-        this.physics.add.collider(this.#critterGroup!, blockingGeometryGroup);
+        this.#trackCollider(this.physics.add.collider(this.#enemyGroup!, blockingGeometryGroup));
+        this.#trackCollider(this.physics.add.collider(this.#critterGroup!, blockingGeometryGroup));
 
         // register overlap enemies and void tiles from map, so enemies can avoid falling into void.
-        this.physics.add.collider(this.#enemyGroup!, this.#earth.getVoidLayer(), (_enemy, _voidTile) => {
+        this.#trackCollider(this.physics.add.collider(this.#enemyGroup!, this.#earth.getVoidLayer(), (_enemy, _voidTile) => {
             //const enemyObj = enemy as CharacterGameObject; enemyObj.hit(DIRECTION.DOWN, 999); currently enemies do not take damage from bumping into the void.
-        });
+        }));
 
         // critters also avoid falling into void tiles.
-        this.physics.add.collider(this.#critterGroup!, this.#earth.getVoidLayer());
+        this.#trackCollider(this.physics.add.collider(this.#critterGroup!, this.#earth.getVoidLayer()));
     }
 
     #playWeaponHitSound(): void {
@@ -266,6 +281,7 @@ export class GameScene extends Phaser.Scene {
             //EVENT_BUS.off(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
             EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
             EVENT_BUS.off(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, this.#handleChestDialogClosed, this);
+            this.#removeAllColliders();
             this.scene.stop(SCENE_KEYS.UI_SCENE);
         });
     }
