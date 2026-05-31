@@ -19,7 +19,11 @@ export class OpenChestState extends BaseCharacterState {
     this._resetObjectVelocity();
 
     // open the chest visually
-    chest.open();
+    if (!chest.open()) {
+      this._gameObject.invulnerableComponent.invulnerable = false;
+      this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
+      return;
+    }
 
     // emit event data regarding chest
     EVENT_BUS.emit(CUSTOM_EVENTS.OPENED_CHEST, chest);
@@ -27,9 +31,8 @@ export class OpenChestState extends BaseCharacterState {
     EVENT_BUS.once(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, () => {
       // make character vulnerable so we can take damage
       this._gameObject.invulnerableComponent.invulnerable = false;
-      this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
-
       chest.close();
+      this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
     });
   }
 }

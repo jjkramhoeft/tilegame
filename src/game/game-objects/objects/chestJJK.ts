@@ -41,9 +41,7 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
     new InteractiveObjectComponent(
       this,
       INTERACTIVE_OBJECT_TYPE.OPEN,
-      () => {
-        return this.#state === CHEST_STATE.REVEALED && this.scene.time.now >= this.#nextOpenAt;
-      },
+      () => this.canOpen,
       () => {
         this.open();
       },
@@ -63,13 +61,18 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
     return this.#contents;
   }
 
-  public open(): void {
-    if (this.#state !== CHEST_STATE.REVEALED || this.scene.time.now < this.#nextOpenAt) {
-      return;
+  get canOpen(): boolean {
+    return this.#state === CHEST_STATE.REVEALED && this.scene.time.now >= this.#nextOpenAt;
+  }
+
+  public open(): boolean {
+    if (!this.canOpen) {
+      return false;
     }
 
     this.#state = CHEST_STATE.OPEN;
     this.setFrame((this.#id-1)*2+1);
+    return true;
 
   }
 
