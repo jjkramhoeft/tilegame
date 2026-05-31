@@ -13,6 +13,7 @@ import { Sheep } from '../game-objects/enemies/sheep';
 import { Snake } from '../game-objects/enemies/snake';
 import { Spider } from '../game-objects/enemies/spider';
 import { Turkey } from '../game-objects/enemies/turkey';
+import { Plant } from '../game-objects/enemies/plant';
 
 type CreatureGroupKind = 'enemy' | 'critter';
 
@@ -44,6 +45,7 @@ const ANIMALS_BY_BIOME: Partial<Record<BIOME, CreatureSpawnOption[]>> = {
   ],
   [BIOME.SWAMP]: [
     { type: 'spider', group: 'enemy', create: (scene, position) => new Spider({ scene, position }) },
+    { type: 'plant', group: 'enemy', create: (scene, position) => new Plant({ scene, position }) },
   ],
   [BIOME.CRYSTAL]: [
     { type: 'spider', group: 'enemy', create: (scene, position) => new Spider({ scene, position }) },

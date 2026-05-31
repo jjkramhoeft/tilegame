@@ -13,6 +13,7 @@ import { Rooster } from '../../game-objects/enemies/rooster';
 import { Turkey } from '../../game-objects/enemies/turkey';
 import { Bull } from '../../game-objects/enemies/bull';
 import { Calf } from '../../game-objects/enemies/calf';
+import { Plant } from '../../game-objects/enemies/plant';
 
 export function spawnDebugEnemies(
     scene: Phaser.Scene,
@@ -49,6 +50,22 @@ export function spawnDebugEnemies(
     });
     snake.enableObject();
     enemyGroup.add(snake);
+    GameDataManager.instance.increaseLivingCreatureCount();
+
+    // A carnivorous plant, added on an empty swamp tile next to the snake.
+    const plantTileOffset: Position = { x: 3, y: 4 };
+    addTileAndVoid(earth, { x: firstTilePosition.x + plantTileOffset.x, y: firstTilePosition.y + plantTileOffset.y }, BIOME.SWAMP);
+    const plantWorldPosition = {
+        x: (plantTileOffset.x + firstTilePosition.x) * earth.getTileSize() + 32,
+        y: (plantTileOffset.y + firstTilePosition.y) * earth.getTileSize() + 32,
+    };
+    const plant = new Plant({
+        scene: scene,
+        position: plantWorldPosition,
+    });
+    plant.enableObject();
+    enemyGroup.add(plant);
+    GameDataManager.instance.markCreatureEverCreated('plant');
     GameDataManager.instance.increaseLivingCreatureCount();
 
     // A lamb, added on a empty tile away from chests and the player.
@@ -172,8 +189,8 @@ export function spawnDebugEnemies(
     GameDataManager.instance.increaseLivingCreatureCount();
 }
 
-function addTileAndVoid(earth: Earth, tilenumber: Position): void {
-    earth.AddTile(new Tile({ tilenumber: tilenumber, biome: BIOME.ROCK }));
+function addTileAndVoid(earth: Earth, tilenumber: Position, biome: BIOME = BIOME.ROCK): void {
+    earth.AddTile(new Tile({ tilenumber: tilenumber, biome }));
     earth.AddTile(new Tile({ tilenumber: { x: tilenumber.x + 1, y: tilenumber.y }, biome: BIOME.VOID }));
     earth.AddTile(new Tile({ tilenumber: { x: tilenumber.x - 1, y: tilenumber.y }, biome: BIOME.VOID }));
     earth.AddTile(new Tile({ tilenumber: { x: tilenumber.x, y: tilenumber.y + 1 }, biome: BIOME.VOID }));
