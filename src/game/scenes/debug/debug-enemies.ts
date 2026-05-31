@@ -23,7 +23,7 @@ export function spawnDebugEnemies(
     earth: Earth,
     firstTilePosition: Position,
 ): void {
-    /*
+
     // A spider, added on a empty tile away from chests and the player.
     const spiderTileOffset: Position = { x: 3, y: 0 };
     addTileAndVoid(earth, { x: firstTilePosition.x + spiderTileOffset.x, y: firstTilePosition.y + spiderTileOffset.y });
@@ -38,9 +38,9 @@ export function spawnDebugEnemies(
     spider.enableObject();
     enemyGroup.add(spider);
     GameDataManager.instance.increaseLivingCreatureCount();
-*/
 
-/*
+
+
     // A snake, added on an empty tile next to the spider.
     const snakeTileOffset: Position = { x: 3, y: 2 };
     addTileAndVoid(earth, { x: firstTilePosition.x + snakeTileOffset.x, y: firstTilePosition.y + snakeTileOffset.y });
@@ -55,8 +55,7 @@ export function spawnDebugEnemies(
     snake.enableObject();
     enemyGroup.add(snake);
     GameDataManager.instance.increaseLivingCreatureCount();
-    */
-/*
+
     // A carnivorous plant, added on an empty swamp tile next to the snake.
     const plantTileOffset: Position = { x: 3, y: 4 };
     addTileAndVoid(earth, { x: firstTilePosition.x + plantTileOffset.x, y: firstTilePosition.y + plantTileOffset.y }, BIOME.SWAMP);
@@ -72,10 +71,10 @@ export function spawnDebugEnemies(
     enemyGroup.add(plant);
     GameDataManager.instance.markCreatureEverCreated('plant');
     GameDataManager.instance.increaseLivingCreatureCount();
-*/
+
     // A skeleton, added on an empty crystal tile next to the plant.
-    const skeletonTileOffset: Position = { x:-13, y: 6 };
-    //addTileAndVoid(earth, { x: firstTilePosition.x + skeletonTileOffset.x, y: firstTilePosition.y + skeletonTileOffset.y }, BIOME.CRYSTAL);
+    const skeletonTileOffset: Position = { x: 3, y: 6 };
+    addTileAndVoid(earth, { x: firstTilePosition.x + skeletonTileOffset.x, y: firstTilePosition.y + skeletonTileOffset.y }, BIOME.CRYSTAL);
     const skeletonWorldPosition = {
         x: (skeletonTileOffset.x + firstTilePosition.x) * earth.getTileSize() + 32,
         y: (skeletonTileOffset.y + firstTilePosition.y) * earth.getTileSize() + 32,
@@ -88,7 +87,7 @@ export function spawnDebugEnemies(
     enemyGroup.add(skeleton);
     GameDataManager.instance.markCreatureEverCreated('skeleton');
     GameDataManager.instance.increaseLivingCreatureCount();
-/*
+
     // A lamb, added on a empty tile away from chests and the player.
     const lambTileOffset: Position = { x: 5, y: 0 };
     addTileAndVoid(earth, { x: firstTilePosition.x + lambTileOffset.x, y: firstTilePosition.y + lambTileOffset.y });
@@ -133,7 +132,7 @@ export function spawnDebugEnemies(
     sheep.enableObject();
     critterGroup.add(sheep);
     GameDataManager.instance.increaseLivingCreatureCount();
-    
+
     // A Piglet, added on a empty tile away from chests and the player.
     const pigletOffset: Position = { x: 5, y: 4 };
     addTileAndVoid(earth, { x: firstTilePosition.x + pigletOffset.x, y: firstTilePosition.y + pigletOffset.y });
@@ -148,7 +147,7 @@ export function spawnDebugEnemies(
     piglet.enableObject();
     critterGroup.add(piglet);
     GameDataManager.instance.increaseLivingCreatureCount();
-    
+
     // A Rooster, added on a empty tile away from chests and the player.
     const roosterOffset: Position = { x: 5, y: -4 };
     addTileAndVoid(earth, { x: firstTilePosition.x + roosterOffset.x, y: firstTilePosition.y + roosterOffset.y });
@@ -163,7 +162,7 @@ export function spawnDebugEnemies(
     rooster.enableObject();
     critterGroup.add(rooster);
     GameDataManager.instance.increaseLivingCreatureCount();
-    
+
     // A Turkey, added on a empty tile away from chests and the player.
     const turkeyOffset: Position = { x: 7, y: -2 };
     addTileAndVoid(earth, { x: firstTilePosition.x + turkeyOffset.x, y: firstTilePosition.y + turkeyOffset.y });
@@ -178,7 +177,7 @@ export function spawnDebugEnemies(
     turkey.enableObject();
     critterGroup.add(turkey);
     GameDataManager.instance.increaseLivingCreatureCount();
-    
+
     // A Bull, added on a empty tile away from chests and the player.
     const bullOffset: Position = { x: 7, y: 6 };
     addTileAndVoid(earth, { x: firstTilePosition.x + bullOffset.x, y: firstTilePosition.y + bullOffset.y });
@@ -193,7 +192,7 @@ export function spawnDebugEnemies(
     bull.enableObject();
     critterGroup.add(bull);
     GameDataManager.instance.increaseLivingCreatureCount();
-    
+
     // A Calf, added on a empty tile away from chests and the player.
     const calfOffset: Position = { x: 5, y: 6 };
     addTileAndVoid(earth, { x: firstTilePosition.x + calfOffset.x, y: firstTilePosition.y + calfOffset.y });
@@ -208,7 +207,6 @@ export function spawnDebugEnemies(
     calf.enableObject();
     critterGroup.add(calf);
     GameDataManager.instance.increaseLivingCreatureCount();
-    */
 }
 
 function addTileAndVoid(earth: Earth, tilenumber: Position, biome: BIOME = BIOME.ROCK): void {
