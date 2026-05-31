@@ -2,15 +2,15 @@ import * as Phaser from 'phaser';
 import { Player } from '../game-objects/player/player';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Earth } from '../ground/earth';
-import { SEX, WEAPON, GEAR, DIRECTION, BIOME, POTION, CASTING_UNLOCKS } from '../common/common';
+import { WEAPON, GEAR, DIRECTION, BIOME, POTION, CASTING_UNLOCKS } from '../common/common';
 import {
     CUSTOM_EVENTS,
     EVENT_BUS,
 } from '../common/event-bus';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
-import { CastingUnlocks, GameObject2, Position } from '../common/types';
-import { DataManager, createEmptyCreaturesEverCreated } from '../common/data-manager';
+import { GameObject2, Position } from '../common/types';
+import { DataManager } from '../common/data-manager';
 import { writeChestDialogInfo } from '../common/chest-dialog';
 import { setupDebugChests } from './debug/debug-chests';
 import { spawnDebugEnemies } from './debug/debug-enemies';
@@ -155,37 +155,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     #setupPlayer(): void {
-        const currentData = DataManager.instance.data;
-        DataManager.instance.data = {
-            sex: currentData.sex ?? SEX.MALE,
-            gear: GEAR.NONE,
-            weapon: WEAPON.NONE,
-
-            languageIsDanish: currentData.languageIsDanish ?? false,
-            isDebugMode: currentData.isDebugMode ?? false,
-            difficulty: currentData.difficulty ?? 'Easy',
-
-            potion: POTION.NONE,
-            currentHealth: 2,
-            maxHealth: 2,
-
-            currentPower: 1,
-            maxPower: 1,
-            unlockedSpellCasting: currentData.unlockedSpellCasting ?? new Set<CastingUnlocks>([CASTING_UNLOCKS.ROCK_BASIC]),
-
-            currentProgress: 0,
-            maxProgress: 0,
-            startTile: { x: 0, y: 0 },
-            gameState: 'not-started',
-
-            currentLivingCreatures: 0,
-            maxLivingCreaturesThisGame: 0,
-            creaturesEverCreated: createEmptyCreaturesEverCreated(),
-            tilesPlaced: {} as Record<CastingUnlocks, number>,
-
-            lastDialogOptionSelected: 0,
-            lastDialogResultInfo: undefined
-        };
+        DataManager.instance.resetForNewGame();
         this.#player = new Player({
             scene: this,
             position: this.#playerStartWorldPosition,
@@ -316,10 +286,7 @@ export class GameScene extends Phaser.Scene {
     /** Place the very first tile under the player start position. Returns its tile coordinates. */
     public placeStartingTile(): Position {
         const startTile = this.#earth.placeStartingTile(this.#playerStartWorldPosition);
-        DataManager.instance.data = {
-            ...DataManager.instance.data,
-            startTile,
-        };
+        DataManager.instance.setStartTile(startTile);
         return startTile;
     }
 
@@ -439,10 +406,7 @@ export class GameScene extends Phaser.Scene {
     #handleOpenChest(chest: ChestJJK): void {
 
         const chestInfo = writeChestDialogInfo(chest);
-        DataManager.instance.data = {
-            ...DataManager.instance.data,
-            lastDialogResultInfo: chestInfo,
-        };
+        DataManager.instance.setLastDialogResultInfo(chestInfo);
         EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_CHEST_DIALOG, chestInfo.dialog);
     }
 

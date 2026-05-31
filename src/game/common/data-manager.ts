@@ -1,5 +1,5 @@
 import type { ChestDialogInfo } from './chest-dialog';
-import { CASTING_UNLOCKS, CREATURE_TYPES, DIFFICULTY } from './common';
+import { CASTING_UNLOCKS, CREATURE_TYPES, DIFFICULTY, GEAR, POTION, SEX, WEAPON } from './common';
 import { ENABLE_LOGGING, LEVEL_UP_TILE_THRESHOLDS, PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
@@ -53,6 +53,42 @@ export type PlayerData = {
   lastDialogResultInfo?: ChestDialogInfo;
 };
 
+export type NewGameSettings = Pick<PlayerData, 'sex' | 'languageIsDanish' | 'isDebugMode' | 'difficulty'>;
+
+export function createDefaultPlayerData(overrides: Partial<PlayerData> = {}): PlayerData {
+  return {
+    sex: SEX.MALE,
+    gear: GEAR.NONE,
+    weapon: WEAPON.NONE,
+
+    languageIsDanish: false,
+    isDebugMode: false,
+    difficulty: DIFFICULTY.EASY,
+
+    potion: POTION.NONE,
+    currentHealth: PLAYER_START_MAX_HEALTH,
+    maxHealth: PLAYER_START_MAX_HEALTH,
+
+    currentPower: 1,
+    maxPower: 1,
+    unlockedSpellCasting: new Set<CastingUnlocks>([CASTING_UNLOCKS.ROCK_BASIC]),
+
+    currentProgress: 0,
+    maxProgress: 0,
+    startTile: { x: 0, y: 0 },
+    gameState: 'not-started',
+
+    currentLivingCreatures: 0,
+    maxLivingCreaturesThisGame: 0,
+    creaturesEverCreated: createEmptyCreaturesEverCreated(),
+    tilesPlaced: {} as Record<CastingUnlocks, number>,
+
+    lastDialogOptionSelected: 0,
+    lastDialogResultInfo: undefined,
+    ...overrides,
+  };
+}
+
 export class DataManager {
   static #instance: DataManager;
 
@@ -89,36 +125,7 @@ export class DataManager {
   ]);
 
   private constructor() {
-    this.#data = {
-      sex: 'male',
-      gear: '',
-      weapon: '',
-
-      languageIsDanish: false,
-      isDebugMode: false,
-      difficulty: DIFFICULTY.EASY,
-
-      potion: '',
-      currentHealth: PLAYER_START_MAX_HEALTH,
-      maxHealth: PLAYER_START_MAX_HEALTH,
-
-      currentPower: 1,
-      maxPower: 1,
-      unlockedSpellCasting: new Set<CastingUnlocks>([CASTING_UNLOCKS.ROCK_BASIC]),
-
-      currentProgress: 0,
-      maxProgress: 0,
-      startTile: { x: 0, y: 0 },
-      gameState: 'not-started',
-
-      currentLivingCreatures: 0,
-      maxLivingCreaturesThisGame: 0,
-      creaturesEverCreated: createEmptyCreaturesEverCreated(),
-      tilesPlaced: {} as Record<CastingUnlocks, number>,
-
-      lastDialogOptionSelected: 0,
-      lastDialogResultInfo: undefined
-    };
+    this.#data = createDefaultPlayerData();
   }
 
   public static get instance(): DataManager {
@@ -133,13 +140,59 @@ export class DataManager {
   }
 
   set data(data: PlayerData) {
-    this.#data = { ...data };
+    this.#data = {
+      ...data,
+      startTile: { ...data.startTile },
+      unlockedSpellCasting: new Set<CastingUnlocks>(data.unlockedSpellCasting ?? [CASTING_UNLOCKS.ROCK_BASIC]),
+      creaturesEverCreated: data.creaturesEverCreated ? { ...data.creaturesEverCreated } : createEmptyCreaturesEverCreated(),
+      tilesPlaced: data.tilesPlaced ? { ...data.tilesPlaced } : {} as Record<CastingUnlocks, number>,
+    };
     if (!this.#data.creaturesEverCreated) {
       this.#data.creaturesEverCreated = createEmptyCreaturesEverCreated();
     }
     if (!this.#data.unlockedSpellCasting) {
       this.#data.unlockedSpellCasting = new Set<CastingUnlocks>([CASTING_UNLOCKS.ROCK_BASIC]);
     }
+  }
+
+  public resetForNewGame(settings?: Partial<NewGameSettings>): void {
+    const currentData = this.#data;
+    this.#totalWeightedTilesPlaced = 0;
+    this.#data = createDefaultPlayerData({
+      sex: settings?.sex ?? currentData.sex,
+      languageIsDanish: settings?.languageIsDanish ?? currentData.languageIsDanish,
+      isDebugMode: settings?.isDebugMode ?? currentData.isDebugMode,
+      difficulty: settings?.difficulty ?? currentData.difficulty,
+    });
+  }
+
+  public setStartTile(startTile: Position): void {
+    this.#data.startTile = { ...startTile };
+  }
+
+  public setGameState(gameState: string): void {
+    this.#data.gameState = gameState;
+  }
+
+  public setLastDialogOptionSelected(optionIndex: number): void {
+    this.#data.lastDialogOptionSelected = optionIndex;
+  }
+
+  public setLastDialogResultInfo(info: ChestDialogInfo | undefined): void {
+    this.#data.lastDialogResultInfo = info;
+  }
+
+  public setLanguageIsDanish(languageIsDanish: boolean): void {
+    this.#data.languageIsDanish = languageIsDanish;
+  }
+
+  public setSex(sex: string): void {
+    this.#data.sex = sex;
+  }
+
+  public setDifficulty(difficulty: string, isDebugMode: boolean): void {
+    this.#data.difficulty = difficulty;
+    this.#data.isDebugMode = isDebugMode;
   }
 
   public resetPlayerHealthToMin(): void {
@@ -166,10 +219,11 @@ export class DataManager {
   }
 
   public markCreatureEverCreated(type: CreatureType): void {
-    if (!this.#data.creaturesEverCreated) {
-      this.#data.creaturesEverCreated = createEmptyCreaturesEverCreated();
-    }
-    this.#data.creaturesEverCreated[type] = true;
+    const creaturesEverCreated = this.#data.creaturesEverCreated ?? createEmptyCreaturesEverCreated();
+    this.#data.creaturesEverCreated = {
+      ...creaturesEverCreated,
+      [type]: true,
+    };
   }
 
   public hasEverCreated(type: CreatureType): boolean {
@@ -178,12 +232,11 @@ export class DataManager {
 
   public increaseTilesPlaced(castingUnlock: CastingUnlocks | undefined): void {
     if (!castingUnlock) { return; }
-    if (!this.#data.tilesPlaced) { this.#data.tilesPlaced = {} as Record<CastingUnlocks, number>; }
-
-    if (!this.#data.tilesPlaced[castingUnlock]) {
-      this.#data.tilesPlaced[castingUnlock] = 0;
-    }
-    this.#data.tilesPlaced[castingUnlock] += 1;
+    const tilesPlaced = this.#data.tilesPlaced ?? {} as Record<CastingUnlocks, number>;
+    this.#data.tilesPlaced = {
+      ...tilesPlaced,
+      [castingUnlock]: (tilesPlaced[castingUnlock] ?? 0) + 1,
+    };
 
     //test powerlevel for upgrade.
     switch (castingUnlock) {
@@ -231,10 +284,12 @@ export class DataManager {
 
     if (unlockCriteria &&
       this.#data.tilesPlaced[castingUnlock] >= unlockCriteria.requiredAmount) {
+      const unlockedSpellCasting = new Set(this.#data.unlockedSpellCasting);
       for (const nextUnlock of unlockCriteria.nextUnlock) {
-        this.#data.unlockedSpellCasting.add(nextUnlock);
+        unlockedSpellCasting.add(nextUnlock);
         if (ENABLE_LOGGING) { console.log(`Unlock achieved: ${nextUnlock}`); }
       }
+      this.#data.unlockedSpellCasting = unlockedSpellCasting;
     } else {
       if (ENABLE_LOGGING) { console.log('No unlock', { castingUnlock, tilesPlaced: this.#data.tilesPlaced[castingUnlock], unlockCriteria }); }
     }

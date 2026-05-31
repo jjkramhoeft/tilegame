@@ -485,9 +485,7 @@ export class UiScene extends Phaser.Scene {
     });*/
 
     if (this.#uiMode === UiMode.ChestDialog) {
-      const playerData = DataManager.instance.data;
-      playerData.lastDialogOptionSelected = this.#selectedMenuOptionIndex;
-      DataManager.instance.data = playerData;
+      DataManager.instance.setLastDialogOptionSelected(this.#selectedMenuOptionIndex);
       this.#chestDialogContainer.visible = false;
       if (!this.#chestCloseSound.isPlaying) {
         this.#chestCloseSound.play();

@@ -55,10 +55,7 @@ export abstract class BaseGameState implements State {
 
   protected _transitionTo(name: string, ...args: unknown[]): void {
     this._stateMachine.setState(name, ...args);
-    DataManager.instance.data = {
-      ...DataManager.instance.data,
-      gameState: name,
-    };
+    DataManager.instance.setGameState(name);
   }
 
   protected _pause(ms: number, callback: () => void): void {

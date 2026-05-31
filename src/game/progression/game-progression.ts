@@ -16,6 +16,7 @@ import { VictoryState } from '../components/state-machine/states/game/victory-st
 import { HelpWithTileCastingState } from '../components/state-machine/states/game/help-with-tilecasting-state';
 import { CUSTOM_EVENTS, EVENT_BUS } from '../common/event-bus';
 import type { GameScene } from '../scenes/game-scene';
+import { DataManager } from '../common/data-manager';
 
 /**
  * Owns the game progression state machine and registers all 12 game states.
@@ -53,6 +54,7 @@ export class GameProgression {
 
   public start(initial: GameStateName = GAME_STATES.START): void {
     this.#stateMachine.setState(initial);
+    DataManager.instance.setGameState(initial);
   }
 
   public update(): void {
@@ -65,6 +67,7 @@ export class GameProgression {
 
   public setState(name: GameStateName, ...args: unknown[]): void {
     this.#stateMachine.setState(name, ...args);
+    DataManager.instance.setGameState(name);
   }
 
   public get isMapUnlocked(): boolean {
@@ -85,5 +88,6 @@ export class GameProgression {
       return;
     }
     this.#stateMachine.setState(GAME_STATES.GAME_OVER);
+    DataManager.instance.setGameState(GAME_STATES.GAME_OVER);
   }
 }

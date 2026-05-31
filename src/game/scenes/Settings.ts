@@ -407,19 +407,13 @@ export class Settings extends Scene {
     private applyLanguage(): void {
         const languageIsDanish = LANGUAGE_OPTIONS[this.languageIndex].isDanish;
         this.registry.set('languageIsDanish', languageIsDanish);
-        DataManager.instance.data = {
-            ...DataManager.instance.data,
-            languageIsDanish,
-        };
+        DataManager.instance.setLanguageIsDanish(languageIsDanish);
     }
 
     private applyPlayer(): void {
         const playerSex = PLAYER_OPTIONS[this.playerIndex].sex;
         this.registry.set('playerSex', playerSex);
-        DataManager.instance.data = {
-            ...DataManager.instance.data,
-            sex: playerSex,
-        };
+        DataManager.instance.setSex(playerSex);
     }
 
     private changeDifficulty(direction: number): void {
@@ -445,10 +439,6 @@ export class Settings extends Scene {
                 world.debugGraphic.clear();
             }
         }
-        DataManager.instance.data = {
-            ...DataManager.instance.data,
-            isDebugMode: debugEnabled,
-            difficulty: difficulty,
-        };
+            DataManager.instance.setDifficulty(difficulty, debugEnabled);
     }
 }
