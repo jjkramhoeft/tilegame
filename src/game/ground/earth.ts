@@ -306,6 +306,7 @@ export class Earth {
     AddChestToTile(position: Position): void {
         let existingTile = this.allTiles.get(this.key(position.x, position.y));
         if (existingTile === undefined) return;
+        if (existingTile.chest !== undefined && existingTile.chest >= 0) return; // Don't place a chest if there is already one.
         let chestNumber: number;
         switch (existingTile.biome) {
             case BIOME.ROCK: chestNumber = 1; break;
