@@ -5,6 +5,9 @@ import { IdleState } from '../../components/state-machine/states/character/idle-
 import { CHARACTER_STATES } from '../../components/state-machine/states/character/character-states';
 import { MoveState } from '../../components/state-machine/states/character/move-state';
 import {
+  ENEMY_SNAKE_ATTACK_COOLDOWN,
+  ENEMY_SNAKE_ATTACK_DAMAGE,
+  ENEMY_SNAKE_ATTACK_HIT_DELAY,
   ENEMY_SNAKE_ATTACK_RANGE,
   ENEMY_SNAKE_CHANGE_DIRECTION_DELAY_MAX,
   ENEMY_SNAKE_CHANGE_DIRECTION_DELAY_MIN,
@@ -19,6 +22,7 @@ import { CharacterGameObject } from '../common/character-game-object';
 import { DIRECTION } from '../../common/common';
 import { HurtState } from '../../components/state-machine/states/character/hurt-state';
 import { DeathState } from '../../components/state-machine/states/character/death-state';
+import { NaturalAttackState } from '../../components/state-machine/states/character/natural-attack-state';
 
 export type SnakeConfig = {
   scene: Phaser.Scene;
@@ -26,9 +30,7 @@ export type SnakeConfig = {
 };
 
 export class Snake extends CharacterGameObject {
-  // Tracks whether we are currently overriding state animations with the attack anim
-  // so we only swap once per range-enter / range-exit.
-  #isAttacking = false;
+  #lastAttackAt = -ENEMY_SNAKE_ATTACK_COOLDOWN;
 
   constructor(config: SnakeConfig) {
     // Snake spritesheet has dedicated walk/idle/attack frames per direction, but no
@@ -42,6 +44,10 @@ export class Snake extends CharacterGameObject {
       IDLE_UP: { key: SNAKE_ANIMATION_KEYS.IDLE_UP, repeat: -1, ignoreIfPlaying: true },
       IDLE_LEFT: { key: SNAKE_ANIMATION_KEYS.IDLE_LEFT, repeat: -1, ignoreIfPlaying: true },
       IDLE_RIGHT: { key: SNAKE_ANIMATION_KEYS.IDLE_RIGHT, repeat: -1, ignoreIfPlaying: true },
+      ATTACK_DOWN: { key: SNAKE_ANIMATION_KEYS.ATTACK_DOWN, repeat: 0, ignoreIfPlaying: true },
+      ATTACK_UP: { key: SNAKE_ANIMATION_KEYS.ATTACK_UP, repeat: 0, ignoreIfPlaying: true },
+      ATTACK_LEFT: { key: SNAKE_ANIMATION_KEYS.ATTACK_LEFT, repeat: 0, ignoreIfPlaying: true },
+      ATTACK_RIGHT: { key: SNAKE_ANIMATION_KEYS.ATTACK_RIGHT, repeat: 0, ignoreIfPlaying: true },
       HURT_DOWN: { key: SNAKE_ANIMATION_KEYS.IDLE_DOWN, repeat: 0, ignoreIfPlaying: true },
       HURT_UP: { key: SNAKE_ANIMATION_KEYS.IDLE_UP, repeat: 0, ignoreIfPlaying: true },
       HURT_LEFT: { key: SNAKE_ANIMATION_KEYS.IDLE_LEFT, repeat: 0, ignoreIfPlaying: true },
@@ -64,7 +70,7 @@ export class Snake extends CharacterGameObject {
       inputComponent: new InputComponent(),
       isInvulnerable: false,
       maxLife: ENEMY_SNAKE_MAX_HEALTH,
-      contactDamage: 1,
+      contactDamage: 0,
     });
 
     // double the visual size of the 32x32 snake sprite
@@ -79,6 +85,12 @@ export class Snake extends CharacterGameObject {
     this._stateMachine.addState(new MoveState(this));
     this._stateMachine.addState(new HurtState(this, ENEMY_SNAKE_HURT_PUSH_BACK_SPEED));
     this._stateMachine.addState(new DeathState(this));
+    this._stateMachine.addState(new NaturalAttackState(this, {
+      getTarget: () => (this.scene as unknown as { player?: CharacterGameObject }).player,
+      damage: ENEMY_SNAKE_ATTACK_DAMAGE,
+      range: ENEMY_SNAKE_ATTACK_RANGE,
+      hitDelay: ENEMY_SNAKE_ATTACK_HIT_DELAY,
+    }));
     this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
   }
 
@@ -102,46 +114,34 @@ export class Snake extends CharacterGameObject {
     }
 
     const currentStateName = this._stateMachine.currentStateName;
-    // Don't override hurt/death animations
-    if (currentStateName === CHARACTER_STATES.HURT_STATE || currentStateName === CHARACTER_STATES.DEATH_STATE) {
-      this.#isAttacking = false;
+    if (
+      currentStateName === CHARACTER_STATES.HURT_STATE ||
+      currentStateName === CHARACTER_STATES.DEATH_STATE ||
+      currentStateName === CHARACTER_STATES.NATURAL_ATTACK_STATE
+    ) {
       return;
     }
 
-    const player = (this.scene as unknown as { player?: Phaser.GameObjects.Sprite }).player;
-    if (player === undefined) {
+    const player = (this.scene as unknown as { player?: CharacterGameObject }).player;
+    if (player === undefined || !player.active || player.isDefeated) {
       return;
     }
 
     const distance = Phaser.Math.Distance.Between(this.x, this.y, player.x, player.y);
-    if (distance <= ENEMY_SNAKE_ATTACK_RANGE) {
-      // Stop moving while attacking and play the directional attack animation
+    if (distance <= ENEMY_SNAKE_ATTACK_RANGE && this.scene.time.now - this.#lastAttackAt >= ENEMY_SNAKE_ATTACK_COOLDOWN) {
       this.controls.reset();
-      const attackKey = this.#getAttackAnimKey();
-      if (!this.#isAttacking || this.anims.currentAnim?.key !== attackKey) {
-        this.play({ key: attackKey, repeat: -1 }, true);
-      }
-      this.#isAttacking = true;
-    } else if (this.#isAttacking) {
-      // Player left attack range - resume normal AI by letting the state machine
-      // repaint its animation on the next idle/move transition.
-      this.#isAttacking = false;
-      this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
+      this.#faceTarget(player);
+      this.#lastAttackAt = this.scene.time.now;
+      this._stateMachine.setState(CHARACTER_STATES.NATURAL_ATTACK_STATE);
     }
   }
 
-  #getAttackAnimKey(): string {
-    switch (this.direction) {
-      case DIRECTION.UP:
-        return SNAKE_ANIMATION_KEYS.ATTACK_UP;
-      case DIRECTION.LEFT:
-        return SNAKE_ANIMATION_KEYS.ATTACK_LEFT;
-      case DIRECTION.RIGHT:
-        return SNAKE_ANIMATION_KEYS.ATTACK_RIGHT;
-      case DIRECTION.DOWN:
-      default:
-        return SNAKE_ANIMATION_KEYS.ATTACK_DOWN;
-    }
+  #faceTarget(target: CharacterGameObject): void {
+    const deltaX = target.x - this.x;
+    const deltaY = target.y - this.y;
+    this.direction = Math.abs(deltaX) > Math.abs(deltaY)
+      ? deltaX < 0 ? DIRECTION.LEFT : DIRECTION.RIGHT
+      : deltaY < 0 ? DIRECTION.UP : DIRECTION.DOWN;
   }
 
   #changeDirection(): void {
@@ -154,8 +154,7 @@ export class Snake extends CharacterGameObject {
 
     // wait a small period of time and then choose a random direction to move
     this.scene.time.delayedCall(ENEMY_SNAKE_CHANGE_DIRECTION_DELAY_WAIT, () => {
-      // Don't fight the attack override
-      if (!this.#isAttacking) {
+      if (this._stateMachine.currentStateName !== CHARACTER_STATES.NATURAL_ATTACK_STATE) {
         const randomDirection = Phaser.Math.Between(0, 3);
         if (randomDirection === 0) {
           this.controls.isUpDown = true;

@@ -10,6 +10,7 @@ import { Lamb } from '../game-objects/enemies/lamb';
 import { Piglet } from '../game-objects/enemies/piglet';
 import { Rooster } from '../game-objects/enemies/rooster';
 import { Sheep } from '../game-objects/enemies/sheep';
+import { Skeleton } from '../game-objects/enemies/skeleton';
 import { Snake } from '../game-objects/enemies/snake';
 import { Spider } from '../game-objects/enemies/spider';
 import { Turkey } from '../game-objects/enemies/turkey';
@@ -49,6 +50,7 @@ const ANIMALS_BY_BIOME: Partial<Record<BIOME, CreatureSpawnOption[]>> = {
   ],
   [BIOME.CRYSTAL]: [
     { type: 'spider', group: 'enemy', create: (scene, position) => new Spider({ scene, position }) },
+    { type: 'skeleton', group: 'enemy', create: (scene, position) => new Skeleton({ scene, position }) },
   ],
 };
 

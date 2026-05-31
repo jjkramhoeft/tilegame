@@ -191,6 +191,9 @@ export class GameScene extends Phaser.Scene {
         // register collisions between enemies and the player.
         this.#trackCollider(this.physics.add.overlap(this.#player, this.#enemyGroup!, (_player, enemy) => {
             const enemyObj = enemy as CharacterGameObject;
+            if (enemyObj.contactDamage <= 0) {
+                return;
+            }
             this.#player.hit(DIRECTION.DOWN, enemyObj.contactDamage);
         }), true);
 
