@@ -356,6 +356,16 @@ export class Earth {
             case BIOME.CRYSTAL: placedBlockingAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_BLOCKING; break;
         }
         if (placedBlockingAsCastingUnlock) GameDataManager.instance.increaseTilesPlaced(placedBlockingAsCastingUnlock);
+        if (existingTile.biome === BIOME.DESERT || existingTile.biome === BIOME.FOREST || existingTile.biome === BIOME.SWAMP) {
+            const payload: TilePlacedPayload = {
+                tileX: position.x,
+                tileY: position.y,
+                biome: existingTile.biome,
+                hasBlocking: true,
+                hasDecoration: existingTile.decoration >= 0,
+            };
+            EVENT_BUS.emit(CUSTOM_EVENTS.TILE_PLACED, payload);
+        }
     }
 
     AddDecorationToTile(position: Position): void {
