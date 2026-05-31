@@ -3,7 +3,7 @@ import { CUSTOM_EVENTS, EVENT_BUS } from '../../../../common/event-bus';
 import type { TextKey } from '../../../../common/texts';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { DIFFICULTY_HARD_WAIT_FACTOR } from '../../../../common/config';
-import { GameDataManager } from '../../../../common/data-manager';
+import { GameDataManager } from '../../../../common/game-data-manager';
 
 /**
  * Base class for the game progression states. Concrete states extend this and

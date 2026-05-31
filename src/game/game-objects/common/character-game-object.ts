@@ -9,7 +9,7 @@ import { AnimationComponent, AnimationConfig } from '../../components/game-objec
 import { InvulnerableComponent } from '../../components/game-object/invulnerable-component';
 import { CHARACTER_STATES } from '../../components/state-machine/states/character/character-states';
 import { LifeComponent } from '../../components/game-object/life-component';
-import { GameDataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/game-data-manager';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
 import { GEAR, DIFFICULTY } from '../../common/common';
 import {

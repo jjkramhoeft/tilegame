@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { BaseWeapon, WeaponAttackAnimationConfig } from './base-weapon';
 import { DIRECTION, WEAPON } from '../../common/common';
-import { GameDataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/game-data-manager';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
 
 // The sword thrust spritesheet uses 128x128 frames while every other player

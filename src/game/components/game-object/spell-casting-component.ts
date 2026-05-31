@@ -1,6 +1,6 @@
 import { BIOME } from '../../common/common';
 import { PLAYER_SPELL_CAST_COOLDOWN } from '../../common/config';
-import { GameDataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/game-data-manager';
 import { CastingUnlocks, GameObject2 } from '../../common/types';
 import { GameScene } from '../../scenes/game-scene';
 import { SpellCastingService } from '../../spellcasting/spell-casting-service';

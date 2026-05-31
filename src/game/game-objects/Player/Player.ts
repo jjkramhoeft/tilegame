@@ -23,7 +23,7 @@ import { SpellCastingComponent } from '../../components/game-object/spell-castin
 import { JjkWeapons } from '../weapons/jjk-weapons';
 import { FallingState } from '../../components/state-machine/states/character/falling-state';
 import { SwimMoveState } from '../../components/state-machine/states/character/swim-move-state';
-import { GameDataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/game-data-manager';
 import { CastingState } from '../../components/state-machine/states/character/casting-state';
 
 

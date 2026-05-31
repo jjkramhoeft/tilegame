@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { GameDataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/game-data-manager';
 import { Direction } from '../../common/types';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
 

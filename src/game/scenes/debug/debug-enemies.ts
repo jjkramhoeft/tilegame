@@ -6,7 +6,7 @@ import { Lamb } from '../../game-objects/enemies/lamb';
 import { Chicken } from '../../game-objects/enemies/chicken';
 import { Earth } from '../../ground/earth';
 import { Tile } from '../../ground/tile';
-import { GameDataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/game-data-manager';
 import { Sheep } from '../../game-objects/enemies/sheep';
 import { Piglet } from '../../game-objects/enemies/piglet';
 import { Rooster } from '../../game-objects/enemies/rooster';

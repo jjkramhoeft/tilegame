@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { CharacterAnimation, GameObject2 } from '../../common/types';
 import { BaseGameObjectComponent } from './base-game-object-component';
-import { GameDataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/game-data-manager';
 
 export type AnimationConfig = {
   [key in CharacterAnimation]?: { key: string; repeat: number; ignoreIfPlaying: boolean };

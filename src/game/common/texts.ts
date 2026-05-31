@@ -1,5 +1,5 @@
 import { GEAR, POTION, WEAPON } from './common';
-import { GameDataManager } from './data-manager';
+import { GameDataManager } from './game-data-manager';
 
 export type LanguageCode = 'en' | 'da';
 

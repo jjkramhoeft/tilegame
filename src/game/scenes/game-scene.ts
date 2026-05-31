@@ -11,7 +11,7 @@ import {
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
 import { GameObject2, Position } from '../common/types';
-import { GameDataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/game-data-manager';
 import { writeChestDialogInfo } from '../common/chest-dialog';
 import { setupDebugChests } from './debug/debug-chests';
 import { spawnDebugEnemies } from './debug/debug-enemies';

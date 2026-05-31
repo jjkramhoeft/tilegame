@@ -7,7 +7,7 @@ import { DecideBorder, PickDecoration, PickBlocking, PickFloating } from './crea
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
 import { ENABLE_LOGGING } from '../common/config';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../common/event-bus';
-import { GameDataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/game-data-manager';
 import { CastingUnlocks } from '../common/types';
 
 export type ChestPlacementHandler = (position: Position, chestNumber: number) => void;

@@ -8,7 +8,7 @@ import { ENABLE_LOGGING, SPELL_STAGGER_MS } from '../common/config';
 import { GameScene } from '../scenes/game-scene';
 import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles } from '../ground/creator';
-import { GameDataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/game-data-manager';
 import { GAME_STATES } from '../components/state-machine/states/game/game-state-keys';
 
 type CastVector = {

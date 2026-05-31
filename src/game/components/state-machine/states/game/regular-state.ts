@@ -4,7 +4,7 @@ import { CUSTOM_EVENTS, EVENT_BUS, ProgressionHelpPayload, type TilePlacedPayloa
 import { BIOME, CASTING_UNLOCKS } from '../../../../common/common';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { ENABLE_LOGGING } from '../../../../common/config';
-import { GameDataManager } from '../../../../common/data-manager';
+import { GameDataManager } from '../../../../common/game-data-manager';
 
 /**
  * Main play state. Watches for triggers that pull the game into a scripted

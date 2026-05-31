@@ -3,7 +3,7 @@ import { SCENE_KEYS } from './scene-keys';
 import { ASSET_KEYS } from '../common/assets';
 import { CASTING_UNLOCKS, DEFAULT_UI_HEADING_STYLE } from '../common/common';
 import { KeyboardComponent } from '../components/input/keyboard-component';
-import { GameDataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/game-data-manager';
 import type { CastingUnlocks, CreatureType } from '../common/types';
 
 const MAP_WIDTH = 1024;

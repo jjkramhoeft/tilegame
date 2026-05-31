@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
 import { ASSET_KEYS } from '../common/assets';
-import { GameDataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/game-data-manager';
 import {
   CUSTOM_EVENTS,
   EVENT_BUS,

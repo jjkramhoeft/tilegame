@@ -2,7 +2,7 @@ import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { DIFFICULTY_HARD_WAIT_FACTOR, ENABLE_LOGGING } from '../../../../common/config';
-import { GameDataManager } from '../../../../common/data-manager';
+import { GameDataManager } from '../../../../common/game-data-manager';
 
 export class GardenState extends BaseGameState {
   constructor(scene: GameScene) {

@@ -1,5 +1,5 @@
 import { GEAR, POTION, WEAPON } from './common';
-import { GameDataManager } from './data-manager';
+import { GameDataManager } from './game-data-manager';
 import { formatChestGearOption, formatChestHeading, formatChestWeaponOption, formatChestPotionOption, getText } from './texts';
 import type { ChestJJK } from '../game-objects/objects/chestJJK';
 

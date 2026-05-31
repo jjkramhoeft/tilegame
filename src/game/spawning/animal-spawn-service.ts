@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { BIOME } from '../common/common';
-import { GameDataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/game-data-manager';
 import { CreatureType, Position } from '../common/types';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
 import { Bull } from '../game-objects/enemies/bull';

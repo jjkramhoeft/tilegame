@@ -4,7 +4,7 @@ import { CHARACTER_ANIMATIONS } from '../../../../common/assets';
 import { BaseCharacterState } from './base-character-state';
 import { CHARACTER_STATES } from './character-states';
 import { CUSTOM_EVENTS, EVENT_BUS } from '../../../../common/event-bus';
-import { GameDataManager } from '../../../../common/data-manager';
+import { GameDataManager } from '../../../../common/game-data-manager';
 
 export class DeathState extends BaseCharacterState {
   #onDieCallback: () => void;

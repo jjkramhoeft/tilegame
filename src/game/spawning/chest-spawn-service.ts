@@ -1,5 +1,5 @@
 import { CASTING_UNLOCKS, CHEST_STATE, GEAR, POTION, WEAPON } from '../common/common';
-import { GameDataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/game-data-manager';
 import { CastingUnlocks, Position } from '../common/types';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 

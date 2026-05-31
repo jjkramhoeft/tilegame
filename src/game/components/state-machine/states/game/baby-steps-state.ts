@@ -3,7 +3,7 @@ import { GAME_STATES } from './game-state-keys';
 import { CASTING_UNLOCKS } from '../../../../common/common';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { Position } from '../../../../common/types';
-import { GameDataManager } from '../../../../common/data-manager';
+import { GameDataManager } from '../../../../common/game-data-manager';
 import { ENABLE_LOGGING } from '../../../../common/config';
 import { CUSTOM_EVENTS, EVENT_BUS, TilePlacedPayload } from '../../../../common/event-bus';
 

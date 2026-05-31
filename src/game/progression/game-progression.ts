@@ -16,7 +16,7 @@ import { VictoryState } from '../components/state-machine/states/game/victory-st
 import { HelpWithTileCastingState } from '../components/state-machine/states/game/help-with-tilecasting-state';
 import { CUSTOM_EVENTS, registerEventBusListenersUntilShutdown } from '../common/event-bus';
 import type { GameScene } from '../scenes/game-scene';
-import { GameDataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/game-data-manager';
 
 /**
  * Owns the game progression state machine and registers all 12 game states.
