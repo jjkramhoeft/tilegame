@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
 import { ASSET_KEYS } from '../common/assets';
+import { logChestDebug } from '../common/chest-debug';
 import { GameDataManager } from '../common/game-data-manager';
 import {
   CUSTOM_EVENTS,
@@ -221,6 +222,11 @@ export class UiScene extends Phaser.Scene {
   }
 
   public showDialog(dialog: DialogPayload): void {
+    logChestDebug('UiScene showDialog', {
+      previousMode: this.#getUiModeName(),
+      heading: dialog.heading,
+      options: [...dialog.options],
+    });
     this.#uiMode = UiMode.ChestDialog;
     this.#selectedMenuOptionIndex = 0;
     this.#selectedSaveOptionIndex = 0;
@@ -262,6 +268,11 @@ export class UiScene extends Phaser.Scene {
       (this.#uiMode === UiMode.NarratorDialog || this.#uiMode === UiMode.ChestDialog);
 
     if (narratorConfirmWithActionKey) {
+      logChestDebug('UiScene action key confirmed dialog', {
+        mode: this.#getUiModeName(),
+        selectedMenuOptionIndex: this.#selectedMenuOptionIndex,
+        activeChestDialogOptionCount: this.#activeChestDialogOptionCount,
+      });
       this.#confirmSelectedOption();
       this.#uiSelectSound.play();
       return;
@@ -484,13 +495,22 @@ export class UiScene extends Phaser.Scene {
     });*/
 
     if (this.#uiMode === UiMode.ChestDialog) {
+      logChestDebug('UiScene closing chest dialog', {
+        selectedMenuOptionIndex: this.#selectedMenuOptionIndex,
+        activeChestDialogOptionCount: this.#activeChestDialogOptionCount,
+      });
       GameDataManager.instance.setLastDialogOptionSelected(this.#selectedMenuOptionIndex);
       this.#chestDialogContainer.visible = false;
       if (!this.#chestCloseSound.isPlaying) {
         this.#chestCloseSound.play();
       }
+      logChestDebug('UiScene emitting CHEST_DIALOG_CLOSED', {
+        selectedMenuOptionIndex: this.#selectedMenuOptionIndex,
+        modeBeforeEmit: this.#getUiModeName(),
+      });
       EVENT_BUS.emit(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED);
       this.#uiMode = UiMode.HudOnly;
+      logChestDebug('UiScene chest dialog closed', { mode: this.#getUiModeName() });
       return;
     }
 
