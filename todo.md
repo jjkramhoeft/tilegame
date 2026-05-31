@@ -12,14 +12,9 @@
   - eveState
 - More uniform tile creation, to get larger area of the same biome
 - Add animal and enemies from included sprite sheets
-  - Skeleton (as Player)
   - Lizard w. dagger  (as Player)
-  - Plant1
-  - Plant2
-  - Plant3
   
   levelup2.mp3 (heath or animal progression??)
-- implement swim speed (very low when wearing cloth) 
 - add control section to settings
 - repeat fruit chest sound put healt on max
 - fix animals walking on water

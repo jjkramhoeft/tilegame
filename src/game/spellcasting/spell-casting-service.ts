@@ -73,11 +73,14 @@ const BIOME_SPELL_UNLOCKS: Partial<Record<BIOME, BiomeSpellUnlocks>> = {
  * The goal is to eventually migrate all spellcasting logic here and out of the debug class.
  */
 export class SpellCastingService {
+  static #reservedTargetKeys = new Set<string>();
+
   protected scene: Phaser.Scene;
   protected earth: Earth;
 
   #castCount = 0;
-  #pendingHops: Phaser.Time.TimerEvent[] = [];
+  #pendingTimers: Phaser.Time.TimerEvent[] = [];
+  #ownedReservedTargetKeys = new Set<string>();
   #powerLevel = 0;
 
   constructor(scene: Phaser.Scene, earth: Earth) {
@@ -86,6 +89,7 @@ export class SpellCastingService {
     // Spell-cast sounds are played as one-shots via `SoundManager.play(key, marker)`
     // so each hop/cast produces an independent, concurrent playback that doesn't
     // restart any in-flight sound. Marker info is passed inline at play time.
+    this.scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.#cleanupPendingCasts());
   }
 
   /**
@@ -111,6 +115,7 @@ export class SpellCastingService {
     if (spellTiles.length === 0) {
       return;
     }
+    this.#reserveTargets(spellTiles);
     this.#scheduleHops(spellType, casterTile.biome, casterTilePosition, spellTiles);
   }
 
@@ -122,17 +127,20 @@ export class SpellCastingService {
    *   hop i: spellTiles[i-1] -> spellTiles[i]
    */
   #scheduleHops(spellType: SpellType, biome: BIOME, casterTile: Position, spellTiles: Position[]): void {
-    for (let i = 0; i < spellTiles.length; i += 1) {
-      const from = i === 0 ? casterTile : spellTiles[i - 1];
-      const to = spellTiles[i];
-      const event = this.scene.time.delayedCall(i * SPELL_STAGGER_MS, () => {
-        this.executeSpellEffect(spellType, biome, from, to, i === 0);
-        const idx = this.#pendingHops.indexOf(event);
-        if (idx !== -1) {
-          this.#pendingHops.splice(idx, 1);
+    for (let targetIndex = 0; targetIndex < spellTiles.length; targetIndex += 1) {
+      const from = targetIndex === 0 ? casterTile : spellTiles[targetIndex - 1];
+      const to = spellTiles[targetIndex];
+      const event = this.scene.time.delayedCall(targetIndex * SPELL_STAGGER_MS, () => {
+        try {
+          this.executeSpellEffect(spellType, biome, from, to, targetIndex === 0, () => this.#releaseTarget(to));
+        } catch (error) {
+          this.#releaseTarget(to);
+          throw error;
+        } finally {
+          this.#removePendingTimer(event);
         }
       });
-      this.#pendingHops.push(event);
+      this.#pendingTimers.push(event);
     }
   }
 
@@ -165,7 +173,7 @@ export class SpellCastingService {
     //     ...
     const primeTargetPosition = this.findPrimeTargetPosition({ x: _casterTile.tileX, y: _casterTile.tileY }, _directions);
     const targets = findTargetTiles(primeTargetPosition, _directions, this.#powerLevel);
-    const targetWithInfo = this.earth.targetWithInfo(targets);
+    const targetWithInfo = this.earth.targetWithInfo(targets).filter(t => !SpellCastingService.#isTargetReserved(t.pos));
     let voidTargets = targetWithInfo.filter(t => t.biome === BIOME.VOID);
     const gameState = GameDataManager.instance.data.gameState;
     if (gameState === GAME_STATES.BABY_STEPS || gameState === GAME_STATES.FIRST_TILE) {
@@ -256,6 +264,50 @@ export class SpellCastingService {
     return BIOME_SPELL_UNLOCKS[biome as BIOME]?.[unlockType];
   }
 
+  static #targetKey(position: Position): string {
+    return `${position.x},${position.y}`;
+  }
+
+  static #isTargetReserved(position: Position): boolean {
+    return SpellCastingService.#reservedTargetKeys.has(SpellCastingService.#targetKey(position));
+  }
+
+  #reserveTargets(targets: Position[]): void {
+    for (const target of targets) {
+      const key = SpellCastingService.#targetKey(target);
+      SpellCastingService.#reservedTargetKeys.add(key);
+      this.#ownedReservedTargetKeys.add(key);
+    }
+  }
+
+  #releaseTarget(target: Position): void {
+    const key = SpellCastingService.#targetKey(target);
+    SpellCastingService.#reservedTargetKeys.delete(key);
+    this.#ownedReservedTargetKeys.delete(key);
+  }
+
+  #releaseOwnedTargets(): void {
+    for (const key of this.#ownedReservedTargetKeys) {
+      SpellCastingService.#reservedTargetKeys.delete(key);
+    }
+    this.#ownedReservedTargetKeys.clear();
+  }
+
+  #removePendingTimer(timer: Phaser.Time.TimerEvent): void {
+    const timerIndex = this.#pendingTimers.indexOf(timer);
+    if (timerIndex !== -1) {
+      this.#pendingTimers.splice(timerIndex, 1);
+    }
+  }
+
+  #cleanupPendingCasts(): void {
+    for (const timer of this.#pendingTimers) {
+      timer.remove();
+    }
+    this.#pendingTimers = [];
+    this.#releaseOwnedTargets();
+  }
+
   private findPrimeTargetPosition(casterPosition: Position, directions: Direction[]): Position {
     const targetPosition = { x: casterPosition.x, y: casterPosition.y };
     for (const direction of directions) {
@@ -270,7 +322,7 @@ export class SpellCastingService {
   }
 
   /** execute one part of the staggeredspell effect (tile changes, mob spawns, VFX, sounds).  */
-  executeSpellEffect(spellType: SpellType, biome: BIOME, startTile: Position, endTile: Position, isOrigin: boolean): void {
+  executeSpellEffect(spellType: SpellType, biome: BIOME, startTile: Position, endTile: Position, isOrigin: boolean, onImpactComplete?: () => void): void {
     if (ENABLE_LOGGING) {
       console.log('[SpellCastingService] executeSpellEffect (stub)', { spellType, biome, startTile, endTile, isOrigon: isOrigin });
     }
@@ -345,34 +397,40 @@ export class SpellCastingService {
     spell.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => { spell.destroy(); });
 
     // spawn delayed VFX at endTile after travel time.
-    this.scene.time.delayedCall(1000, () => {
-      const impactVFX = this.scene.add
-        .sprite(endTile.x * tile_size + half_tile, endTile.y * tile_size + half_tile, ASSET_KEYS.MAGIC_FX_LIGHT_CAST)
-        .setScale(1.0, 0.6);
-      impactVFX.setDepth(DECORATION_DEPTH + 1);
-      impactVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
-      impactVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
-      impactVFX.play(ASSET_KEYS.CAST_TARGET_A);
-      impactVFX.on('animationcomplete', () => { impactVFX.destroy(); });
-      // Add the tile, decoration, blocking, chest or animal here.
-      switch (spellType) {
-        case SPELL_TYPES.BASIC:
-          this.earth.AddBaseTile(endTile, biome, true);
-          break;
-        case SPELL_TYPES.DECORATION:
-          this.earth.AddDecorationToTile(endTile);
-          break;
-        case SPELL_TYPES.BLOCKING:
-          this.earth.AddBlockingToTile(endTile);
-          break;
-        case SPELL_TYPES.CHEST:
-          this.earth.AddChestToTile(endTile);
-          break;
-        case SPELL_TYPES.ANIMAL:
-          (this.scene as GameScene).addMob(endTile, biome);
-          break;
+    const impactTimer = this.scene.time.delayedCall(1000, () => {
+      try {
+        const impactVFX = this.scene.add
+          .sprite(endTile.x * tile_size + half_tile, endTile.y * tile_size + half_tile, ASSET_KEYS.MAGIC_FX_LIGHT_CAST)
+          .setScale(1.0, 0.6);
+        impactVFX.setDepth(DECORATION_DEPTH + 1);
+        impactVFX.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
+        impactVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+        impactVFX.play(ASSET_KEYS.CAST_TARGET_A);
+        impactVFX.on('animationcomplete', () => { impactVFX.destroy(); });
+        // Add the tile, decoration, blocking, chest or animal here.
+        switch (spellType) {
+          case SPELL_TYPES.BASIC:
+            this.earth.AddBaseTile(endTile, biome, true);
+            break;
+          case SPELL_TYPES.DECORATION:
+            this.earth.AddDecorationToTile(endTile);
+            break;
+          case SPELL_TYPES.BLOCKING:
+            this.earth.AddBlockingToTile(endTile);
+            break;
+          case SPELL_TYPES.CHEST:
+            this.earth.AddChestToTile(endTile);
+            break;
+          case SPELL_TYPES.ANIMAL:
+            (this.scene as GameScene).addMob(endTile, biome);
+            break;
+        }
+      } finally {
+        this.#removePendingTimer(impactTimer);
+        onImpactComplete?.();
       }
     });
+    this.#pendingTimers.push(impactTimer);
   }
 
   /** Future home for cooldowns / channel timers. No-op for now. */

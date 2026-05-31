@@ -171,6 +171,10 @@ export class Player extends CharacterGameObject {
     return this._stateMachine.currentStateName ?? 'XX-No_STATE-XX';
   }
 
+  get isCasting(): boolean {
+    return this._stateMachine.currentStateName === CHARACTER_STATES.CASTING_STATE;
+  }
+
   public update(): void {
     super.update();
     this.#collidingObjectsComponent.reset();
