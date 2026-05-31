@@ -204,6 +204,9 @@ export class GameScene extends Phaser.Scene {
 
         // register overlap between player weapon and enemies
         this.#trackCollider(this.physics.add.overlap(this.#player.weaponBody, this.#enemyGroup!, (_weaponBody, enemy) => {
+            if (this.#player.isCasting) {
+                return;
+            }
             const enemyObj = enemy as CharacterGameObject;
             if (enemyObj.hit(this.#player.direction, this.#player.weaponDamage)) {
                 this.#playWeaponHitSound();
@@ -212,6 +215,9 @@ export class GameScene extends Phaser.Scene {
 
         // critters (passive mobs) can be hit by the player's weapon but do not damage the player on contact.
         this.#trackCollider(this.physics.add.overlap(this.#player.weaponBody, this.#critterGroup!, (_weaponBody, critter) => {
+            if (this.#player.isCasting) {
+                return;
+            }
             const critterObj = critter as CharacterGameObject;
             if (critterObj.hit(this.#player.direction, this.#player.weaponDamage)) {
                 this.#playWeaponHitSound();
