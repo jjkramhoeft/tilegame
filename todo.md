@@ -36,3 +36,7 @@
 - Pair of animals
 - Bump sound when pushed by animals
 - Break a tile when an animal is killed
+- find sound for spell cast has no target
+- easy/hard should change numbers
+- dansk tekst er for lang
+- first tree does not happens
