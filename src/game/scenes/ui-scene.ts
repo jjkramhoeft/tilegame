@@ -285,6 +285,10 @@ export class UiScene extends Phaser.Scene {
     return this.#selectedMenuOptionIndex;
   }
 
+  public isChestDialogShown(): boolean {
+    return this.#uiMode === UiMode.ChestDialog;
+  }
+
   #createHud(): void {
     const playerData = GameDataManager.instance.data;
 

@@ -3,6 +3,7 @@ import { findNearestOpenInteractiveObject } from '../../../../common/interaction
 import { GameObject2 } from '../../../../common/types';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
 import { ChestJJK } from '../../../../game-objects/objects/chestJJK';
+import { SCENE_KEYS } from '../../../../scenes/scene-keys';
 import { StateMachine } from '../../state-machine';
 import { CHARACTER_STATES } from './character-states';
 
@@ -10,7 +11,16 @@ type SceneWithChests = {
   chestArray?: ChestJJK[];
 };
 
+type SceneWithChestDialog = {
+  isChestDialogShown?: () => boolean;
+};
+
 export function tryOpenNearestChest(gameObject: CharacterGameObject, stateMachine: StateMachine): boolean {
+  const uiScene = gameObject.scene.scene.get(SCENE_KEYS.UI_SCENE) as unknown as SceneWithChestDialog;
+  if (uiScene.isChestDialogShown?.() === true) {
+    return false;
+  }
+
   const chests = (gameObject.scene as unknown as SceneWithChests).chestArray;
   if (chests === undefined || chests.length === 0) {
     return false;
