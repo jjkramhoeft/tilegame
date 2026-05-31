@@ -1,8 +1,7 @@
-import { BIOME } from '../../common/common';
-import { Player } from '../../game-objects/player/player';
-import { Earth } from '../../ground/earth';
+import { BIOME } from '../common/common';
+import { Player } from '../game-objects/player/player';
+import { Earth } from '../ground/earth';
 
-/** @deprecated  */
 export function updateFallingLogic(player: Player, earth: Earth): void {
     if (player.stateMachine.currentStateName !== 'MOVE_STATE') {
         return;
@@ -18,7 +17,7 @@ export function updateFallingLogic(player: Player, earth: Earth): void {
     }
     else if (tileBelow === undefined || tileBelow.biome === BIOME.VOID) {
         const borderTile = earth.getBorderTile(player.x, player.y);
-        if ((borderTile === undefined || borderTile.biome === BIOME.VOID) && 
+        if ((borderTile === undefined || borderTile.biome === BIOME.VOID) &&
             (tileBelow === undefined || tileBelow.biome === BIOME.VOID)) {
             player.fall();
         }

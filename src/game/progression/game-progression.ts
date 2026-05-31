@@ -14,7 +14,7 @@ import { BossFightState } from '../components/state-machine/states/game/boss-fig
 import { GameOverState } from '../components/state-machine/states/game/game-over-state';
 import { VictoryState } from '../components/state-machine/states/game/victory-state';
 import { HelpWithTileCastingState } from '../components/state-machine/states/game/help-with-tilecasting-state';
-import { CUSTOM_EVENTS, EVENT_BUS } from '../common/event-bus';
+import { CUSTOM_EVENTS, registerEventBusListenersUntilShutdown } from '../common/event-bus';
 import type { GameScene } from '../scenes/game-scene';
 import { DataManager } from '../common/data-manager';
 
@@ -46,10 +46,9 @@ export class GameProgression {
     // Reset once-per-game flags so subsequent runs trigger narrator beats again.
     RegularState.resetFlags();
 
-    EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#playerDefeatedHandler);
-    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#playerDefeatedHandler);
-    });
+    registerEventBusListenersUntilShutdown(scene, [
+      { event: CUSTOM_EVENTS.PLAYER_DEFEATED, listener: this.#playerDefeatedHandler },
+    ]);
   }
 
   public start(initial: GameStateName = GAME_STATES.START): void {

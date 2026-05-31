@@ -1,5 +1,3 @@
-import * as Phaser from 'phaser';
-
 export interface TileCollisionObject {
     x: number;
     y: number;
@@ -7,15 +5,7 @@ export interface TileCollisionObject {
     height: number;
 }
 
-export interface TileCollisionData {
-    objectgroup?: {
-        objects?: TileCollisionObject[];
-    };
-}
-
-export function getBlockingBoxesData(t: Phaser.Tilemaps.Tileset): Map<number, TileCollisionObject> {
-    t.tileData = t.tileData || {};
-
+export function getBlockingBoxesData(): Map<number, TileCollisionObject> {
     const blockingData: Map<number, TileCollisionObject> = new Map<number, TileCollisionObject>();
     //rocks
     blockingData.set(0, { x: 10, y: 15, width: 48, height: 42 });//
@@ -125,6 +115,5 @@ export function getBlockingBoxesData(t: Phaser.Tilemaps.Tileset): Map<number, Ti
     blockingData.set(89, { x: 16, y: 26, width: 21, height: 20 });
     blockingData.set(90, { x: 26, y: 26, width: 18, height: 20 });
     blockingData.set(91, { x: 16, y: 30, width: 30, height: 27 });
-    t.tileData = blockingData as unknown as Record<number, TileCollisionData>;
-    return t.tileData as unknown as Map<number, TileCollisionObject>;
+    return blockingData;
 }

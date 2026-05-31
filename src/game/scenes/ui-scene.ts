@@ -6,6 +6,7 @@ import {
   CUSTOM_EVENTS,
   EVENT_BUS,
   PLAYER_UPDATE_TYPE,
+  registerEventBusListenersUntilShutdown,
   type LivingCreaturesUpdated,
   type ProgressionHelpCloseAction as NarratorDialogCloseAction,
   type ProgressionHelpClosed as NarratorDialogClosed,
@@ -135,14 +136,16 @@ export class UiScene extends Phaser.Scene {
     this.#uiSelectSound = this.sound.add(ASSET_KEYS.BLIP_SELECT_7);
     this.#narratorSound = this.sound.add(ASSET_KEYS.SUCCESS_1);
 
-    EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
-    EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
-    EVENT_BUS.on(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, this.updateLivingCreaturesInHud, this);
-    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_HEALTH_HUD, this.showHealthHud, this);
-    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_POWER_HUD, this.showPowerHud, this);
-    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_PROGRESS_HUD, this.showProgressHud, this);
-    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_CHEST_DIALOG, this.showDialog, this);
-    EVENT_BUS.on(CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, this.showNarratorDialog, this);
+    registerEventBusListenersUntilShutdown(this, [
+      { event: CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, listener: this.updateHealthInHud, context: this },
+      { event: CUSTOM_EVENTS.PLAYER_POWER_UPDATED, listener: this.updatePowerInHud, context: this },
+      { event: CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, listener: this.updateLivingCreaturesInHud, context: this },
+      { event: CUSTOM_EVENTS.SHOW_HEALTH_HUD, listener: this.showHealthHud, context: this },
+      { event: CUSTOM_EVENTS.SHOW_POWER_HUD, listener: this.showPowerHud, context: this },
+      { event: CUSTOM_EVENTS.SHOW_PROGRESS_HUD, listener: this.showProgressHud, context: this },
+      { event: CUSTOM_EVENTS.SHOW_CHEST_DIALOG, listener: this.showDialog, context: this },
+      { event: CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, listener: this.showNarratorDialog, context: this },
+    ]);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       if (ENABLE_LOGGING) {
@@ -154,14 +157,6 @@ export class UiScene extends Phaser.Scene {
         });
       }
 
-      EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, this.updateHealthInHud, this);
-      EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_POWER_UPDATED, this.updatePowerInHud, this);
-      EVENT_BUS.off(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, this.updateLivingCreaturesInHud, this);
-      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_HEALTH_HUD, this.showHealthHud, this);
-      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_POWER_HUD, this.showPowerHud, this);
-      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_PROGRESS_HUD, this.showProgressHud, this);
-      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_CHEST_DIALOG, this.showDialog, this);
-      EVENT_BUS.off(CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, this.showNarratorDialog, this);
     });
   }
 

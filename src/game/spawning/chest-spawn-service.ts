@@ -1,6 +1,6 @@
 import { CASTING_UNLOCKS, CHEST_STATE, GEAR, POTION, WEAPON } from '../common/common';
 import { DataManager } from '../common/data-manager';
-import { Position } from '../common/types';
+import { CastingUnlocks, Position } from '../common/types';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 
 type ChestContents = {
@@ -8,6 +8,8 @@ type ChestContents = {
   weapon: string;
   potion: string;
 };
+
+type ChestCastingUnlock = Extract<keyof typeof CASTING_UNLOCKS, `CHEST${number}`>;
 
 const CHEST_CONTENTS: Record<number, ChestContents> = {
   1: { gear: GEAR.BARE, weapon: WEAPON.NONE, potion: POTION.NONE },
@@ -18,6 +20,11 @@ const CHEST_CONTENTS: Record<number, ChestContents> = {
   6: { gear: GEAR.ARMOR, weapon: WEAPON.NONE, potion: POTION.NONE },
   7: { gear: GEAR.NONE, weapon: WEAPON.NONE, potion: POTION.FRUIT },
 };
+
+function getChestCastingUnlock(chestNumber: number): CastingUnlocks | undefined {
+  const key = `CHEST${chestNumber}` as ChestCastingUnlock;
+  return CASTING_UNLOCKS[key];
+}
 
 export class ChestSpawnService {
   readonly #scene: Phaser.Scene;
@@ -50,7 +57,7 @@ export class ChestSpawnService {
 
     this.#chests.push(chest);
     this.#chestGroup.add(chest);
-    DataManager.instance.increaseTilesPlaced(CASTING_UNLOCKS['CHEST' + chestNumber as keyof typeof CASTING_UNLOCKS]);
+    DataManager.instance.increaseTilesPlaced(getChestCastingUnlock(chestNumber));
     return chest;
   }
 

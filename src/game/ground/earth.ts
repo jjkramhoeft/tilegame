@@ -140,7 +140,7 @@ export class Earth {
             console.error('Failed to load blocking tileset');
             return;
         }
-        this.blockingData = getBlockingBoxesData(tilesetBlocking); // get in blocking-boxes.ts
+        this.blockingData = getBlockingBoxesData();
         const blockingLayer = this.tilemap.createBlankLayer('blocking', tilesetBlocking);
         if (!blockingLayer) {
             console.error('Failed to create blocking tile layer');

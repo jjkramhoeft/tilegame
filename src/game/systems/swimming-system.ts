@@ -1,8 +1,7 @@
-import { BIOME } from '../../common/common';
-import { Player } from '../../game-objects/player/player';
-import { Earth } from '../../ground/earth';
+import { BIOME } from '../common/common';
+import { Player } from '../game-objects/player/player';
+import { Earth } from '../ground/earth';
 
-/** @deprecated  */
 export function updateSwimmingLogic(player: Player, earth: Earth): void {
     const playerTilePosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
     const tile = earth.getTile(playerTilePosition.x, playerTilePosition.y);

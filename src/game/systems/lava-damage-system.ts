@@ -1,11 +1,10 @@
-import { BIOME, DIRECTION } from '../../common/common';
-import { PLAYER_LAVA_DAMAGE } from '../../common/config';
-import { Direction } from '../../common/types';
-import { CHARACTER_STATES } from '../../components/state-machine/states/character/character-states';
-import { Player } from '../../game-objects/player/player';
-import { Earth } from '../../ground/earth';
+import { BIOME, DIRECTION } from '../common/common';
+import { PLAYER_LAVA_DAMAGE } from '../common/config';
+import { Direction } from '../common/types';
+import { CHARACTER_STATES } from '../components/state-machine/states/character/character-states';
+import { Player } from '../game-objects/player/player';
+import { Earth } from '../ground/earth';
 
-/** @deprecated  */
 export function updateLavaDamageLogic(player: Player, earth: Earth): void {
     if (player.currentState === CHARACTER_STATES.FALLING_STATE || player.currentState === CHARACTER_STATES.DEATH_STATE) {
         return;
@@ -21,7 +20,6 @@ export function updateLavaDamageLogic(player: Player, earth: Earth): void {
     player.hit(getLavaPushBackDirection(player), PLAYER_LAVA_DAMAGE);
 }
 
-/** @deprecated  */
 function getLavaPushBackDirection(player: Player): Direction {
     const lastMoveDirections = player.getLastMoveDirections();
     const lastMoveDirection = lastMoveDirections[lastMoveDirections.length - 1] ?? player.direction;

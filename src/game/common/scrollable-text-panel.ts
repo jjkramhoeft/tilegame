@@ -75,6 +75,7 @@ export class ScrollableTextPanel {
 
     destroy(): void {
         this.#scene.input.off(Phaser.Input.Events.POINTER_WHEEL, this.#handleWheel);
+        this.#container.destroy(true);
     }
 
     #createText(config: ScrollableTextPanelConfig): void {

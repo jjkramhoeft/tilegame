@@ -23,6 +23,29 @@ export const CUSTOM_EVENTS = {
   SHOW_PROGRESS_HUD: 'SHOW_PROGRESS_HUD',
 } as const;
 
+export type CustomEventName = (typeof CUSTOM_EVENTS)[keyof typeof CUSTOM_EVENTS];
+export type EventBusListener = (...args: any[]) => void;
+export type EventBusListenerRegistration = {
+  event: CustomEventName;
+  listener: EventBusListener;
+  context?: unknown;
+};
+
+export function registerEventBusListenersUntilShutdown(
+  scene: Phaser.Scene,
+  registrations: EventBusListenerRegistration[],
+): void {
+  registrations.forEach(({ event, listener, context }) => {
+    EVENT_BUS.on(event, listener, context);
+  });
+
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+    registrations.forEach(({ event, listener, context }) => {
+      EVENT_BUS.off(event, listener, context);
+    });
+  });
+}
+
 export const PLAYER_UPDATE_TYPE = {
   INCREASE: 'INCREASE',
   DECREASE: 'DECREASE',

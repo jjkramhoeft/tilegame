@@ -2,10 +2,11 @@ import * as Phaser from 'phaser';
 import { Player } from '../game-objects/player/player';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Earth } from '../ground/earth';
-import { WEAPON, GEAR, DIRECTION, BIOME, POTION, CASTING_UNLOCKS } from '../common/common';
+import { WEAPON, GEAR, DIRECTION, BIOME } from '../common/common';
 import {
     CUSTOM_EVENTS,
     EVENT_BUS,
+    registerEventBusListenersUntilShutdown,
 } from '../common/event-bus';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
@@ -14,9 +15,9 @@ import { DataManager } from '../common/data-manager';
 import { writeChestDialogInfo } from '../common/chest-dialog';
 import { setupDebugChests } from './debug/debug-chests';
 import { spawnDebugEnemies } from './debug/debug-enemies';
-import { updateFallingLogic } from './debug/debug-falling';
-import { updateLavaDamageLogic } from './debug/debug-lava';
-import { updateSwimmingLogic } from './debug/debug-swimming';
+import { updateFallingLogic } from '../systems/falling-system';
+import { updateLavaDamageLogic } from '../systems/lava-damage-system';
+import { updateSwimmingLogic } from '../systems/swimming-system';
 import { SpellCastingService } from '../spellcasting/spell-casting-service';
 import { setupDebugBlocking } from './debug/debug-blocking';
 import { SCENE_KEYS } from './scene-keys';
@@ -240,17 +241,14 @@ export class GameScene extends Phaser.Scene {
     #registerCustomEvents(): void {
         if (ENABLE_LOGGING) { console.debug('[GameScene] registering custom events'); }
 
-        EVENT_BUS.on(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
-        //EVENT_BUS.on(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
-        EVENT_BUS.on(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
-        EVENT_BUS.on(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, this.#handleChestDialogClosed, this);
+        registerEventBusListenersUntilShutdown(this, [
+            { event: CUSTOM_EVENTS.OPENED_CHEST, listener: this.#handleOpenChest, context: this },
+            { event: CUSTOM_EVENTS.PLAYER_DEFEATED, listener: this.#handlePlayerDefeatedEvent, context: this },
+            { event: CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, listener: this.#handleChestDialogClosed, context: this },
+        ]);
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
             if (ENABLE_LOGGING) { console.debug('[GameScene] shutdown cleanup'); }
-            EVENT_BUS.off(CUSTOM_EVENTS.OPENED_CHEST, this.#handleOpenChest, this);
-            //EVENT_BUS.off(CUSTOM_EVENTS.ENEMY_DESTROYED, this.#checkForAllEnemiesAreDefeated, this);
-            EVENT_BUS.off(CUSTOM_EVENTS.PLAYER_DEFEATED, this.#handlePlayerDefeatedEvent, this);
-            EVENT_BUS.off(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, this.#handleChestDialogClosed, this);
             this.#removeAllColliders();
             this.scene.stop(SCENE_KEYS.UI_SCENE);
         });
