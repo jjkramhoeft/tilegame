@@ -7,7 +7,7 @@ import { DecideBorder, PickDecoration, PickBlocking, PickFloating } from './crea
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
 import { ENABLE_LOGGING } from '../common/config';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../common/event-bus';
-import { DataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/data-manager';
 import { CastingUnlocks } from '../common/types';
 
 export type ChestPlacementHandler = (position: Position, chestNumber: number) => void;
@@ -354,7 +354,7 @@ export class Earth {
             case BIOME.SWAMP: placedBlockingAsCastingUnlock = CASTING_UNLOCKS.SWAMP_BLOCKING; break;
             case BIOME.CRYSTAL: placedBlockingAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_BLOCKING; break;
         }
-        if (placedBlockingAsCastingUnlock) DataManager.instance.increaseTilesPlaced(placedBlockingAsCastingUnlock);
+        if (placedBlockingAsCastingUnlock) GameDataManager.instance.increaseTilesPlaced(placedBlockingAsCastingUnlock);
     }
 
     AddDecorationToTile(position: Position): void {
@@ -374,7 +374,7 @@ export class Earth {
             case BIOME.SWAMP: placedTileAsCastingUnlock = CASTING_UNLOCKS.SWAMP_DECORATION; break;
             case BIOME.CRYSTAL: placedTileAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_DECORATION; break;
         }
-        if (placedTileAsCastingUnlock) DataManager.instance.increaseTilesPlaced(placedTileAsCastingUnlock);
+        if (placedTileAsCastingUnlock) GameDataManager.instance.increaseTilesPlaced(placedTileAsCastingUnlock);
         // Notify listeners (game progression, etc.) that a tile was placed.
         const payload: TilePlacedPayload = {
             tileX: position.x,
@@ -394,49 +394,49 @@ export class Earth {
         let actualBiome = biome;
         if (allowVariation && BIOME.VOID < biome) {
             let rockFactor = 0;
-            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.ROCK_BASIC)) {
+            if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.ROCK_BASIC)) {
                 rockFactor = 1;
                 if (biome === BIOME.ROCK) rockFactor += 10;
             }
             let desertFactor = 0;
-            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.DESERT_BASIC)) {
+            if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.DESERT_BASIC)) {
                 desertFactor = 1;
                 if (biome === BIOME.DESERT) desertFactor += 10;
             }
             let waterFactor = 0;
-            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.WATER_BASIC)) {
+            if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.WATER_BASIC)) {
                 waterFactor = 1;
                 if (biome === BIOME.WATER) waterFactor += 10;
             }
 
             let grassFactor = 0;
-            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.GRASS_BASIC)) {
+            if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.GRASS_BASIC)) {
                 grassFactor = 1;
                 if (biome === BIOME.GRASS) grassFactor += 10;
             }
             let forestFactor = 0;
-            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.FOREST_BASIC)) {
+            if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.FOREST_BASIC)) {
                 forestFactor = 1;
                 if (biome === BIOME.FOREST) forestFactor += 10;
             }
             let mountainFactor = 0;
-            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.MOUNTAIN_BASIC)) {
+            if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.MOUNTAIN_BASIC)) {
                 mountainFactor = 1;
                 if (biome === BIOME.MOUNTAIN) mountainFactor += 10;
             }
 
             let swampFactor = 0;
-            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.SWAMP_BASIC)) {
+            if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.SWAMP_BASIC)) {
                 swampFactor = 1;
                 if (biome === BIOME.SWAMP) swampFactor += 10;
             }
             let crystalFactor = 0;
-            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CRYSTAL_BASIC)) {
+            if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CRYSTAL_BASIC)) {
                 crystalFactor = 1;
                 if (biome === BIOME.CRYSTAL) crystalFactor += 10;
             }
             let lavaFactor = 0;
-            if (DataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.LAVA_BASIC)) {
+            if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.LAVA_BASIC)) {
                 lavaFactor = 1;
                 if (biome === BIOME.LAVA) lavaFactor += 10;
             }
@@ -497,7 +497,7 @@ export class Earth {
             floating: -1,
         });
         this.AddTile(tile);
-        DataManager.instance.increaseTilesPlaced(placedTileAsCastingUnlock);
+        GameDataManager.instance.increaseTilesPlaced(placedTileAsCastingUnlock);
         this.addMissingVoidNeighbors(position);
     }
 

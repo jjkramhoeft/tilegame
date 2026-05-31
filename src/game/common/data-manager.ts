@@ -89,8 +89,8 @@ export function createDefaultPlayerData(overrides: Partial<PlayerData> = {}): Pl
   };
 }
 
-export class DataManager {
-  static #instance: DataManager;
+export class GameDataManager {
+  static #instance: GameDataManager;
 
   #data: PlayerData;
   #totalWeightedTilesPlaced: number = 0;
@@ -128,11 +128,11 @@ export class DataManager {
     this.#data = createDefaultPlayerData();
   }
 
-  public static get instance(): DataManager {
-    if (!DataManager.#instance) {
-      DataManager.#instance = new DataManager();
+  public static get instance(): GameDataManager {
+    if (!GameDataManager.#instance) {
+      GameDataManager.#instance = new GameDataManager();
     }
-    return DataManager.#instance;
+    return GameDataManager.#instance;
   }
 
   get data(): PlayerData {
@@ -182,6 +182,24 @@ export class DataManager {
     this.#data.lastDialogResultInfo = info;
   }
 
+  public getLastDialogOptionSelected(): number {
+    return this.#data.lastDialogOptionSelected;
+  }
+
+  public getLastDialogResultInfo(): ChestDialogInfo | undefined {
+    const info = this.#data.lastDialogResultInfo;
+    if (!info) {
+      return undefined;
+    }
+    return {
+      ...info,
+      dialog: {
+        ...info.dialog,
+        options: [...info.dialog.options],
+      },
+    };
+  }
+
   public setLanguageIsDanish(languageIsDanish: boolean): void {
     this.#data.languageIsDanish = languageIsDanish;
   }
@@ -193,6 +211,38 @@ export class DataManager {
   public setDifficulty(difficulty: string, isDebugMode: boolean): void {
     this.#data.difficulty = difficulty;
     this.#data.isDebugMode = isDebugMode;
+  }
+
+  public getCurrentHealth(): number {
+    return this.#data.currentHealth;
+  }
+
+  public getMaxHealth(): number {
+    return this.#data.maxHealth;
+  }
+
+  public getGear(): string {
+    return this.#data.gear;
+  }
+
+  public getWeapon(): string {
+    return this.#data.weapon;
+  }
+
+  public getPotion(): string {
+    return this.#data.potion;
+  }
+
+  public updatePlayerGear(gear: string): void {
+    this.#data.gear = gear;
+  }
+
+  public updatePlayerWeapon(weapon: string): void {
+    this.#data.weapon = weapon;
+  }
+
+  public updatePlayerPotion(potion: string): void {
+    this.#data.potion = potion;
   }
 
   public resetPlayerHealthToMin(): void {
@@ -263,7 +313,7 @@ export class DataManager {
       case CASTING_UNLOCKS.CRYSTAL_BLOCKING: this.#totalWeightedTilesPlaced += 3; break;
     }
     const levelUpThreshold = LEVEL_UP_TILE_THRESHOLDS[this.#data.currentPower];
-    const debugDivider = DataManager.instance.data.isDebugMode ? 10 : 1;
+    const debugDivider = GameDataManager.instance.data.isDebugMode ? 10 : 1;
     if (this.#totalWeightedTilesPlaced >= levelUpThreshold / debugDivider) {
       //Power up player.
       this.updatePlayerCurrentPower(this.#data.currentPower + 1);

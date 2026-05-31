@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import type { GameScene } from '../../../../scenes/game-scene';
-import { DataManager } from '../../../../common/data-manager';
+import { GameDataManager } from '../../../../common/data-manager';
 import { DIFFICULTY_HARD_WAIT_FACTOR, ENABLE_LOGGING } from '../../../../common/config';
 import { ASSET_KEYS } from '../../../../common/assets';
 
@@ -53,7 +53,7 @@ export class StartState extends BaseGameState {
   public onEnter(): void {
     if (ENABLE_LOGGING) { console.debug('[GameProgression] StartState entered'); }
     let defaultWaitTime = 500;
-    if (DataManager.instance.data.difficulty === 'Hard') {
+    if (GameDataManager.instance.data.difficulty === 'Hard') {
       defaultWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
     }
 

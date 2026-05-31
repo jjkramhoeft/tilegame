@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { BIOME } from '../common/common';
-import { DataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/data-manager';
 import { CreatureType, Position } from '../common/types';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
 import { Bull } from '../game-objects/enemies/bull';
@@ -84,8 +84,8 @@ export class AnimalSpawnService {
       this.#critterGroup.add(animal);
     }
 
-    DataManager.instance.markCreatureEverCreated(option.type);
-    DataManager.instance.increaseLivingCreatureCount();
+    GameDataManager.instance.markCreatureEverCreated(option.type);
+    GameDataManager.instance.increaseLivingCreatureCount();
     return animal;
   }
 

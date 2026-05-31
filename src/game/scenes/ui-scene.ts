@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
 import { ASSET_KEYS } from '../common/assets';
-import { DataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/data-manager';
 import {
   CUSTOM_EVENTS,
   EVENT_BUS,
@@ -110,7 +110,7 @@ export class UiScene extends Phaser.Scene {
 
     if (ENABLE_LOGGING) {
       console.debug('[UiScene] create start', {
-        isDebugMode: DataManager.instance.data.isDebugMode,
+        isDebugMode: GameDataManager.instance.data.isDebugMode,
         initialMode: this.#getUiModeName(),
       });
     }
@@ -169,7 +169,7 @@ export class UiScene extends Phaser.Scene {
 
   public async updateHealthInHud(data: PlayerHealthUpdated): Promise<void> {
     if (data.type === PLAYER_UPDATE_TYPE.INCREASE) {
-      this.#syncMeter(this.#hearts, DataManager.instance.data.maxHealth, data.currentHealth);
+      this.#syncMeter(this.#hearts, GameDataManager.instance.data.maxHealth, data.currentHealth);
       return;
     }
 
@@ -190,18 +190,18 @@ export class UiScene extends Phaser.Scene {
       });
       health -= 1;
     }
-    this.#syncMeter(this.#hearts, DataManager.instance.data.maxHealth, data.currentHealth);
+    this.#syncMeter(this.#hearts, GameDataManager.instance.data.maxHealth, data.currentHealth);
   }
 
   public updatePowerInHud(data: PlayerPowerUpdated): void {
-    this.#syncMeter(this.#power, DataManager.instance.data.maxPower, data.currentPower + 2);
+    this.#syncMeter(this.#power, GameDataManager.instance.data.maxPower, data.currentPower + 2);
     if (data.type === PLAYER_UPDATE_TYPE.INCREASE && !this.#levelUpSound.isPlaying) {
       this.#levelUpSound.play();
     }
   }
 
   public updateProgressInHud(data: PlayerProgressUpdated): void {
-    this.#syncMeter(this.#progress, DataManager.instance.data.maxProgress, data.currentProgress);
+    this.#syncMeter(this.#progress, GameDataManager.instance.data.maxProgress, data.currentProgress);
   }
 
   public updateLivingCreaturesInHud(data: LivingCreaturesUpdated): void {
@@ -286,7 +286,7 @@ export class UiScene extends Phaser.Scene {
   }
 
   #createHud(): void {
-    const playerData = DataManager.instance.data;
+    const playerData = GameDataManager.instance.data;
 
     this.#hudContainer = this.add.container(0, 0, []);
     this.#hearts = this.#createMeter({
@@ -480,7 +480,7 @@ export class UiScene extends Phaser.Scene {
     });*/
 
     if (this.#uiMode === UiMode.ChestDialog) {
-      DataManager.instance.setLastDialogOptionSelected(this.#selectedMenuOptionIndex);
+      GameDataManager.instance.setLastDialogOptionSelected(this.#selectedMenuOptionIndex);
       this.#chestDialogContainer.visible = false;
       if (!this.#chestCloseSound.isPlaying) {
         this.#chestCloseSound.play();

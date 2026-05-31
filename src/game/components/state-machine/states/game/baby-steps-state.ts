@@ -3,7 +3,7 @@ import { GAME_STATES } from './game-state-keys';
 import { CASTING_UNLOCKS } from '../../../../common/common';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { Position } from '../../../../common/types';
-import { DataManager } from '../../../../common/data-manager';
+import { GameDataManager } from '../../../../common/data-manager';
 import { ENABLE_LOGGING } from '../../../../common/config';
 import { CUSTOM_EVENTS, EVENT_BUS, TilePlacedPayload } from '../../../../common/event-bus';
 
@@ -26,7 +26,7 @@ export class BabyStepsState extends BaseGameState {
 
   public onEnter(): void {
     if (ENABLE_LOGGING) { console.debug('[GameProgression] BabyStepsState entered'); }
-    this.#starterTilePosition = DataManager.instance.data.startTile;
+    this.#starterTilePosition = GameDataManager.instance.data.startTile;
     if (!BabyStepsState.#hudShown) {
       this.#tileHandler = (payload) => this.#onTilePlaced(payload);
       EVENT_BUS.on(CUSTOM_EVENTS.TILE_PLACED, this.#tileHandler);
@@ -42,11 +42,11 @@ export class BabyStepsState extends BaseGameState {
   }
 
   public onUpdate(): void {
-    const blockingRocksPlaced = DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BLOCKING] ?? 0;
+    const blockingRocksPlaced = GameDataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BLOCKING] ?? 0;
     if (blockingRocksPlaced < 2) {
       return; // Not enough blocking rocks placed yet.
     }
-    const basicRocksPlaced = DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BASIC] ?? 0;
+    const basicRocksPlaced = GameDataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BASIC] ?? 0;
     if (basicRocksPlaced < this.#filledTargetTilesNeeded) {
       return; // Not enough target tiles filled yet.
     }

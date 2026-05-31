@@ -1,5 +1,5 @@
 import { GEAR, POTION, WEAPON } from './common';
-import { DataManager } from './data-manager';
+import { GameDataManager } from './data-manager';
 
 export type LanguageCode = 'en' | 'da';
 
@@ -411,7 +411,7 @@ type GearDisplayContext = 'found' | 'option' | 'current';
 type WeaponDisplayContext = 'found' | 'option' | 'current';
 
 export function getCurrentLanguage(): LanguageCode {
-    return DataManager.instance.data.languageIsDanish ? 'da' : 'en';
+    return GameDataManager.instance.data.languageIsDanish ? 'da' : 'en';
 }
 
 export function getText(key: TextKey, params: TextParams = {}, language: LanguageCode = getCurrentLanguage()): string {

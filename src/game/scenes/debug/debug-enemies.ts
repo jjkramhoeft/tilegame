@@ -6,7 +6,7 @@ import { Lamb } from '../../game-objects/enemies/lamb';
 import { Chicken } from '../../game-objects/enemies/chicken';
 import { Earth } from '../../ground/earth';
 import { Tile } from '../../ground/tile';
-import { DataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/data-manager';
 import { Sheep } from '../../game-objects/enemies/sheep';
 import { Piglet } from '../../game-objects/enemies/piglet';
 import { Rooster } from '../../game-objects/enemies/rooster';
@@ -34,7 +34,7 @@ export function spawnDebugEnemies(
     });
     spider.enableObject();
     enemyGroup.add(spider);
-    DataManager.instance.increaseLivingCreatureCount();
+    GameDataManager.instance.increaseLivingCreatureCount();
 
     // A snake, added on an empty tile next to the spider.
     const snakeTileOffset: Position = { x: 3, y: 2 };
@@ -49,7 +49,7 @@ export function spawnDebugEnemies(
     });
     snake.enableObject();
     enemyGroup.add(snake);
-    DataManager.instance.increaseLivingCreatureCount();
+    GameDataManager.instance.increaseLivingCreatureCount();
 
     // A lamb, added on a empty tile away from chests and the player.
     const lambTileOffset: Position = { x: 5, y: 0 };
@@ -64,7 +64,7 @@ export function spawnDebugEnemies(
     });
     lamb.enableObject();
     critterGroup.add(lamb);
-    DataManager.instance.increaseLivingCreatureCount();
+    GameDataManager.instance.increaseLivingCreatureCount();
 
     // A Chicken, added on a empty tile away from chests and the player.
     const chickenOffset: Position = { x: 5, y: -2 };
@@ -79,7 +79,7 @@ export function spawnDebugEnemies(
     });
     chicken.enableObject();
     critterGroup.add(chicken);
-    DataManager.instance.increaseLivingCreatureCount();
+    GameDataManager.instance.increaseLivingCreatureCount();
 
     // A Sheep, added on a empty tile away from chests and the player.
     const sheepOffset: Position = { x: 5, y: 2 };
@@ -94,7 +94,7 @@ export function spawnDebugEnemies(
     });
     sheep.enableObject();
     critterGroup.add(sheep);
-    DataManager.instance.increaseLivingCreatureCount();
+    GameDataManager.instance.increaseLivingCreatureCount();
     
     // A Piglet, added on a empty tile away from chests and the player.
     const pigletOffset: Position = { x: 5, y: 4 };
@@ -109,7 +109,7 @@ export function spawnDebugEnemies(
     });
     piglet.enableObject();
     critterGroup.add(piglet);
-    DataManager.instance.increaseLivingCreatureCount();
+    GameDataManager.instance.increaseLivingCreatureCount();
     
     // A Rooster, added on a empty tile away from chests and the player.
     const roosterOffset: Position = { x: 5, y: -4 };
@@ -124,7 +124,7 @@ export function spawnDebugEnemies(
     });
     rooster.enableObject();
     critterGroup.add(rooster);
-    DataManager.instance.increaseLivingCreatureCount();
+    GameDataManager.instance.increaseLivingCreatureCount();
     
     // A Turkey, added on a empty tile away from chests and the player.
     const turkeyOffset: Position = { x: 7, y: -2 };
@@ -139,7 +139,7 @@ export function spawnDebugEnemies(
     });
     turkey.enableObject();
     critterGroup.add(turkey);
-    DataManager.instance.increaseLivingCreatureCount();
+    GameDataManager.instance.increaseLivingCreatureCount();
     
     // A Bull, added on a empty tile away from chests and the player.
     const bullOffset: Position = { x: 7, y: 6 };
@@ -154,7 +154,7 @@ export function spawnDebugEnemies(
     });
     bull.enableObject();
     critterGroup.add(bull);
-    DataManager.instance.increaseLivingCreatureCount();
+    GameDataManager.instance.increaseLivingCreatureCount();
     
     // A Calf, added on a empty tile away from chests and the player.
     const calfOffset: Position = { x: 5, y: 6 };
@@ -169,7 +169,7 @@ export function spawnDebugEnemies(
     });
     calf.enableObject();
     critterGroup.add(calf);
-    DataManager.instance.increaseLivingCreatureCount();
+    GameDataManager.instance.increaseLivingCreatureCount();
 }
 
 function addTileAndVoid(earth: Earth, tilenumber: Position): void {

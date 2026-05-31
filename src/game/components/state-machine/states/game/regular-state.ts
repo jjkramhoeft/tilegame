@@ -4,7 +4,7 @@ import { CUSTOM_EVENTS, EVENT_BUS, ProgressionHelpPayload, type TilePlacedPayloa
 import { BIOME, CASTING_UNLOCKS } from '../../../../common/common';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { ENABLE_LOGGING } from '../../../../common/config';
-import { DataManager } from '../../../../common/data-manager';
+import { GameDataManager } from '../../../../common/data-manager';
 
 /**
  * Main play state. Watches for triggers that pull the game into a scripted
@@ -60,12 +60,12 @@ export class RegularState extends BaseGameState {
   #onTilePlaced(payload: TilePlacedPayload): void {
     //Test for only basic tiles and help with tilecasting.
     if (!payload.hasBlocking && !payload.hasDecoration) {
-      const baseTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BASIC] ?? 0) +
-        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_BASIC] ?? 0);
-      const decorationTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_DECORATION] ?? 0) +
-        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_DECORATION] ?? 0);
-      const blockingTileCount = (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BLOCKING] ?? 0) +
-        (DataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_BLOCKING] ?? 0);
+      const baseTileCount = (GameDataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BASIC] ?? 0) +
+        (GameDataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_BASIC] ?? 0);
+      const decorationTileCount = (GameDataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_DECORATION] ?? 0) +
+        (GameDataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_DECORATION] ?? 0);
+      const blockingTileCount = (GameDataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.ROCK_BLOCKING] ?? 0) +
+        (GameDataManager.instance.data.tilesPlaced[CASTING_UNLOCKS.DESERT_BLOCKING] ?? 0);
       if ((decorationTileCount + blockingTileCount) * 2.1 < baseTileCount) {
         this._transitionTo(GAME_STATES.HELP_WITH_TILECASTING);
       }

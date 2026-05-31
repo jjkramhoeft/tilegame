@@ -1,6 +1,6 @@
 import { BIOME } from '../../common/common';
 import { PLAYER_SPELL_CAST_COOLDOWN } from '../../common/config';
-import { DataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/data-manager';
 import { CastingUnlocks, GameObject2 } from '../../common/types';
 import { GameScene } from '../../scenes/game-scene';
 import { SpellCastingService } from '../../spellcasting/spell-casting-service';
@@ -54,12 +54,12 @@ export class SpellCastingComponent extends BaseGameObjectComponent {
 
   /** Current power level. v1 reads the player's value; enemies will override later. */
   get powerLevel(): number {
-    return DataManager.instance.data.currentPower;
+    return GameDataManager.instance.data.currentPower;
   }
 
-  /** Unlocked spell variants. v1 reads from `DataManager`; enemy casters will own their own set. */
+  /** Unlocked spell variants. v1 reads from `GameDataManager`; enemy casters will own their own set. */
   get unlocks(): ReadonlySet<CastingUnlocks> {
-    return DataManager.instance.data.unlockedSpellCasting;
+    return GameDataManager.instance.data.unlockedSpellCasting;
   }
 
   /** Delegate to the scene service. Stamps the cooldown when the cast actually fires. */

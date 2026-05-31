@@ -3,7 +3,7 @@ import { SCENE_KEYS } from './scene-keys';
 import { ASSET_KEYS } from '../common/assets';
 import { CASTING_UNLOCKS, DEFAULT_UI_HEADING_STYLE } from '../common/common';
 import { KeyboardComponent } from '../components/input/keyboard-component';
-import { DataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/data-manager';
 import type { CastingUnlocks, CreatureType } from '../common/types';
 
 const MAP_WIDTH = 1024;
@@ -110,7 +110,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   #renderUnlockedMagicOverlays(): void {
-    const magic = DataManager.instance.data.unlockedSpellCasting;
+    const magic = GameDataManager.instance.data.unlockedSpellCasting;
     for (const overlay of MAP_OVERLAYS) {
       if (magic.has(overlay.flag)) {
         this.add.image(overlay.x, overlay.y, overlay.imageKey).setOrigin(0.5).setScale(0.7).setAlpha(0.6).setDepth(10);
@@ -121,8 +121,8 @@ export class MapScene extends Phaser.Scene {
   }
 
   #renderCreatureOverlays(): void {
-    const magic = DataManager.instance.data.unlockedSpellCasting;
-    const dataManager = DataManager.instance;
+    const magic = GameDataManager.instance.data.unlockedSpellCasting;
+    const dataManager = GameDataManager.instance;
     for (const overlay of CREATURE_OVERLAYS) {
       if (dataManager.hasEverCreated(overlay.type)) {
         this.add.image(overlay.x, overlay.y, overlay.imageKey).setOrigin(0.5).setDepth(10);

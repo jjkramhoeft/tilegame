@@ -8,7 +8,7 @@ import { ENABLE_LOGGING, SPELL_STAGGER_MS } from '../common/config';
 import { GameScene } from '../scenes/game-scene';
 import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles } from '../ground/creator';
-import { DataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/data-manager';
 import { GAME_STATES } from '../components/state-machine/states/game/game-state-keys';
 
 type CastVector = {
@@ -99,7 +99,7 @@ export class SpellCastingService {
     const casterTile = this.earth.getTile(casterTilePosition.x, casterTilePosition.y);
     if (!casterTile) { console.warn('Caster is not on a valid tile'); return; }
     const directions = (caster as CharacterGameObject).getLastMoveDirections();
-    this.#powerLevel = DataManager.instance.data.currentPower;
+    this.#powerLevel = GameDataManager.instance.data.currentPower;
 
     // First get a list of target tiles and spell type
     const { spellTiles, spellType } = this.determineSpellTilesAndType(casterTile, directions);
@@ -167,10 +167,10 @@ export class SpellCastingService {
     const targets = findTargetTiles(primeTargetPosition, _directions, this.#powerLevel);
     const targetWithInfo = this.earth.targetWithInfo(targets);
     let voidTargets = targetWithInfo.filter(t => t.biome === BIOME.VOID);
-    const gameState = DataManager.instance.data.gameState;
+    const gameState = GameDataManager.instance.data.gameState;
     if (gameState === GAME_STATES.BABY_STEPS || gameState === GAME_STATES.FIRST_TILE) {
       // In these early states, only allow BASIC spell close to the firstTile.
-      const firstTile: Position = DataManager.instance.data.startTile;
+      const firstTile: Position = GameDataManager.instance.data.startTile;
       voidTargets = voidTargets.filter(t => Math.abs(t.pos.x - firstTile.x) <= 2 && Math.abs(t.pos.y - firstTile.y) <= 2);
     }
 
@@ -190,7 +190,7 @@ export class SpellCastingService {
         return { spellTiles: decorationTargets.slice(0, Math.min(decorationTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.DECORATION };
       }
     }
-    const firstTile: Position = DataManager.instance.data.startTile;
+    const firstTile: Position = GameDataManager.instance.data.startTile;
     const blockingTargets = targetWithInfo.filter(t =>
       t.biome === _casterTile.biome && //only on tiles of same biome as caster is on
       t.decorated && // is decorated
@@ -243,13 +243,13 @@ export class SpellCastingService {
     if (!chestUnlock) {
       return false;
     }
-    const data = DataManager.instance.data;
+    const data = GameDataManager.instance.data;
     return data.unlockedSpellCasting.has(chestUnlock) && !(data.tilesPlaced[chestUnlock] > 0);
   }
 
   private spellUnlockIsUnlocked(biome: number, unlockType: keyof BiomeSpellUnlocks): boolean {
     const unlock = this.getBiomeSpellUnlock(biome, unlockType);
-    return unlock !== undefined && DataManager.instance.data.unlockedSpellCasting.has(unlock);
+    return unlock !== undefined && GameDataManager.instance.data.unlockedSpellCasting.has(unlock);
   }
 
   private getBiomeSpellUnlock(biome: number, unlockType: keyof BiomeSpellUnlocks): CastingUnlocks | undefined {

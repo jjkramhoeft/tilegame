@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { DataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/data-manager';
 import { Direction } from '../../common/types';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
 
@@ -95,7 +95,7 @@ export abstract class BaseWeapon implements Weapon {
   }
 
   private getAttackAnimationKeyJJK(direction: Direction): string  {
-    const d = DataManager.instance.data;
+    const d = GameDataManager.instance.data;
     const animP = `${d.sex}-${d.gear}-${d.weapon}-`;
     switch (direction) {
       case 'DOWN': return animP + 'thrust-down';

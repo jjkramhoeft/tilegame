@@ -9,7 +9,7 @@ import { AnimationComponent, AnimationConfig } from '../../components/game-objec
 import { InvulnerableComponent } from '../../components/game-object/invulnerable-component';
 import { CHARACTER_STATES } from '../../components/state-machine/states/character/character-states';
 import { LifeComponent } from '../../components/game-object/life-component';
-import { DataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/data-manager';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
 import { GEAR, DIFFICULTY } from '../../common/common';
 import {
@@ -118,7 +118,7 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
   }
 
   get speed(): number {
-    const difficultySpeedMultiplyer = DataManager.instance.data.difficulty === DIFFICULTY.HARD 
+    const difficultySpeedMultiplyer = GameDataManager.instance.data.difficulty === DIFFICULTY.HARD 
       ? DIFFICULTY_HARD_SPEED_MULTIPLIER 
       : 1;
     if (!this._isPlayer) {// Animals, Critter & Enemies
@@ -128,10 +128,10 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     const isSwimming = this._stateMachine.currentStateName === CHARACTER_STATES.SWIM_STATE;
     const baseSpeed = isSwimming ? PLAYER_SWIM_SPEED : this._speedComponent.speed;
     const speedPenalty = isSwimming
-      ? DataManager.instance.data.gear === GEAR.ARMOR
+      ? GameDataManager.instance.data.gear === GEAR.ARMOR
         ? PLAYER_SWIM_ARMOR_AS_GEAR_SPEED_PENALTY
         : PLAYER_SWIM_NORMAL_AS_GEAR_SPEED_PENALTY
-      : DataManager.instance.data.gear === GEAR.ARMOR
+      : GameDataManager.instance.data.gear === GEAR.ARMOR
         ? PLAYER_ARMOR_AS_GEAR_SPEED_PENALTY
         : PLAYER_NORMAL_AS_GEAR_SPEED_PENALTY;
     return Math.max(0, (baseSpeed - speedPenalty) * difficultySpeedMultiplyer);
@@ -183,7 +183,7 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     // have character take damage and see if the character has died
     this._lifeComponent.takeDamage(damage);
     if (this._isPlayer) {
-      DataManager.instance.updatePlayerCurrentHealth(this._lifeComponent.life);
+      GameDataManager.instance.updatePlayerCurrentHealth(this._lifeComponent.life);
     }
     if (this._lifeComponent.life === 0) {
       this._isDefeated = true;

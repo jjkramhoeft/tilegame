@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { BaseWeapon, WeaponAttackAnimationConfig } from './base-weapon';
 import { DIRECTION, WEAPON } from '../../common/common';
-import { DataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/data-manager';
 import { WeaponComponent } from '../../components/game-object/weapon-component';
 
 // The sword thrust spritesheet uses 128x128 frames while every other player
@@ -30,13 +30,13 @@ export class JjkWeapons extends BaseWeapon {
   }
 
   public attackUp(): void {
-    if(DataManager.instance.data.weapon === WEAPON.SWORD) {
+    if(GameDataManager.instance.data.weapon === WEAPON.SWORD) {
       this._weaponComponent.body.setSize(44, 32);
       this._weaponComponent.body.position.set(this._sprite.x - 21, this._sprite.y - 24);
-    } else if(DataManager.instance.data.weapon === WEAPON.STAFF) {
+    } else if(GameDataManager.instance.data.weapon === WEAPON.STAFF) {
       this._weaponComponent.body.setSize(40, 28);
       this._weaponComponent.body.position.set(this._sprite.x - 19, this._sprite.y - 23);
-    } else if(DataManager.instance.data.weapon === WEAPON.DAGGER) {
+    } else if(GameDataManager.instance.data.weapon === WEAPON.DAGGER) {
       this._weaponComponent.body.setSize(36, 24);
       this._weaponComponent.body.position.set(this._sprite.x - 17, this._sprite.y - 22);
     } else  {// WEAPON.NONE
@@ -47,13 +47,13 @@ export class JjkWeapons extends BaseWeapon {
   }
 
   public attackDown(): void {
-    if(DataManager.instance.data.weapon === WEAPON.SWORD) {
+    if(GameDataManager.instance.data.weapon === WEAPON.SWORD) {
       this._weaponComponent.body.setSize(44, 32);   
       this._weaponComponent.body.position.set(this._sprite.x - 21, this._sprite.y + 22);
-    } else if(DataManager.instance.data.weapon === WEAPON.STAFF) {
+    } else if(GameDataManager.instance.data.weapon === WEAPON.STAFF) {
       this._weaponComponent.body.setSize(40, 28);   
       this._weaponComponent.body.position.set(this._sprite.x - 19, this._sprite.y + 22);
-    } else if(DataManager.instance.data.weapon === WEAPON.DAGGER) {
+    } else if(GameDataManager.instance.data.weapon === WEAPON.DAGGER) {
       this._weaponComponent.body.setSize(36, 24);   
       this._weaponComponent.body.position.set(this._sprite.x - 17, this._sprite.y + 22);
     } else  {// WEAPON.NONE
@@ -64,13 +64,13 @@ export class JjkWeapons extends BaseWeapon {
   }
 
   public attackRight(): void {
-    if(DataManager.instance.data.weapon === WEAPON.SWORD) {
+    if(GameDataManager.instance.data.weapon === WEAPON.SWORD) {
       this._weaponComponent.body.setSize(32, 44);
       this._weaponComponent.body.position.set(this._sprite.x + 12, this._sprite.y - 10);
-    } else if(DataManager.instance.data.weapon === WEAPON.STAFF) {
+    } else if(GameDataManager.instance.data.weapon === WEAPON.STAFF) {
       this._weaponComponent.body.setSize(28, 40);
       this._weaponComponent.body.position.set(this._sprite.x + 12, this._sprite.y - 6);
-    } else if(DataManager.instance.data.weapon === WEAPON.DAGGER) {
+    } else if(GameDataManager.instance.data.weapon === WEAPON.DAGGER) {
       this._weaponComponent.body.setSize(24, 36);
       this._weaponComponent.body.position.set(this._sprite.x + 12, this._sprite.y - 4);
     } else  {// WEAPON.NONE
@@ -81,13 +81,13 @@ export class JjkWeapons extends BaseWeapon {
   }
 
   public attackLeft(): void {
-    if(DataManager.instance.data.weapon === WEAPON.SWORD) {
+    if(GameDataManager.instance.data.weapon === WEAPON.SWORD) {
       this._weaponComponent.body.setSize(32, 44);
       this._weaponComponent.body.position.set(this._sprite.x -40, this._sprite.y -10);
-    } else if(DataManager.instance.data.weapon === WEAPON.STAFF) {
+    } else if(GameDataManager.instance.data.weapon === WEAPON.STAFF) {
       this._weaponComponent.body.setSize(28, 40);
       this._weaponComponent.body.position.set(this._sprite.x - 36, this._sprite.y - 6);
-    } else if(DataManager.instance.data.weapon === WEAPON.DAGGER) {
+    } else if(GameDataManager.instance.data.weapon === WEAPON.DAGGER) {
       this._weaponComponent.body.setSize(24, 36);
       this._weaponComponent.body.position.set(this._sprite.x - 32, this._sprite.y - 4);
     } else  {// WEAPON.NONE

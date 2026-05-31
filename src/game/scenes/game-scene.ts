@@ -11,7 +11,7 @@ import {
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
 import { GameObject2, Position } from '../common/types';
-import { DataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/data-manager';
 import { writeChestDialogInfo } from '../common/chest-dialog';
 import { setupDebugChests } from './debug/debug-chests';
 import { spawnDebugEnemies } from './debug/debug-enemies';
@@ -59,7 +59,7 @@ export class GameScene extends Phaser.Scene {
 
     create() {
         this.#resetSceneState();
-        if (ENABLE_LOGGING) { console.debug('[GameScene] create start', { isDebugMode: DataManager.instance.data.isDebugMode, uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE), uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE), }); }
+        if (ENABLE_LOGGING) { console.debug('[GameScene] create start', { isDebugMode: GameDataManager.instance.data.isDebugMode, uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE), uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE), }); }
         if (!this.input.keyboard) { console.warn('Phaser keyboard plugin is not setup properly.'); return; }
         this.#controls = new KeyboardComponent(this.input.keyboard);
         this.#chestJJKGroup = this.add.group([]);
@@ -82,7 +82,7 @@ export class GameScene extends Phaser.Scene {
 
         this.#progression = new GameProgression(this);
 
-        if (DataManager.instance.data.isDebugMode) {
+        if (GameDataManager.instance.data.isDebugMode) {
             if (ENABLE_LOGGING) { console.debug('[GameScene] debug mode detected, bypassing progression help'); }
             // Debug bypass: GameProgression is constructed (so PLAYER_DEFEATED
             // routing exists if ever needed) but `start()` is never called, so
@@ -156,7 +156,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     #setupPlayer(): void {
-        DataManager.instance.resetForNewGame();
+        GameDataManager.instance.resetForNewGame();
         this.#player = new Player({
             scene: this,
             position: this.#playerStartWorldPosition,
@@ -227,7 +227,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     #playWeaponHitSound(): void {
-        const weapon = DataManager.instance.data.weapon;
+        const weapon = GameDataManager.instance.data.weapon;
         const soundKey = weapon === 'dagger' ? 'attack-dagger'
             : weapon === 'staff' ? 'attack-staff'
                 : weapon === 'sword' ? 'attack-sword'
@@ -284,7 +284,7 @@ export class GameScene extends Phaser.Scene {
     /** Place the very first tile under the player start position. Returns its tile coordinates. */
     public placeStartingTile(): Position {
         const startTile = this.#earth.placeStartingTile(this.#playerStartWorldPosition);
-        DataManager.instance.setStartTile(startTile);
+        GameDataManager.instance.setStartTile(startTile);
         return startTile;
     }
 
@@ -326,74 +326,69 @@ export class GameScene extends Phaser.Scene {
     }
 
     #handleChestDialogClosed(): void {
-        let d = DataManager.instance.data;
-        const dialogResultInfo = d.lastDialogResultInfo;
-        //console.debug(`Dialog closed, Player: ${d.sex} ${d.gear} ${d.weapon}, last option selected: ${d.lastDialogOptionSelected}, dialog result info: ${JSON.stringify(dialogResultInfo)}`);
-        if (dialogResultInfo) {
-            const chest = this.#getChestById(dialogResultInfo.chestNumber);
-            if (!chest) {
-                console.warn(`Unable to apply chest dialog result. Chest id ${dialogResultInfo.chestNumber} was not found.`);
-                DataManager.instance.data = d;
-                return;
-            }
-            // Handle fruit potion chest.
-            if (dialogResultInfo.chestNumber === 7) {
-                //console.debug('Applying potion result from chest dialog');
-                if (d.lastDialogOptionSelected === 0) {
-                    d.potion = dialogResultInfo.option1PotionToPlayer;
-                    // Boost max health to 6 (3 full hearts) and fully heal. Only apply when
-                    // not already maxed, to avoid redundant HUD churn. The potion is
-                    // unlimited in this chest, so chest contents are not cleared.
-                    if (d.maxHealth < 6) {
-                        this.#player.lifeComponent.setMaxLife(6, true);
-                        d.maxHealth = 6;
-                        DataManager.instance.data = d;
-                        DataManager.instance.updatePlayerMaxHealth(6);
-                        // Animate the HUD filling one half-heart at a time instead of
-                        // snapping straight to full. Each step emits PLAYER_HEALTH_UPDATED
-                        // (INCREASE) which redraws the meter against the new maxHealth.
-                        this.#animateHealthGainTo(6);
-                        return;
-                    }
-                } else {
-                    // Opted not to eat/drink, do nothing.
-                }
-                DataManager.instance.data = d;
-                return;
-            }
-            // handle regular chest with weapon and gear options.
-            if (d.lastDialogOptionSelected === 0) {// Top Option Selected, can be either weapon or gear.
-                // Weapons is in the top option
-                if (!(dialogResultInfo.option1WeaponToPlayer === WEAPON.NONE && dialogResultInfo.option1WeaponToLeave === WEAPON.NONE)) {
-                    d.weapon = dialogResultInfo.option1WeaponToPlayer;
-                    chest.contents.weapon = dialogResultInfo.option1WeaponToLeave;
-                }
-                // Gear is in the top option
-                if (!(dialogResultInfo.option1GearToPlayer === GEAR.NONE && dialogResultInfo.option1GearToLeave === GEAR.NONE)) {
-                    d.gear = dialogResultInfo.option1GearToPlayer;
-                    chest.contents.gear = dialogResultInfo.option1GearToLeave;
+        const dataManager = GameDataManager.instance;
+        const dialogResultInfo = dataManager.getLastDialogResultInfo();
+        const selectedOption = dataManager.getLastDialogOptionSelected();
+        if (!dialogResultInfo) {
+            return;
+        }
+
+        const chest = this.#getChestById(dialogResultInfo.chestNumber);
+        if (!chest) {
+            console.warn(`Unable to apply chest dialog result. Chest id ${dialogResultInfo.chestNumber} was not found.`);
+            return;
+        }
+
+        // Handle fruit potion chest.
+        if (dialogResultInfo.chestNumber === 7) {
+            if (selectedOption === 0) {
+                dataManager.updatePlayerPotion(dialogResultInfo.option1PotionToPlayer);
+                // Boost max health to 6 (3 full hearts) and fully heal. Only apply when
+                // not already maxed, to avoid redundant HUD churn. The potion is
+                // unlimited in this chest, so chest contents are not cleared.
+                if (dataManager.getMaxHealth() < 6) {
+                    this.#player.lifeComponent.setMaxLife(6, true);
+                    dataManager.updatePlayerMaxHealth(6);
+                    // Animate the HUD filling one half-heart at a time instead of
+                    // snapping straight to full. Each step emits PLAYER_HEALTH_UPDATED
+                    // (INCREASE) which redraws the meter against the new maxHealth.
+                    this.#animateHealthGainTo(6);
                 }
             }
-            if (d.lastDialogOptionSelected === 1) {
-                // Option 2 selected kan only be gear
-                if (!(dialogResultInfo.option2GearToPlayer === GEAR.NONE && dialogResultInfo.option2GearToLeave === GEAR.NONE)) {
-                    d.gear = dialogResultInfo.option2GearToPlayer;
-                    chest.contents.gear = dialogResultInfo.option2GearToLeave;
-                }
+            return;
+        }
+
+        // handle regular chest with weapon and gear options.
+        if (selectedOption === 0) {// Top Option Selected, can be either weapon or gear.
+            // Weapons is in the top option
+            if (!(dialogResultInfo.option1WeaponToPlayer === WEAPON.NONE && dialogResultInfo.option1WeaponToLeave === WEAPON.NONE)) {
+                dataManager.updatePlayerWeapon(dialogResultInfo.option1WeaponToPlayer);
+                chest.contents.weapon = dialogResultInfo.option1WeaponToLeave;
+            }
+            // Gear is in the top option
+            if (!(dialogResultInfo.option1GearToPlayer === GEAR.NONE && dialogResultInfo.option1GearToLeave === GEAR.NONE)) {
+                dataManager.updatePlayerGear(dialogResultInfo.option1GearToPlayer);
+                chest.contents.gear = dialogResultInfo.option1GearToLeave;
             }
         }
-        DataManager.instance.data = d;
+        if (selectedOption === 1) {
+            // Option 2 selected kan only be gear
+            if (!(dialogResultInfo.option2GearToPlayer === GEAR.NONE && dialogResultInfo.option2GearToLeave === GEAR.NONE)) {
+                dataManager.updatePlayerGear(dialogResultInfo.option2GearToPlayer);
+                chest.contents.gear = dialogResultInfo.option2GearToLeave;
+            }
+        }
     }
 
     /** Step current health up by one half-heart per `stepDelayMs` until reaching `target`.
      *  Each step emits PLAYER_HEALTH_UPDATED so the HUD redraws incrementally. */
     #animateHealthGainTo(target: number, stepDelayMs = 120): void {
         const tick = () => {
-            const cur = DataManager.instance.data.currentHealth;
+            const cur = GameDataManager.instance.getCurrentHealth();
             if (cur >= target) {
                 return;
             }
-            DataManager.instance.updatePlayerCurrentHealth(cur + 1);
+            GameDataManager.instance.updatePlayerCurrentHealth(cur + 1);
             if (cur + 1 < target) {
                 this.time.delayedCall(stepDelayMs, tick);
             }
@@ -404,7 +399,7 @@ export class GameScene extends Phaser.Scene {
     #handleOpenChest(chest: ChestJJK): void {
 
         const chestInfo = writeChestDialogInfo(chest);
-        DataManager.instance.setLastDialogResultInfo(chestInfo);
+        GameDataManager.instance.setLastDialogResultInfo(chestInfo);
         EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_CHEST_DIALOG, chestInfo.dialog);
     }
 

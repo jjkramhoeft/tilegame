@@ -2,7 +2,7 @@ import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { DIFFICULTY_HARD_WAIT_FACTOR, ENABLE_LOGGING } from '../../../../common/config';
-import { DataManager } from '../../../../common/data-manager';
+import { GameDataManager } from '../../../../common/data-manager';
 
 export class GardenState extends BaseGameState {
   constructor(scene: GameScene) {
@@ -18,7 +18,7 @@ export class GardenState extends BaseGameState {
       true, // offsetPlayer to get the tile position of the player's center instead of feet
     );
     let defaultStepWaitTime = 80;
-    if(DataManager.instance.data.difficulty === 'Hard') {
+    if(GameDataManager.instance.data.difficulty === 'Hard') {
       defaultStepWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
     }
     this._scene.progression.unlockMap();// unlocked early

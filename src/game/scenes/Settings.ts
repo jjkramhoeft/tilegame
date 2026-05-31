@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
-import { DataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/data-manager';
 import { setEnableLogging } from '../common/config';
 import {
     ASSET_KEYS,
@@ -115,7 +115,7 @@ export class Settings extends Scene {
                 this.debugIndex = index;
             }
         } else {
-            const currentDifficulty = DataManager.instance.data.difficulty;
+            const currentDifficulty = GameDataManager.instance.data.difficulty;
             const index = DEBUG_OPTIONS.findIndex((option) => option.value === currentDifficulty);
             if (index >= 0) {
                 this.debugIndex = index;
@@ -135,7 +135,7 @@ export class Settings extends Scene {
         if (typeof savedLanguage === 'boolean') {
             this.languageIndex = savedLanguage ? 0 : 1;
         } else {
-            this.languageIndex = DataManager.instance.data.languageIsDanish ? 0 : 1;
+            this.languageIndex = GameDataManager.instance.data.languageIsDanish ? 0 : 1;
         }
 
         const savedPlayerSex = this.registry.get('playerSex');
@@ -145,7 +145,7 @@ export class Settings extends Scene {
                 this.playerIndex = index;
             }
         } else {
-            const index = PLAYER_OPTIONS.findIndex((option) => option.sex === DataManager.instance.data.sex);
+            const index = PLAYER_OPTIONS.findIndex((option) => option.sex === GameDataManager.instance.data.sex);
             if (index >= 0) {
                 this.playerIndex = index;
             }
@@ -407,13 +407,13 @@ export class Settings extends Scene {
     private applyLanguage(): void {
         const languageIsDanish = LANGUAGE_OPTIONS[this.languageIndex].isDanish;
         this.registry.set('languageIsDanish', languageIsDanish);
-        DataManager.instance.setLanguageIsDanish(languageIsDanish);
+        GameDataManager.instance.setLanguageIsDanish(languageIsDanish);
     }
 
     private applyPlayer(): void {
         const playerSex = PLAYER_OPTIONS[this.playerIndex].sex;
         this.registry.set('playerSex', playerSex);
-        DataManager.instance.setSex(playerSex);
+        GameDataManager.instance.setSex(playerSex);
     }
 
     private changeDifficulty(direction: number): void {
@@ -439,6 +439,6 @@ export class Settings extends Scene {
                 world.debugGraphic.clear();
             }
         }
-            DataManager.instance.setDifficulty(difficulty, debugEnabled);
+            GameDataManager.instance.setDifficulty(difficulty, debugEnabled);
     }
 }

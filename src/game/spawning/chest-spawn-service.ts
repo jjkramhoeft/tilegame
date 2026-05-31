@@ -1,5 +1,5 @@
 import { CASTING_UNLOCKS, CHEST_STATE, GEAR, POTION, WEAPON } from '../common/common';
-import { DataManager } from '../common/data-manager';
+import { GameDataManager } from '../common/data-manager';
 import { CastingUnlocks, Position } from '../common/types';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 
@@ -57,7 +57,7 @@ export class ChestSpawnService {
 
     this.#chests.push(chest);
     this.#chestGroup.add(chest);
-    DataManager.instance.increaseTilesPlaced(getChestCastingUnlock(chestNumber));
+    GameDataManager.instance.increaseTilesPlaced(getChestCastingUnlock(chestNumber));
     return chest;
   }
 

@@ -4,7 +4,7 @@ import { CHARACTER_ANIMATIONS } from '../../../../common/assets';
 import { BaseCharacterState } from './base-character-state';
 import { CHARACTER_STATES } from './character-states';
 import { CUSTOM_EVENTS, EVENT_BUS } from '../../../../common/event-bus';
-import { DataManager } from '../../../../common/data-manager';
+import { GameDataManager } from '../../../../common/data-manager';
 
 export class DeathState extends BaseCharacterState {
   #onDieCallback: () => void;
@@ -42,7 +42,7 @@ export class DeathState extends BaseCharacterState {
   #triggerDefeatedEvent(): void {
     this._gameObject.disableObject();
     if (this._gameObject.isEnemy) {
-      DataManager.instance.decreaseLivingCreatureCount();
+      GameDataManager.instance.decreaseLivingCreatureCount();
       EVENT_BUS.emit(CUSTOM_EVENTS.ENEMY_DESTROYED);
     } else {
       EVENT_BUS.emit(CUSTOM_EVENTS.PLAYER_DEFEATED);

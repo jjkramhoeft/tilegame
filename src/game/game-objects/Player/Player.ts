@@ -23,7 +23,7 @@ import { SpellCastingComponent } from '../../components/game-object/spell-castin
 import { JjkWeapons } from '../weapons/jjk-weapons';
 import { FallingState } from '../../components/state-machine/states/character/falling-state';
 import { SwimMoveState } from '../../components/state-machine/states/character/swim-move-state';
-import { DataManager } from '../../common/data-manager';
+import { GameDataManager } from '../../common/data-manager';
 import { CastingState } from '../../components/state-machine/states/character/casting-state';
 
 
@@ -84,7 +84,7 @@ export class Player extends CharacterGameObject {
 
     // Play sex-specific "ow" sound when the player takes damage or dies.
     const playOwSound = (): void => {
-      const owSoundKey = DataManager.instance.data.sex === 'female' ? 'female-ow' : 'male-ow';
+      const owSoundKey = GameDataManager.instance.data.sex === 'female' ? 'female-ow' : 'male-ow';
       const owSound = config.scene.sound.get(owSoundKey) ?? config.scene.sound.add(owSoundKey);
       if (!owSound.isPlaying) {
         owSound.play();

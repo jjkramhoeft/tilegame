@@ -3,7 +3,7 @@ import { CUSTOM_EVENTS, EVENT_BUS } from '../../../../common/event-bus';
 import type { TextKey } from '../../../../common/texts';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { DIFFICULTY_HARD_WAIT_FACTOR } from '../../../../common/config';
-import { DataManager } from '../../../../common/data-manager';
+import { GameDataManager } from '../../../../common/data-manager';
 
 /**
  * Base class for the game progression states. Concrete states extend this and
@@ -29,7 +29,7 @@ export abstract class BaseGameState implements State {
     this.#name = name;
     this._scene = scene;
     this.defaultWaitTime = 500;
-    if(DataManager.instance.data.difficulty === 'Hard') {
+    if(GameDataManager.instance.data.difficulty === 'Hard') {
       this.defaultWaitTime *= DIFFICULTY_HARD_WAIT_FACTOR;
     }
   }
@@ -55,7 +55,7 @@ export abstract class BaseGameState implements State {
 
   protected _transitionTo(name: string, ...args: unknown[]): void {
     this._stateMachine.setState(name, ...args);
-    DataManager.instance.setGameState(name);
+    GameDataManager.instance.setGameState(name);
   }
 
   protected _pause(ms: number, callback: () => void): void {
