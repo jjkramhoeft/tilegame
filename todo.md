@@ -25,8 +25,6 @@
 - repeat fruit chest sound put healt on max
 - Bounce-move-state -> follow-move-state (intaeract w. animal)
 - Implement boss; Lizard character with snake minions
-- Fix escape dialog
-- Remove exces debug info
 
 ## Implementations that require new asserts
 
@@ -35,14 +33,12 @@
 - Find Mountain sprite sheet
 - Add water ponds to swamp as decorations
 - Bump sound when pushed by animals
-- find sound for spell cast has no target
 
 - record voice-over for narrator. Nathan for english, Ulla, Taina or me for danish
 - Pair of animals
 - Break a tile when an animal is killed
 - easy/hard should change numbers
 - dansk tekst er for lang
-- find better 8-bit UI sound effects
 - HUD rewrite - Simpler one pr. icon system
   - Health: Full heart, Spinning heart
   - Power

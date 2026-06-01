@@ -113,6 +113,8 @@ export class SpellCastingService {
     // first spell: this.executeSpellEffect(spellType, casterTile.biome, casterTilePosition, spellTiles[0]);
     // second spell:this.executeSpellEffect(spellType, casterTile.biome, spellTiles[0], spellTiles[1]);
     if (spellTiles.length === 0) {
+      //ToDo: play spell failed sound. (ASSET_KEYS.SPELL_FAILED)
+      this.scene.sound.play(ASSET_KEYS.SPELL_FAILED);
       return;
     }
     this.#reserveTargets(spellTiles);
@@ -144,33 +146,9 @@ export class SpellCastingService {
     }
   }
 
-  // Placeholder for the method that determines which tiles are affected by the spell and which type of spell is being cast, based on the caster's tile, direction, power level, unlocks and game state. Currently just a stub that returns the first tile in the cast direction as the target and BASIC as the spell type.
+  // method that determines which tiles are affected by the spell and which type of spell is being cast, based on the caster's tile, direction, power level, unlocks and game state.
   determineSpellTilesAndType(_casterTile: Tile, _directions: ("UP" | "DOWN" | "LEFT" | "RIGHT")[]): { spellTiles: Position[]; spellType: SpellType; } {
-    // First find out which type of spell should be cast.
-    // Based on casters tile, powerlevel, unlocks, gameState and available target tiles in the cast directions.
-    // 1) Base tile spell 
-    //     gameState in (firstTileState,babyStepsState,regularState) and 
-    //     if any void tiles in target
-    // 2) Decoration spell 
-    //     if not 1 and 
-    //     gameState in (babyStepsState,regularState) and
-    //     any tiles without decoration of same biome as caster is on in target
-    // 3) Chest spawn spell 
-    //     if not 1 & 2 and 
-    //     gameState in (regularState) and
-    //     any decorated but not blocked tiles of same biome as caster is on in target and
-    //     chest this biome is unlocked and
-    //     % chance is met
-    // 4) Animal spawn spell
-    //     if not 1,2 & 3 and 
-    //     gameState in (regularState) and
-    //     any decorated but not blocked tiles of same biome as caster is on in target and
-    //     animals this biome is unlocked and
-    //     pr. biome criteria for neighboring tiles is met and
-    //     % chance is met
-    // 5) Blocking spell
-    //     if not 1,2,3 & 4 and 
-    //     ...
+
     const primeTargetPosition = this.findPrimeTargetPosition({ x: _casterTile.tileX, y: _casterTile.tileY }, _directions);
     const targets = findTargetTiles(primeTargetPosition, _directions, this.#powerLevel);
     const targetWithInfo = this.earth.targetWithInfo(targets).filter(t => !SpellCastingService.#isTargetReserved(t.pos));

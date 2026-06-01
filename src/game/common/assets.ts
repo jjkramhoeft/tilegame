@@ -86,6 +86,7 @@ export const ASSET_KEYS = {
   STEPS: 'steps',
   WATER_SPLASH: 'water-splash',
   SPELL_NOTES_1: 'spellnotes1',
+  SPELL_FAILED: 'spell-failed',
   LEVELUP: 'levelup',
   LEVELUP_2: 'levelup2',
   ATTACK_PUNCH: 'attack-punch',
