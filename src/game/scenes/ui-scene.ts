@@ -1,7 +1,6 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
 import { ASSET_KEYS } from '../common/assets';
-import { logChestDebug } from '../common/chest-debug';
 import { GameDataManager } from '../common/game-data-manager';
 import {
   CUSTOM_EVENTS,
@@ -36,15 +35,12 @@ const HUD_NONE_FRAME = 3;
 
 const DIALOG_X = 205;
 const DIALOG_Y = 80;
-const SAVE_DIALOG_Y = 480;
 const DIALOG_WIDTH = 610;
 const DIALOG_HEIGHT = 250;
 const DIALOG_HEADING_X = 75;
 const DIALOG_HEADING_Y = 40;
 const DIALOG_OPTION_X = 65;
-const SAVE_DIALOG_OPTION_X = 165;
 const DIALOG_CURSOR_X = 45;
-const SAVE_DIALOG_CURSOR_X = 145;
 const NARRATOR_DIALOG_OPTION_X = 185;
 const NARRATOR_DIALOG_CURSOR_X = 165;
 const DIALOG_FIRST_OPTION_Y = 85;
@@ -53,7 +49,6 @@ const NARRATOR_DIALOG_MESSAGE_Y = 45;
 const NARRATOR_DIALOG_OPTION_Y = 180;
 const DIALOG_OPTION_SPACING = 40;
 const DIALOG_CURSOR_SIZE = 16;
-const SAVE_DIALOG_OPTION_COUNT = 3;
 
 type HudMeterConfig = {
   currentValue: number;
@@ -66,7 +61,6 @@ type HudMeterConfig = {
 const enum UiMode {
   HudOnly,
   ChestDialog,
-  SaveDialog,
   NarratorDialog,
 }
 
@@ -75,9 +69,6 @@ export class UiScene extends Phaser.Scene {
   #hearts!: Phaser.GameObjects.Sprite[];
   #power!: Phaser.GameObjects.Sprite[];
   #progress!: Phaser.GameObjects.Sprite[];
-
-  #saveDialogContainer!: Phaser.GameObjects.Container;
-  #saveDialogCursorGameObject!: Phaser.GameObjects.Image;
 
   #narratorDialogContainer!: Phaser.GameObjects.Container;
   #narratorDialogText!: Phaser.GameObjects.Text;
@@ -91,7 +82,6 @@ export class UiScene extends Phaser.Scene {
 
   #controls!: KeyboardComponent;
   #selectedMenuOptionIndex!: number;
-  #selectedSaveOptionIndex!: number;
   #uiMode = UiMode.HudOnly;
   #chestOpenSound!: Phaser.Sound.BaseSound;
   #chestCloseSound!: Phaser.Sound.BaseSound;
@@ -110,31 +100,23 @@ export class UiScene extends Phaser.Scene {
     this.#resetSceneState();
 
     if (ENABLE_LOGGING) {
-      console.debug('[UiScene] create start', {
-        isDebugMode: GameDataManager.instance.data.isDebugMode,
-        initialMode: this.#getUiModeName(),
-      });
+      console.debug('[UiScene] create start', { isDebugMode: GameDataManager.instance.data.isDebugMode, initialMode: this.#getUiModeName(), });
     }
 
-    if (!this.input.keyboard) {
-      console.warn('[UiScene] keyboard plugin is not setup properly');
-      return;
-    }
+    if (!this.input.keyboard) { console.warn('[UiScene] keyboard plugin is not setup properly'); return; }
 
     this.#createHud();
     this.#createChestDialog();
-    this.#createSaveDialog();
     this.#createNarratorDialog();
 
     this.#controls = new KeyboardComponent(this.input.keyboard);
     this.#selectedMenuOptionIndex = 0;
-    this.#selectedSaveOptionIndex = 0;
     this.#chestOpenSound = this.sound.add(ASSET_KEYS.CHEST);
     this.#chestCloseSound = this.sound.add(ASSET_KEYS.CHEST_2);
     this.#levelUpSound = this.sound.add(ASSET_KEYS.LEVELUP, { volume: 1.0 });
-    this.#uiDownSound = this.sound.add(ASSET_KEYS.MENU_006);
-    this.#uiUpSound = this.sound.add(ASSET_KEYS.MENU_024);
-    this.#uiSelectSound = this.sound.add(ASSET_KEYS.BLIP_SELECT_7);
+    this.#uiDownSound = this.sound.add(ASSET_KEYS.UI_DOWN);
+    this.#uiUpSound = this.sound.add(ASSET_KEYS.UI_UP);
+    this.#uiSelectSound = this.sound.add(ASSET_KEYS.UI_SELECT);
     this.#narratorSound = this.sound.add(ASSET_KEYS.SUCCESS_1);
 
     registerEventBusListenersUntilShutdown(this, [
@@ -147,24 +129,11 @@ export class UiScene extends Phaser.Scene {
       { event: CUSTOM_EVENTS.SHOW_CHEST_DIALOG, listener: this.showDialog, context: this },
       { event: CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, listener: this.showNarratorDialog, context: this },
     ]);
-
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      if (ENABLE_LOGGING) {
-        console.debug('[UiScene] shutdown cleanup', {
-          mode: this.#getUiModeName(),
-          narratorDialogVisible: this.#narratorDialogContainer?.visible,
-          saveDialogVisible: this.#saveDialogContainer?.visible,
-          dialogVisible: this.#chestDialogContainer?.visible,
-        });
-      }
-
-    });
   }
 
   #resetSceneState(): void {
     this.#narratorDialogCloseAction = 'close';
     this.#selectedMenuOptionIndex = 0;
-    this.#selectedSaveOptionIndex = 0;
     this.#uiMode = UiMode.HudOnly;
   }
 
@@ -222,14 +191,8 @@ export class UiScene extends Phaser.Scene {
   }
 
   public showDialog(dialog: DialogPayload): void {
-    logChestDebug('UiScene showDialog', {
-      previousMode: this.#getUiModeName(),
-      heading: dialog.heading,
-      options: [...dialog.options],
-    });
     this.#uiMode = UiMode.ChestDialog;
     this.#selectedMenuOptionIndex = 0;
-    this.#selectedSaveOptionIndex = 0;
     this.#activeChestDialogOptionCount = dialog.options.length;
     this.#chestDialogContainer.visible = true;
     this.#chestDialogContainerText.setText(dialog.heading);
@@ -246,33 +209,20 @@ export class UiScene extends Phaser.Scene {
   public showNarratorDialog(payload: NarratorDialogPayload): void {
     this.#uiMode = UiMode.NarratorDialog;
     this.#narratorDialogCloseAction = payload.closeAction ?? 'close';
-    this.#saveDialogContainer.visible = false;
     this.#chestDialogContainer.visible = false;
     this.#narratorDialogText.setText(getText(payload.textKey));
     this.#narratorDialogContainer.visible = true;
-    //console.debug('[UiScene] narrator dialog visible', {mode: this.#getUiModeName(), closeAction: this.#narratorDialogCloseAction, });
     if (!this.#narratorSound.isPlaying) {
       this.#narratorSound.play();
     }
   }
 
   public update(): void {
-    if (this.#controls.isEscapeKeyJustDown) {
-      if (this.#uiMode === UiMode.HudOnly) {
-        this.#openSaveDialog();
-      }
-      return;
-    }
 
     const narratorConfirmWithActionKey = this.#controls.isActionKeyJustDown &&
       (this.#uiMode === UiMode.NarratorDialog || this.#uiMode === UiMode.ChestDialog);
 
     if (narratorConfirmWithActionKey) {
-      logChestDebug('UiScene action key confirmed dialog', {
-        mode: this.#getUiModeName(),
-        selectedMenuOptionIndex: this.#selectedMenuOptionIndex,
-        activeChestDialogOptionCount: this.#activeChestDialogOptionCount,
-      });
       this.#confirmSelectedOption();
       this.#uiSelectSound.play();
       return;
@@ -423,31 +373,6 @@ export class UiScene extends Phaser.Scene {
     this.#activeChestDialogOptionCount = 0;
   }
 
-  #createSaveDialog(): void {
-    this.#saveDialogContainer = this.add.container(DIALOG_X, SAVE_DIALOG_Y, [
-      this.add.image(0, 0, ASSET_KEYS.UI_DIALOG, 0).setOrigin(0).setDisplaySize(DIALOG_WIDTH, DIALOG_HEIGHT),
-    ]);
-    [
-      getText('ui.save.backToMainMenu'),
-      getText('ui.save.save'),
-      getText('ui.save.continuePlaying'),
-    ].forEach((text, index) => {
-      const option = this.add.text(
-        SAVE_DIALOG_OPTION_X,
-        DIALOG_FIRST_OPTION_Y + index * DIALOG_OPTION_SPACING,
-        text,
-        DEFAULT_UI_OPTION_STYLE,
-      ).setOrigin(0);
-      this.#saveDialogContainer.add(option);
-    });
-
-    this.#saveDialogCursorGameObject = this.add.image(SAVE_DIALOG_CURSOR_X, DIALOG_FIRST_OPTION_Y, ASSET_KEYS.UI_CURSOR, 0)
-      .setOrigin(0)
-      .setDisplaySize(DIALOG_CURSOR_SIZE, DIALOG_CURSOR_SIZE);
-    this.#saveDialogContainer.add(this.#saveDialogCursorGameObject);
-    this.#saveDialogContainer.visible = false;
-  }
-
   #createNarratorDialog(): void {
     this.#narratorDialogContainer = this.add.container(DIALOG_X, DIALOG_Y, [
       this.add.image(0, 0, ASSET_KEYS.UI_DIALOG, 0).setOrigin(0).setDisplaySize(DIALOG_WIDTH, DIALOG_HEIGHT),
@@ -475,61 +400,22 @@ export class UiScene extends Phaser.Scene {
     this.#narratorDialogContainer.visible = false;
   }
 
-  #openSaveDialog(): void {
-    if (this.#uiMode === UiMode.ChestDialog) {
-      return;
-    }
-    if (ENABLE_LOGGING) { console.debug('Escape key just down, opening escape and save dialog'); }
-    this.#selectedSaveOptionIndex = 0;
-    this.#saveDialogContainer.visible = true;
-    this.#uiMode = UiMode.SaveDialog;
-    this.#updateSaveDialogCursor();
-  }
-
-  #confirmSelectedOption(): void {/*
-    console.debug('[UiScene] confirm selected option', {
-      mode: this.#getUiModeName(),
-      selectedMenuOptionIndex: this.#selectedMenuOptionIndex,
-      selectedSaveOptionIndex: this.#selectedSaveOptionIndex,
-      narratorDialogCloseAction: this.#narratorDialogCloseAction,
-    });*/
+  #confirmSelectedOption(): void {
 
     if (this.#uiMode === UiMode.ChestDialog) {
-      logChestDebug('UiScene closing chest dialog', {
-        selectedMenuOptionIndex: this.#selectedMenuOptionIndex,
-        activeChestDialogOptionCount: this.#activeChestDialogOptionCount,
-      });
       GameDataManager.instance.setLastDialogOptionSelected(this.#selectedMenuOptionIndex);
       this.#chestDialogContainer.visible = false;
       if (!this.#chestCloseSound.isPlaying) {
         this.#chestCloseSound.play();
       }
-      logChestDebug('UiScene emitting CHEST_DIALOG_CLOSED', {
-        selectedMenuOptionIndex: this.#selectedMenuOptionIndex,
-        modeBeforeEmit: this.#getUiModeName(),
-      });
       EVENT_BUS.emit(CUSTOM_EVENTS.CHEST_DIALOG_CLOSED);
       this.#uiMode = UiMode.HudOnly;
-      logChestDebug('UiScene chest dialog closed', { mode: this.#getUiModeName() });
       return;
-    }
-
-    if (this.#uiMode === UiMode.SaveDialog) {
-      if (this.#selectedSaveOptionIndex === 0) {
-        this.scene.stop(SCENE_KEYS.GAME_SCENE);
-        this.scene.start(SCENE_KEYS.INTRO);
-        this.scene.stop(SCENE_KEYS.UI_SCENE);
-        return;
-      } else if (this.#selectedSaveOptionIndex === 2) {
-        this.#saveDialogContainer.visible = false;
-        this.#uiMode = UiMode.HudOnly;
-      }
     }
 
     if (this.#uiMode === UiMode.NarratorDialog) {
       const closeAction = this.#narratorDialogCloseAction;
       const closedPayload: NarratorDialogClosed = { closeAction };
-      //console.debug('[UiScene] closing narrator dialog', closedPayload);
       this.#narratorDialogContainer.visible = false;
       this.#narratorDialogCloseAction = 'close';
       this.#uiMode = UiMode.HudOnly;
@@ -541,7 +427,6 @@ export class UiScene extends Phaser.Scene {
     switch (this.#uiMode) {
       case UiMode.HudOnly: return 'HudOnly';
       case UiMode.ChestDialog: return 'ChestDialog';
-      case UiMode.SaveDialog: return 'SaveDialog';
       case UiMode.NarratorDialog: return 'NarratorDialog';
     }
   }
@@ -554,21 +439,10 @@ export class UiScene extends Phaser.Scene {
         Math.max(this.#activeChestDialogOptionCount - 1, 0),
       );
       this.#updateDialogCursor();
-    } else if (this.#uiMode === UiMode.SaveDialog) {
-      this.#selectedSaveOptionIndex = Phaser.Math.Clamp(
-        this.#selectedSaveOptionIndex + direction,
-        0,
-        SAVE_DIALOG_OPTION_COUNT - 1,
-      );
-      this.#updateSaveDialogCursor();
     }
   }
 
   #updateDialogCursor(): void {
     this.#cursorGameObject.setY(DIALOG_FIRST_OPTION_Y + this.#selectedMenuOptionIndex * DIALOG_OPTION_SPACING);
-  }
-
-  #updateSaveDialogCursor(): void {
-    this.#saveDialogCursorGameObject.setY(DIALOG_FIRST_OPTION_Y + this.#selectedSaveOptionIndex * DIALOG_OPTION_SPACING);
   }
 }

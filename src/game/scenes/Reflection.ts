@@ -100,7 +100,7 @@ export class Reflection extends Scene {
         const centerX = this.cameras.main.centerX;
         const registryVolume = this.registry.get('musicVolume');
         const musicVolume = typeof registryVolume === 'number' ? registryVolume : 0.1;
-        this.#uiSelectSound = this.sound.add(ASSET_KEYS.BLIP_SELECT_7);
+        this.#uiSelectSound = this.sound.add(ASSET_KEYS.UI_SELECT);
 
         this.registry.set('musicVolume', musicVolume);
 

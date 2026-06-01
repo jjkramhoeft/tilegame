@@ -4,7 +4,7 @@ import { CastingUnlocks, Direction, GameObject2, SpellType, Position } from '../
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
 import { Tile } from '../ground/tile';
 import { BIOME, BIOME_COLOR_MAP, CASTING_UNLOCKS, DECORATION_DEPTH, SPELL_TYPES } from '../common/common';
-import { ENABLE_LOGGING, SPELL_STAGGER_MS } from '../common/config';
+import { SPELL_STAGGER_MS } from '../common/config';
 import { GameScene } from '../scenes/game-scene';
 import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles } from '../ground/creator';
@@ -323,9 +323,6 @@ export class SpellCastingService {
 
   /** execute one part of the staggeredspell effect (tile changes, mob spawns, VFX, sounds).  */
   executeSpellEffect(spellType: SpellType, biome: BIOME, startTile: Position, endTile: Position, isOrigin: boolean, onImpactComplete?: () => void): void {
-    if (ENABLE_LOGGING) {
-      console.log('[SpellCastingService] executeSpellEffect (stub)', { spellType, biome, startTile, endTile, isOrigon: isOrigin });
-    }
     const tile_size = 64;
     const half_tile = 32;
     const tintColor = BIOME_COLOR_MAP[biome] ?? BIOME_COLOR_MAP[BIOME.VOID];

@@ -83,10 +83,7 @@ export class MapScene extends Phaser.Scene {
       .text(MAP_WIDTH / 2, MAP_HEIGHT - 60, "Press 'x' or 'm' to return", DEFAULT_UI_HEADING_STYLE)
       .setOrigin(0.5);
 
-    if (!this.input.keyboard) {
-      console.warn('[MapScene] keyboard plugin missing');
-      return;
-    }
+    if (!this.input.keyboard) { console.warn('[MapScene] keyboard plugin missing'); return; }
     this.#controls = new KeyboardComponent(this.input.keyboard);
   }
 
@@ -126,7 +123,7 @@ export class MapScene extends Phaser.Scene {
     for (const overlay of CREATURE_OVERLAYS) {
       if (dataManager.hasEverCreated(overlay.type)) {
         this.add.image(overlay.x, overlay.y, overlay.imageKey).setOrigin(0.5).setDepth(10);
-      } else if(magic.has(overlay.flag)){
+      } else if (magic.has(overlay.flag)) {
         this.add.image(overlay.x, overlay.y, ASSET_KEYS.MAP_STAR1).setOrigin(0.5).setDepth(10);
       }
     }

@@ -104,9 +104,9 @@ export class Settings extends Scene {
         this.createDecorativePlant();
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanupDecorativePlantTimer());
 
-        this.#uiDownSound = this.sound.add(ASSET_KEYS.MENU_006);
-        this.#uiUpSound = this.sound.add(ASSET_KEYS.MENU_024);
-        this.#uiSelectSound = this.sound.add(ASSET_KEYS.BLIP_SELECT_7);
+        this.#uiDownSound = this.sound.add(ASSET_KEYS.UI_DOWN);
+        this.#uiUpSound = this.sound.add(ASSET_KEYS.UI_UP);
+        this.#uiSelectSound = this.sound.add(ASSET_KEYS.UI_SELECT);
 
         const savedDifficulty = this.registry.get('difficulty');
         const hasSavedDifficulty = isDifficulty(savedDifficulty);

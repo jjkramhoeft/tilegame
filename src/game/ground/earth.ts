@@ -47,10 +47,7 @@ export class Earth {
             width,
             height,
         });
-        if (!this.tilemap) {
-            console.error('Failed to create biome layer');
-            return;
-        }
+        if (!this.tilemap) { console.error('Failed to create biome layer'); return; }
         // Set up void layer.
         const tilesetVoid = this.tilemap.addTilesetImage(
             ASSET_KEYS.TILESET_BASE,
@@ -64,10 +61,7 @@ export class Earth {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BASE}`);
         }
         const voidLayer = this.tilemap.createBlankLayer('void', tilesetVoid);
-        if (!voidLayer) {
-            console.error('Failed to create void tile layer');
-            return;
-        }
+        if (!voidLayer) { console.error('Failed to create void tile layer'); return; }
         voidLayer.setDepth(VOID_SOLID_DEPTH);
         // Mark void tiles as colliding so Arcade physics can overlap against the layer.
         voidLayer.setCollision(BIOME.VOID);
@@ -86,10 +80,7 @@ export class Earth {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BASE}`);
         }
         const biomeLayer = this.tilemap.createBlankLayer('biome', tilesetBase);
-        if (!biomeLayer) {
-            console.error('Failed to create biome tile layer');
-            return;
-        }
+        if (!biomeLayer) { console.error('Failed to create biome tile layer'); return; }
         biomeLayer.setDepth(BASE_DEPTH);
         this.biomeLayer = biomeLayer;
 
@@ -104,10 +95,7 @@ export class Earth {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BORDER}`);
         }
         const borderLayer = this.tilemap.createBlankLayer('border', tilesetBorder);
-        if (!borderLayer) {
-            console.error('Failed to create border layer');
-            return;
-        }
+        if (!borderLayer) { console.error('Failed to create border layer'); return; }
         borderLayer.setDepth(BORDER_DEPTH);
         this.borderLayer = borderLayer;
 
@@ -122,10 +110,7 @@ export class Earth {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_DECORATION}`);
         }
         const decorationLayer = this.tilemap.createBlankLayer('decoration', tilesetDeco);
-        if (!decorationLayer) {
-            console.error('Failed to create decoration layer');
-            return;
-        }
+        if (!decorationLayer) { console.error('Failed to create decoration layer'); return; }
         decorationLayer.setDepth(DECORATION_DEPTH);
         this.decorationLayer = decorationLayer;
 
@@ -136,16 +121,10 @@ export class Earth {
             this.tileSize,
             this.tileSize
         );
-        if (!tilesetBlocking) {
-            console.error('Failed to load blocking tileset');
-            return;
-        }
+        if (!tilesetBlocking) { console.error('Failed to load blocking tileset'); return; }
         this.blockingData = getBlockingBoxesData();
         const blockingLayer = this.tilemap.createBlankLayer('blocking', tilesetBlocking);
-        if (!blockingLayer) {
-            console.error('Failed to create blocking tile layer');
-            return;
-        }
+        if (!blockingLayer) { console.error('Failed to create blocking tile layer'); return; }
         blockingLayer.setDepth(BLOCKING_TILE_DEPTH);
         blockingLayer.setVisible(false);
         this.blockingLayer = blockingLayer;
@@ -158,14 +137,9 @@ export class Earth {
             this.tileSize,
             this.tileSize
         );
-        if (!tilesetFloating) {
-            throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_FLOATING}`);
-        }
+        if (!tilesetFloating) { throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_FLOATING}`); }
         const floatingLayer = this.tilemap.createBlankLayer('floating', tilesetFloating);
-        if (!floatingLayer) {
-            console.error('Failed to create floating tile layer');
-            return;
-        }
+        if (!floatingLayer) { console.error('Failed to create floating tile layer'); return; }
         floatingLayer.setDepth(FLOATING_DEPTH);
         this.floatingLayer = floatingLayer;
 
@@ -333,7 +307,7 @@ export class Earth {
         if (blocking < 0) return;
         existingTile.blocking = blocking;
         existingTile.floating = floating;
-        this.blockingLayer.putTileAt(blocking, position.x, position.y);        
+        this.blockingLayer.putTileAt(blocking, position.x, position.y);
         this.createBlockingGeometryBody(position.x, position.y, blocking);
         const worldX = position.x * 64;
         const worldY = position.y * 64;
@@ -530,7 +504,6 @@ export class Earth {
     public AddTile(tile: Tile): void {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
-            if (ENABLE_LOGGING) { console.log(`Placing biome tile with index ${tile.biome} at (${tile.tileX}, ${tile.tileY})`); }
             if (tile.biome === BIOME.VOID) {
                 const voidTile = this.voidLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
                 voidTile?.setCollision(true, true, true, true);
@@ -577,21 +550,18 @@ export class Earth {
             if (tile.border > 39) {
                 console.warn(`Border tile index ${tile.border} is out of expected range!`);
             }
-            if (ENABLE_LOGGING) { console.log(`Placing border tile with index ${tile.border} at (${tile.tileX}, ${tile.tileY})`); }
             this.borderLayer.putTileAt(tile.border, tile.tileX, tile.tileY);
         }
         if (tile.decoration >= 0) {
             if (tile.decoration > 55) {
                 console.warn(`Decoration tile index ${tile.decoration} is out of expected range!`);
             }
-            if (ENABLE_LOGGING) { console.log(`Placing decoration tile with index ${tile.decoration} at (${tile.tileX}, ${tile.tileY})`); }
             this.decorationLayer.putTileAt(tile.decoration, tile.tileX, tile.tileY);
         }
         if (tile.blocking >= 0) {
             if (tile.blocking > 91) {
                 console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
             }
-            if (ENABLE_LOGGING) { console.log(`Placing blocking tile with index ${tile.blocking} at (${tile.tileX}, ${tile.tileY})`); }
             this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
             this.createBlockingGeometryBody(tile.tileX, tile.tileY, tile.blocking);
             const worldX = tile.tileX * 64;
@@ -603,7 +573,6 @@ export class Earth {
             if (tile.floating > 15) {
                 console.warn(`Floating tile index ${tile.floating} is out of expected range!`);
             }
-            if (ENABLE_LOGGING) { console.log(`Placing floating tile with index ${tile.floating} at (${tile.tileX}, ${tile.tileY})`); }
             this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY - 1);
         }
         if (0 < tile.chest) {
@@ -797,7 +766,7 @@ export class Earth {
         this.createBlockingGeometryBody(first.x, first.y, 42);// The big tree trunk blocking. (Currently hardcoded at nor ready for Save Game). ToDo: Fix blocking bigTree.
 
         const placeTileAt = (tile: Tile): void => { this.AddTile(tile); };
-        
+
         const spawnBigTree = (): void => {
             this.scene.sound.play(ASSET_KEYS.WHOOSH);
             this.scene.add

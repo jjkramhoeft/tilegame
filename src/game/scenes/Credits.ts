@@ -55,18 +55,18 @@ export class Credits extends Scene
         const centerX = this.cameras.main.centerX;
         const registryVolume = this.registry.get('musicVolume');
         const musicVolume = typeof registryVolume === 'number' ? registryVolume : 0.1;
-        this.#uiSelectSound = this.sound.add('Blip_Select7');
+        this.#uiSelectSound = this.sound.add(ASSET_KEYS.UI_SELECT);
 
         this.registry.set('musicVolume', musicVolume);
 
-        this.creditsMusic = this.sound.add('creditsMusic', {
+        this.creditsMusic = this.sound.add(ASSET_KEYS.CREDITS_MUSIC, {
             loop: true,
             volume: musicVolume
         });
         this.creditsMusic.play();
 
-        this.add.image(centerX, centerY, 'credit-bg');
-        this.add.image(centerX+180, 120, 'logo').setDepth(100).setScale(2);;
+        this.add.image(centerX, centerY, ASSET_KEYS.CREDITS_BACKGROUND);
+        this.add.image(centerX+180, 120, ASSET_KEYS.LOGO).setDepth(100).setScale(2);;
 
         this.add.text(200, 150, getText('credits.title'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 58, color: COLORS.title,

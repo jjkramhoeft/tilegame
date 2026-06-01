@@ -1,5 +1,4 @@
 import * as Phaser from 'phaser';
-import { logChestDebug } from '../../common/chest-debug';
 import { CHEST_STATE, INTERACTIVE_OBJECT_TYPE } from '../../common/common';
 import { CHEST_OPEN_CLOSE_DELAY_MS } from '../../common/config';
 import type { Gear, Potion, Weapon } from '../../common/common';
@@ -37,7 +36,6 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
     this.#state = chestState;
     this.#id = config.id;
     this.#contents = config.contents;
-    logChestDebug('constructed', this.debugInfo);
 
     // add components
     new InteractiveObjectComponent(
@@ -45,11 +43,9 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
       INTERACTIVE_OBJECT_TYPE.OPEN,
       () => {
         const canOpen = this.canOpen;
-        logChestDebug('can interact check', { ...this.debugInfo, canOpen });
         return canOpen;
       },
       () => {
-        logChestDebug('interactive callback invoked', this.debugInfo);
         this.open();
       },
     );
@@ -88,46 +84,36 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
   }
 
   public open(): boolean {
-    logChestDebug('open requested', this.debugInfo);
     if (!this.canOpen) {
-      logChestDebug('open blocked', this.debugInfo);
       return false;
     }
 
     this.#state = CHEST_STATE.OPEN;
     this.setFrame((this.#id-1)*2+1);
-    logChestDebug('opened', this.debugInfo);
     return true;
 
   }
 
   public close(): void {
-    logChestDebug('close requested', this.debugInfo);
     if (this.#state !== CHEST_STATE.OPEN) {
-      logChestDebug('close ignored because chest is not open', this.debugInfo);
       return;
     }
 
     this.#state = CHEST_STATE.REVEALED;
     this.setFrame((this.#id-1)*2);
     this.#nextOpenAt = this.scene.time.now + CHEST_OPEN_CLOSE_DELAY_MS;
-    logChestDebug('closed and cooldown started', this.debugInfo);
   }
 
   public disableObject(): void {
-    logChestDebug('disable requested', this.debugInfo);
     // disable body on game object so we stop triggering the collision
     (this.body as Phaser.Physics.Arcade.Body).enable = false;
     // make not visible until player re-enters room
     this.active = false;
     this.visible = false;
-    logChestDebug('disabled', this.debugInfo);
   }
 
   public enableObject(): void {
-    logChestDebug('enable requested', this.debugInfo);
     if (this.#state === CHEST_STATE.HIDDEN) {
-      logChestDebug('enable ignored because chest is hidden', this.debugInfo);
       return;
     }
 
@@ -136,17 +122,13 @@ export class ChestJJK extends Phaser.Physics.Arcade.Image implements CustomGameO
     // make visible to the player
     this.active = true;
     this.visible = true;
-    logChestDebug('enabled', this.debugInfo);
   }
 
   public reveal(): void {
-    logChestDebug('reveal requested', this.debugInfo);
     if (this.#state !== CHEST_STATE.HIDDEN) {
-      logChestDebug('reveal ignored because chest is not hidden', this.debugInfo);
       return;
     }
     this.#state = CHEST_STATE.REVEALED;
     this.enableObject();
-    logChestDebug('revealed', this.debugInfo);
   }
 }

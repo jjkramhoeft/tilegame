@@ -109,9 +109,9 @@ export class Intro extends Scene {
         this.menuItems = [];
         this.selectedMenuIndex = 0;
 
-        this.#uiDownSound = this.sound.add('menu_006');
-        this.#uiUpSound = this.sound.add('menu_024');
-        this.#uiSelectSound = this.sound.add('Blip_Select7');
+        this.#uiDownSound = this.sound.add(ASSET_KEYS.UI_DOWN);
+        this.#uiUpSound = this.sound.add(ASSET_KEYS.UI_UP);
+        this.#uiSelectSound = this.sound.add(ASSET_KEYS.UI_SELECT);
 
         let musicVolume = this.registry.get('musicVolume');
         if (typeof musicVolume !== 'number') {
@@ -126,7 +126,7 @@ export class Intro extends Scene {
         this.add.image(512, 150, ASSET_KEYS.LOGO).setDepth(100).setScale(2.5);
         this.startBackgroundAnimalSpawning();
 
-        this.introMusic = this.sound.add('introMusic', {
+        this.introMusic = this.sound.add(ASSET_KEYS.INTRO_MUSIC, {
             loop: true,
             volume: musicVolume
         });

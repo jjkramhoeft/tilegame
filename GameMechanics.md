@@ -337,17 +337,16 @@ The game has a page/scene with points to talk about to encourage thinking about 
 
 ### UI
 
-- Up [menu_006.wav]
-- Down [menu_024.wav]
-- Select [Blip_Select7.wav]
+- Up [ui_up.wav]
+- Down [ui_down.wav]
+- Select [ui_select.wav]
 - Narrator (game state dialog shown) [sucess1.mp3]
 - open chest [chest.mp3]
 - close chest [chest2.mp3]
 - game over by falling [game-over.mp3]*
 - game over killed [game-over2.mp3]*
 - game won [win.mp3]*
-- [menu_018.wav]*
-- [menu_023.wav]*
+- [menu_xxx.wav]*
 
 ### Game
 
