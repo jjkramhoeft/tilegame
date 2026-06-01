@@ -25,6 +25,7 @@
 - repeat fruit chest sound put healt on max
 - Bounce-move-state -> follow-move-state (intaeract w. animal)
 - Implement boss; Lizard character with snake minions
+- New chest to start/stop music
 
 ## Implementations that require new asserts
 

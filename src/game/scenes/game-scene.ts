@@ -27,6 +27,7 @@ import { GAME_STATES } from '../components/state-machine/states/game/game-state-
 import { ChestSpawnService } from '../spawning/chest-spawn-service';
 import { AnimalSpawnService } from '../spawning/animal-spawn-service';
 import { ENABLE_LOGGING } from '../common/config';
+import { ASSET_KEYS } from '../common/assets';
 
 export class GameScene extends Phaser.Scene {
 
@@ -194,7 +195,9 @@ export class GameScene extends Phaser.Scene {
         }), true);
 
         // critters (passive animals) collide with the player and bounce away without damaging the player.
-        this.#trackCollider(this.physics.add.collider(this.#player, this.#critterGroup!), true);
+        this.#trackCollider(this.physics.add.collider(this.#player, this.#critterGroup!, () => {
+            this.#playPlayerAnimalBumpSound();
+        }), true);
 
         // register overlap between player weapon and enemies
         this.#trackCollider(this.physics.add.overlap(this.#player.weaponBody, this.#enemyGroup!, (_weaponBody, enemy) => {
@@ -238,6 +241,13 @@ export class GameScene extends Phaser.Scene {
                 : weapon === WEAPON.SWORD ? 'attack-sword'
                     : 'attack-punch';
         const sound = this.sound.get(soundKey) ?? this.sound.add(soundKey);
+        if (!sound.isPlaying) {
+            sound.play();
+        }
+    }
+
+    #playPlayerAnimalBumpSound(): void {
+        const sound = this.sound.get(ASSET_KEYS.BUMP) ?? this.sound.add(ASSET_KEYS.BUMP);
         if (!sound.isPlaying) {
             sound.play();
         }
