@@ -5,12 +5,17 @@ import { BASE_DEPTH, CASTING_UNLOCKS, BIOME, BLOCKING_TILE_DEPTH, BORDER_DEPTH, 
 import { ASSET_KEYS } from '../common/assets';
 import { DecideBorder, PickDecoration, PickBlocking, PickFloating } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
-import { ENABLE_LOGGING } from '../common/config';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../common/event-bus';
 import { GameDataManager } from '../common/game-data-manager';
 import { CastingUnlocks } from '../common/types';
 
 export type ChestPlacementHandler = (position: Position, chestNumber: number) => void;
+
+const CREATURE_BLOCKING_BIOMES: readonly BIOME[] = [BIOME.VOID, BIOME.WATER, BIOME.LAVA, BIOME.MOUNTAIN];
+
+function isCreatureBlockingBiome(biome: BIOME): boolean {
+    return CREATURE_BLOCKING_BIOMES.includes(biome);
+}
 
 export class Earth {
 
@@ -19,6 +24,7 @@ export class Earth {
     protected tilemap!: Phaser.Tilemaps.Tilemap;
     protected voidLayer!: Phaser.Tilemaps.TilemapLayer;
     protected biomeLayer!: Phaser.Tilemaps.TilemapLayer;
+    protected creatureBlockingLayer!: Phaser.Tilemaps.TilemapLayer;
     protected borderLayer!: Phaser.Tilemaps.TilemapLayer;
     protected decorationLayer!: Phaser.Tilemaps.TilemapLayer;
     protected blockingLayer!: Phaser.Tilemaps.TilemapLayer;
@@ -83,6 +89,12 @@ export class Earth {
         if (!biomeLayer) { console.error('Failed to create biome tile layer'); return; }
         biomeLayer.setDepth(BASE_DEPTH);
         this.biomeLayer = biomeLayer;
+
+        const creatureBlockingLayer = this.tilemap.createBlankLayer('creature-blocking', tilesetBase);
+        if (!creatureBlockingLayer) { console.error('Failed to create creature blocking tile layer'); return; }
+        creatureBlockingLayer.setVisible(false);
+        creatureBlockingLayer.setCollision([...CREATURE_BLOCKING_BIOMES]);
+        this.creatureBlockingLayer = creatureBlockingLayer;
 
         // Set up border layer.
         const tilesetBorder = this.tilemap.addTilesetImage(
@@ -513,6 +525,7 @@ export class Earth {
                 this.voidLayer.removeTileAt(tile.tileX, tile.tileY, true, true);
                 this.biomeLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
             }
+            this.updateCreatureBlockingTile(tile);
             if (tile.biome === BIOME.WATER) {
                 this.scene.add
                     .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, ASSET_KEYS.TILESET_ANIMATED)
@@ -812,8 +825,22 @@ export class Earth {
         return this.voidLayer;
     }
 
+    public getCreatureBlockingLayer(): Phaser.Tilemaps.TilemapLayer {
+        return this.creatureBlockingLayer;
+    }
+
     private key(x: number, y: number): string {
         return `${x},${y}`;
+    }
+
+    private updateCreatureBlockingTile(tile: Tile): void {
+        if (isCreatureBlockingBiome(tile.biome)) {
+            const blockingTile = this.creatureBlockingLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
+            blockingTile?.setCollision(true, true, true, true);
+            return;
+        }
+
+        this.creatureBlockingLayer.removeTileAt(tile.tileX, tile.tileY, true, true);
     }
 
     private createBlockingGeometryBody(tileX: number, tileY: number, tileIndex: number): void {

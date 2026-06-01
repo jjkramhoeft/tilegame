@@ -5,7 +5,6 @@
 ### Most importend
 
 - add control section to settings
-- fix animals walking on water (lava? mountains?)
 
 - Finalize aminal placement (pick a better placement tile and pick animal fitting the unlocked biome)
   - Need four naborhg of same biome, target one not blocked.
@@ -33,7 +32,6 @@
 
 - Find Mountain sprite sheet
 - Add water ponds to swamp as decorations
-- Bump sound when pushed by animals
 
 - record voice-over for narrator. Nathan for english, Ulla, Taina or me for danish
 - Pair of animals

@@ -225,13 +225,13 @@ export class GameScene extends Phaser.Scene {
         this.#trackCollider(this.physics.add.collider(this.#enemyGroup!, blockingGeometryGroup));
         this.#trackCollider(this.physics.add.collider(this.#critterGroup!, blockingGeometryGroup));
 
-        // register overlap enemies and void tiles from map, so enemies can avoid falling into void.
-        this.#trackCollider(this.physics.add.collider(this.#enemyGroup!, this.#earth.getVoidLayer(), (_enemy, _voidTile) => {
-            //const enemyObj = enemy as CharacterGameObject; enemyObj.hit(DIRECTION.DOWN, 999); currently enemies do not take damage from bumping into the void.
+        // enemies and critters avoid creature-blocking biomes: void, water, lava and mountain.
+        const creatureBlockingLayer = this.#earth.getCreatureBlockingLayer();
+        this.#trackCollider(this.physics.add.collider(this.#enemyGroup!, creatureBlockingLayer, (_enemy, _blockedTile) => {
+            //const enemyObj = enemy as CharacterGameObject; enemyObj.hit(DIRECTION.DOWN, 999); currently enemies do not take damage from bumping into blocked biomes.
         }));
 
-        // critters also avoid falling into void tiles.
-        this.#trackCollider(this.physics.add.collider(this.#critterGroup!, this.#earth.getVoidLayer()));
+        this.#trackCollider(this.physics.add.collider(this.#critterGroup!, creatureBlockingLayer));
     }
 
     #playWeaponHitSound(): void {
