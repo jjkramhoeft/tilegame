@@ -31,8 +31,8 @@ The tile map consist of six layers
 - Animated: Idle, Walking, Attack/Cast, Swim, Die/Fall
 - Two starter options: Male or female (Adam or Eve)
 - Four Weapon progressions: None, Dagger, Staff, Sword
-- Four Outfit progressions: None, Bare, Basic, Armor
-- Cast blob shadow (in cluede in sprite)
+- Four Outfit progressions: Nude, Bare, Basic, Armor
+- Cast blob shadow (incluede in sprite)
 - Blocked by blocking layer and Mountain layer
 - Falls from void or empty tiles
 - Swims in water layer
@@ -65,18 +65,18 @@ The animations for the Lamb is set up in PreloadScene and the key for the animat
 - Blocked by blocking layer, void layer, water layer and mountain layer
 - Needs path finding and some simple chase mechanics
 
-## Biomes
+## Biomes & empty
 
-- Void / ´none´
 - Rock. Start biome
 - Desert
 - grass
 - forest
-- water
 - swamp
 - crystal
-- lava
-- mountain
+- (Void / ´none´)
+- (water)
+- (lava)
+- (mountain)
 
 ### Depth of layers in map in game-scene
 
@@ -119,26 +119,18 @@ Initially, the map should only consist of a background image and text with a pro
 
 The music should continue playing when the map is shown.
 
-The map should only be accessible from the FirstTreeState game state onwards.
+The map are introduced in the FirstTreeState game state but accessible from the RegularState
 
 ### Chest Dialog
 
+Eksample:
 - Heading: A chest with a dagger and some basic cloth
 - Options
   1) Take weapon from chest (and leave current weapon in chest)
   2) Take gear from chest (and leave current gear in chest)
-  3) Do nothing
+  3) Do nothing / leave
 
-- Heading: A chest with a dagger
-- Options
-  1) Take weapon from chest
-  2) Do nothing
-
-- Heading: An empty chest
-- Options
-  1) Leave weapon in chest
-  2) Leave gear in chest
-  3) Do nothing
+Generaly weapons get the first option and gear the second option, the last option is to leave
 
 ## Game Progression
 
@@ -167,6 +159,7 @@ The game play progression is implemented using StateMachine, a BaseGameState and
 - regularState
 - firstTreeState
 - firstAnimalState
+- helpWithTileCastingState
 - eveState
 - bossFightState
 - gameOverState
@@ -175,38 +168,21 @@ The game play progression is implemented using StateMachine, a BaseGameState and
 #### Start State
 
 A narrator game state, Player is passive.
-The events in this gameState is as following:
-
-1) empty screen (no player and no tiles) only 25 dark clouds moving around for 2 seconds
-2) text: "...In the beginning the earth was formless and empty..."
-3) ½ sec pause, then the clouds move away from the center and
-4) Place 1st tile
-5) 1 sec pause
-6) Place player (movement disabled)
-7) 1 sec pause
-8) text: "...God create the earth and heavens and you, Move carefully..."
-9) enable player movement
-10) Transition to First Tile Assignment State
+Dark clouds moving around, the the first tile and the player is introduced
 
 #### First Tile State
 
 An active player game state, No narrator
 First very simple play state.
-player can move (and can fall and die), player can attack but cast is limited to an off sound and no effect.
-ToDo: implement limited cast. (where isLimmited = true)
+player can move (and can fall and die), player can attack and cast magic.
 After player movement and an attack/cast transition to Assignment State
 
 #### Assignment State
 
 A narrator game state, Player is passive.
-No player movement
-
-1) 1 sec pause
-2) Text: "...And you shall help in the creating, make the land, fill it with green forest and then animals"
-3) 1 sec pause
-4) Place target void (use placeTargetVoidTiles in earth)
-5) 1 sec pause
-6) Transition to Baby Steps State
+No player movement. The player get the first goal and are asigned to make some tiles.
+"...And you shall help in the creating, make the land, fill it with green forest and then animals"
+Transition to Baby Steps State
 
 #### Baby Steps State
 
@@ -219,13 +195,11 @@ when target are filled and 2 blocking rocks are placed in tiles, and player is b
 
 A narrator game state, Player is passive.
 No player movement
-
-1) 1 sec pause
-2) Text: "...Not just barren rock and wasteland, no green fields, flowing rivers and trees..."
-3) Change tiles one by one to a more fertile and green, add water like a river, add bushes and small trees, and then add the big tree. (use placeGardenTiles() in earth)
-4) Text: "...Your assignment is create a lush forest with many animals, if you pick an evil path you will have to face the demon"  
-5) Add box (a chest) of fruit next to the bigTree, where the player can interact to eat an apple and get a boost to max health and full health (use chest number 7)
-6) Transition to regularPlayState
+The narrator lay out the goal for the game and add tiles resembeling a garden around the players starting position.
+Change tiles one by one to a more fertile and green, add water like a river, add bushes and small trees, and then add the big tree. (use placeGardenTiles() in earth)
+"...Your assignment is create a lush forest with many animals, if you pick an evil path you will have to face the demon"  
+A chest with fruit are added next to the bigTree, where the player can interact to eat an apple and get a boost to max health and full health (use chest number 7)
+Transition to regularPlayState
 
 #### Regular Play State
 
@@ -238,11 +212,9 @@ Can transition to many game states (firstTree, firstAnimal, eve, bossFight, game
 
 A narrator game state, Player is passive.
 No player movement.
-Triggered by first blocking forest tree, desert palm/cacti, swamp tree, from regular state. This transition will be implemented later.
-
-1) 1 sec pause
-2) Text "You added you first tree, fine here can animal thrive..."
-3) Transition to regular game state
+Triggered by first blocking forest tree, desert palm/cacti, swamp tree, from regular state.
+The narrator introduces the map
+Transition to regular game state
 
 #### First Animal State
 

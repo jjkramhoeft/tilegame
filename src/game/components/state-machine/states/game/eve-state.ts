@@ -11,6 +11,7 @@ import { ENABLE_LOGGING } from '../../../../common/config';
  *    the player's gear/weapon but unchangeable.
  *  - Following + auto-attack behaviour for the companion.
  *  - Companion adds to player's max health on introduction.
+ *  - Can interact with Companion for a simple dialog
  *  - Animal multiplication mechanic.
  *  - A trigger from RegularState (TBD) to enter this state.
  *
