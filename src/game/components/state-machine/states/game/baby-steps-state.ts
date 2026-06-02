@@ -16,7 +16,7 @@ import { CUSTOM_EVENTS, EVENT_BUS, TilePlacedPayload } from '../../../../common/
  */
 export class BabyStepsState extends BaseGameState {
   #starterTilePosition?: Position;
-  #filledTargetTilesNeeded = 20;
+  #filledTargetTilesNeeded = 10;
   #tileHandler?: (payload: TilePlacedPayload) => void;
   static #hudShown = false;
 

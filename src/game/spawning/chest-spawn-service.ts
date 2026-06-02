@@ -8,18 +8,20 @@ type ChestContents = {
   gear: Gear;
   weapon: Weapon;
   potion: Potion;
+  music: boolean;
 };
 
 type ChestCastingUnlock = Extract<keyof typeof CASTING_UNLOCKS, `CHEST${number}`>;
 
 const CHEST_CONTENTS: Record<number, ChestContents> = {
-  1: { gear: GEAR.BARE, weapon: WEAPON.NONE, potion: POTION.NONE },
-  2: { gear: GEAR.NONE, weapon: WEAPON.DAGGER, potion: POTION.NONE },
-  3: { gear: GEAR.BASIC, weapon: WEAPON.NONE, potion: POTION.NONE },
-  4: { gear: GEAR.NONE, weapon: WEAPON.STAFF, potion: POTION.NONE },
-  5: { gear: GEAR.NONE, weapon: WEAPON.SWORD, potion: POTION.NONE },
-  6: { gear: GEAR.ARMOR, weapon: WEAPON.NONE, potion: POTION.NONE },
-  7: { gear: GEAR.NONE, weapon: WEAPON.NONE, potion: POTION.FRUIT },
+  1: { gear: GEAR.BARE, weapon: WEAPON.NONE, potion: POTION.NONE, music: false },
+  2: { gear: GEAR.NONE, weapon: WEAPON.DAGGER, potion: POTION.NONE, music: false },
+  3: { gear: GEAR.BASIC, weapon: WEAPON.NONE, potion: POTION.NONE, music: false },
+  4: { gear: GEAR.NONE, weapon: WEAPON.STAFF, potion: POTION.NONE, music: false },
+  5: { gear: GEAR.NONE, weapon: WEAPON.SWORD, potion: POTION.NONE, music: false },
+  6: { gear: GEAR.ARMOR, weapon: WEAPON.NONE, potion: POTION.NONE, music: false },
+  7: { gear: GEAR.NONE, weapon: WEAPON.NONE, potion: POTION.FRUIT, music: false },
+  8: { gear: GEAR.NONE, weapon: WEAPON.NONE, potion: POTION.NONE, music: true },
 };
 
 function getChestCastingUnlock(chestNumber: number): CastingUnlocks | undefined {
@@ -49,6 +51,7 @@ export class ChestSpawnService {
       gear: GEAR.NONE,
       weapon: WEAPON.NONE,
       potion: POTION.NONE,
+      music: false,
     };
     const worldPosition = {
       x: tilePosition.x * this.#tileSize,
