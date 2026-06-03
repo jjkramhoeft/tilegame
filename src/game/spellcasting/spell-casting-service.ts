@@ -10,6 +10,7 @@ import { ASSET_KEYS } from '../common/assets';
 import { findTargetTiles } from '../ground/creator';
 import { GameDataManager } from '../common/game-data-manager';
 import { GAME_STATES } from '../components/state-machine/states/game/game-state-keys';
+import { playSpellHopVfx } from './spell-hop-vfx';
 
 type CastVector = {
   x: number;
@@ -132,9 +133,10 @@ export class SpellCastingService {
     for (let targetIndex = 0; targetIndex < spellTiles.length; targetIndex += 1) {
       const from = targetIndex === 0 ? casterTile : spellTiles[targetIndex - 1];
       const to = spellTiles[targetIndex];
+      const isFinalImpact = targetIndex === spellTiles.length - 1;
       const event = this.scene.time.delayedCall(targetIndex * SPELL_STAGGER_MS, () => {
         try {
-          this.executeSpellEffect(spellType, biome, from, to, targetIndex === 0, () => this.#releaseTarget(to));
+          this.executeSpellEffect(spellType, biome, from, to, targetIndex === 0, isFinalImpact, () => this.#releaseTarget(to));
         } catch (error) {
           this.#releaseTarget(to);
           throw error;
@@ -331,10 +333,12 @@ export class SpellCastingService {
   }
 
   /** execute one part of the staggeredspell effect (tile changes, mob spawns, VFX, sounds).  */
-  executeSpellEffect(spellType: SpellType, biome: BIOME, startTile: Position, endTile: Position, isOrigin: boolean, onImpactComplete?: () => void): void {
+  executeSpellEffect(spellType: SpellType, biome: BIOME, startTile: Position, endTile: Position, isOrigin: boolean, isFinalImpact = true, onImpactComplete?: () => void): void {
     const tile_size = 64;
     const half_tile = 32;
     const tintColor = BIOME_COLOR_MAP[biome] ?? BIOME_COLOR_MAP[BIOME.VOID];
+
+    playSpellHopVfx(this.scene, startTile, endTile, tintColor, isOrigin, isFinalImpact);
 
     // play sound as a one-shot so concurrent hops/casts overlap instead of restarting
     // a shared sound instance. Re-roll once if we'd repeat the previous marker.
