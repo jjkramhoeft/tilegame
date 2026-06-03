@@ -404,6 +404,26 @@ const TEXTS = {
         en: 'sword',
         da: 'sabel',
     },
+    'keyboard.attack': {
+        en: 'Attack',
+        da: 'Angrib',
+    },
+    'keyboard.interact': {
+        en: 'Interact',
+        da: 'Interager',
+    },
+    'keyboard.cast': {
+        en: 'Magic',
+        da: 'Magi',
+    },
+    'keyboard.move': {
+        en: 'Move',
+        da: 'Bevægelse',
+    },
+    'keyboard.map': {
+        en: 'Sky',
+        da: 'Himlen',
+    },
 } as const;
 
 export type TextKey = keyof typeof TEXTS;

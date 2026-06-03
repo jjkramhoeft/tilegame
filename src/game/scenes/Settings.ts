@@ -108,6 +108,8 @@ export class Settings extends Scene {
         this.#uiUpSound = this.sound.add(ASSET_KEYS.MENU_024);
         this.#uiSelectSound = this.sound.add(ASSET_KEYS.BLIP_SELECT_7);
 
+        this.addKeyboard('default',-350,150);
+
         const savedDifficulty = this.registry.get('difficulty');
         const hasSavedDifficulty = isDifficulty(savedDifficulty);
         if (hasSavedDifficulty) {
@@ -236,6 +238,36 @@ export class Settings extends Scene {
             this.#uiSelectSound.play();
             this.scene.start(SCENE_KEYS.INTRO);
         });
+    }
+
+    addKeyboard(layout: string, xOffset: number, yOffset: number): void {
+        const x = this.cameras.main.centerX + xOffset;
+        const y = this.cameras.main.centerY + yOffset;
+        const dy = 25;
+        const dx = 80;
+        if(layout === 'default' && this.input.keyboard) {
+
+            //Attack z  
+            this.add.image(x, y, ASSET_KEYS.KEYBOARDKEYS, 8);
+            this.add.text(x, y+dy, getText('keyboard.attack'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center'}).setOrigin(0.5).setDepth(100);
+            //Interact x
+            this.add.image(x+dx, y, ASSET_KEYS.KEYBOARDKEYS, 9);
+            this.add.text(x+dx, y+dy, getText('keyboard.interact'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center'}).setOrigin(0.5).setDepth(100);
+            //Cast c
+            this.add.image(x+dx*2, y, ASSET_KEYS.KEYBOARDKEYS, 10);
+            this.add.text(x+dx*2, y+dy, getText('keyboard.cast'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center'}).setOrigin(0.5).setDepth(100);
+            //Map m
+            this.add.image(x+dx*3.2, y, ASSET_KEYS.KEYBOARDKEYS, 11);
+            this.add.text(x+dx*3.2, y+dy, getText('keyboard.map'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center'}).setOrigin(0.5).setDepth(100);
+            //Move 
+            this.add.image(x+dx*5, y, ASSET_KEYS.KEYBOARDKEYS, 13);
+            this.add.image(x+dx*4.5, y+dy, ASSET_KEYS.KEYBOARDKEYS, 14);
+            this.add.image(x+dx*5, y+dy, ASSET_KEYS.KEYBOARDKEYS, 15);
+            this.add.image(x+dx*5.5, y+dy, ASSET_KEYS.KEYBOARDKEYS, 16);
+            this.add.text(x+dx*5, y+dy*2.2, getText('keyboard.move'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center'}).setOrigin(0.5).setDepth(100);
+
+
+        }
     }
 
     update(): void {

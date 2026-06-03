@@ -86,6 +86,7 @@ const imageAssets: readonly ImageAsset[] = [
 ];
 
 const spritesheetAssets: readonly SpritesheetAsset[] = [
+  { key: ASSET_KEYS.KEYBOARDKEYS, path: 'assets/images/hud/keys.png', frameConfig: { frameWidth: 32, frameHeight: 32 } },
   { key: ASSET_KEYS.ENEMY_DEATH, path: 'assets/images/enemies/enemy_death.png', frameConfig: { frameWidth: 16, frameHeight: 16 } },
   { key: ASSET_KEYS.PLANT1_ATTACK, path: 'assets/Plant1_Attack_with_shadow.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
   { key: ASSET_KEYS.PLANT1_IDLE, path: 'assets/Plant1_Idle_with_shadow.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
