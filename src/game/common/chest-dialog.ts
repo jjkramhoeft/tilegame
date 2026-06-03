@@ -1,5 +1,4 @@
 import { GEAR, POTION, WEAPON } from './common';
-import { logChestDebug } from './chest-debug';
 import type { Gear, Potion, Weapon } from './common';
 import { GameDataManager } from './game-data-manager';
 import { formatChestGearOption, formatChestHeading, formatChestWeaponOption, formatChestPotionOption, getText } from './texts';
@@ -23,14 +22,6 @@ export interface ChestDialogInfo {
 }
 
 export function writeChestDialogInfo(chest: ChestJJK): ChestDialogInfo {
-  logChestDebug('writeChestDialogInfo started', {
-    chest: chest.debugInfo,
-    player: {
-      gear: GameDataManager.instance.data.gear,
-      weapon: GameDataManager.instance.data.weapon,
-      potion: GameDataManager.instance.data.potion,
-    },
-  });
   let result: ChestDialogInfo = {
     option1GearToPlayer: GEAR.NONE,
     option1WeaponToPlayer: WEAPON.NONE,
@@ -103,16 +94,5 @@ export function writeChestDialogInfo(chest: ChestJJK): ChestDialogInfo {
       result.option1WeaponToLeave = GameDataManager.instance.data.weapon;
     }
   }
-  logChestDebug('writeChestDialogInfo completed', {
-    chestNumber: result.chestNumber,
-    dialog: result.dialog,
-    option1GearToPlayer: result.option1GearToPlayer,
-    option1WeaponToPlayer: result.option1WeaponToPlayer,
-    option1GearToLeave: result.option1GearToLeave,
-    option1WeaponToLeave: result.option1WeaponToLeave,
-    option2GearToPlayer: result.option2GearToPlayer,
-    option2GearToLeave: result.option2GearToLeave,
-    option1PotionToPlayer: result.option1PotionToPlayer,
-  });
   return result;
 }

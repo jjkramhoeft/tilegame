@@ -1,4 +1,4 @@
-import * as Phaser from 'phaser';
+//import * as Phaser from 'phaser';
 import { StateMachine } from '../components/state-machine/state-machine';
 import { GAME_STATES, GameStateName } from '../components/state-machine/states/game/game-state-keys';
 import { StartState } from '../components/state-machine/states/game/start-state';

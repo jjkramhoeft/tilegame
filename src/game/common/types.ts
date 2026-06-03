@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { CHARACTER_ANIMATIONS } from './assets';
-import { CASTING_UNLOCKS, CHEST_STATE, CREATURE_TYPES, DIRECTION, INTERACTIVE_OBJECT_TYPE, SPELL_TYPES, } from './common';
+import { BIOME, CASTING_UNLOCKS, CHEST_STATE, CREATURE_TYPES, DIRECTION, INTERACTIVE_OBJECT_TYPE, SPELL_TYPES, } from './common';
 
 export type CharacterAnimation = keyof typeof CHARACTER_ANIMATIONS;
 
@@ -30,3 +30,13 @@ export type SpellType = keyof typeof SPELL_TYPES;
 export type CastingUnlocks = keyof typeof CASTING_UNLOCKS;
 
 export type UnlockCriteriaMap =  Map<CastingUnlocks, {requiredAmount: number, nextUnlock: CastingUnlocks[]}>;
+
+export type TargetInfo = {
+  pos: Position;
+  neighborCount: number;
+  biome: BIOME;
+  decorated: boolean;
+  blocking: boolean;
+  chest: boolean;
+  neighborBiomeCount: number;
+};

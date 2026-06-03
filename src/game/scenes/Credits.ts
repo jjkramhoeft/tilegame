@@ -5,6 +5,7 @@ import { getText } from '../common/texts';
 import { SCENE_KEYS } from './scene-keys';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { ScrollableTextPanel } from '../common/scrollable-text-panel';
+import { AmbientParticles, createAmbientParticles } from './ambient-particles';
 
 const COLORS = {
     title: '#5eb1da',
@@ -42,6 +43,7 @@ export class Credits extends Scene
     creditsMusic?: Phaser.Sound.BaseSound;
     private creditsScrollPanel?: ScrollableTextPanel;
     private controls?: KeyboardComponent;
+    private ambientParticles?: AmbientParticles;
     #uiSelectSound!: Phaser.Sound.BaseSound;
 
     constructor ()
@@ -55,18 +57,19 @@ export class Credits extends Scene
         const centerX = this.cameras.main.centerX;
         const registryVolume = this.registry.get('musicVolume');
         const musicVolume = typeof registryVolume === 'number' ? registryVolume : 0.1;
-        this.#uiSelectSound = this.sound.add('Blip_Select7');
+        this.#uiSelectSound = this.sound.add(ASSET_KEYS.UI_SELECT);
 
         this.registry.set('musicVolume', musicVolume);
 
-        this.creditsMusic = this.sound.add('creditsMusic', {
+        this.creditsMusic = this.sound.add(ASSET_KEYS.CREDITS_MUSIC, {
             loop: true,
             volume: musicVolume
         });
         this.creditsMusic.play();
 
-        this.add.image(centerX, centerY, 'credit-bg');
-        this.add.image(centerX+180, 120, 'logo').setDepth(100).setScale(2);;
+        this.add.image(centerX, centerY, ASSET_KEYS.CREDITS_BACKGROUND);
+        this.ambientParticles = createAmbientParticles(this);
+        this.add.image(centerX+180, 120, ASSET_KEYS.LOGO).setDepth(100).setScale(2);;
 
         this.add.text(200, 150, getText('credits.title'), {
             fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 58, color: COLORS.title,
@@ -97,6 +100,8 @@ export class Credits extends Scene
         }
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.ambientParticles?.destroy();
+            this.ambientParticles = undefined;
             this.creditsScrollPanel?.destroy();
             this.creditsScrollPanel = undefined;
             this.creditsMusic?.stop();

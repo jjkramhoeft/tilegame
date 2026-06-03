@@ -12,6 +12,7 @@ import {
 } from '../common/assets';
 import { getText } from '../common/texts';
 import { KeyboardComponent } from '../components/input/keyboard-component';
+import { createIntroAmbientParticles, AmbientParticles } from './ambient-particles';
 
 const COLORS = {
     title: '#5eb1da',
@@ -96,6 +97,7 @@ export class Intro extends Scene {
     private controls?: KeyboardComponent;
     private animalSpawnEvent?: Phaser.Time.TimerEvent;
     private backgroundAnimals: Phaser.GameObjects.Sprite[] = [];
+    private ambientParticles?: AmbientParticles;
 
     #uiDownSound!: Phaser.Sound.BaseSound;
     #uiUpSound!: Phaser.Sound.BaseSound;
@@ -109,9 +111,9 @@ export class Intro extends Scene {
         this.menuItems = [];
         this.selectedMenuIndex = 0;
 
-        this.#uiDownSound = this.sound.add('menu_006');
-        this.#uiUpSound = this.sound.add('menu_024');
-        this.#uiSelectSound = this.sound.add('Blip_Select7');
+        this.#uiDownSound = this.sound.add(ASSET_KEYS.UI_DOWN);
+        this.#uiUpSound = this.sound.add(ASSET_KEYS.UI_UP);
+        this.#uiSelectSound = this.sound.add(ASSET_KEYS.UI_SELECT);
 
         let musicVolume = this.registry.get('musicVolume');
         if (typeof musicVolume !== 'number') {
@@ -123,10 +125,11 @@ export class Intro extends Scene {
         this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_2).setDepth(10);
         this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_1).setDepth(20);
         this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_0).setDepth(30);
+        this.ambientParticles = createIntroAmbientParticles(this);
         this.add.image(512, 150, ASSET_KEYS.LOGO).setDepth(100).setScale(2.5);
         this.startBackgroundAnimalSpawning();
 
-        this.introMusic = this.sound.add('introMusic', {
+        this.introMusic = this.sound.add(ASSET_KEYS.INTRO_MUSIC, {
             loop: true,
             volume: musicVolume
         });
@@ -183,6 +186,8 @@ export class Intro extends Scene {
         }
 
         this.events.once('shutdown', () => {
+            this.ambientParticles?.destroy();
+            this.ambientParticles = undefined;
             this.cleanupBackgroundAnimals();
             this.introMusic?.stop();
             this.introMusic?.destroy();

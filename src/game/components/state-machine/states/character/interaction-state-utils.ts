@@ -1,5 +1,4 @@
 import { PLAYER_CHEST_INTERACTION_RANGE } from '../../../../common/config';
-import { logChestDebug } from '../../../../common/chest-debug';
 import { findNearestOpenInteractiveObject } from '../../../../common/interaction-utility';
 import { GameObject2 } from '../../../../common/types';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
@@ -19,29 +18,14 @@ type SceneWithChestDialog = {
 export function tryOpenNearestChest(gameObject: CharacterGameObject, stateMachine: StateMachine): boolean {
   const uiScene = gameObject.scene.scene.get(SCENE_KEYS.UI_SCENE) as unknown as SceneWithChestDialog;
   if (uiScene.isChestDialogShown?.() === true) {
-    logChestDebug('tryOpenNearestChest blocked because chest dialog is already shown', {
-      actorPosition: { x: gameObject.x, y: gameObject.y },
-      state: stateMachine.currentStateName,
-    });
     return false;
   }
 
   const chests = (gameObject.scene as unknown as SceneWithChests).chestArray;
   if (chests === undefined || chests.length === 0) {
-    logChestDebug('tryOpenNearestChest found no chest array/candidates', {
-      actorPosition: { x: gameObject.x, y: gameObject.y },
-      state: stateMachine.currentStateName,
-      hasChestArray: chests !== undefined,
-    });
     return false;
   }
 
-  logChestDebug('tryOpenNearestChest scanning candidates', {
-    actorPosition: { x: gameObject.x, y: gameObject.y },
-    state: stateMachine.currentStateName,
-    range: PLAYER_CHEST_INTERACTION_RANGE,
-    candidates: chests.map((chest) => chest.debugInfo),
-  });
 
   const nearestChest = findNearestOpenInteractiveObject(
     gameObject,
@@ -49,17 +33,9 @@ export function tryOpenNearestChest(gameObject: CharacterGameObject, stateMachin
     PLAYER_CHEST_INTERACTION_RANGE,
   );
   if (nearestChest === undefined) {
-    logChestDebug('tryOpenNearestChest found no interactable chest', {
-      actorPosition: { x: gameObject.x, y: gameObject.y },
-      state: stateMachine.currentStateName,
-    });
     return false;
   }
 
-  logChestDebug('tryOpenNearestChest selected chest', {
-    state: stateMachine.currentStateName,
-    chest: (nearestChest as ChestJJK).debugInfo,
-  });
   stateMachine.setState(CHARACTER_STATES.OPEN_CHEST_STATE, nearestChest);
   return true;
 }

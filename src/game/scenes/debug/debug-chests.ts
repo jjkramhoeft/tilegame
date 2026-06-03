@@ -1,4 +1,3 @@
-import { logChestDebug } from '../../common/chest-debug';
 import { Earth } from '../../ground/earth';
 import { Tile } from '../../ground/tile';
 import { Position } from '../../common/types';
@@ -8,8 +7,7 @@ export function setupDebugChests(
     firstTilePosition: Position,
     placeChest: (position: Position, chestNumber: number) => void,
 ): void {
-    logChestDebug('setupDebugChests started', { firstTilePosition });
-
+    
     const debugTileOffsets: Position[] = [
         { x: 0, y: -1 },
         { x: -1, y: -2 }, { x: 0, y: -2 }, { x: 1, y: -2 },
@@ -42,11 +40,6 @@ export function setupDebugChests(
             if (offset.x === 2) { debugChestNumber = 6; }
         }
         if (debugChestNumber !== undefined) {
-            logChestDebug('setupDebugChests placing chest', {
-                debugChestNumber,
-                offset,
-                tilePosition: { x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y },
-            });
             earth.AddTile(new Tile({
                 tilenumber: { x: firstTilePosition.x + offset.x, y: firstTilePosition.y + offset.y },
                 biome: 1,
@@ -67,5 +60,4 @@ export function setupDebugChests(
         });
         earth.AddTile(tile);
     });
-    logChestDebug('setupDebugChests completed', { firstTilePosition });
 }

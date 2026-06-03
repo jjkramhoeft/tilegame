@@ -138,12 +138,10 @@ const fontAssets: readonly FontAsset[] = [
 const audioAssets: readonly AudioAsset[] = [
   { key: ASSET_KEYS.MAGIC_AUDIO_SPRITE, path: 'assets/sound/magic-audio-sprite.mp3' },
   { key: ASSET_KEYS.MAGIC_AUDIO_SPRITE_BAD, path: 'assets/sound/magic-audio-sprite-bad.mp3' },
-  { key: ASSET_KEYS.MENU_006, path: 'assets/sound/menu_006.wav' },
-  { key: ASSET_KEYS.MENU_018, path: 'assets/sound/menu_018.wav' },
-  { key: ASSET_KEYS.MENU_023, path: 'assets/sound/menu_023.wav' },
-  { key: ASSET_KEYS.MENU_024, path: 'assets/sound/menu_024.wav' },
+  { key: ASSET_KEYS.UI_UP, path: 'assets/sound/ui_up.wav' },
+  { key: ASSET_KEYS.UI_DOWN, path: 'assets/sound/ui_down.wav' },
+  { key: ASSET_KEYS.UI_SELECT, path: 'assets/sound/ui_select.wav' },
   { key: ASSET_KEYS.SUCCESS_1, path: 'assets/sound/sucess1.mp3' },
-  { key: ASSET_KEYS.BLIP_SELECT_7, path: 'assets/sound/Blip_Select7.wav' },
   { key: ASSET_KEYS.NO_HIT, path: 'assets/sound/no-hit.wav' },
   { key: ASSET_KEYS.BUMP, path: 'assets/sound/bump.wav' },
   { key: ASSET_KEYS.POWERUP, path: 'assets/sound/powerup.mp3' },
@@ -172,6 +170,7 @@ const audioAssets: readonly AudioAsset[] = [
   { key: ASSET_KEYS.MAGIC_DOWN, path: 'assets/sound/magic-down.mp3' },
   { key: ASSET_KEYS.MAGIC_DOWN_2, path: 'assets/sound/magic-down-2.mp3' },
   { key: ASSET_KEYS.WHOOSH, path: 'assets/sound/whoosh.mp3' },
+  { key: ASSET_KEYS.SPELL_FAILED, path: 'assets/sound/spell_fail_1.wav' },
 ];
 
 const playerSexes = Object.values(SEX);

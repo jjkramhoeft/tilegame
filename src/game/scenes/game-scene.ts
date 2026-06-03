@@ -2,7 +2,6 @@ import * as Phaser from 'phaser';
 import { Player } from '../game-objects/player/player';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Earth } from '../ground/earth';
-import { logChestDebug } from '../common/chest-debug';
 import { WEAPON, GEAR, DIRECTION, BIOME } from '../common/common';
 import {
     CUSTOM_EVENTS,
@@ -28,6 +27,7 @@ import { GAME_STATES } from '../components/state-machine/states/game/game-state-
 import { ChestSpawnService } from '../spawning/chest-spawn-service';
 import { AnimalSpawnService } from '../spawning/animal-spawn-service';
 import { ENABLE_LOGGING } from '../common/config';
+import { ASSET_KEYS } from '../common/assets';
 
 export class GameScene extends Phaser.Scene {
 
@@ -36,7 +36,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     addChest(position: Position, chestNumber: number) {
-        logChestDebug('GameScene addChest requested', { position, chestNumber, isDebugMode: GameDataManager.instance.data.isDebugMode });
         this.#chestSpawn.spawn(position, chestNumber);
     }
 
@@ -61,7 +60,6 @@ export class GameScene extends Phaser.Scene {
 
     create() {
         this.#resetSceneState();
-        if (ENABLE_LOGGING) { console.debug('[GameScene] create start', { isDebugMode: GameDataManager.instance.data.isDebugMode, uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE), uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE), }); }
         if (!this.input.keyboard) { console.warn('Phaser keyboard plugin is not setup properly.'); return; }
         this.#controls = new KeyboardComponent(this.input.keyboard);
         this.#chestJJKGroup = this.add.group([]);
@@ -75,8 +73,6 @@ export class GameScene extends Phaser.Scene {
         this.#animalSpawn = new AnimalSpawnService(this, this.#enemyGroup, this.#critterGroup, this.#earth.getTileSize());
         this.#registerCustomEvents();
         this.scene.launch(SCENE_KEYS.UI_SCENE);
-        if (ENABLE_LOGGING) { console.debug('[GameScene] UI scene launched', { uiSceneActive: this.scene.isActive(SCENE_KEYS.UI_SCENE), uiSceneSleeping: this.scene.isSleeping(SCENE_KEYS.UI_SCENE), }); }
-
         // Common setup that applies to both debug and progression paths.
         this.#registerColliders();
         this.#spellCasting = new SpellCastingService(this, this.#earth);
@@ -85,7 +81,6 @@ export class GameScene extends Phaser.Scene {
         this.#progression = new GameProgression(this);
 
         if (GameDataManager.instance.data.isDebugMode) {
-            if (ENABLE_LOGGING) { console.debug('[GameScene] debug mode detected, bypassing progression help'); }
             // Debug bypass: GameProgression is constructed (so PLAYER_DEFEATED
             // routing exists if ever needed) but `start()` is never called, so
             // no game state is active and no narrator/listener side-effects fire.
@@ -200,7 +195,9 @@ export class GameScene extends Phaser.Scene {
         }), true);
 
         // critters (passive animals) collide with the player and bounce away without damaging the player.
-        this.#trackCollider(this.physics.add.collider(this.#player, this.#critterGroup!), true);
+        this.#trackCollider(this.physics.add.collider(this.#player, this.#critterGroup!, () => {
+            this.#playPlayerAnimalBumpSound();
+        }), true);
 
         // register overlap between player weapon and enemies
         this.#trackCollider(this.physics.add.overlap(this.#player.weaponBody, this.#enemyGroup!, (_weaponBody, enemy) => {
@@ -228,13 +225,13 @@ export class GameScene extends Phaser.Scene {
         this.#trackCollider(this.physics.add.collider(this.#enemyGroup!, blockingGeometryGroup));
         this.#trackCollider(this.physics.add.collider(this.#critterGroup!, blockingGeometryGroup));
 
-        // register overlap enemies and void tiles from map, so enemies can avoid falling into void.
-        this.#trackCollider(this.physics.add.collider(this.#enemyGroup!, this.#earth.getVoidLayer(), (_enemy, _voidTile) => {
-            //const enemyObj = enemy as CharacterGameObject; enemyObj.hit(DIRECTION.DOWN, 999); currently enemies do not take damage from bumping into the void.
+        // enemies and critters avoid creature-blocking biomes: void, water, lava and mountain.
+        const creatureBlockingLayer = this.#earth.getCreatureBlockingLayer();
+        this.#trackCollider(this.physics.add.collider(this.#enemyGroup!, creatureBlockingLayer, (_enemy, _blockedTile) => {
+            //const enemyObj = enemy as CharacterGameObject; enemyObj.hit(DIRECTION.DOWN, 999); currently enemies do not take damage from bumping into blocked biomes.
         }));
 
-        // critters also avoid falling into void tiles.
-        this.#trackCollider(this.physics.add.collider(this.#critterGroup!, this.#earth.getVoidLayer()));
+        this.#trackCollider(this.physics.add.collider(this.#critterGroup!, creatureBlockingLayer));
     }
 
     #playWeaponHitSound(): void {
@@ -244,6 +241,13 @@ export class GameScene extends Phaser.Scene {
                 : weapon === WEAPON.SWORD ? 'attack-sword'
                     : 'attack-punch';
         const sound = this.sound.get(soundKey) ?? this.sound.add(soundKey);
+        if (!sound.isPlaying) {
+            sound.play();
+        }
+    }
+
+    #playPlayerAnimalBumpSound(): void {
+        const sound = this.sound.get(ASSET_KEYS.BUMP) ?? this.sound.add(ASSET_KEYS.BUMP);
         if (!sound.isPlaying) {
             sound.play();
         }
@@ -259,17 +263,14 @@ export class GameScene extends Phaser.Scene {
         ]);
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-            if (ENABLE_LOGGING) { console.debug('[GameScene] shutdown cleanup'); }
             this.#removeAllColliders();
             this.scene.stop(SCENE_KEYS.UI_SCENE);
         });
     }
 
     #startDebugGameplay(): void {
-        //console.debug('[GameScene] startDebugGameplay');
 
         const firstTilePosition = this.placeStartingTile();
-        //console.debug('[GameScene] starting tile placed', firstTilePosition);
 
         setupDebugChests(this.#earth, firstTilePosition, (position, chestNumber) => this.addChest(position, chestNumber));
         setupDebugBlocking(this, this.#earth, firstTilePosition);
@@ -285,11 +286,8 @@ export class GameScene extends Phaser.Scene {
         });
         this.#earth.AddTile(fruitChestTile);
         this.addChest({ x: firstTilePosition.x + 7, y: firstTilePosition.y }, 7);
-        //Tmp test of bigTree
-        //this.#earth.placeGardenTiles();
 
         this.#controls.isMovementLocked = false;
-        //console.debug('[GameScene] debug gameplay ready');
     }
 
     /** Place the very first tile under the player start position. Returns its tile coordinates. */
@@ -340,19 +338,7 @@ export class GameScene extends Phaser.Scene {
         const dataManager = GameDataManager.instance;
         const dialogResultInfo = dataManager.getLastDialogResultInfo();
         const selectedOption = dataManager.getLastDialogOptionSelected();
-        logChestDebug('GameScene handling CHEST_DIALOG_CLOSED', {
-            selectedOption,
-            dialogResultInfo,
-            player: {
-                gear: dataManager.getGear(),
-                weapon: dataManager.getWeapon(),
-                potion: dataManager.getPotion(),
-                currentHealth: dataManager.getCurrentHealth(),
-                maxHealth: dataManager.getMaxHealth(),
-            },
-        });
         if (!dialogResultInfo) {
-            logChestDebug('GameScene chest close ignored because no dialog result exists');
             return;
         }
 
@@ -361,15 +347,9 @@ export class GameScene extends Phaser.Scene {
             console.warn(`Unable to apply chest dialog result. Chest id ${dialogResultInfo.chestNumber} was not found.`);
             return;
         }
-        logChestDebug('GameScene found chest for dialog result', { chest: chest.debugInfo });
 
         // Handle fruit potion chest.
         if (dialogResultInfo.chestNumber === 7) {
-            logChestDebug('GameScene applying fruit chest result', {
-                chest: chest.debugInfo,
-                selectedOption,
-                potionToPlayer: dialogResultInfo.option1PotionToPlayer,
-            });
             if (selectedOption === 0) {
                 dataManager.updatePlayerPotion(dialogResultInfo.option1PotionToPlayer);
                 // Boost max health to 6 (3 full hearts) and fully heal. Only apply when
@@ -384,26 +364,11 @@ export class GameScene extends Phaser.Scene {
                     this.#animateHealthGainTo(6);
                 }
             }
-            logChestDebug('GameScene finished fruit chest result', {
-                chest: chest.debugInfo,
-                player: {
-                    potion: dataManager.getPotion(),
-                    currentHealth: dataManager.getCurrentHealth(),
-                    maxHealth: dataManager.getMaxHealth(),
-                },
-            });
             return;
         }
 
         // handle regular chest with weapon and gear options.
         if (selectedOption === 0) {// Top Option Selected, can be either weapon or gear.
-            logChestDebug('GameScene applying regular chest top option', {
-                chest: chest.debugInfo,
-                option1WeaponToPlayer: dialogResultInfo.option1WeaponToPlayer,
-                option1WeaponToLeave: dialogResultInfo.option1WeaponToLeave,
-                option1GearToPlayer: dialogResultInfo.option1GearToPlayer,
-                option1GearToLeave: dialogResultInfo.option1GearToLeave,
-            });
             // Weapons is in the top option
             if (!(dialogResultInfo.option1WeaponToPlayer === WEAPON.NONE && dialogResultInfo.option1WeaponToLeave === WEAPON.NONE)) {
                 dataManager.updatePlayerWeapon(dialogResultInfo.option1WeaponToPlayer);
@@ -416,25 +381,12 @@ export class GameScene extends Phaser.Scene {
             }
         }
         if (selectedOption === 1) {
-            logChestDebug('GameScene applying regular chest second option', {
-                chest: chest.debugInfo,
-                option2GearToPlayer: dialogResultInfo.option2GearToPlayer,
-                option2GearToLeave: dialogResultInfo.option2GearToLeave,
-            });
             // Option 2 selected kan only be gear
             if (!(dialogResultInfo.option2GearToPlayer === GEAR.NONE && dialogResultInfo.option2GearToLeave === GEAR.NONE)) {
                 dataManager.updatePlayerGear(dialogResultInfo.option2GearToPlayer);
                 chest.contents.gear = dialogResultInfo.option2GearToLeave;
             }
         }
-        logChestDebug('GameScene finished regular chest result', {
-            chest: chest.debugInfo,
-            player: {
-                gear: dataManager.getGear(),
-                weapon: dataManager.getWeapon(),
-                potion: dataManager.getPotion(),
-            },
-        });
     }
 
     /** Step current health up by one half-heart per `stepDelayMs` until reaching `target`.
@@ -454,14 +406,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     #handleOpenChest(chest: ChestJJK): void {
-        logChestDebug('GameScene handling OPENED_CHEST', { chest: chest.debugInfo });
-
         const chestInfo = writeChestDialogInfo(chest);
         GameDataManager.instance.setLastDialogResultInfo(chestInfo);
-        logChestDebug('GameScene emitting SHOW_CHEST_DIALOG', {
-            chest: chest.debugInfo,
-            dialog: chestInfo.dialog,
-        });
         EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_CHEST_DIALOG, chestInfo.dialog);
     }
 

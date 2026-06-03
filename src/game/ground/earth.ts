@@ -1,16 +1,20 @@
 import * as Phaser from 'phaser';
 import { Tile } from './tile';
-import { Position } from '../common/types';
+import { CastingUnlocks, Position, TargetInfo } from '../common/types';
 import { BASE_DEPTH, CASTING_UNLOCKS, BIOME, BLOCKING_TILE_DEPTH, BORDER_DEPTH, CRYSTAL_GLIMTS_DEPTH, DECORATION_DEPTH, FLOATING_DEPTH, LAVA_DEPTH, VOID_ANIM_DEPTH, VOID_SOLID_DEPTH, WATER_DEPTH } from '../common/common';
 import { ASSET_KEYS } from '../common/assets';
 import { DecideBorder, PickDecoration, PickBlocking, PickFloating } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
-import { ENABLE_LOGGING } from '../common/config';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../common/event-bus';
 import { GameDataManager } from '../common/game-data-manager';
-import { CastingUnlocks } from '../common/types';
 
 export type ChestPlacementHandler = (position: Position, chestNumber: number) => void;
+
+const CREATURE_BLOCKING_BIOMES: readonly BIOME[] = [BIOME.VOID, BIOME.WATER, BIOME.LAVA, BIOME.MOUNTAIN];
+
+function isCreatureBlockingBiome(biome: BIOME): boolean {
+    return CREATURE_BLOCKING_BIOMES.includes(biome);
+}
 
 export class Earth {
 
@@ -19,6 +23,7 @@ export class Earth {
     protected tilemap!: Phaser.Tilemaps.Tilemap;
     protected voidLayer!: Phaser.Tilemaps.TilemapLayer;
     protected biomeLayer!: Phaser.Tilemaps.TilemapLayer;
+    protected creatureBlockingLayer!: Phaser.Tilemaps.TilemapLayer;
     protected borderLayer!: Phaser.Tilemaps.TilemapLayer;
     protected decorationLayer!: Phaser.Tilemaps.TilemapLayer;
     protected blockingLayer!: Phaser.Tilemaps.TilemapLayer;
@@ -47,10 +52,7 @@ export class Earth {
             width,
             height,
         });
-        if (!this.tilemap) {
-            console.error('Failed to create biome layer');
-            return;
-        }
+        if (!this.tilemap) { console.error('Failed to create biome layer'); return; }
         // Set up void layer.
         const tilesetVoid = this.tilemap.addTilesetImage(
             ASSET_KEYS.TILESET_BASE,
@@ -64,10 +66,7 @@ export class Earth {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BASE}`);
         }
         const voidLayer = this.tilemap.createBlankLayer('void', tilesetVoid);
-        if (!voidLayer) {
-            console.error('Failed to create void tile layer');
-            return;
-        }
+        if (!voidLayer) { console.error('Failed to create void tile layer'); return; }
         voidLayer.setDepth(VOID_SOLID_DEPTH);
         // Mark void tiles as colliding so Arcade physics can overlap against the layer.
         voidLayer.setCollision(BIOME.VOID);
@@ -86,12 +85,15 @@ export class Earth {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BASE}`);
         }
         const biomeLayer = this.tilemap.createBlankLayer('biome', tilesetBase);
-        if (!biomeLayer) {
-            console.error('Failed to create biome tile layer');
-            return;
-        }
+        if (!biomeLayer) { console.error('Failed to create biome tile layer'); return; }
         biomeLayer.setDepth(BASE_DEPTH);
         this.biomeLayer = biomeLayer;
+
+        const creatureBlockingLayer = this.tilemap.createBlankLayer('creature-blocking', tilesetBase);
+        if (!creatureBlockingLayer) { console.error('Failed to create creature blocking tile layer'); return; }
+        creatureBlockingLayer.setVisible(false);
+        creatureBlockingLayer.setCollision([...CREATURE_BLOCKING_BIOMES]);
+        this.creatureBlockingLayer = creatureBlockingLayer;
 
         // Set up border layer.
         const tilesetBorder = this.tilemap.addTilesetImage(
@@ -104,10 +106,7 @@ export class Earth {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_BORDER}`);
         }
         const borderLayer = this.tilemap.createBlankLayer('border', tilesetBorder);
-        if (!borderLayer) {
-            console.error('Failed to create border layer');
-            return;
-        }
+        if (!borderLayer) { console.error('Failed to create border layer'); return; }
         borderLayer.setDepth(BORDER_DEPTH);
         this.borderLayer = borderLayer;
 
@@ -122,10 +121,7 @@ export class Earth {
             throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_DECORATION}`);
         }
         const decorationLayer = this.tilemap.createBlankLayer('decoration', tilesetDeco);
-        if (!decorationLayer) {
-            console.error('Failed to create decoration layer');
-            return;
-        }
+        if (!decorationLayer) { console.error('Failed to create decoration layer'); return; }
         decorationLayer.setDepth(DECORATION_DEPTH);
         this.decorationLayer = decorationLayer;
 
@@ -136,16 +132,10 @@ export class Earth {
             this.tileSize,
             this.tileSize
         );
-        if (!tilesetBlocking) {
-            console.error('Failed to load blocking tileset');
-            return;
-        }
+        if (!tilesetBlocking) { console.error('Failed to load blocking tileset'); return; }
         this.blockingData = getBlockingBoxesData();
         const blockingLayer = this.tilemap.createBlankLayer('blocking', tilesetBlocking);
-        if (!blockingLayer) {
-            console.error('Failed to create blocking tile layer');
-            return;
-        }
+        if (!blockingLayer) { console.error('Failed to create blocking tile layer'); return; }
         blockingLayer.setDepth(BLOCKING_TILE_DEPTH);
         blockingLayer.setVisible(false);
         this.blockingLayer = blockingLayer;
@@ -158,14 +148,9 @@ export class Earth {
             this.tileSize,
             this.tileSize
         );
-        if (!tilesetFloating) {
-            throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_FLOATING}`);
-        }
+        if (!tilesetFloating) { throw new Error(`Tileset not found for key: ${ASSET_KEYS.TILESET_FLOATING}`); }
         const floatingLayer = this.tilemap.createBlankLayer('floating', tilesetFloating);
-        if (!floatingLayer) {
-            console.error('Failed to create floating tile layer');
-            return;
-        }
+        if (!floatingLayer) { console.error('Failed to create floating tile layer'); return; }
         floatingLayer.setDepth(FLOATING_DEPTH);
         this.floatingLayer = floatingLayer;
 
@@ -333,7 +318,7 @@ export class Earth {
         if (blocking < 0) return;
         existingTile.blocking = blocking;
         existingTile.floating = floating;
-        this.blockingLayer.putTileAt(blocking, position.x, position.y);        
+        this.blockingLayer.putTileAt(blocking, position.x, position.y);
         this.createBlockingGeometryBody(position.x, position.y, blocking);
         const worldX = position.x * 64;
         const worldY = position.y * 64;
@@ -407,49 +392,58 @@ export class Earth {
             let rockFactor = 0;
             if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.ROCK_BASIC)) {
                 rockFactor = 1;
-                if (biome === BIOME.ROCK) rockFactor += 10;
+                rockFactor += neighborBiomes.filter(b => b === BIOME.ROCK).length * 2;
+                //if (biome === BIOME.ROCK) rockFactor += 10;
             }
             let desertFactor = 0;
             if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.DESERT_BASIC)) {
                 desertFactor = 1;
-                if (biome === BIOME.DESERT) desertFactor += 10;
+                desertFactor += neighborBiomes.filter(b => b === BIOME.DESERT).length * 4;
+                //if (biome === BIOME.DESERT) desertFactor += 10;
             }
             let waterFactor = 0;
             if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.WATER_BASIC)) {
                 waterFactor = 1;
-                if (biome === BIOME.WATER) waterFactor += 10;
+                waterFactor += neighborBiomes.filter(b => b === BIOME.WATER).length * 5;
+                //if (biome === BIOME.WATER) waterFactor += 20;
             }
 
             let grassFactor = 0;
             if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.GRASS_BASIC)) {
                 grassFactor = 1;
-                if (biome === BIOME.GRASS) grassFactor += 10;
+                grassFactor += neighborBiomes.filter(b => b === BIOME.GRASS).length * 4;
+                //if (biome === BIOME.GRASS) grassFactor += 10;
             }
             let forestFactor = 0;
             if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.FOREST_BASIC)) {
                 forestFactor = 1;
-                if (biome === BIOME.FOREST) forestFactor += 10;
+                forestFactor += neighborBiomes.filter(b => b === BIOME.FOREST).length * 4;
+                //if (biome === BIOME.FOREST) forestFactor += 10;
             }
             let mountainFactor = 0;
             if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.MOUNTAIN_BASIC)) {
                 mountainFactor = 1;
-                if (biome === BIOME.MOUNTAIN) mountainFactor += 10;
+                mountainFactor += neighborBiomes.filter(b => b === BIOME.MOUNTAIN).length * 5;
+                //if (biome === BIOME.MOUNTAIN) mountainFactor += 30;
             }
 
             let swampFactor = 0;
             if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.SWAMP_BASIC)) {
                 swampFactor = 1;
-                if (biome === BIOME.SWAMP) swampFactor += 10;
+                swampFactor += neighborBiomes.filter(b => b === BIOME.SWAMP).length * 4;
+                //if (biome === BIOME.SWAMP) swampFactor += 10;
             }
             let crystalFactor = 0;
             if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.CRYSTAL_BASIC)) {
                 crystalFactor = 1;
-                if (biome === BIOME.CRYSTAL) crystalFactor += 10;
+                crystalFactor += neighborBiomes.filter(b => b === BIOME.CRYSTAL).length * 4;
+                //if (biome === BIOME.CRYSTAL) crystalFactor += 10;
             }
             let lavaFactor = 0;
             if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.LAVA_BASIC)) {
                 lavaFactor = 1;
-                if (biome === BIOME.LAVA) lavaFactor += 10;
+                lavaFactor += neighborBiomes.filter(b => b === BIOME.LAVA).length * 3;
+                //if (biome === BIOME.LAVA) lavaFactor += 20;
             }
             const totalFactor = rockFactor + desertFactor + waterFactor + grassFactor + forestFactor + mountainFactor + swampFactor + crystalFactor + lavaFactor;
             const randomValue = Phaser.Math.RND.integerInRange(1, totalFactor);
@@ -482,6 +476,41 @@ export class Earth {
                 placedTileAsCastingUnlock = CASTING_UNLOCKS.LAVA_BASIC;
             }
         }
+        else {// no variation allowed, but still need to determine casting unlock for the tile that is placed.
+            switch (biome) {
+                case BIOME.ROCK: //fine rock is unlocked by default, no need to test for it.
+                    placedTileAsCastingUnlock = CASTING_UNLOCKS.ROCK_BASIC;
+                    break;
+                case BIOME.DESERT: // fine desert is only placed by the player so it must be unlocked.
+                    placedTileAsCastingUnlock = CASTING_UNLOCKS.DESERT_BASIC;
+                    break;
+                case BIOME.WATER: // can not cast from water
+                    throw new Error('Water biome can not be placed without variation as it can not be casted from.');
+                case BIOME.GRASS: // fine desert is only placed by the player so it must be unlocked.
+                    placedTileAsCastingUnlock = CASTING_UNLOCKS.GRASS_BASIC;
+                    break;
+                case BIOME.FOREST: // Need to test if it is unlocked (forest is also placed by the narrator)
+                    if (GameDataManager.instance.data.unlockedSpellCasting.has(CASTING_UNLOCKS.FOREST_BASIC)) {
+                        placedTileAsCastingUnlock = CASTING_UNLOCKS.FOREST_BASIC;
+                    }
+                    else {
+                        placedTileAsCastingUnlock = CASTING_UNLOCKS.ROCK_BASIC;
+                        actualBiome = BIOME.ROCK;// If forest is not unlocked, place a rock tile instead, as forest can not be casted from but rock can.
+                    }
+                    break;
+                case BIOME.MOUNTAIN: // can not cast from mountain
+                    throw new Error('Mountain biome can not be placed without variation as it can not be casted from.');
+                case BIOME.SWAMP: // Fine swamp is only placed by the player so it must be unlocked.
+                    placedTileAsCastingUnlock = CASTING_UNLOCKS.SWAMP_BASIC; 
+                    break;
+                case BIOME.CRYSTAL: // Fine crystal is only placed by the player so it must be unlocked.
+                    placedTileAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_BASIC; 
+                    break;
+                case BIOME.LAVA: // can not cast from mountain
+                    throw new Error('Lava biome can not be placed without variation as it can not be casted from.');
+            }
+
+        }
         const border: number = DecideBorder(actualBiome, neighborBiomes);
         const neighborPositions: Position[] = [
             { x: position.x - 1, y: position.y },
@@ -512,8 +541,8 @@ export class Earth {
         this.addMissingVoidNeighbors(position);
     }
 
-    public targetWithInfo(positions: Position[]): { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean, blocking: boolean, chest: boolean }[] {
-        const result: { pos: Position, neighborCount: number, biome: BIOME, decorated: boolean, blocking: boolean, chest: boolean }[] = [];
+    public targetWithInfo(positions: Position[]): TargetInfo[] {
+        const result: TargetInfo[] = [];
         for (const position of positions) {
             const tile = this.getTile(position.x, position.y);
             const biome = tile?.biome ?? BIOME.VOID;
@@ -522,7 +551,9 @@ export class Earth {
             const chest = tile?.chest !== undefined && tile.chest >= 0;
             const neighborTiles = this.get4NeighborTiles(position);
             const neighborCount = neighborTiles.filter(n => 0 < n.biome).length;
-            result.push({ pos: position, neighborCount, biome, decorated, blocking, chest });
+            const neighborBiomeCount = neighborTiles.filter(n => n.biome === biome).length;
+            result.push({ pos: position, neighborCount, biome, decorated, blocking, chest, neighborBiomeCount });
+
         }
         return result;
     }
@@ -530,7 +561,6 @@ export class Earth {
     public AddTile(tile: Tile): void {
         this.allTiles.set(this.key(tile.tileX, tile.tileY), tile);
         if (tile.biome >= 0) {
-            if (ENABLE_LOGGING) { console.log(`Placing biome tile with index ${tile.biome} at (${tile.tileX}, ${tile.tileY})`); }
             if (tile.biome === BIOME.VOID) {
                 const voidTile = this.voidLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
                 voidTile?.setCollision(true, true, true, true);
@@ -540,6 +570,7 @@ export class Earth {
                 this.voidLayer.removeTileAt(tile.tileX, tile.tileY, true, true);
                 this.biomeLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
             }
+            this.updateCreatureBlockingTile(tile);
             if (tile.biome === BIOME.WATER) {
                 this.scene.add
                     .sprite(tile.tileX * this.tileSize, tile.tileY * this.tileSize, ASSET_KEYS.TILESET_ANIMATED)
@@ -577,21 +608,18 @@ export class Earth {
             if (tile.border > 39) {
                 console.warn(`Border tile index ${tile.border} is out of expected range!`);
             }
-            if (ENABLE_LOGGING) { console.log(`Placing border tile with index ${tile.border} at (${tile.tileX}, ${tile.tileY})`); }
             this.borderLayer.putTileAt(tile.border, tile.tileX, tile.tileY);
         }
         if (tile.decoration >= 0) {
             if (tile.decoration > 55) {
                 console.warn(`Decoration tile index ${tile.decoration} is out of expected range!`);
             }
-            if (ENABLE_LOGGING) { console.log(`Placing decoration tile with index ${tile.decoration} at (${tile.tileX}, ${tile.tileY})`); }
             this.decorationLayer.putTileAt(tile.decoration, tile.tileX, tile.tileY);
         }
         if (tile.blocking >= 0) {
             if (tile.blocking > 91) {
                 console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
             }
-            if (ENABLE_LOGGING) { console.log(`Placing blocking tile with index ${tile.blocking} at (${tile.tileX}, ${tile.tileY})`); }
             this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
             this.createBlockingGeometryBody(tile.tileX, tile.tileY, tile.blocking);
             const worldX = tile.tileX * 64;
@@ -603,7 +631,6 @@ export class Earth {
             if (tile.floating > 15) {
                 console.warn(`Floating tile index ${tile.floating} is out of expected range!`);
             }
-            if (ENABLE_LOGGING) { console.log(`Placing floating tile with index ${tile.floating} at (${tile.tileX}, ${tile.tileY})`); }
             this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY - 1);
         }
         if (0 < tile.chest) {
@@ -797,7 +824,7 @@ export class Earth {
         this.createBlockingGeometryBody(first.x, first.y, 42);// The big tree trunk blocking. (Currently hardcoded at nor ready for Save Game). ToDo: Fix blocking bigTree.
 
         const placeTileAt = (tile: Tile): void => { this.AddTile(tile); };
-        
+
         const spawnBigTree = (): void => {
             this.scene.sound.play(ASSET_KEYS.WHOOSH);
             this.scene.add
@@ -843,8 +870,22 @@ export class Earth {
         return this.voidLayer;
     }
 
+    public getCreatureBlockingLayer(): Phaser.Tilemaps.TilemapLayer {
+        return this.creatureBlockingLayer;
+    }
+
     private key(x: number, y: number): string {
         return `${x},${y}`;
+    }
+
+    private updateCreatureBlockingTile(tile: Tile): void {
+        if (isCreatureBlockingBiome(tile.biome)) {
+            const blockingTile = this.creatureBlockingLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
+            blockingTile?.setCollision(true, true, true, true);
+            return;
+        }
+
+        this.creatureBlockingLayer.removeTileAt(tile.tileX, tile.tileY, true, true);
     }
 
     private createBlockingGeometryBody(tileX: number, tileY: number, tileIndex: number): void {

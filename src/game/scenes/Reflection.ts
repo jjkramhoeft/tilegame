@@ -5,6 +5,7 @@ import { getText } from '../common/texts';
 import { SCENE_KEYS } from './scene-keys';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { ScrollableTextPanel } from '../common/scrollable-text-panel';
+import { AmbientParticles, createAmbientParticles } from './ambient-particles';
 
 const COLORS = {
     title: '#5eb1da',
@@ -90,6 +91,7 @@ export class Reflection extends Scene {
     private controls?: KeyboardComponent;
     private backgroundClouds: Phaser.GameObjects.Image[] = [];
     private cloudSpawnEvent?: Phaser.Time.TimerEvent;
+    private ambientParticles?: AmbientParticles;
     #uiSelectSound!: Phaser.Sound.BaseSound;
 
     constructor() {
@@ -100,7 +102,7 @@ export class Reflection extends Scene {
         const centerX = this.cameras.main.centerX;
         const registryVolume = this.registry.get('musicVolume');
         const musicVolume = typeof registryVolume === 'number' ? registryVolume : 0.1;
-        this.#uiSelectSound = this.sound.add(ASSET_KEYS.BLIP_SELECT_7);
+        this.#uiSelectSound = this.sound.add(ASSET_KEYS.UI_SELECT);
 
         this.registry.set('musicVolume', musicVolume);
 
@@ -109,6 +111,7 @@ export class Reflection extends Scene {
 
         this.add.image(0, 0, ASSET_KEYS.CREDITS_BACKGROUND).setOrigin(0).setDisplaySize(this.scale.width, this.scale.height).setDepth(0);
         this.add.image(0, 0, ASSET_KEYS.CREDITS_BACKGROUND_LAYER_1).setOrigin(0).setDisplaySize(this.scale.width, this.scale.height).setDepth(40);
+        this.ambientParticles = createAmbientParticles(this);
         this.createBackgroundClouds();
         this.add.image(centerX + 355, 95, ASSET_KEYS.LOGO).setDepth(100).setScale(1.5);
 
@@ -142,6 +145,8 @@ export class Reflection extends Scene {
         }
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.ambientParticles?.destroy();
+            this.ambientParticles = undefined;
             this.reflectionScrollPanel?.destroy();
             this.reflectionScrollPanel = undefined;
             this.clearBackgroundClouds();
