@@ -501,10 +501,10 @@ export class Earth {
                 case BIOME.MOUNTAIN: // can not cast from mountain
                     throw new Error('Mountain biome can not be placed without variation as it can not be casted from.');
                 case BIOME.SWAMP: // Fine swamp is only placed by the player so it must be unlocked.
-                    placedTileAsCastingUnlock = CASTING_UNLOCKS.SWAMP_BASIC; 
+                    placedTileAsCastingUnlock = CASTING_UNLOCKS.SWAMP_BASIC;
                     break;
                 case BIOME.CRYSTAL: // Fine crystal is only placed by the player so it must be unlocked.
-                    placedTileAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_BASIC; 
+                    placedTileAsCastingUnlock = CASTING_UNLOCKS.CRYSTAL_BASIC;
                     break;
                 case BIOME.LAVA: // can not cast from mountain
                     throw new Error('Lava biome can not be placed without variation as it can not be casted from.');
@@ -536,6 +536,10 @@ export class Earth {
             blocking: -1,
             floating: -1,
         });
+        if (tile.biome === BIOME.MOUNTAIN) {
+            tile.blocking = Phaser.Math.RND.integerInRange(0, 4);
+            tile.floating =tile.blocking;
+        }
         this.AddTile(tile);
         GameDataManager.instance.increaseTilesPlaced(placedTileAsCastingUnlock);
         this.addMissingVoidNeighbors(position);
@@ -565,6 +569,11 @@ export class Earth {
                 const voidTile = this.voidLayer.putTileAt(tile.biome, tile.tileX, tile.tileY);
                 voidTile?.setCollision(true, true, true, true);
                 this.biomeLayer.removeTileAt(tile.tileX, tile.tileY, true, true);
+            }
+            else if (tile.biome === BIOME.SWAMP) {
+                this.voidLayer.removeTileAt(tile.tileX, tile.tileY, true, true);
+                const swampTile = Phaser.Utils.Array.GetRandom([tile.biome, 10, 11, 12, 13]);
+                this.biomeLayer.putTileAt(swampTile, tile.tileX, tile.tileY);
             }
             else {
                 this.voidLayer.removeTileAt(tile.tileX, tile.tileY, true, true);
@@ -617,21 +626,32 @@ export class Earth {
             this.decorationLayer.putTileAt(tile.decoration, tile.tileX, tile.tileY);
         }
         if (tile.blocking >= 0) {
-            if (tile.blocking > 91) {
-                console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
+            if (tile.biome === BIOME.MOUNTAIN) {
+                const worldX = tile.tileX * 64;
+                const worldY = tile.tileY * 64;
+                const sprite = this.scene.add.image(worldX, worldY, ASSET_KEYS.TILESET_MOUNTAIN, tile.blocking+5).setOrigin(0, 0);
+                sprite.setDepth(worldY + 64);
+            } else {
+                if (tile.blocking > 91) {
+                    console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
+                }
+                this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
+                this.createBlockingGeometryBody(tile.tileX, tile.tileY, tile.blocking);
+                const worldX = tile.tileX * 64;
+                const worldY = tile.tileY * 64;
+                const sprite = this.scene.add.image(worldX, worldY, ASSET_KEYS.TILESET_BLOCKING, tile.blocking).setOrigin(0, 0);
+                sprite.setDepth(worldY + 64);
             }
-            this.blockingLayer.putTileAt(tile.blocking, tile.tileX, tile.tileY);
-            this.createBlockingGeometryBody(tile.tileX, tile.tileY, tile.blocking);
-            const worldX = tile.tileX * 64;
-            const worldY = tile.tileY * 64;
-            const sprite = this.scene.add.image(worldX, worldY, ASSET_KEYS.TILESET_BLOCKING, tile.blocking).setOrigin(0, 0);
-            sprite.setDepth(worldY + 64);
         }
         if (tile.floating >= 0) {
-            if (tile.floating > 15) {
-                console.warn(`Floating tile index ${tile.floating} is out of expected range!`);
+            if (tile.biome === BIOME.MOUNTAIN) {
+                this.floatingLayer.putTileAt(tile.floating+16, tile.tileX, tile.tileY - 1);
+            } else {
+                if (tile.floating > 15) {
+                    console.warn(`Floating tile index ${tile.floating} is out of expected range!`);
+                }
+                this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY - 1);
             }
-            this.floatingLayer.putTileAt(tile.floating, tile.tileX, tile.tileY - 1);
         }
         if (0 < tile.chest) {
             this.placeChestHandler?.({ x: tile.tileX, y: tile.tileY }, tile.chest);

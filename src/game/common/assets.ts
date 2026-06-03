@@ -27,6 +27,7 @@ export const ASSET_KEYS = {
   FONT_PRESS_START_2P: 'FONT_PRESS_START_2P',
   FONT_PIXEL_SERIF_16PX: 'FONT_PIXEL_SERIF_16PX',
   KEYBOARDKEYS: 'KEYBOARDKEYS',
+  HUD_ICONS: 'HUD_ICONS',
 
   INTRO_BACKGROUND: 'background',
   INTRO_BACKGROUND_LAYER_0: 'background_l0',
@@ -67,6 +68,7 @@ export const ASSET_KEYS = {
   MAGIC_FX_LIGHT_CAST: 'magic-fx-light-cast',
   MAGIC_FX_BLUE_CIRCLE_EXPLOSION: 'magic-fx-blue-circleexplosion',
   MAGIC_FX_NOTES: 'magic-fx-notes',
+  MAGIC_FX_PARTICLE_NOTES: 'magic-fx-particle-notes',
 
   UI_UP: 'ui-up',
   UI_DOWN: 'ui-down',
@@ -283,6 +285,7 @@ export const ASSET_KEYS = {
   TILESET_BORDER: 'tile-border',
   TILESET_ANIMATED: 'tile-animated',
   TILESET_BASE: 'tile-base',  
+  TILESET_MOUNTAIN: 'tile-mountain',  
   
 } as const;
 
