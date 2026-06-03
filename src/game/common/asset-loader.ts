@@ -123,6 +123,10 @@ const spritesheetAssets: readonly SpritesheetAsset[] = [
   { key: ASSET_KEYS.CALF, path: 'assets/Calf.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
   { key: ASSET_KEYS.BULL, path: 'assets/Bull.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
   { key: ASSET_KEYS.SPELL_MUSIC_11, path: 'assets/spell-music-11.png', frameConfig: { frameWidth: 150, frameHeight: 150 } },
+  { key: ASSET_KEYS.HUD_ICONS, path: 'assets/images/hud/hud-icons.png', frameConfig: { frameWidth: 16, frameHeight: 16 } },
+  { key: ASSET_KEYS.MAGIC_FX_PARTICLE_NOTES, path: 'assets/images/notes.png', frameConfig: { frameWidth: 16, frameHeight: 16 } },
+  { key: ASSET_KEYS.TILESET_MOUNTAIN, path: 'assets/images/tile-mountains.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
+  
 ];
 
 const asepriteAssets: readonly AsepriteAsset[] = [
