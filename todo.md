@@ -2,8 +2,6 @@
 
 ## Implementations that do not require new asserts  
 
-### Most importend
-
 - add control section, show in settings and in first gamestate
 
 - Player extra rules
@@ -49,8 +47,3 @@
 - Add water ponds to swamp as decorations
 - record voice-over for narrator. Nathan for english, Ulla, Taina or me for danish
 - Break a tile when an animal is killed
-
-## Experiment
-
-- Cast Spell Visual Effect with Particles
-- Particel on into scene

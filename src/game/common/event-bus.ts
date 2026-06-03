@@ -21,7 +21,14 @@ export const CUSTOM_EVENTS = {
   SHOW_HEALTH_HUD: 'SHOW_HEALTH_HUD',
   SHOW_POWER_HUD: 'SHOW_POWER_HUD',
   SHOW_PROGRESS_HUD: 'SHOW_PROGRESS_HUD',
+  SHOW_HELP_KEYBORD: 'SHOW_HELP_KEYBORD',
+  HIDE_HELP_KEYBORD: 'HIDE_HELP_KEYBORD',
+  DIM_HELP_KEYBORD_KEYS: 'DIM_HELP_KEYBORD_KEYS',
 } as const;
+
+export type DimHelpKeyboardKeysPayload = {
+  textKey: 'Attack' | 'Cast' | 'Map' | 'Interact' | 'Move';
+};
 
 export type CustomEventName = (typeof CUSTOM_EVENTS)[keyof typeof CUSTOM_EVENTS];
 export type EventBusListener = (...args: any[]) => void;

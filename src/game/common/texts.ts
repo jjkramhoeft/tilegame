@@ -410,7 +410,7 @@ const TEXTS = {
     },
     'keyboard.interact': {
         en: 'Interact',
-        da: 'Interager',
+        da: 'Brug',
     },
     'keyboard.cast': {
         en: 'Magic',

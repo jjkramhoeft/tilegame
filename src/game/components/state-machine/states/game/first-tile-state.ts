@@ -5,10 +5,10 @@ import type { GameScene } from '../../../../scenes/game-scene';
 import { ENABLE_LOGGING } from '../../../../common/config';
 
 /**
- * First active play state. Player can move and attack. Casting is meant to be
- * limited (off sound, no effect) — that hookup lands in a later phase.
+ * First active play state. Player can move and attack and cast. 
  * Transitions to AssignmentState once the player has both moved and triggered
- * an attack/cast.
+ * an attack and a cast.
+ * Use the HUD to show the keys, when they have been pressed they are dimmed, when transitioning out the key help is hiddened.
  */
 export class FirstTileState extends BaseGameState {
   #startX = 0;
@@ -28,8 +28,7 @@ export class FirstTileState extends BaseGameState {
     this.#startY = player.y;
     this.#moved = false;
     this.#attacked = false;
-    // Limited cast: silent-ish sound, no tile or mob placement.
-    //this._scene.setLimitedCast(true);
+    this.#casted = false;
   }
 
   public onUpdate(): void {
@@ -38,7 +37,7 @@ export class FirstTileState extends BaseGameState {
     if (!this.#moved) {
       const dx = player.x - this.#startX;
       const dy = player.y - this.#startY;
-      if (Math.abs(dx) + Math.abs(dy) > 8) {
+      if (Math.abs(dx) + Math.abs(dy) > 10) {
         this.#moved = true;
       }
     }
