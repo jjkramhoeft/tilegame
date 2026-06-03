@@ -338,7 +338,7 @@ export class UiScene extends Phaser.Scene {
 
     this.#createKeyboardHelpMove(KEYBOARD_HELP_ITEM_SPACING);
     this.#createKeyboardHelpAction('Attack', -KEYBOARD_HELP_ITEM_SPACING, 8, getText('keyboard.attack'));
-    this.#createKeyboardHelpAction('Cast', -2xx0, 10, getText('keyboard.cast'));
+    this.#createKeyboardHelpAction('Cast', -20, 10, getText('keyboard.cast'));
 
     this.#keyBoardHelpContainer.visible = false;
   }
