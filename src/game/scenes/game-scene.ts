@@ -389,9 +389,9 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    /** Step current health up by one half-heart per `stepDelayMs` until reaching `target`.
+    /** Step current health up by one per `stepDelayMs` until reaching `target`.
      *  Each step emits PLAYER_HEALTH_UPDATED so the HUD redraws incrementally. */
-    #animateHealthGainTo(target: number, stepDelayMs = 120): void {
+    #animateHealthGainTo(target: number, stepDelayMs = 500): void {
         const tick = () => {
             const cur = GameDataManager.instance.getCurrentHealth();
             if (cur >= target) {

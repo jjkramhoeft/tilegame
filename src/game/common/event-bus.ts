@@ -8,6 +8,7 @@ export const CUSTOM_EVENTS = {
   ENEMY_DESTROYED: 'ENEMY_DESTROYED',
   PLAYER_DEFEATED: 'PLAYER_DEFEATED',
   PLAYER_HEALTH_UPDATED: 'PLAYER_HEALTH_UPDATED',
+  PLAYER_MAX_HEALTH_UPDATED: 'PLAYER_MAX_HEALTH_UPDATED',
   PLAYER_POWER_UPDATED: 'PLAYER_POWER_UPDATED',
   PLAYER_PROGRESS_UPDATED: 'PLAYER_PROGRESS_UPDATED',
   LIVING_CREATURES_UPDATED: 'LIVING_CREATURES_UPDATED',
@@ -64,6 +65,11 @@ export type PlayerHealthUpdated = {
   currentHealth: number;
   previousHealth: number;
   type: PlayerUpdateType;
+};
+
+export type PlayerMaxHealthUpdated = {
+  currentMaxHealth: number;
+  previousMaxHealth: number;
 };
 
 export type PlayerPowerUpdated = {

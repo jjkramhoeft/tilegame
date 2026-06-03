@@ -1,13 +1,14 @@
 import type { ChestDialogInfo } from './chest-dialog';
 import { CASTING_UNLOCKS, CREATURE_TYPES, DIFFICULTY, GEAR, POTION, SEX, WEAPON } from './common';
 import type { Difficulty, Gear, Potion, Sex, Weapon } from './common';
-import { ENABLE_LOGGING, LEVEL_UP_TILE_THRESHOLDS, PLAYER_START_MAX_HEALTH } from './config';
+import { ENABLE_LOGGING, LEVEL_UP_TILE_THRESHOLDS, PLAYER_START_HEALTH, PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
   EVENT_BUS,
   PLAYER_UPDATE_TYPE,
   LivingCreaturesUpdated,
   PlayerHealthUpdated,
+  PlayerMaxHealthUpdated,
   PlayerPowerUpdated,
   PlayerProgressUpdated,
   PlayerUpdateType,
@@ -67,7 +68,7 @@ export function createDefaultPlayerData(overrides: Partial<PlayerData> = {}): Pl
     difficulty: DIFFICULTY.EASY,
 
     potion: POTION.NONE,
-    currentHealth: PLAYER_START_MAX_HEALTH,
+    currentHealth: PLAYER_START_HEALTH,
     maxHealth: PLAYER_START_MAX_HEALTH,
 
     currentPower: 1,
@@ -247,7 +248,8 @@ export class GameDataManager {
   }
 
   public resetPlayerHealthToMin(): void {
-    this.#data.currentHealth = PLAYER_START_MAX_HEALTH;
+    this.#data.currentHealth = PLAYER_START_HEALTH;
+    this.#data.maxHealth = PLAYER_START_MAX_HEALTH;
   }
 
   public resetLivingCreatureCount(): void {
@@ -369,7 +371,15 @@ export class GameDataManager {
   }
 
   public updatePlayerMaxHealth(max: number): void {
+    if (max <= this.#data.maxHealth) {
+      return;
+    }
+    const dataToPass: PlayerMaxHealthUpdated = {
+      previousMaxHealth: this.#data.maxHealth,
+      currentMaxHealth: max,
+    };
     this.#data.maxHealth = max;
+    EVENT_BUS.emit(CUSTOM_EVENTS.PLAYER_MAX_HEALTH_UPDATED, dataToPass);
   }
 
   public updatePlayerCurrentHealth(health: number): void {

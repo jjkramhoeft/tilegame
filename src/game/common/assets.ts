@@ -515,42 +515,25 @@ export const CHEST_FRAME_KEYS = {
   SMALL_CHEST_OPEN: 'chest_open.png',
 } as const;
 
-export const DOOR_FRAME_KEYS = {
-  TRAP_LEFT: 'trap_left.png',
-  TRAP_RIGHT: 'trap_right.png',
-  TRAP_UP: 'trap_up.png',
-  TRAP_DOWN: 'trap_down.png',
-  BOSS_LEFT: 'boss_left.png',
-  BOSS_RIGHT: 'boss_right.png',
-  BOSS_UP: 'boss_up.png',
-  BOSS_DOWN: 'boss_down.png',
-  LOCK_LEFT: 'lock_left.png',
-  LOCK_RIGHT: 'lock_right.png',
-  LOCK_UP: 'lock_up.png',
-  LOCK_DOWN: 'lock_down.png',
-} as const;
 
-export const BUTTON_FRAME_KEYS = {
-  FLOOR_SWITCH: 'floor_switch.png',
-  PLATE_SWITCH: 'plate_switch.png',
-} as const;
 
-export const CHEST_REWARD_TO_TEXTURE_FRAME = {
-  SMALL_KEY: 119,
-  BOSS_KEY: 121,
-  MAP: 117,
-  COMPASS: 118,
-  NOTHING: 126,
-} as const;
-
-export const HEART_ANIMATIONS = {
-  LOSE_LAST_HALF: 'heart_lose_last_half',
-  LOSE_FIRST_HALF: 'heart_lost_first_half',
+export const SPIN_HUD_ANIMATIONS = {
+  HEARTH: 'spin_hearth',
+  POWER: 'spin_power',
+  PROGRESS: 'spin_progress',
 };
 
 export const HEART_TEXTURE_FRAME = {
-  NONE: '15',
-  FULL: '10',
-  EMPTY: '14',
-  HALF: '12',
+  FULL: 9,
+  NONE: 17,
+} as const;
+
+export const POWER_TEXTURE_FRAME = {
+  FULL: 0,
+  NONE: 8,
+} as const;
+
+export const PROGRESS_TEXTURE_FRAME = {
+  FULL: 18,
+  NONE: 26,
 } as const;

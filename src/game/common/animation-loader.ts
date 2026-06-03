@@ -13,6 +13,7 @@ import {
   SHEEP_ANIMATION_KEYS,
   SKELETON_ANIMATION_KEYS,
   SNAKE_ANIMATION_KEYS,
+  SPIN_HUD_ANIMATIONS,
   TURKEY_ANIMATION_KEYS,
 } from './assets';
 import { GEAR, SEX, WEAPON } from './common';
@@ -61,63 +62,25 @@ export function createAnimations(scene: Phaser.Scene): void {
 
 export function createUiAnimations(anims: AnimationManager): void {
   anims.create({
-    key: 'JJK_LOOSE_FULL_HEART',
-    frames: anims.generateFrameNumbers(ASSET_KEYS.HEARTS_16, { start: 4, end: 7 }),
+    key: SPIN_HUD_ANIMATIONS.HEARTH,
+    frames: anims.generateFrameNumbers(ASSET_KEYS.HUD_ICONS, { start: 9, end: 16 }),
     frameRate: 8,
-    repeat: 2,
+    repeat: 1,
   });
   anims.create({
-    key: 'JJK_LOOSE_FIRST_HALF',
-    frames: anims.generateFrameNumbers(ASSET_KEYS.HEARTS_16, { start: 8, end: 11 }),
+    key: SPIN_HUD_ANIMATIONS.POWER,
+    frames: anims.generateFrameNumbers(ASSET_KEYS.HUD_ICONS, { start: 0, end: 7 }),
     frameRate: 8,
-    repeat: 2,
+    repeat: 1,
   });
   anims.create({
-    key: 'JJK_LOOSE_SECOND_HALF',
-    frames: anims.generateFrameNumbers(ASSET_KEYS.HEARTS_16, { start: 12, end: 15 }),
+    key: SPIN_HUD_ANIMATIONS.PROGRESS,
+    frames: anims.generateFrameNumbers(ASSET_KEYS.HUD_ICONS, { start: 18, end: 25 }),
     frameRate: 8,
-    repeat: 2,
+    repeat: 1,
   });
 
-  anims.create({
-    key: 'JJK_LOOSE_FULL_POWER',
-    frames: anims.generateFrameNumbers(ASSET_KEYS.POWER_16, { start: 4, end: 7 }),
-    frameRate: 8,
-    repeat: 2,
-  });
-  anims.create({
-    key: 'JJK_LOOSE_FIRST_HALF_POWER',
-    frames: anims.generateFrameNumbers(ASSET_KEYS.POWER_16, { start: 8, end: 11 }),
-    frameRate: 8,
-    repeat: 2,
-  });
-  anims.create({
-    key: 'JJK_LOOSE_SECOND_HALF_POWER',
-    frames: anims.generateFrameNumbers(ASSET_KEYS.POWER_16, { start: 12, end: 15 }),
-    frameRate: 8,
-    repeat: 2,
-  });
-
-  anims.create({
-    key: 'JJK_LOOSE_FULL_PROGRESS',
-    frames: anims.generateFrameNumbers(ASSET_KEYS.PROGRESS_16, { start: 4, end: 7 }),
-    frameRate: 8,
-    repeat: 2,
-  });
-  anims.create({
-    key: 'JJK_LOOSE_FIRST_HALF_PROGRESS',
-    frames: anims.generateFrameNumbers(ASSET_KEYS.PROGRESS_16, { start: 8, end: 11 }),
-    frameRate: 8,
-    repeat: 2,
-  });
-  anims.create({
-    key: 'JJK_LOOSE_SECOND_HALF_PROGRESS',
-    frames: anims.generateFrameNumbers(ASSET_KEYS.PROGRESS_16, { start: 12, end: 15 }),
-    frameRate: 8,
-    repeat: 2,
-  });
-
-  anims.createFromAseprite(ASSET_KEYS.HUD_NUMBERS);
+  //anims.createFromAseprite(ASSET_KEYS.HUD_NUMBERS);
 }
 
 export function createAdamAndEveAnimations(anims: AnimationManager): void {

@@ -4,6 +4,8 @@ export function setEnableLogging(value: boolean) { ENABLE_LOGGING = value; }
 export const DIFFICULTY_HARD_SPEED_MULTIPLIER = 1.5;
 export  const DIFFICULTY_HARD_WAIT_FACTOR = 0.5;
 
+export const PLAYER_START_MAX_HEALTH = 5;
+export const PLAYER_START_HEALTH = 2;
 export const PLAYER_SPEED = 90;
 export const PLAYER_CHEST_INTERACTION_RANGE = 72;
 export const CHEST_OPEN_CLOSE_DELAY_MS = 500;
@@ -14,7 +16,6 @@ export const PLAYER_SWIM_ARMOR_AS_GEAR_SPEED_PENALTY = 45;
 export const PLAYER_SWIM_NORMAL_AS_GEAR_SPEED_PENALTY = 10;
 export const PLAYER_INVULNERABLE_AFTER_HIT_DURATION = 1000;
 export const PLAYER_HURT_PUSH_BACK_SPEED = 50;
-export const PLAYER_START_MAX_HEALTH = 6;
 export const PLAYER_ATTACK_DAMAGE = 1;
 export const PLAYER_LAVA_DAMAGE = 1;
 export const IDLE_SLOWDOWN_FACTOR = 0.9;
@@ -122,8 +123,8 @@ export const TILES_BEFORE_ANIMAL_UNLOCK = 10;
 export const LEVEL_UP_TILE_THRESHOLDS: Record<number, number> = {
 	1: 75,
 	2: 150,
-	3: 300,
-	4: 500,
-	5: 750,
-	6: 1000,
+	3: 400,
+	4: 750,
+	5: 1000,
+	6: 1500,
 };

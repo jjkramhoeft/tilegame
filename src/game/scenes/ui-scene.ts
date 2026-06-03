@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { SCENE_KEYS } from './scene-keys';
-import { ASSET_KEYS } from '../common/assets';
+import { ASSET_KEYS, HEART_TEXTURE_FRAME, POWER_TEXTURE_FRAME, PROGRESS_TEXTURE_FRAME, SPIN_HUD_ANIMATIONS } from '../common/assets';
 import { GameDataManager } from '../common/game-data-manager';
 import {
   CUSTOM_EVENTS,
@@ -13,6 +13,7 @@ import {
   type ProgressionHelpClosed as NarratorDialogClosed,
   type ProgressionHelpPayload as NarratorDialogPayload,
   type PlayerHealthUpdated,
+  type PlayerMaxHealthUpdated,
   type PlayerPowerUpdated,
   type PlayerProgressUpdated,
 } from '../common/event-bus';
@@ -30,9 +31,6 @@ const HUD_SECOND_ROW_Y = 43;
 const HUD_HEALTH_X = 50;
 const HUD_POWER_X = 400;
 const HUD_PROGRESS_X = 800;
-const HUD_EMPTY_FRAME = 0;
-const HUD_FULL_FRAME = 2;
-const HUD_NONE_FRAME = 3;
 
 const KEYBOARD_HELP_Y_OFFSET = 105;
 const KEYBOARD_HELP_ACTION_Y = 6;
@@ -72,6 +70,8 @@ type HudMeterConfig = {
   startX: number;
   textureKey: string;
   horizontalSpacing?: number;
+  fullIndex: number;
+  emptyIndex: number;
 };
 
 type KeyboardHelpTextKey = DimHelpKeyboardKeysPayload['textKey'];
@@ -143,6 +143,7 @@ export class UiScene extends Phaser.Scene {
 
     registerEventBusListenersUntilShutdown(this, [
       { event: CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, listener: this.updateHealthInHud, context: this },
+      { event: CUSTOM_EVENTS.PLAYER_MAX_HEALTH_UPDATED, listener: this.updateMaxHealthInHud, context: this },
       { event: CUSTOM_EVENTS.PLAYER_POWER_UPDATED, listener: this.updatePowerInHud, context: this },
       { event: CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, listener: this.updateLivingCreaturesInHud, context: this },
       { event: CUSTOM_EVENTS.SHOW_HEALTH_HUD, listener: this.showHealthHud, context: this },
@@ -163,44 +164,51 @@ export class UiScene extends Phaser.Scene {
   }
 
   public async updateHealthInHud(data: PlayerHealthUpdated): Promise<void> {
+    const animationName = SPIN_HUD_ANIMATIONS.HEARTH;
+    this.#ensureHealthMeterCapacity(GameDataManager.instance.data.maxHealth);
+    
     if (data.type === PLAYER_UPDATE_TYPE.INCREASE) {
-      this.#syncMeter(this.#hearts, GameDataManager.instance.data.maxHealth, data.currentHealth);
+      // This updateHealthInHud only increases the health by 1, so we can just play the animation once and then sync the meter to the correct value at the end of the animation.
+      await this.#playMeterSpriteAnimation(this.#hearts, data.currentHealth - 1, animationName, 'heart');
+      this.#syncMeter(this.#hearts, data.currentHealth, HEART_TEXTURE_FRAME.FULL, HEART_TEXTURE_FRAME.NONE);
       return;
     }
 
+    // This updateHealthInHud can decreases the health by more than 1, so we need to play the animation for each heart that is lost.
     const healthDifference = data.previousHealth - data.currentHealth;
     let health = data.previousHealth;
     for (let index = 0; index < healthDifference; index += 1) {
-      const heartIndex = Math.round(health / 2) - 1;
-      const isHalfHeart = health % 2 === 1;
-      let animationName = 'JJK_LOOSE_SECOND_HALF';
-      if (!isHalfHeart) {
-        animationName = 'JJK_LOOSE_FIRST_HALF';
-      }
-      await new Promise((resolve) => {
-        this.#hearts[heartIndex].play(animationName);
-        this.#hearts[heartIndex].once(Phaser.Animations.Events.ANIMATION_COMPLETE_KEY + animationName, () => {
-          resolve(undefined);
-        });
-      });
+      await this.#playMeterSpriteAnimation(this.#hearts, health - 1, animationName, 'heart');
       health -= 1;
     }
-    this.#syncMeter(this.#hearts, GameDataManager.instance.data.maxHealth, data.currentHealth);
+    this.#syncMeter(this.#hearts, data.currentHealth, HEART_TEXTURE_FRAME.FULL, HEART_TEXTURE_FRAME.NONE);
+  }
+
+  public updateMaxHealthInHud(data: PlayerMaxHealthUpdated): void {
+    this.#ensureHealthMeterCapacity(data.currentMaxHealth);
+    this.#syncMeter(this.#hearts, GameDataManager.instance.data.currentHealth, HEART_TEXTURE_FRAME.FULL, HEART_TEXTURE_FRAME.NONE);
   }
 
   public updatePowerInHud(data: PlayerPowerUpdated): void {
-    this.#syncMeter(this.#power, GameDataManager.instance.data.maxPower, data.currentPower + 2);
+    // This updatePowerInHud always increases the power by 1, so we can just play the animation once and then sync the meter to the correct value at the end of the animation.
+    const power = this.#power[data.currentPower - 1];
+    if (power) {
+      power.play(SPIN_HUD_ANIMATIONS.POWER);
+    } else {
+      console.warn('[UiScene] Unable to animate power HUD. Invalid power index.', { currentPower: data.currentPower, meterLength: this.#power.length });
+    }
+    this.#syncMeter(this.#power, data.currentPower, POWER_TEXTURE_FRAME.FULL, POWER_TEXTURE_FRAME.NONE);
     if (data.type === PLAYER_UPDATE_TYPE.INCREASE && !this.#levelUpSound.isPlaying) {
       this.#levelUpSound.play();
     }
   }
 
   public updateProgressInHud(data: PlayerProgressUpdated): void {
-    this.#syncMeter(this.#progress, GameDataManager.instance.data.maxProgress, data.currentProgress);
+    this.#syncMeter(this.#progress, data.currentProgress, PROGRESS_TEXTURE_FRAME.FULL, PROGRESS_TEXTURE_FRAME.NONE);
   }
 
   public updateLivingCreaturesInHud(data: LivingCreaturesUpdated): void {
-    this.#syncLivingCreaturesMeter(data.currentLivingCreatures, data.maxLivingCreaturesThisGame);
+    this.#syncLivingCreaturesMeter(data.currentLivingCreatures);
   }
 
   public showHealthHud(): void {
@@ -303,25 +311,31 @@ export class UiScene extends Phaser.Scene {
       currentValue: playerData.currentHealth,
       maxValue: playerData.maxHealth,
       startX: HUD_HEALTH_X,
-      textureKey: ASSET_KEYS.HEARTS_16,
+      textureKey: ASSET_KEYS.HUD_ICONS,
+      fullIndex: HEART_TEXTURE_FRAME.FULL,
+      emptyIndex: HEART_TEXTURE_FRAME.NONE,
     });
     this.#power = this.#createMeter({
       currentValue: playerData.currentPower,
       maxValue: playerData.maxPower,
       startX: HUD_POWER_X,
-      textureKey: ASSET_KEYS.POWER_16,
+      textureKey: ASSET_KEYS.HUD_ICONS,
+      fullIndex: POWER_TEXTURE_FRAME.FULL,
+      emptyIndex: POWER_TEXTURE_FRAME.NONE,
       horizontalSpacing: 2,
     });
     this.#progress = this.#createMeter({
       currentValue: this.#getLivingCreaturesMeterValue(playerData.currentLivingCreatures),
       maxValue: this.#getLivingCreaturesMeterValue(playerData.maxLivingCreaturesThisGame),
       startX: HUD_PROGRESS_X,
-      textureKey: ASSET_KEYS.PROGRESS_16,
+      textureKey: ASSET_KEYS.HUD_ICONS,
+      fullIndex: PROGRESS_TEXTURE_FRAME.FULL,
+      emptyIndex: PROGRESS_TEXTURE_FRAME.NONE,
     });
 
-    this.#setMeterVisible(this.#hearts, false);
-    this.#setMeterVisible(this.#power, false);
-    this.#setMeterVisible(this.#progress, false);
+    this.#setMeterVisible(this.#hearts, true);// todo false
+    this.#setMeterVisible(this.#power, true);
+    this.#setMeterVisible(this.#progress, true);
 
     this.#hudContainer.add(this.#hearts);
     this.#hudContainer.add(this.#power);
@@ -382,17 +396,51 @@ export class UiScene extends Phaser.Scene {
 
   #createMeter(config: HudMeterConfig): Phaser.GameObjects.Sprite[] {
     const meter: Phaser.GameObjects.Sprite[] = [];
-    for (let index = 0; index < HUD_METER_SPRITE_COUNT; index += 1) {
+    for (let index = 0; index < config.maxValue; index += 1) {
       const position = this.#getMeterSpritePosition(config.startX, index, config.horizontalSpacing);
-      const frame = this.#getMeterFrame(index, config.maxValue, config.currentValue);
+      const frame = config.currentValue > index ? config.fullIndex : config.emptyIndex;
       meter.push(this.add.sprite(position.x, position.y, config.textureKey, frame).setOrigin(0));
     }
     return meter;
   }
 
-  #syncMeter(meter: Phaser.GameObjects.Sprite[], maxValue: number, currentValue: number): void {
+  #ensureHealthMeterCapacity(maxHealth: number): void {
+    const visible = this.#hearts[0]?.visible ?? true;
+    const currentHealth = GameDataManager.instance.data.currentHealth;
+    for (let index = this.#hearts.length; index < maxHealth; index += 1) {
+      const position = this.#getMeterSpritePosition(HUD_HEALTH_X, index);
+      const frame = currentHealth > index ? HEART_TEXTURE_FRAME.FULL : HEART_TEXTURE_FRAME.NONE;
+      const sprite = this.add.sprite(position.x, position.y, ASSET_KEYS.HUD_ICONS, frame)
+        .setOrigin(0)
+        .setVisible(visible);
+      this.#hearts.push(sprite);
+      this.#hudContainer.add(sprite);
+    }
+  }
+
+  async #playMeterSpriteAnimation(
+    meter: Phaser.GameObjects.Sprite[],
+    spriteIndex: number,
+    animationName: string,
+    meterName: string,
+  ): Promise<void> {
+    const sprite = meter[spriteIndex];
+    if (!sprite) {
+      console.warn(`[UiScene] Unable to animate ${meterName} HUD. Invalid sprite index.`, { spriteIndex, meterLength: meter.length });
+      return;
+    }
+    await new Promise((resolve) => {
+      sprite.play(animationName);
+      sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE_KEY + animationName, () => {
+        resolve(undefined);
+      });
+    });
+  }
+
+  #syncMeter(meter: Phaser.GameObjects.Sprite[], currentValue: number, fullIndex: number, emptyIndex: number): void {
+    
     meter.forEach((sprite, index) => {
-      sprite.setFrame(this.#getMeterFrame(index, maxValue, currentValue));
+      sprite.setFrame(currentValue > index ? fullIndex : emptyIndex);
     });
   }
 
@@ -402,33 +450,17 @@ export class UiScene extends Phaser.Scene {
     });
   }
 
-  #syncLivingCreaturesMeter(currentLivingCreatures: number, maxLivingCreaturesThisGame: number): void {
+  #syncLivingCreaturesMeter(currentLivingCreatures: number): void {
     this.#syncMeter(
       this.#progress,
-      this.#getLivingCreaturesMeterValue(maxLivingCreaturesThisGame),
       this.#getLivingCreaturesMeterValue(currentLivingCreatures),
+      PROGRESS_TEXTURE_FRAME.FULL,
+      PROGRESS_TEXTURE_FRAME.NONE,
     );
   }
 
   #getLivingCreaturesMeterValue(currentLivingCreatures: number): number {
     return Math.min(currentLivingCreatures, HUD_METER_SPRITE_COUNT) * 2;
-  }
-
-  #getMeterFrame(index: number, maxValue: number, currentValue: number): number {
-    const numberOfSlots = Math.floor(maxValue / 2);
-    const numberOfFullSlots = Math.floor(currentValue / 2);
-    const hasHalfSlot = currentValue % 2 === 1;
-
-    if (index < numberOfFullSlots) {
-      return HUD_FULL_FRAME;
-    }
-    if (hasHalfSlot && index === numberOfFullSlots) {
-      return HUD_FULL_FRAME;
-    }
-    if (index < numberOfSlots) {
-      return HUD_EMPTY_FRAME;
-    }
-    return HUD_NONE_FRAME;
   }
 
   #getMeterSpritePosition(startX: number, index: number, horizontalSpacing: number = 0): { x: number; y: number } {
