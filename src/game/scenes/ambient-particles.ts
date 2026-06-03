@@ -1,0 +1,114 @@
+import * as Phaser from 'phaser';
+
+const DUST_TEXTURE_KEY = 'intro-dust-particle';
+const FIREFLY_TEXTURE_KEY = 'intro-firefly-particle';
+
+const INTRO_DUST_DEPTH = 999;
+const INTRO_FIREFLY_DEPTH = 999;
+
+export type IntroAmbientParticles = {
+  emitters: Phaser.GameObjects.Particles.ParticleEmitter[];
+  destroy: () => void;
+};
+
+function ensureAmbientParticleTextures(scene: Phaser.Scene): void {
+  if (!scene.textures.exists(DUST_TEXTURE_KEY)) {
+    const dustGraphics = scene.add.graphics();
+    dustGraphics.fillStyle(0xfff7df, 0.9);
+    dustGraphics.fillCircle(3, 3, 2);
+    dustGraphics.fillStyle(0xffffff, 0.35);
+    dustGraphics.fillCircle(3, 3, 1);
+    dustGraphics.generateTexture(DUST_TEXTURE_KEY, 6, 6);
+    dustGraphics.destroy();
+  }
+
+  if (!scene.textures.exists(FIREFLY_TEXTURE_KEY)) {
+    const fireflyGraphics = scene.add.graphics();
+    fireflyGraphics.fillStyle(0xffc85a, 0.12);
+    fireflyGraphics.fillCircle(6, 6, 6);
+    fireflyGraphics.fillStyle(0xffdf75, 0.35);
+    fireflyGraphics.fillCircle(6, 6, 4);
+    fireflyGraphics.fillStyle(0xffffc8, 0.9);
+    fireflyGraphics.fillCircle(6, 6, 2);
+    fireflyGraphics.generateTexture(FIREFLY_TEXTURE_KEY, 12, 12);
+    fireflyGraphics.destroy();
+  }
+}
+
+function createViewportZone(scene: Phaser.Scene): Phaser.Types.GameObjects.Particles.RandomZoneSource {
+  const bounds = new Phaser.Geom.Rectangle(0, 0, scene.scale.width, scene.scale.height);
+  return {
+    getRandomPoint: (point) => {
+      point.x = Phaser.Math.FloatBetween(bounds.left, bounds.right);
+      point.y = Phaser.Math.FloatBetween(bounds.top, bounds.bottom);
+    },
+  };
+}
+
+function createDustEmitter(scene: Phaser.Scene): Phaser.GameObjects.Particles.ParticleEmitter {
+  const emitter = scene.add.particles(0, 0, DUST_TEXTURE_KEY, {
+    emitZone: {
+      type: 'random',
+      source: createViewportZone(scene),
+    },
+    frequency: 420,
+    quantity: 2,
+    advance: 8000,
+    lifespan: { min: 7000, max: 14000 },
+    speedX: { min: -4, max: 8 },
+    speedY: { min: -18, max: -4 },
+    accelerationY: -1,
+    scale: { start: 0.8, end: 0.18, random: true },
+    alpha: { start: 0.28, end: 0 },
+    rotate: { min: -15, max: 15 },
+    reserve: 100,
+    maxAliveParticles: 120,
+  });
+  emitter.setDepth(INTRO_DUST_DEPTH);
+  emitter.setScrollFactor(0);
+  return emitter;
+}
+
+function createFireflyEmitter(scene: Phaser.Scene): Phaser.GameObjects.Particles.ParticleEmitter {
+  const emitter = scene.add.particles(0, 0, FIREFLY_TEXTURE_KEY, {
+    emitZone: {
+      type: 'random',
+      source: createViewportZone(scene),
+    },
+    frequency: 1300,
+    quantity: 2,
+    advance: 4000,
+    lifespan: { min: 3000, max: 6500 },
+    speedX: { min: -10, max: 10 },
+    speedY: { min: -8, max: 6 },
+    scale: { start: 0.6, end: 0 },
+    alpha: { start: 0.75, end: 0 },
+    tint: 0xffe88a,
+    reserve: 24,
+    maxAliveParticles: 28,
+  });
+  emitter.setDepth(INTRO_FIREFLY_DEPTH);
+  emitter.setParticleTint(0xffe88a);
+  emitter.tintMode = Phaser.TintModes.ADD;
+  emitter.setScrollFactor(0);
+  return emitter;
+}
+
+export function createIntroAmbientParticles(scene: Phaser.Scene): IntroAmbientParticles {
+  ensureAmbientParticleTextures(scene);
+
+  const emitters = [
+    createDustEmitter(scene),
+    createFireflyEmitter(scene),
+  ];
+
+  return {
+    emitters,
+    destroy: () => {
+      for (const emitter of emitters) {
+        emitter.stop(true);
+        emitter.destroy();
+      }
+    },
+  };
+}

@@ -12,6 +12,7 @@ import {
 } from '../common/assets';
 import { getText } from '../common/texts';
 import { KeyboardComponent } from '../components/input/keyboard-component';
+import { createIntroAmbientParticles, IntroAmbientParticles } from './ambient-particles';
 
 const COLORS = {
     title: '#5eb1da',
@@ -96,6 +97,7 @@ export class Intro extends Scene {
     private controls?: KeyboardComponent;
     private animalSpawnEvent?: Phaser.Time.TimerEvent;
     private backgroundAnimals: Phaser.GameObjects.Sprite[] = [];
+    private ambientParticles?: IntroAmbientParticles;
 
     #uiDownSound!: Phaser.Sound.BaseSound;
     #uiUpSound!: Phaser.Sound.BaseSound;
@@ -123,6 +125,7 @@ export class Intro extends Scene {
         this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_2).setDepth(10);
         this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_1).setDepth(20);
         this.add.image(512, 384, ASSET_KEYS.INTRO_BACKGROUND_LAYER_0).setDepth(30);
+        this.ambientParticles = createIntroAmbientParticles(this);
         this.add.image(512, 150, ASSET_KEYS.LOGO).setDepth(100).setScale(2.5);
         this.startBackgroundAnimalSpawning();
 
@@ -183,6 +186,8 @@ export class Intro extends Scene {
         }
 
         this.events.once('shutdown', () => {
+            this.ambientParticles?.destroy();
+            this.ambientParticles = undefined;
             this.cleanupBackgroundAnimals();
             this.introMusic?.stop();
             this.introMusic?.destroy();
