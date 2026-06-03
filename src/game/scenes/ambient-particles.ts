@@ -6,9 +6,14 @@ const FIREFLY_TEXTURE_KEY = 'intro-firefly-particle';
 const INTRO_DUST_DEPTH = 999;
 const INTRO_FIREFLY_DEPTH = 999;
 
-export type IntroAmbientParticles = {
+export type AmbientParticles = {
   emitters: Phaser.GameObjects.Particles.ParticleEmitter[];
   destroy: () => void;
+};
+
+export type AmbientParticleOptions = {
+  dustDepth?: number;
+  fireflyDepth?: number;
 };
 
 function ensureAmbientParticleTextures(scene: Phaser.Scene): void {
@@ -45,7 +50,7 @@ function createViewportZone(scene: Phaser.Scene): Phaser.Types.GameObjects.Parti
   };
 }
 
-function createDustEmitter(scene: Phaser.Scene): Phaser.GameObjects.Particles.ParticleEmitter {
+function createDustEmitter(scene: Phaser.Scene, depth: number): Phaser.GameObjects.Particles.ParticleEmitter {
   const emitter = scene.add.particles(0, 0, DUST_TEXTURE_KEY, {
     emitZone: {
       type: 'random',
@@ -64,12 +69,12 @@ function createDustEmitter(scene: Phaser.Scene): Phaser.GameObjects.Particles.Pa
     reserve: 100,
     maxAliveParticles: 120,
   });
-  emitter.setDepth(INTRO_DUST_DEPTH);
+  emitter.setDepth(depth);
   emitter.setScrollFactor(0);
   return emitter;
 }
 
-function createFireflyEmitter(scene: Phaser.Scene): Phaser.GameObjects.Particles.ParticleEmitter {
+function createFireflyEmitter(scene: Phaser.Scene, depth: number): Phaser.GameObjects.Particles.ParticleEmitter {
   const emitter = scene.add.particles(0, 0, FIREFLY_TEXTURE_KEY, {
     emitZone: {
       type: 'random',
@@ -87,19 +92,19 @@ function createFireflyEmitter(scene: Phaser.Scene): Phaser.GameObjects.Particles
     reserve: 24,
     maxAliveParticles: 28,
   });
-  emitter.setDepth(INTRO_FIREFLY_DEPTH);
+  emitter.setDepth(depth);
   emitter.setParticleTint(0xffe88a);
   emitter.tintMode = Phaser.TintModes.ADD;
   emitter.setScrollFactor(0);
   return emitter;
 }
 
-export function createIntroAmbientParticles(scene: Phaser.Scene): IntroAmbientParticles {
+export function createAmbientParticles(scene: Phaser.Scene, options: AmbientParticleOptions = {}): AmbientParticles {
   ensureAmbientParticleTextures(scene);
 
   const emitters = [
-    createDustEmitter(scene),
-    createFireflyEmitter(scene),
+    createDustEmitter(scene, options.dustDepth ?? INTRO_DUST_DEPTH),
+    createFireflyEmitter(scene, options.fireflyDepth ?? INTRO_FIREFLY_DEPTH),
   ];
 
   return {
@@ -111,4 +116,8 @@ export function createIntroAmbientParticles(scene: Phaser.Scene): IntroAmbientPa
       }
     },
   };
+}
+
+export function createIntroAmbientParticles(scene: Phaser.Scene): AmbientParticles {
+  return createAmbientParticles(scene);
 }

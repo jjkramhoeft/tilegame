@@ -13,6 +13,7 @@ import { SCENE_KEYS } from './scene-keys';
 import { DIFFICULTY, SEX, isDifficulty, isSex } from '../common/common';
 import type { Difficulty, Sex } from '../common/common';
 import { KeyboardComponent } from '../components/input/keyboard-component';
+import { AmbientParticles, createAmbientParticles } from './ambient-particles';
 
 const CURSOR_SIZE = 16;
 const CURSOR_X_OFFSET = 30; // distance left of the '<' arrow
@@ -88,6 +89,7 @@ export class Settings extends Scene {
     private controls?: KeyboardComponent;
     private decorativePlant?: Phaser.GameObjects.Sprite;
     private decorativePlantTimer?: Phaser.Time.TimerEvent;
+    private ambientParticles?: AmbientParticles;
     #uiDownSound!: Phaser.Sound.BaseSound;
     #uiUpSound!: Phaser.Sound.BaseSound;
     #uiSelectSound!: Phaser.Sound.BaseSound;
@@ -101,8 +103,13 @@ export class Settings extends Scene {
         this.rows = [];
         this.selectedRowIndex = 0;
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, ASSET_KEYS.CREDITS_BACKGROUND);
+        this.ambientParticles = createAmbientParticles(this);
         this.createDecorativePlant();
-        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanupDecorativePlantTimer());
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.ambientParticles?.destroy();
+            this.ambientParticles = undefined;
+            this.cleanupDecorativePlantTimer();
+        });
 
         this.#uiDownSound = this.sound.add(ASSET_KEYS.UI_DOWN);
         this.#uiUpSound = this.sound.add(ASSET_KEYS.UI_UP);

@@ -12,7 +12,7 @@ import {
 } from '../common/assets';
 import { getText } from '../common/texts';
 import { KeyboardComponent } from '../components/input/keyboard-component';
-import { createIntroAmbientParticles, IntroAmbientParticles } from './ambient-particles';
+import { createIntroAmbientParticles, AmbientParticles } from './ambient-particles';
 
 const COLORS = {
     title: '#5eb1da',
@@ -97,7 +97,7 @@ export class Intro extends Scene {
     private controls?: KeyboardComponent;
     private animalSpawnEvent?: Phaser.Time.TimerEvent;
     private backgroundAnimals: Phaser.GameObjects.Sprite[] = [];
-    private ambientParticles?: IntroAmbientParticles;
+    private ambientParticles?: AmbientParticles;
 
     #uiDownSound!: Phaser.Sound.BaseSound;
     #uiUpSound!: Phaser.Sound.BaseSound;
