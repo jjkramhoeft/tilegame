@@ -115,7 +115,8 @@ export class Settings extends Scene {
         this.#uiUpSound = this.sound.add(ASSET_KEYS.UI_UP);
         this.#uiSelectSound = this.sound.add(ASSET_KEYS.UI_SELECT);
 
-        this.addKeyboard('default',-350,150);
+        this.addKeyboard('default', -350, 100);
+        this.addKeyboard('alt', -350, 250);
 
         const savedDifficulty = this.registry.get('difficulty');
         const hasSavedDifficulty = isDifficulty(savedDifficulty);
@@ -241,7 +242,7 @@ export class Settings extends Scene {
         this.trackLocalizedText(backText, () => getText('settings.back'));
         backText.setOrigin(1);
         backText.setInteractive({ useHandCursor: true });
-        backText.on('pointerdown', () => {         
+        backText.on('pointerdown', () => {
             this.#uiSelectSound.play();
             this.scene.start(SCENE_KEYS.INTRO);
         });
@@ -252,28 +253,55 @@ export class Settings extends Scene {
         const y = this.cameras.main.centerY + yOffset;
         const dy = 25;
         const dx = 80;
-        if(layout === 'default' && this.input.keyboard) {
-
+        if (layout === 'default' && this.input.keyboard) {
             //Attack z  
             this.add.image(x, y, ASSET_KEYS.KEYBOARDKEYS, 8);
-            this.add.text(x, y+dy, getText('keyboard.attack'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center'}).setOrigin(0.5).setDepth(100);
+            const attackText = this.add.text(x, y + dy, getText('keyboard.attack'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center' }).setOrigin(0.5).setDepth(100);
+            this.trackLocalizedText(attackText, () => getText('keyboard.attack'));
             //Interact x
-            this.add.image(x+dx, y, ASSET_KEYS.KEYBOARDKEYS, 9);
-            this.add.text(x+dx, y+dy, getText('keyboard.interact'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center'}).setOrigin(0.5).setDepth(100);
+            this.add.image(x + dx, y, ASSET_KEYS.KEYBOARDKEYS, 9);
+            const interactText = this.add.text(x + dx, y + dy, getText('keyboard.interact'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center' }).setOrigin(0.5).setDepth(100);
+            this.trackLocalizedText(interactText, () => getText('keyboard.interact'));
             //Cast c
-            this.add.image(x+dx*2, y, ASSET_KEYS.KEYBOARDKEYS, 10);
-            this.add.text(x+dx*2, y+dy, getText('keyboard.cast'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center'}).setOrigin(0.5).setDepth(100);
+            this.add.image(x + dx * 2, y, ASSET_KEYS.KEYBOARDKEYS, 10);
+            const castText = this.add.text(x + dx * 2, y + dy, getText('keyboard.cast'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center' }).setOrigin(0.5).setDepth(100);
+            this.trackLocalizedText(castText, () => getText('keyboard.cast'));
             //Map m
-            this.add.image(x+dx*3.2, y, ASSET_KEYS.KEYBOARDKEYS, 11);
-            this.add.text(x+dx*3.2, y+dy, getText('keyboard.map'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center'}).setOrigin(0.5).setDepth(100);
+            this.add.image(x + dx * 3.2, y, ASSET_KEYS.KEYBOARDKEYS, 11);
+            const mapText = this.add.text(x + dx * 3.2, y + dy, getText('keyboard.map'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center' }).setOrigin(0.5).setDepth(100);
+            this.trackLocalizedText(mapText, () => getText('keyboard.map'));
             //Move 
-            this.add.image(x+dx*5, y, ASSET_KEYS.KEYBOARDKEYS, 13);
-            this.add.image(x+dx*4.5, y+dy, ASSET_KEYS.KEYBOARDKEYS, 14);
-            this.add.image(x+dx*5, y+dy, ASSET_KEYS.KEYBOARDKEYS, 15);
-            this.add.image(x+dx*5.5, y+dy, ASSET_KEYS.KEYBOARDKEYS, 16);
-            this.add.text(x+dx*5, y+dy*2.2, getText('keyboard.move'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center'}).setOrigin(0.5).setDepth(100);
-
-
+            this.add.image(x + dx * 5, y, ASSET_KEYS.KEYBOARDKEYS, 13);
+            this.add.image(x + dx * 4.5, y + dy, ASSET_KEYS.KEYBOARDKEYS, 14);
+            this.add.image(x + dx * 5, y + dy, ASSET_KEYS.KEYBOARDKEYS, 15);
+            this.add.image(x + dx * 5.5, y + dy, ASSET_KEYS.KEYBOARDKEYS, 16);
+            const moveText = this.add.text(x + dx * 5, y + dy * 2.2, getText('keyboard.move'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center' }).setOrigin(0.5).setDepth(100);
+            this.trackLocalizedText(moveText, () => getText('keyboard.move'));
+        } else if (layout === 'alt' && this.input.keyboard) {
+            const dimColor = 0x999999;
+            //Move 
+            this.add.image(x + dx * 0.5, y, ASSET_KEYS.KEYBOARDKEYS, 1).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            this.add.image(x, y + dy, ASSET_KEYS.KEYBOARDKEYS, 5).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            this.add.image(x + dx * 0.5, y + dy, ASSET_KEYS.KEYBOARDKEYS, 6).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            this.add.image(x + dx, y + dy, ASSET_KEYS.KEYBOARDKEYS, 7).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            const moveText = this.add.text(x + dx * 0.5, y + dy * 2.2, getText('keyboard.move'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center' }).setOrigin(0.5).setDepth(100).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            this.trackLocalizedText(moveText, () => getText('keyboard.move'));
+            //Attack r  
+            this.add.image(x+ dx * 2, y, ASSET_KEYS.KEYBOARDKEYS, 2).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            const attackText = this.add.text(x+dx*2, y + dy, getText('keyboard.attack'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center' }).setOrigin(0.5).setDepth(100).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            this.trackLocalizedText(attackText, () => getText('keyboard.attack'));
+            //Cast t
+            this.add.image(x + dx * 3, y, ASSET_KEYS.KEYBOARDKEYS, 3).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            const castText = this.add.text(x + dx * 3, y + dy, getText('keyboard.cast'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center' }).setOrigin(0.5).setDepth(100).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            this.trackLocalizedText(castText, () => getText('keyboard.cast'));
+            //Map m
+            this.add.image(x + dx * 4, y, ASSET_KEYS.KEYBOARDKEYS, 11).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            const mapText = this.add.text(x + dx * 4, y + dy, getText('keyboard.map'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center' }).setOrigin(0.5).setDepth(100).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            //Interact enter
+            this.add.image(x + dx*5, y, ASSET_KEYS.KEYBOARDKEYS, 4).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            const interactText = this.add.text(x + dx*5, y + dy, getText('keyboard.interact'), { fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, fontSize: 22, color: COLORS.title, stroke: COLORS.titleStroke, strokeThickness: 4, align: 'center' }).setOrigin(0.5).setDepth(100).setTint(dimColor).setTintMode(Phaser.TintModes.MULTIPLY);
+            this.trackLocalizedText(interactText, () => getText('keyboard.interact'));
+            this.trackLocalizedText(mapText, () => getText('keyboard.map'));
         }
     }
 
@@ -282,7 +310,7 @@ export class Settings extends Scene {
             return;
         }
 
-        if (this.controls.isEscapeKeyJustDown || this.controls.isActionKeyJustDown) {            
+        if (this.controls.isEscapeKeyJustDown || this.controls.isActionKeyJustDown) {
             this.#uiSelectSound.play();
             this.scene.start(SCENE_KEYS.INTRO);
             return;
@@ -311,7 +339,7 @@ export class Settings extends Scene {
         }
         if (this.controls.isRightJustDown) {
             activeRow.onNext();
-            activeRow.valueText.setText(activeRow.getValueText());            
+            activeRow.valueText.setText(activeRow.getValueText());
             this.#uiUpSound.play();
         }
     }
@@ -479,6 +507,6 @@ export class Settings extends Scene {
                 world.debugGraphic.clear();
             }
         }
-            GameDataManager.instance.setDifficulty(difficulty, debugEnabled);
+        GameDataManager.instance.setDifficulty(difficulty, debugEnabled);
     }
 }
