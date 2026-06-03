@@ -7,6 +7,7 @@ import {
   EVENT_BUS,
   PLAYER_UPDATE_TYPE,
   registerEventBusListenersUntilShutdown,
+  type DimHelpKeyboardKeysPayload,
   type LivingCreaturesUpdated,
   type ProgressionHelpCloseAction as NarratorDialogCloseAction,
   type ProgressionHelpClosed as NarratorDialogClosed,
@@ -33,6 +34,21 @@ const HUD_EMPTY_FRAME = 0;
 const HUD_FULL_FRAME = 2;
 const HUD_NONE_FRAME = 3;
 
+const KEYBOARD_HELP_Y_OFFSET = 105;
+const KEYBOARD_HELP_ACTION_Y = 6;
+const KEYBOARD_HELP_TEXT_Y = 42;
+const KEYBOARD_HELP_MOVE_TEXT_Y = 65;
+const KEYBOARD_HELP_ITEM_SPACING = 130;
+const KEYBOARD_HELP_DIM_TINT = 0x999999;
+const KEYBOARD_HELP_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
+  align: 'center',
+  fontFamily: ASSET_KEYS.FONT_PIXEL_SERIF_16PX,
+  fontSize: 18,
+  color: '#FFFFFF',
+  stroke: '#000000',
+  strokeThickness: 4,
+};
+
 const DIALOG_X = 205;
 const DIALOG_Y = 80;
 const DIALOG_WIDTH = 610;
@@ -58,6 +74,9 @@ type HudMeterConfig = {
   horizontalSpacing?: number;
 };
 
+type KeyboardHelpTextKey = DimHelpKeyboardKeysPayload['textKey'];
+type KeyboardHelpObject = Phaser.GameObjects.Image | Phaser.GameObjects.Text;
+
 const enum UiMode {
   HudOnly,
   ChestDialog,
@@ -69,6 +88,8 @@ export class UiScene extends Phaser.Scene {
   #hearts!: Phaser.GameObjects.Sprite[];
   #power!: Phaser.GameObjects.Sprite[];
   #progress!: Phaser.GameObjects.Sprite[];
+  #keyBoardHelpContainer!: Phaser.GameObjects.Container;
+  #keyboardHelpObjects = new Map<KeyboardHelpTextKey, KeyboardHelpObject[]>();
 
   #narratorDialogContainer!: Phaser.GameObjects.Container;
   #narratorDialogText!: Phaser.GameObjects.Text;
@@ -106,6 +127,7 @@ export class UiScene extends Phaser.Scene {
     if (!this.input.keyboard) { console.warn('[UiScene] keyboard plugin is not setup properly'); return; }
 
     this.#createHud();
+    this.#createKeyboardHelpContainer();
     this.#createChestDialog();
     this.#createNarratorDialog();
 
@@ -126,6 +148,9 @@ export class UiScene extends Phaser.Scene {
       { event: CUSTOM_EVENTS.SHOW_HEALTH_HUD, listener: this.showHealthHud, context: this },
       { event: CUSTOM_EVENTS.SHOW_POWER_HUD, listener: this.showPowerHud, context: this },
       { event: CUSTOM_EVENTS.SHOW_PROGRESS_HUD, listener: this.showProgressHud, context: this },
+      { event: CUSTOM_EVENTS.SHOW_HELP_KEYBORD, listener: this.showKeyboardHelp, context: this },
+      { event: CUSTOM_EVENTS.HIDE_HELP_KEYBORD, listener: this.hideKeyboardHelp, context: this },
+      { event: CUSTOM_EVENTS.DIM_HELP_KEYBORD_KEYS, listener: this.dimKeyboardHelpKeys, context: this },
       { event: CUSTOM_EVENTS.SHOW_CHEST_DIALOG, listener: this.showDialog, context: this },
       { event: CUSTOM_EVENTS.SHOW_NARRATOR_DIALOG, listener: this.showNarratorDialog, context: this },
     ]);
@@ -188,6 +213,26 @@ export class UiScene extends Phaser.Scene {
 
   public showProgressHud(): void {
     this.#setMeterVisible(this.#progress, true);
+  }
+
+  public showKeyboardHelp(): void {
+    this.#resetKeyboardHelpKeys();
+    this.#keyBoardHelpContainer.visible = true;
+  }
+
+  public hideKeyboardHelp(): void {
+    this.#keyBoardHelpContainer.visible = false;
+  }
+
+  public dimKeyboardHelpKeys(payload?: DimHelpKeyboardKeysPayload): void {
+    if (!payload) {
+      return;
+    }
+    const objects = this.#keyboardHelpObjects.get(payload.textKey);
+    if (!objects) {
+      return;
+    }
+    this.#setKeyboardHelpObjectsDimmed(objects, true);
   }
 
   public showDialog(dialog: DialogPayload): void {
@@ -281,6 +326,58 @@ export class UiScene extends Phaser.Scene {
     this.#hudContainer.add(this.#hearts);
     this.#hudContainer.add(this.#power);
     this.#hudContainer.add(this.#progress);
+  }
+
+  #createKeyboardHelpContainer(): void {
+    this.#keyboardHelpObjects.clear();
+    this.#keyBoardHelpContainer = this.add.container(
+      this.cameras.main.width / 2,
+      this.cameras.main.height - KEYBOARD_HELP_Y_OFFSET,
+      [],
+    );
+
+    this.#createKeyboardHelpMove(KEYBOARD_HELP_ITEM_SPACING);
+    this.#createKeyboardHelpAction('Attack', -KEYBOARD_HELP_ITEM_SPACING, 8, getText('keyboard.attack'));
+    this.#createKeyboardHelpAction('Cast', -2xx0, 10, getText('keyboard.cast'));
+
+    this.#keyBoardHelpContainer.visible = false;
+  }
+
+  #createKeyboardHelpMove(x: number): void {
+    const objects: KeyboardHelpObject[] = [
+      this.add.image(x, -10, ASSET_KEYS.KEYBOARDKEYS, 13),
+      this.add.image(x - 16, 22, ASSET_KEYS.KEYBOARDKEYS, 14),
+      this.add.image(x, 22, ASSET_KEYS.KEYBOARDKEYS, 15),
+      this.add.image(x + 16, 22, ASSET_KEYS.KEYBOARDKEYS, 16),
+      this.add.text(x, KEYBOARD_HELP_MOVE_TEXT_Y, getText('keyboard.move'), KEYBOARD_HELP_TEXT_STYLE).setOrigin(0.5),
+    ];
+    this.#keyBoardHelpContainer.add(objects);
+    this.#keyboardHelpObjects.set('Move', objects);
+  }
+
+  #createKeyboardHelpAction(textKey: KeyboardHelpTextKey, x: number, frame: number, label: string): void {
+    const objects: KeyboardHelpObject[] = [
+      this.add.image(x, KEYBOARD_HELP_ACTION_Y, ASSET_KEYS.KEYBOARDKEYS, frame),
+      this.add.text(x, KEYBOARD_HELP_TEXT_Y, label, KEYBOARD_HELP_TEXT_STYLE).setOrigin(0.5),
+    ];
+    this.#keyBoardHelpContainer.add(objects);
+    this.#keyboardHelpObjects.set(textKey, objects);
+  }
+
+  #resetKeyboardHelpKeys(): void {
+    this.#keyboardHelpObjects.forEach((objects) => {
+      this.#setKeyboardHelpObjectsDimmed(objects, false);
+    });
+  }
+
+  #setKeyboardHelpObjectsDimmed(objects: KeyboardHelpObject[], dimmed: boolean): void {
+    objects.forEach((object) => {
+      if (dimmed) {
+        object.setTint(KEYBOARD_HELP_DIM_TINT).setTintMode(Phaser.TintModes.MULTIPLY);
+        return;
+      }
+      object.clearTint();
+    });
   }
 
   #createMeter(config: HudMeterConfig): Phaser.GameObjects.Sprite[] {

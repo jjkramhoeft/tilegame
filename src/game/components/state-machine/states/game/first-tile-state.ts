@@ -1,6 +1,7 @@
 import { BaseGameState } from './base-game-state';
 import { GAME_STATES } from './game-state-keys';
 import { CHARACTER_STATES } from '../character/character-states';
+import { CUSTOM_EVENTS, EVENT_BUS } from '../../../../common/event-bus';
 import type { GameScene } from '../../../../scenes/game-scene';
 import { ENABLE_LOGGING } from '../../../../common/config';
 
@@ -29,6 +30,7 @@ export class FirstTileState extends BaseGameState {
     this.#moved = false;
     this.#attacked = false;
     this.#casted = false;
+    EVENT_BUS.emit(CUSTOM_EVENTS.SHOW_HELP_KEYBORD);
   }
 
   public onUpdate(): void {
@@ -39,19 +41,27 @@ export class FirstTileState extends BaseGameState {
       const dy = player.y - this.#startY;
       if (Math.abs(dx) + Math.abs(dy) > 10) {
         this.#moved = true;
+        EVENT_BUS.emit(CUSTOM_EVENTS.DIM_HELP_KEYBORD_KEYS, { textKey: 'Move' });
       }
     }
     
     if (!this.#attacked && player.currentState === CHARACTER_STATES.ATTACK_STATE) {
       this.#attacked = true;
+      EVENT_BUS.emit(CUSTOM_EVENTS.DIM_HELP_KEYBORD_KEYS, { textKey: 'Attack' });
     }
     
     if (!this.#casted && player.currentState === CHARACTER_STATES.CASTING_STATE) {
       this.#casted = true;
+      EVENT_BUS.emit(CUSTOM_EVENTS.DIM_HELP_KEYBORD_KEYS, { textKey: 'Cast' });
     }
 
     if (this.#moved && this.#attacked && this.#casted) {
       this._transitionTo(GAME_STATES.ASSIGNMENT);
     }
+  }
+
+  public override onExit(): void {
+    EVENT_BUS.emit(CUSTOM_EVENTS.HIDE_HELP_KEYBORD);
+    super.onExit();
   }
 }
