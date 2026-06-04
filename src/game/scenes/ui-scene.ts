@@ -189,14 +189,9 @@ export class UiScene extends Phaser.Scene {
     this.#syncMeter(this.#hearts, GameDataManager.instance.data.currentHealth, HEART_TEXTURE_FRAME.FULL, HEART_TEXTURE_FRAME.NONE);
   }
 
-  public updatePowerInHud(data: PlayerPowerUpdated): void {
+  public async updatePowerInHud(data: PlayerPowerUpdated): Promise<void> {
     // This updatePowerInHud always increases the power by 1, so we can just play the animation once and then sync the meter to the correct value at the end of the animation.
-    const power = this.#power[data.currentPower + 1];
-    if (power) {
-      power.play(SPIN_HUD_ANIMATIONS.POWER);
-    } else {
-      console.warn('[UiScene] Unable to animate power HUD. Invalid power index.', { currentPower: data.currentPower, meterLength: this.#power.length });
-    }
+    await this.#playMeterSpriteAnimation(this.#power, data.currentPower - 1, SPIN_HUD_ANIMATIONS.POWER, 'power');
     this.#syncMeter(this.#power, data.currentPower, POWER_TEXTURE_FRAME.FULL, POWER_TEXTURE_FRAME.NONE);
     if (data.type === PLAYER_UPDATE_TYPE.INCREASE && !this.#levelUpSound.isPlaying) {
       this.#levelUpSound.play();
