@@ -4,6 +4,8 @@ export function setEnableLogging(value: boolean) { ENABLE_LOGGING = value; }
 export const DIFFICULTY_HARD_SPEED_MULTIPLIER = 1.5;
 export  const DIFFICULTY_HARD_WAIT_FACTOR = 0.5;
 
+export const MAX_POWER_LEVEL = 6;
+export const MAX_PROGRESS_LEVEL = 6;
 export const PLAYER_START_MAX_HEALTH = 5;
 export const PLAYER_START_HEALTH = 2;
 export const PLAYER_SPEED = 90;

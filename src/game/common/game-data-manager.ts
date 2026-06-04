@@ -1,7 +1,7 @@
 import type { ChestDialogInfo } from './chest-dialog';
 import { CASTING_UNLOCKS, CREATURE_TYPES, DIFFICULTY, GEAR, POTION, SEX, WEAPON } from './common';
 import type { Difficulty, Gear, Potion, Sex, Weapon } from './common';
-import { ENABLE_LOGGING, LEVEL_UP_TILE_THRESHOLDS, PLAYER_START_HEALTH, PLAYER_START_MAX_HEALTH } from './config';
+import { ENABLE_LOGGING, LEVEL_UP_TILE_THRESHOLDS, MAX_POWER_LEVEL, PLAYER_START_HEALTH, PLAYER_START_MAX_HEALTH } from './config';
 import {
   CUSTOM_EVENTS,
   EVENT_BUS,
@@ -72,7 +72,7 @@ export function createDefaultPlayerData(overrides: Partial<PlayerData> = {}): Pl
     maxHealth: PLAYER_START_MAX_HEALTH,
 
     currentPower: 1,
-    maxPower: 1,
+    maxPower: MAX_POWER_LEVEL,
     unlockedSpellCasting: new Set<CastingUnlocks>([CASTING_UNLOCKS.ROCK_BASIC]),
 
     currentProgress: 0,
@@ -291,7 +291,6 @@ export class GameDataManager {
       [castingUnlock]: (tilesPlaced[castingUnlock] ?? 0) + 1,
     };
 
-    //test powerlevel for upgrade.
     switch (castingUnlock) {
       case CASTING_UNLOCKS.ROCK_BASIC: this.#totalWeightedTilesPlaced += 1; break;
       case CASTING_UNLOCKS.DESERT_BASIC: this.#totalWeightedTilesPlaced += 1; break;
@@ -315,11 +314,14 @@ export class GameDataManager {
       case CASTING_UNLOCKS.SWAMP_BLOCKING: this.#totalWeightedTilesPlaced += 3; break;
       case CASTING_UNLOCKS.CRYSTAL_BLOCKING: this.#totalWeightedTilesPlaced += 3; break;
     }
-    const levelUpThreshold = LEVEL_UP_TILE_THRESHOLDS[this.#data.currentPower];
-    const debugDivider = GameDataManager.instance.data.isDebugMode ? 10 : 1;
-    if (this.#totalWeightedTilesPlaced >= levelUpThreshold / debugDivider) {
-      //Power up player.
-      this.updatePlayerCurrentPower(this.#data.currentPower + 1);
+
+    if (this.#data.currentPower < MAX_POWER_LEVEL) {
+      const levelUpThreshold = LEVEL_UP_TILE_THRESHOLDS[this.#data.currentPower];
+      const debugDivider = GameDataManager.instance.data.isDebugMode ? 10 : 1;
+      if (this.#totalWeightedTilesPlaced >= levelUpThreshold / debugDivider) {
+        //Power up player.
+        this.updatePlayerCurrentPower(this.#data.currentPower + 1);
+      }
     }
 
     //Test if unlock next is achieved.

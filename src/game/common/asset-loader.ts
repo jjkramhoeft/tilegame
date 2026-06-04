@@ -108,9 +108,6 @@ const spritesheetAssets: readonly SpritesheetAsset[] = [
   { key: ASSET_KEYS.TILESET_FLOATING, path: 'assets/tile-floating.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
   { key: ASSET_KEYS.BIG_TREE, path: 'assets/big-tree.png', frameConfig: { frameWidth: 128, frameHeight: 256 } },
   { key: ASSET_KEYS.CONTAINERS, path: 'assets/containers.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
-  { key: ASSET_KEYS.HEARTS_16, path: 'assets/hearts16.png', frameConfig: { frameWidth: 16, frameHeight: 16 } },
-  { key: ASSET_KEYS.POWER_16, path: 'assets/power16.png', frameConfig: { frameWidth: 16, frameHeight: 16 } },
-  { key: ASSET_KEYS.PROGRESS_16, path: 'assets/progress16.png', frameConfig: { frameWidth: 16, frameHeight: 16 } },
   { key: ASSET_KEYS.LAMB, path: 'assets/Lamb.png', frameConfig: { frameWidth: 32, frameHeight: 32 } },
   { key: ASSET_KEYS.CHICKEN, path: 'assets/Chicken.png', frameConfig: { frameWidth: 16, frameHeight: 16 } },
   { key: ASSET_KEYS.SHEEP, path: 'assets/Sheep.png', frameConfig: { frameWidth: 32, frameHeight: 32 } },
@@ -122,7 +119,6 @@ const spritesheetAssets: readonly SpritesheetAsset[] = [
   { key: ASSET_KEYS.ROOSTER, path: 'assets/Rooster.png', frameConfig: { frameWidth: 32, frameHeight: 32 } },
   { key: ASSET_KEYS.CALF, path: 'assets/Calf.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
   { key: ASSET_KEYS.BULL, path: 'assets/Bull.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
-  { key: ASSET_KEYS.SPELL_MUSIC_11, path: 'assets/spell-music-11.png', frameConfig: { frameWidth: 150, frameHeight: 150 } },
   { key: ASSET_KEYS.HUD_ICONS, path: 'assets/images/hud/hud-icons.png', frameConfig: { frameWidth: 16, frameHeight: 16 } },
   { key: ASSET_KEYS.MAGIC_FX_PARTICLE_NOTES, path: 'assets/images/notes.png', frameConfig: { frameWidth: 16, frameHeight: 16 } },
   { key: ASSET_KEYS.TILESET_MOUNTAIN, path: 'assets/images/tile-mountains.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
@@ -130,12 +126,10 @@ const spritesheetAssets: readonly SpritesheetAsset[] = [
 ];
 
 const asepriteAssets: readonly AsepriteAsset[] = [
-  { key: ASSET_KEYS.HUD_NUMBERS, texturePath: 'assets/images/hud/heart_and_hud_numbers.png', atlasPath: 'assets/images/hud/heart_and_hud_numbers.json' },
   { key: ASSET_KEYS.SPIDER, texturePath: 'assets/images/enemies/spider.png', atlasPath: 'assets/images/enemies/spider.json' },
 ];
 
 const fontAssets: readonly FontAsset[] = [
-  { key: ASSET_KEYS.FONT_PRESS_START_2P, path: 'assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf' },
   { key: ASSET_KEYS.FONT_PIXEL_SERIF_16PX, path: 'assets/fonts/PixelSerif_16px_v02.ttf' },
 ];
 

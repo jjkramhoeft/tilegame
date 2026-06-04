@@ -191,7 +191,7 @@ export class UiScene extends Phaser.Scene {
 
   public updatePowerInHud(data: PlayerPowerUpdated): void {
     // This updatePowerInHud always increases the power by 1, so we can just play the animation once and then sync the meter to the correct value at the end of the animation.
-    const power = this.#power[data.currentPower - 1];
+    const power = this.#power[data.currentPower + 1];
     if (power) {
       power.play(SPIN_HUD_ANIMATIONS.POWER);
     } else {
