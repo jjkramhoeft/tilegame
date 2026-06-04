@@ -95,7 +95,7 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     // general config
     this._isPlayer = isPlayer;
     this._isDefeated = false;
-    this._contactDamage = contactDamage ?? 2;
+    this._contactDamage = contactDamage ?? 1;
     if (!this._isPlayer) {
       this.disableObject();
     }
