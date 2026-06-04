@@ -35,7 +35,7 @@ export type CharacterConfig = {
   invulnerableAfterHitAnimationDuration?: number;
   maxLife: number;
   currentLife?: number;
-  /** Damage in half-hearts dealt to the player on contact. Defaults to 2 (one full heart). */
+  /** Damage in hearts dealt to the player on contact. Defaults to 1 (one full heart). */
   contactDamage?: number;
 };
 
@@ -153,7 +153,7 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     return this._lifeComponent;
   }
 
-  /** Damage in half-hearts this character deals to the player on contact. */
+  /** Damage in hearts this character deals to the player on contact. */
   get contactDamage(): number {
     return this._contactDamage;
   }

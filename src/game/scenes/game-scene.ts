@@ -26,7 +26,7 @@ import { GameProgression } from '../progression/game-progression';
 import { GAME_STATES } from '../components/state-machine/states/game/game-state-keys';
 import { ChestSpawnService } from '../spawning/chest-spawn-service';
 import { AnimalSpawnService } from '../spawning/animal-spawn-service';
-import { ENABLE_LOGGING } from '../common/config';
+import { ENABLE_LOGGING, PLAYER_START_MAX_HEALTH, PLAYER_START_HEALTH } from '../common/config';
 import { ASSET_KEYS } from '../common/assets';
 
 export class GameScene extends Phaser.Scene {
@@ -158,8 +158,8 @@ export class GameScene extends Phaser.Scene {
             scene: this,
             position: this.#playerStartWorldPosition,
             controls: this.#controls,
-            maxLife: 2,
-            currentLife: 2
+            maxLife: PLAYER_START_MAX_HEALTH,
+            currentLife: PLAYER_START_HEALTH
         });
         this.#controls.isMovementLocked = true;
 
@@ -320,10 +320,7 @@ export class GameScene extends Phaser.Scene {
     /** Place the fruit potion chest (chest #7) on a forest tile near the big tree. */
     public placeFruitChestNearBigTree(): void {
         const first = this.#earth.getFirstTilePosition();
-        if (!first) {
-            console.warn('[GameScene] placeFruitChestNearBigTree called before starting tile placed');
-            return;
-        }
+        if (!first) { console.warn('[GameScene] placeFruitChestNearBigTree called before starting tile placed'); return; }
         const tilePos = { x: first.x + 1, y: first.y };
         const tile = new Tile({ tilenumber: tilePos, biome: BIOME.FOREST });
         this.#earth.AddTile(tile);
@@ -352,16 +349,15 @@ export class GameScene extends Phaser.Scene {
         if (dialogResultInfo.chestNumber === 7) {
             if (selectedOption === 0) {
                 dataManager.updatePlayerPotion(dialogResultInfo.option1PotionToPlayer);
-                // Boost max health to 6 (3 full hearts) and fully heal. Only apply when
-                // not already maxed, to avoid redundant HUD churn. The potion is
+                // Boost health to max (fully heal). The potion is
                 // unlimited in this chest, so chest contents are not cleared.
-                if (dataManager.getMaxHealth() < 6) {
-                    this.#player.lifeComponent.setMaxLife(6, true);
-                    dataManager.updatePlayerMaxHealth(6);
-                    // Animate the HUD filling one half-heart at a time instead of
+                const missingHealth = dataManager.getMaxHealth() - dataManager.getCurrentHealth();
+                if (missingHealth > 0) {
+                    this.#player.lifeComponent.heal(missingHealth);
+                    // Animate the HUD filling one heart at a time instead of
                     // snapping straight to full. Each step emits PLAYER_HEALTH_UPDATED
                     // (INCREASE) which redraws the meter against the new maxHealth.
-                    this.#animateHealthGainTo(6);
+                    this.#animateHealthGainTo(dataManager.getMaxHealth());
                 }
             }
             return;

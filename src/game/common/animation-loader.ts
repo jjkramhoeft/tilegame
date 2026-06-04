@@ -64,19 +64,19 @@ export function createUiAnimations(anims: AnimationManager): void {
   anims.create({
     key: SPIN_HUD_ANIMATIONS.HEARTH,
     frames: anims.generateFrameNumbers(ASSET_KEYS.HUD_ICONS, { start: 9, end: 16 }),
-    frameRate: 8,
+    frameRate: 12,
     repeat: 1,
   });
   anims.create({
     key: SPIN_HUD_ANIMATIONS.POWER,
     frames: anims.generateFrameNumbers(ASSET_KEYS.HUD_ICONS, { start: 0, end: 7 }),
-    frameRate: 8,
+    frameRate: 12,
     repeat: 1,
   });
   anims.create({
     key: SPIN_HUD_ANIMATIONS.PROGRESS,
     frames: anims.generateFrameNumbers(ASSET_KEYS.HUD_ICONS, { start: 18, end: 25 }),
-    frameRate: 8,
+    frameRate: 12,
     repeat: 1,
   });
 
