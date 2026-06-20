@@ -33,12 +33,13 @@
 - [ ] Rework map to follow progression (avoid confusion) — ⚠️ define what the fixed map should look like
 - [ ] Add counters to map: time played, tiles placed, decorations, blockings, animals living & killed
 - [ ] Add red tint to map tied to animals killed and lizard state
+- [ ] Use animated tiles to highlight latest unlocked, closest next unlock (Crystal animation for latest unlocked, Void animation for next)
 
 ## ✨ VFX / particles
 
 - [ ] Rework spell particles: scale particle count with player power level; vary by target (decoration, blocking, chest, animal)
 - [ ] Add particles: place-garden, cloud-disperse, first-tile, player-placement
-- [ ] Triple ambient dust particles in Intro, Settings, Credits & Reflection scenes
+- [ ] Triple ambient dust particles in Intro, Settings, Credits & Reflection scenes 
 
 ## 🔊 Audio
 

@@ -77,7 +77,7 @@ Void → Rock → Desert → Water → Grass → Forest → Mountain → Swamp �
 
 All assets are preloaded in `PreloadScene`. 
 
-Aseprite is only used for the spider and some few HUD elements. Animations are createded by `PreloadScene` using these five functions
+Aseprite is only used for the spider and some few HUD elements. Animations are created by `PreloadScene` using these five functions
 
 - `createUiAnimations` ( for the HUD and other animation for non game scenes)
 - `createAdamAndEveAnimations` (the male and female player characters)

@@ -82,7 +82,7 @@ export const BIOME_COLOR_MAP: Record<number, number> = {
   [BIOME.MOUNTAIN]: 0x808080,  // gray
 };
 
-// Rendering dept for the tiles and objects. Higher value means rendered on top of lower value. Negative values are for tiles, positive values are for objects.
+// Rendering depth for the tiles and objects. Higher value means rendered on top of lower value. Negative values are for tiles, positive values are for objects.
 export const FLOATING_DEPTH = 9999999;
 // BLOCKING_OBJECT_DEPTH MIN:1 MAX:9999998 (depending on y-axis value)
 export const BLOCKING_TILE_DEPTH = 0;

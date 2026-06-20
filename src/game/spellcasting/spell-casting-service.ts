@@ -109,7 +109,7 @@ export class SpellCastingService {
     // First get a list of target tiles and spell type
     const { spellTiles, spellType } = this.determineSpellTilesAndType(casterTile, directions);
 
-    // Now excute the spell cast. 
+    // Now execute the spell cast.
     // if more than one target tile, execute spell staggered on all tiles with small delay.
     // first spell: this.executeSpellEffect(spellType, casterTile.biome, casterTilePosition, spellTiles[0]);
     // second spell:this.executeSpellEffect(spellType, casterTile.biome, spellTiles[0], spellTiles[1]);
@@ -180,7 +180,7 @@ export class SpellCastingService {
       return { spellTiles: sortedVoidTargets.slice(0, Math.min(sortedVoidTargets.length, this.#powerLevel)).map(t => t.pos), spellType: SPELL_TYPES.BASIC };
     }
 
-    // 2) SPELL_TYPES.DECORATION, Decoration spell if ant undecorated targets exist.
+    // 2) SPELL_TYPES.DECORATION, Decoration spell if any undecorated targets exist.
     if (this.decorationIsUnlocked(_casterTile.biome)) {
       const decorationTargets = targetWithInfo.filter(t =>
         0 < t.biome && // not void or empty
@@ -332,7 +332,7 @@ export class SpellCastingService {
     return targetPosition;
   }
 
-  /** execute one part of the staggeredspell effect (tile changes, mob spawns, VFX, sounds).  */
+  /** execute one part of the staggered spell effect (tile changes, mob spawns, VFX, sounds).  */
   executeSpellEffect(spellType: SpellType, biome: BIOME, startTile: Position, endTile: Position, isOrigin: boolean, isFinalImpact = true, onImpactComplete?: () => void): void {
     const tile_size = 64;
     const half_tile = 32;
@@ -353,9 +353,9 @@ export class SpellCastingService {
       config: {},
     });
 
-    // spawn VFX at startTile if an origon.
+    // spawn VFX at startTile if an origin.
     if (isOrigin) {
-      // spawn origon VFX at startTile center (not player).
+      // spawn origin VFX at startTile center (not player).
       // spawn VFX traveling from startTile center to player travelGVector.
       const player = (this.scene as GameScene).playerPosition;
       let travelGVector: CastVector = { x: (player.x - 32 - startTile.x * tile_size), y: (player.y - startTile.y * tile_size) };
@@ -384,7 +384,7 @@ export class SpellCastingService {
     // spawn VFX traveling from startTile to endTile along travelVector.
     let travelVector: CastVector = { x: (endTile.x - startTile.x) * tile_size, y: (endTile.y - startTile.y) * tile_size };
     let startVector: CastVector = { x: startTile.x * tile_size + half_tile, y: startTile.y * tile_size + half_tile };
-    if (isOrigin) {//if origon (first of staggered spell) start at player
+    if (isOrigin) {//if origin (first of staggered spell) start at player
       const player = (this.scene as GameScene).playerPosition;
       startVector = { x: player.x, y: player.y };
       travelVector = { x: (endTile.x * tile_size + half_tile - startVector.x), y: (endTile.y * tile_size + half_tile - startVector.y) }

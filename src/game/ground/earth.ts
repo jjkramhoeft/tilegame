@@ -268,7 +268,7 @@ export class Earth {
         return neighborBiomes;
     }
 
-    // Used to add visual distinct viod tiles.
+    // Used to add visual distinct void tiles.
     public AddVoidMarkerTile(tileX: number, tileY: number): void {
         const existing = this.allTiles.get(this.key(tileX, tileY));
         if (existing !== undefined && existing.biome !== BIOME.VOID) {
@@ -279,7 +279,7 @@ export class Earth {
             biome: BIOME.VOID
         });
         this.allTiles.set(this.key(tileX, tileY), voidMarkerTile);
-        //voidMarkerTile?.setCollision(true, true, true, true); collision not need on maker void tiles, they are use early in the game when there are no animals, so no bounce is needed.
+        //voidMarkerTile?.setCollision(true, true, true, true); collision not needed on marker void tiles, they are used early in the game when there are no animals, so no bounce is needed.
         this.scene.add
             .sprite(voidMarkerTile.tileX * this.tileSize + this.tileSize / 2, voidMarkerTile.tileY * this.tileSize + this.tileSize / 2, ASSET_KEYS.TILESET_ANIMATED)
             .setOrigin(0.5, 0.5)
@@ -724,7 +724,7 @@ export class Earth {
 
     public placeGardenTiles(staggerMs = 0, currentPlayerTilePosition: Position, onComplete?: () => void): void {
         //ToDo: Implement changing the center tiles to a lush green garden, using forest, grass and water tiles, then add the big-tree.
-        //For now it just simple forest bioms and the big tree.
+        //For now it just simple forest biomes and the big tree.
         if (!this.firstTilePosition) {
             onComplete?.();
             return;

@@ -9,18 +9,18 @@ This game is a top-down RPG game. The player creates the map while playing
 The tile map consist of six layers
 
 - Floating Layer: (treetops and mountaintops, and unique objects). This layer is always show on top of the player
-- Blocking Layer: (trees and giant mushrooms, large rocks and crystals, large cacti, mountain bases and tree bases, and unique objects). This layer contains tileData with collision objects. If the players y value is lager than the collision objects y value then this tile is show below the player, otherwise it is shown on top of the player
+- Blocking Layer: (trees and giant mushrooms, large rocks and crystals, large cacti, mountain bases and tree bases, and unique objects). This layer contains tileData with collision objects. If the players y value is larger than the collision objects y value then this tile is show below the player, otherwise it is shown on top of the player
 - Decoration Layer (pebbles, small plants and crystals). This layer is always below the player
 - Border Layer (four per biome - up,right,down,left). This layer is always below the player. This layer is used to make the transition from one biome to another smoother.
 - Base Layer (void, rock, desert, grass, forest, water, swamp, crystal, lava, and mountain are the ten base static layers for each biome). This layer is always below the player
 
-  Animated biom bases (water, lava, crystal and void have an associated animated sprite).
+  Animated biome bases (water, lava, crystal and void have an associated animated sprite).
 - Void layer
 
-### Funtions
+### Functions
 
 - Start/Initialize empty, all tiles in all layers are empty (minus one)
-- Create Tile for dynamicly adding tile to the map: CreateTile(x, y, base, border, decoration, blocking, floating)
+- Create Tile for dynamically adding tile to the map: CreateTile(x, y, base, border, decoration, blocking, floating)
 
 ## Characters
 
@@ -32,7 +32,7 @@ The tile map consist of six layers
 - Two starter options: Male or female (Adam or Eve)
 - Four Weapon progressions: None, Dagger, Staff, Sword
 - Four Outfit progressions: Nude, Bare, Basic, Armor
-- Cast blob shadow (incluede in sprite)
+- Cast blob shadow (included in sprite)
 - Blocked by blocking layer and Mountain layer
 - Falls from void or empty tiles
 - Swims in water layer
@@ -43,7 +43,7 @@ The tile map consist of six layers
 - Can Face in four direction
 - Animated: Idle, Walking, Die/Fall
 - Options: Sheep, Lamb, Chicken, Piglet, Rooster, Turkey, Bull, Calf
-- Cast blob shadow (in cluede in sprite)
+- Cast blob shadow (included in sprite)
 - Blocked by blocking layer, void layer, water layer and mountain layer
 
 #### Lamb
@@ -84,9 +84,9 @@ From lowest to highest
 
 - -50 Void Layer (VOID_SOLID_DEPTH)
 
-  -40 The depth the payer are at when falling (PLAYER_FALLING_STATE_DEPTH)
+  -40 The depth the player are at when falling (PLAYER_FALLING_STATE_DEPTH)
 - -30 Void Layers animation (VOID_ANIM_DEPTH)
-- -20 Biom Layer (BASE_DEPTH)
+- -20 Biome Layer (BASE_DEPTH)
 - -18 Border Layer (BORDER_DEPTH)
   
   -16 Lava animation depth (LAVA_DEPTH)  
@@ -100,9 +100,9 @@ From lowest to highest
 
 ## Game UI Dialog
 
-consist of the fowwing ellements
+consist of the following elements
 
-- Health/Life Indicator (Hearts, like Zelda games a full heath is equal to two health, A halft hjearth is one health)
+- Health/Life Indicator (Hearts, like Zelda games a full heart is equal to two health, A half heart is one health)
 - Magic Level Indicator (starts at one, indicates how many tile the player can place when using magic)
 - Progression Level Indicator (Animals, shows how many live animals there current is on the earth)
 - Chest Dialog
@@ -123,14 +123,14 @@ The map are introduced in the FirstTreeState game state but accessible from the 
 
 ### Chest Dialog
 
-Eksample:
+Example:
 - Heading: A chest with a dagger and some basic cloth
 - Options
   1) Take weapon from chest (and leave current weapon in chest)
   2) Take gear from chest (and leave current gear in chest)
   3) Do nothing / leave
 
-Generaly weapons get the first option and gear the second option, the last option is to leave
+Generally weapons get the first option and gear the second option, the last option is to leave
 
 ## Game Progression
 
@@ -180,7 +180,7 @@ After player movement and an attack/cast transition to Assignment State
 #### Assignment State
 
 A narrator game state, Player is passive.
-No player movement. The player get the first goal and are asigned to make some tiles.
+No player movement. The player get the first goal and are assigned to make some tiles.
 "...And you shall help in the creating, make the land, fill it with green forest and then animals"
 Transition to Baby Steps State
 
@@ -195,7 +195,7 @@ when target are filled and 2 blocking rocks are placed in tiles, and player is b
 
 A narrator game state, Player is passive.
 No player movement
-The narrator lay out the goal for the game and add tiles resembeling a garden around the players starting position.
+The narrator lay out the goal for the game and add tiles resembling a garden around the players starting position.
 Change tiles one by one to a more fertile and green, add water like a river, add bushes and small trees, and then add the big tree. (use placeGardenTiles() in earth)
 "...Your assignment is create a lush forest with many animals, if you pick an evil path you will have to face the demon"  
 A chest with fruit are added next to the bigTree, where the player can interact to eat an apple and get a boost to max health and full health (use chest number 7)
@@ -289,7 +289,7 @@ Trigger by boss fight end or animal progression maxed
 6) Mountain. Impassable
 7) Swamp. Chest 6 (Sword weapon)
 8) Crystal. Chest 3 (Armor outfit)
-9) Lava. Burning - will dammage player
+9) Lava. Burning - will damage player
 
 First when a biome is unlocked only plain basetiles with borderlayer can be added as new tiles. After X tiles are placed, new placed tiles can also include decorations.
 
@@ -314,13 +314,13 @@ First when a biome is unlocked only plain basetiles with borderlayer can be adde
 
 ## Talking Points (Danish: "Reflektionsspørgsmål")
 
-The game has a page/scene with points to talk about to encourage thinking about lift and Genesis and creation.
+The game has a page/scene with points to talk about to encourage thinking about life and Genesis and creation.
 
 - Order and Chaos
 
   The sequence of creation, understanding and science
 
-- Thinking and Preconsesions
+- Thinking and Preconceptions
 
   An walking talking snake, Skeletons - where did the other humans come from
 
@@ -376,7 +376,7 @@ The game has a page/scene with points to talk about to encourage thinking about 
 - good magic x 12 [magic-audio-sprite.mp3]
 - bad magic x 12 [magic-audio-sprite-bad.mp3]
 - failed magic (no target) [magic-down.mp3]*
-- [magic-down-2.mp3] irretating to listens to+
+- [magic-down-2.mp3] irritating to listens to+
 - [shortspell1.wav] old deprecated spell sound+
 
   --------
