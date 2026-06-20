@@ -11,6 +11,7 @@ import {
   PLANT3_ANIMATION_KEYS,
   ROOSTER_ANIMATION_KEYS,
   SHEEP_ANIMATION_KEYS,
+  LIZARD_ANIMATION_KEYS,
   SKELETON_ANIMATION_KEYS,
   SNAKE_ANIMATION_KEYS,
   SPIN_HUD_ANIMATIONS,
@@ -168,6 +169,7 @@ export function createMobAnimations(anims: AnimationManager): void {
   createPlantAnimations(anims, PLANT3_ANIMATION_KEYS, ASSET_KEYS.PLANT3_ATTACK, ASSET_KEYS.PLANT3_IDLE, ASSET_KEYS.PLANT3_DEATH);
   
   createSkeletonAnimations(anims);
+  createLizardAnimations(anims);
 }
 
 export function createTileAnimations(anims: AnimationManager): void {
@@ -271,10 +273,11 @@ function createPlantAnimations(
 function createSkeletonAnimations(
   anims: AnimationManager
 ): void {
+  // Attack rows follow the same UP, LEFT, DOWN, RIGHT order as the walk rows.
   anims.create({ key: SKELETON_ANIMATION_KEYS.ATTACK_UP, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_ATTACK, { start: 0, end: 7 }), frameRate: 9, repeat: 0 });
-  anims.create({ key: SKELETON_ANIMATION_KEYS.ATTACK_RIGHT, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_ATTACK, { start: 8, end: 15 }), frameRate: 9, repeat: 0 });
+  anims.create({ key: SKELETON_ANIMATION_KEYS.ATTACK_LEFT, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_ATTACK, { start: 8, end: 15 }), frameRate: 9, repeat: 0 });
   anims.create({ key: SKELETON_ANIMATION_KEYS.ATTACK_DOWN, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_ATTACK, { start: 16, end: 23 }), frameRate: 9, repeat: 0 });
-  anims.create({ key: SKELETON_ANIMATION_KEYS.ATTACK_LEFT, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_ATTACK, { start: 24, end: 31 }), frameRate: 9, repeat: 0 });
+  anims.create({ key: SKELETON_ANIMATION_KEYS.ATTACK_RIGHT, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_ATTACK, { start: 24, end: 31 }), frameRate: 9, repeat: 0 });
   anims.create({ key: SKELETON_ANIMATION_KEYS.WALK_UP, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_MOVE, { start: 0, end: 8 }), frameRate: 8, repeat: -1 });
   anims.create({ key: SKELETON_ANIMATION_KEYS.WALK_LEFT, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_MOVE, { start: 9, end: 17 }), frameRate: 8, repeat: -1 });
   anims.create({ key: SKELETON_ANIMATION_KEYS.WALK_DOWN, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_MOVE, { start: 18, end: 26 }), frameRate: 8, repeat: -1 });
@@ -283,4 +286,24 @@ function createSkeletonAnimations(
   anims.create({ key: SKELETON_ANIMATION_KEYS.IDLE_LEFT, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_MOVE, { start: 9, end: 9 }), frameRate: 8, repeat: -1 });
   anims.create({ key: SKELETON_ANIMATION_KEYS.IDLE_DOWN, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_MOVE, { start: 18, end: 18 }), frameRate: 8, repeat: -1 });
   anims.create({ key: SKELETON_ANIMATION_KEYS.IDLE_RIGHT, frames: anims.generateFrameNumbers(ASSET_KEYS.SKELETON_MOVE, { start: 27, end: 27 }), frameRate: 8, repeat: -1 });
+}
+
+function createLizardAnimations(
+  anims: AnimationManager
+): void {
+  // Lizard sheets are 13 frames per direction (64x64). Walk and attack rows both
+  // follow UP, LEFT, DOWN, RIGHT order.
+  anims.create({ key: LIZARD_ANIMATION_KEYS.ATTACK_UP, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_ATTACK, { start: 0, end: 12 }), frameRate: 9, repeat: 0 });
+  anims.create({ key: LIZARD_ANIMATION_KEYS.ATTACK_LEFT, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_ATTACK, { start: 13, end: 25 }), frameRate: 9, repeat: 0 });
+  anims.create({ key: LIZARD_ANIMATION_KEYS.ATTACK_DOWN, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_ATTACK, { start: 26, end: 38 }), frameRate: 9, repeat: 0 });
+  anims.create({ key: LIZARD_ANIMATION_KEYS.ATTACK_RIGHT, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_ATTACK, { start: 39, end: 51 }), frameRate: 9, repeat: 0 });
+  anims.create({ key: LIZARD_ANIMATION_KEYS.WALK_UP, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_MOVE, { start: 0, end: 12 }), frameRate: 8, repeat: -1 });
+  anims.create({ key: LIZARD_ANIMATION_KEYS.WALK_LEFT, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_MOVE, { start: 13, end: 25 }), frameRate: 8, repeat: -1 });
+  anims.create({ key: LIZARD_ANIMATION_KEYS.WALK_DOWN, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_MOVE, { start: 26, end: 38 }), frameRate: 8, repeat: -1 });
+  anims.create({ key: LIZARD_ANIMATION_KEYS.WALK_RIGHT, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_MOVE, { start: 39, end: 51 }), frameRate: 8, repeat: -1 });
+  // Idle reuses the first two frames of each walk direction as a slow loop.
+  anims.create({ key: LIZARD_ANIMATION_KEYS.IDLE_UP, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_MOVE, { start: 0, end: 1 }), frameRate: 4, repeat: -1 });
+  anims.create({ key: LIZARD_ANIMATION_KEYS.IDLE_LEFT, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_MOVE, { start: 13, end: 14 }), frameRate: 4, repeat: -1 });
+  anims.create({ key: LIZARD_ANIMATION_KEYS.IDLE_DOWN, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_MOVE, { start: 26, end: 27 }), frameRate: 4, repeat: -1 });
+  anims.create({ key: LIZARD_ANIMATION_KEYS.IDLE_RIGHT, frames: anims.generateFrameNumbers(ASSET_KEYS.LIZARD_MOVE, { start: 39, end: 40 }), frameRate: 4, repeat: -1 });
 }

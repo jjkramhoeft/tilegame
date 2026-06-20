@@ -11,6 +11,8 @@ export const ASSET_KEYS = {
   BULL: 'Bull',
   SKELETON_ATTACK: 'skeleton-attack',
   SKELETON_MOVE: 'skeleton-move',
+  LIZARD_ATTACK: 'lizard-attack',
+  LIZARD_MOVE: 'lizard-move',
   PLANT1_ATTACK: 'plant1-attack',
   PLANT1_IDLE: 'plant1-idle',
   PLANT1_DEATH: 'plant1-death',
@@ -426,6 +428,21 @@ export const SKELETON_ANIMATION_KEYS = {
   ATTACK_UP: 'skeleton-attack-up',
   ATTACK_LEFT: 'skeleton-attack-left',
   ATTACK_RIGHT: 'skeleton-attack-right',
+} as const;
+
+export const LIZARD_ANIMATION_KEYS = {
+  WALK_DOWN: 'lizard-walk-down',
+  WALK_UP: 'lizard-walk-up',
+  WALK_LEFT: 'lizard-walk-left',
+  WALK_RIGHT: 'lizard-walk-right',
+  IDLE_DOWN: 'lizard-idle-down',
+  IDLE_UP: 'lizard-idle-up',
+  IDLE_LEFT: 'lizard-idle-left',
+  IDLE_RIGHT: 'lizard-idle-right',
+  ATTACK_DOWN: 'lizard-attack-down',
+  ATTACK_UP: 'lizard-attack-up',
+  ATTACK_LEFT: 'lizard-attack-left',
+  ATTACK_RIGHT: 'lizard-attack-right',
 } as const;
 
 export const CHARACTER_ANIMATIONS = {

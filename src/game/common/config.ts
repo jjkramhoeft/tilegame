@@ -69,6 +69,19 @@ export const ENEMY_SKELETON_ATTACK_HIT_DELAY = 300;
 export const ENEMY_SKELETON_ATTACK_LUNGE_SPEED = 120; // px/sec toward the player while attacking
 export const ENEMY_SKELETON_ATTACK_LUNGE_DURATION = 100; // ms the lunge velocity is applied
 
+export const ENEMY_LIZARD_SPEED = 65;
+export const ENEMY_LIZARD_CHANGE_DIRECTION_DELAY_MIN = 500;
+export const ENEMY_LIZARD_CHANGE_DIRECTION_DELAY_MAX = 1500;
+export const ENEMY_LIZARD_CHANGE_DIRECTION_DELAY_WAIT = 200;
+export const ENEMY_LIZARD_HURT_PUSH_BACK_SPEED = 50;
+export const ENEMY_LIZARD_MAX_HEALTH = 4;
+export const ENEMY_LIZARD_ATTACK_RANGE = 50;
+export const ENEMY_LIZARD_ATTACK_DAMAGE = 2;
+export const ENEMY_LIZARD_ATTACK_COOLDOWN = 1100;
+export const ENEMY_LIZARD_ATTACK_HIT_DELAY = 300;
+export const ENEMY_LIZARD_ATTACK_LUNGE_SPEED = 150; // px/sec toward the player while attacking
+export const ENEMY_LIZARD_ATTACK_LUNGE_DURATION = 110; // ms the lunge velocity is applied
+
 export const ENEMY_PLANT_SPEED = 0;
 export const ENEMY_PLANT_HURT_PUSH_BACK_SPEED = 0;
 export const ENEMY_PLANT_MAX_HEALTH = 2;

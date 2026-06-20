@@ -15,6 +15,7 @@ import { Bull } from '../../game-objects/enemies/bull';
 import { Calf } from '../../game-objects/enemies/calf';
 import { Plant } from '../../game-objects/enemies/plant';
 import { Skeleton } from '../../game-objects/enemies/skeleton';
+import { Lizard } from '../../game-objects/enemies/lizard';
 
 export function spawnDebugEnemies(
     scene: Phaser.Scene,
@@ -86,6 +87,22 @@ export function spawnDebugEnemies(
     skeleton.enableObject();
     enemyGroup.add(skeleton);
     GameDataManager.instance.markCreatureEverCreated('skeleton');
+    GameDataManager.instance.increaseLivingCreatureCount();
+
+    // A lizard, added on an empty crystal tile next to the skeleton.
+    const lizardTileOffset: Position = { x: 3, y: 8 };
+    addTileAndVoid(earth, { x: firstTilePosition.x + lizardTileOffset.x, y: firstTilePosition.y + lizardTileOffset.y }, BIOME.CRYSTAL);
+    const lizardWorldPosition = {
+        x: (lizardTileOffset.x + firstTilePosition.x) * earth.getTileSize() + 32,
+        y: (lizardTileOffset.y + firstTilePosition.y) * earth.getTileSize() + 32,
+    };
+    const lizard = new Lizard({
+        scene: scene,
+        position: lizardWorldPosition,
+    });
+    lizard.enableObject();
+    enemyGroup.add(lizard);
+    GameDataManager.instance.markCreatureEverCreated('lizardman');
     GameDataManager.instance.increaseLivingCreatureCount();
 
     // A lamb, added on a empty tile away from chests and the player.

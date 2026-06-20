@@ -113,6 +113,8 @@ const spritesheetAssets: readonly SpritesheetAsset[] = [
   { key: ASSET_KEYS.SNAKE, path: 'assets/Snake.png', frameConfig: { frameWidth: 32, frameHeight: 32 } },
   { key: ASSET_KEYS.SKELETON_MOVE, path: 'assets/skeleton-none-walk.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
   { key: ASSET_KEYS.SKELETON_ATTACK, path: 'assets/skeleton-none-thrust.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
+  { key: ASSET_KEYS.LIZARD_MOVE, path: 'assets/lizard-dagger-walk.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
+  { key: ASSET_KEYS.LIZARD_ATTACK, path: 'assets/lizard-dagger-thrust.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
   { key: ASSET_KEYS.TURKEY, path: 'assets/Turkey.png', frameConfig: { frameWidth: 32, frameHeight: 32 } },
   { key: ASSET_KEYS.PIGLET, path: 'assets/Piglet.png', frameConfig: { frameWidth: 32, frameHeight: 32 } },
   { key: ASSET_KEYS.ROOSTER, path: 'assets/Rooster.png', frameConfig: { frameWidth: 32, frameHeight: 32 } },
