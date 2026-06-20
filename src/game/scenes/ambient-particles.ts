@@ -57,7 +57,7 @@ function createDustEmitter(scene: Phaser.Scene, depth: number): Phaser.GameObjec
       source: createViewportZone(scene),
     },
     frequency: 420,
-    quantity: 2,
+    quantity: 6,
     advance: 8000,
     lifespan: { min: 7000, max: 14000 },
     speedX: { min: -4, max: 8 },
@@ -66,8 +66,8 @@ function createDustEmitter(scene: Phaser.Scene, depth: number): Phaser.GameObjec
     scale: { start: 0.8, end: 0.18, random: true },
     alpha: { start: 0.28, end: 0 },
     rotate: { min: -15, max: 15 },
-    reserve: 100,
-    maxAliveParticles: 120,
+    reserve: 300,
+    maxAliveParticles: 360,
   });
   emitter.setDepth(depth);
   emitter.setScrollFactor(0);
