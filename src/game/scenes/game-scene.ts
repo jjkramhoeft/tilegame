@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { Player } from '../game-objects/player/player';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Earth } from '../ground/earth';
-import { WEAPON, GEAR, DIRECTION, BIOME } from '../common/common';
+import { WEAPON, GEAR, DIRECTION, BIOME, DIFFICULTY, CASTING_UNLOCKS } from '../common/common';
 import {
     CUSTOM_EVENTS,
     EVENT_BUS,
@@ -85,13 +85,22 @@ export class GameScene extends Phaser.Scene {
 
         this.#progression = new GameProgression(this);
 
-        if (GameDataManager.instance.data.isDebugMode) {
-            // Debug bypass: GameProgression is constructed (so PLAYER_DEFEATED
+        const difficulty = GameDataManager.instance.data.difficulty;
+
+        if (difficulty === DIFFICULTY.DEBUG_ASSETS) {
+            // Asset/sandbox bypass: GameProgression is constructed (so PLAYER_DEFEATED
             // routing exists if ever needed) but `start()` is never called, so
             // no game state is active and no narrator/listener side-effects fire.
             // Unlock the map so it can be debugged without playing through progression.
             this.#progression.unlockMap();
             this.#startDebugGameplay();
+            return;
+        }
+
+        if (difficulty === DIFFICULTY.DEBUG_PLAY) {
+            // Gameplay bypass: skip the first four tutorial states and drop straight
+            // into GardenState with progression seeded as if they had been played.
+            this.#startDebugPlay();
             return;
         }
 
@@ -296,6 +305,46 @@ export class GameScene extends Phaser.Scene {
         this.addChest({ x: firstTilePosition.x + 7, y: firstTilePosition.y }, 7);
 
         this.#controls.isMovementLocked = false;
+    }
+
+    /**
+     * Boot straight into real gameplay, skipping the four tutorial states
+     * (start -> first-tile -> assignment -> baby-steps). Seeds progression as if
+     * those states had been played, places the start tile, reveals the player,
+     * then enters GardenState which builds the garden and transitions to REGULAR.
+     */
+    #startDebugPlay(): void {
+        this.#seedDebugPlayProgression();
+
+        // Replicate StartState's essential side-effects: place the start tile and
+        // reveal the player (movement stays gated; GardenState unlocks it).
+        const start = this.placeStartingTile();
+
+        // Relocate the player one tile WEST of the start tile and give it solid
+        // ground, so the big tree (a blocking body GardenState grows on the start
+        // tile) does not trap the player. (-1, 0) is a garden forest tile and a
+        // blocking-tree slot GardenState already skips when the player stands on it.
+        const tileSize = this.#earth.getTileSize();
+        this.#earth.AddTile(new Tile({
+            tilenumber: { x: start.x - 1, y: start.y },
+            biome: BIOME.FOREST,
+        }));
+        this.#player.setPosition(this.#playerStartWorldPosition.x - tileSize, this.#playerStartWorldPosition.y);
+
+        this.revealPlayer();
+        this.#progression.start(GAME_STATES.GARDEN);
+    }
+
+    /**
+     * Seed the progression a player would have accumulated by the time the garden
+     * appears. Re-drives the real `increaseTilesPlaced` path so the unlock cascade
+     * and power bump stay consistent with normal play (no duplicated logic).
+     */
+    #seedDebugPlayProgression(): void {
+        const gdm = GameDataManager.instance;
+        for (let i = 0; i < 10; i++) { gdm.increaseTilesPlaced(CASTING_UNLOCKS.ROCK_BASIC); }      // -> unlocks ROCK_DECORATION
+        for (let i = 0; i < 10; i++) { gdm.increaseTilesPlaced(CASTING_UNLOCKS.ROCK_DECORATION); } // -> unlocks ROCK_BLOCKING + CHEST1
+        for (let i = 0; i < 4; i++) { gdm.increaseTilesPlaced(CASTING_UNLOCKS.ROCK_BLOCKING); }    // -> unlocks ROCK_ANIMALS + DESERT_BASIC
     }
 
     /** Place the very first tile under the player start position. Returns its tile coordinates. */

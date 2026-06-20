@@ -99,10 +99,15 @@ export const VOID_SOLID_DEPTH = -50;
 export const  DIFFICULTY = {
   EASY :'Easy',
   HARD :'Hard',
-  DEBUG:'Debug'
+  DEBUG_PLAY :'DebugPlay',
+  DEBUG_ASSETS :'DebugAssets'
 } as const;
 
 export type Difficulty = (typeof DIFFICULTY)[keyof typeof DIFFICULTY];
+
+export function isDebugDifficulty(value: Difficulty): boolean {
+  return value === DIFFICULTY.DEBUG_PLAY || value === DIFFICULTY.DEBUG_ASSETS;
+}
 
 export const  GEAR = {
   NONE :'nude',

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tilegame-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--config", "vite/config.dev.mjs", "--port", "5180", "--strictPort"],
+      "port": 5180
+    }
+  ]
+}

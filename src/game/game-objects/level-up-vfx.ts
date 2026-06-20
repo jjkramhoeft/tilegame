@@ -3,7 +3,7 @@ import { ASSET_KEYS } from '../common/assets';
 import { FLOATING_DEPTH } from '../common/common';
 
 // hud-icons.png frames are 16x16; scale up so the spin reads clearly in world space.
-const LEVEL_UP_VFX_SCALE = 1.5;
+const LEVEL_UP_VFX_SCALE = 1;
 // How far above the player's origin the icon floats (player feet sit near the origin).
 const LEVEL_UP_VFX_Y_OFFSET = 42;
 // Subtle upward drift while the spin plays, for extra "pop".

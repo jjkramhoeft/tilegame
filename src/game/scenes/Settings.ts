@@ -10,7 +10,7 @@ import {
 } from '../common/assets';
 import { getText, type TextKey } from '../common/texts';
 import { SCENE_KEYS } from './scene-keys';
-import { DIFFICULTY, SEX, isDifficulty, isSex } from '../common/common';
+import { DIFFICULTY, SEX, isDifficulty, isDebugDifficulty, isSex } from '../common/common';
 import type { Difficulty, Sex } from '../common/common';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { AmbientParticles, createAmbientParticles } from './ambient-particles';
@@ -40,7 +40,8 @@ const PLAYER_OPTIONS = [
 const DEBUG_OPTIONS = [
     { textKey: 'settings.difficulty.easy', value: DIFFICULTY.EASY },
     { textKey: 'settings.difficulty.hard', value: DIFFICULTY.HARD },
-    { textKey: 'settings.difficulty.debug', value: DIFFICULTY.DEBUG },
+    { textKey: 'settings.difficulty.debugPlay', value: DIFFICULTY.DEBUG_PLAY },
+    { textKey: 'settings.difficulty.debugAssets', value: DIFFICULTY.DEBUG_ASSETS },
 ] satisfies readonly { textKey: TextKey; value: Difficulty }[];
 
 type LocalizedTextObject = {
@@ -491,7 +492,7 @@ export class Settings extends Scene {
 
     private applyDifficulty(): void {
         const difficulty = DEBUG_OPTIONS[this.debugIndex].value;
-        const debugEnabled = difficulty === DIFFICULTY.DEBUG;
+        const debugEnabled = isDebugDifficulty(difficulty);
         this.registry.set('difficulty', difficulty);
         this.registry.set('physicsDebug', debugEnabled);
         setEnableLogging(debugEnabled);

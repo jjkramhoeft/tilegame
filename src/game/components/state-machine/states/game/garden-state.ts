@@ -4,6 +4,7 @@ import type { GameScene } from '../../../../scenes/game-scene';
 import { DIFFICULTY_HARD_WAIT_FACTOR, ENABLE_LOGGING } from '../../../../common/config';
 import { GameDataManager } from '../../../../common/game-data-manager';
 import { DIFFICULTY } from '../../../../common/common';
+import type { Position } from '../../../../common/types';
 
 export class GardenState extends BaseGameState {
   constructor(scene: GameScene) {
@@ -24,21 +25,31 @@ export class GardenState extends BaseGameState {
     }
     this._scene.progression.unlockMap();// unlocked early
 
+    // Debug-play skips the narrator beats and builds the garden immediately.
+    if (GameDataManager.instance.data.difficulty === DIFFICULTY.DEBUG_PLAY) {
+      this.#buildGarden(currentPlayerTilePosition, defaultStepWaitTime);
+      return;
+    }
+
     this._pause(this.defaultWaitTime, () => {
       this._showNarrator('narrator.garden.lush', () => {
         this._pause(this.defaultWaitTime, () => {
           this._showNarrator('narrator.garden.assignment', () => {
-            this._scene.earth.placeGardenTiles(defaultStepWaitTime, currentPlayerTilePosition, () => {
-              this._pause(this.defaultWaitTime, () => {
-                this._scene.placeFruitChestNearBigTree();
-                this._pause(this.defaultWaitTime, () => {
-                  // Transition to the regular play state.
-                  this._scene.unlockPlayerMovement();
-                  this._transitionTo(GAME_STATES.REGULAR);
-                });
-              });
-            });
+            this.#buildGarden(currentPlayerTilePosition, defaultStepWaitTime);
           });
+        });
+      });
+    });
+  }
+
+  #buildGarden(currentPlayerTilePosition: Position, defaultStepWaitTime: number): void {
+    this._scene.earth.placeGardenTiles(defaultStepWaitTime, currentPlayerTilePosition, () => {
+      this._pause(this.defaultWaitTime, () => {
+        this._scene.placeFruitChestNearBigTree();
+        this._pause(this.defaultWaitTime, () => {
+          // Transition to the regular play state.
+          this._scene.unlockPlayerMovement();
+          this._transitionTo(GAME_STATES.REGULAR);
         });
       });
     });

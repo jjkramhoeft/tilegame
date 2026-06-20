@@ -81,9 +81,13 @@ const TEXTS = {
         en: 'Hard',
         da: 'Svær',
     },
-    'settings.difficulty.debug': {
-        en: 'Debug',
-        da: 'Debug',
+    'settings.difficulty.debugPlay': {
+        en: 'Debug Play',
+        da: 'Debug Spil',
+    },
+    'settings.difficulty.debugAssets': {
+        en: 'Debug Assets',
+        da: 'Debug Assets',
     },
     //Credit Scene
     'credits.title': {
