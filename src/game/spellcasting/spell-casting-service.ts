@@ -381,30 +381,8 @@ export class SpellCastingService {
       });
     }
 
-    // spawn VFX traveling from startTile to endTile along travelVector.
-    let travelVector: CastVector = { x: (endTile.x - startTile.x) * tile_size, y: (endTile.y - startTile.y) * tile_size };
-    let startVector: CastVector = { x: startTile.x * tile_size + half_tile, y: startTile.y * tile_size + half_tile };
-    if (isOrigin) {//if origin (first of staggered spell) start at player
-      const player = (this.scene as GameScene).playerPosition;
-      startVector = { x: player.x, y: player.y };
-      travelVector = { x: (endTile.x * tile_size + half_tile - startVector.x), y: (endTile.y * tile_size + half_tile - startVector.y) }
-    }
-    const spell = this.scene.add
-      .sprite(startVector.x + travelVector.x / 10, startVector.y + travelVector.y / 10, ASSET_KEYS.MAGIC_FX_NOTES)
-      .setScale(0.5)
-      .setOrigin(0.5, 0.5);
-    spell.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
-    spell.setTint(tintColor).setTintMode(Phaser.TintModes.MULTIPLY);
-    spell.play('spell-music-anim');
-    this.scene.tweens.add({
-      targets: spell,
-      x: spell.x + travelVector.x,
-      y: spell.y + travelVector.y,
-      duration: 1500,
-      ease: 'Sine.easeOut',
-      onComplete: () => spell.destroy(),
-    });
-    spell.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => { spell.destroy(); });
+    // The traveling note glyphs are emitted by the notes.png particle trail in
+    // `playSpellHopVfx` above; no separate traveling sprite is needed here.
 
     // spawn delayed VFX at endTile after travel time.
     const impactTimer = this.scene.time.delayedCall(1000, () => {

@@ -6,7 +6,9 @@ import { Position } from '../common/types';
 const TILE_SIZE = 64;
 const HALF_TILE = TILE_SIZE / 2;
 const SPELL_VFX_DEPTH = DECORATION_DEPTH + 1;
-const SPELL_MUSIC_ANIM = 'spell-music-anim';
+// notes.png is a 4x4 sheet of static note glyphs (16 frames). Each particle picks
+// one at random so the stream reads as scattered, varied musical notes.
+const NOTE_FRAMES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
 type Point = {
   x: number;
@@ -43,27 +45,28 @@ function createNoteTrailEmitter(
   end: Point,
   tintColor: number
 ): Phaser.GameObjects.Particles.ParticleEmitter {
-  const emitter = scene.add.particles(start.x, start.y, ASSET_KEYS.MAGIC_FX_NOTES, {
-    anim: SPELL_MUSIC_ANIM,
+  const emitter = scene.add.particles(start.x, start.y, ASSET_KEYS.MAGIC_FX_PARTICLE_NOTES, {
+    frame: { frames: NOTE_FRAMES, cycle: false },
     emitting: false,
     frequency: -1,
     emitZone: {
       type: 'edge',
       source: createHopLine(start, end),
-      quantity: 14,
+      quantity: 16,
       seamless: true,
     },
     lifespan: { min: 700, max: 1100 },
     speed: { min: 0, max: 25 },
-    scale: { start: 0.28, end: 0.03 },
+    // Keep pixel-art glyphs crisp: constant native scale, fade via alpha only.
+    scale: 1.0,
     alpha: { start: 0.95, end: 0 },
     rotate: { min: -25, max: 25 },
     particleBringToTop: true,
-    reserve: 24,
-    maxAliveParticles: 32,
+    reserve: 20,
+    maxAliveParticles: 24,
   });
   setEmitterStyle(emitter, tintColor);
-  emitter.explode(14);
+  emitter.explode(16);
   emitter.stop();
   return emitter;
 }
@@ -103,19 +106,20 @@ function createOriginBurstEmitter(
   origin: Point,
   tintColor: number
 ): Phaser.GameObjects.Particles.ParticleEmitter {
-  const emitter = scene.add.particles(origin.x, origin.y, ASSET_KEYS.MAGIC_FX_NOTES, {
-    anim: SPELL_MUSIC_ANIM,
+  const emitter = scene.add.particles(origin.x, origin.y, ASSET_KEYS.MAGIC_FX_PARTICLE_NOTES, {
+    frame: { frames: NOTE_FRAMES, cycle: false },
     emitting: false,
     frequency: -1,
     lifespan: { min: 500, max: 900 },
     angle: { min: 0, max: 360 },
     speed: { min: 25, max: 120 },
-    scale: { start: 0.2, end: 0 },
+    // Keep pixel-art glyphs crisp: constant native scale, fade via alpha only.
+    scale: 1.0,
     alpha: { start: 0.9, end: 0 },
     rotate: { min: -45, max: 45 },
     particleBringToTop: true,
     reserve: 16,
-    maxAliveParticles: 20,
+    maxAliveParticles: 18,
   });
   setEmitterStyle(emitter, tintColor);
   emitter.explode(14);

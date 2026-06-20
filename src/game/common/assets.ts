@@ -61,7 +61,6 @@ export const ASSET_KEYS = {
   MAGIC_FX_HOLY_EXPLOSION: 'magic-fx-holy-explosion',
   MAGIC_FX_LIGHT_CAST: 'magic-fx-light-cast',
   MAGIC_FX_BLUE_CIRCLE_EXPLOSION: 'magic-fx-blue-circleexplosion',
-  MAGIC_FX_NOTES: 'magic-fx-notes',
   MAGIC_FX_PARTICLE_NOTES: 'magic-fx-particle-notes',
 
   UI_UP: 'ui-up',

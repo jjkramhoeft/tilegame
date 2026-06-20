@@ -100,7 +100,6 @@ const spritesheetAssets: readonly SpritesheetAsset[] = [
   { key: ASSET_KEYS.MAGIC_FX_HOLY_EXPLOSION, path: 'assets/magic-fx-holy-explosion.png', frameConfig: { frameWidth: 96, frameHeight: 96 } },
   { key: ASSET_KEYS.MAGIC_FX_LIGHT_CAST, path: 'assets/magic-fx-light-cast.png', frameConfig: { frameWidth: 96, frameHeight: 96 } },
   { key: ASSET_KEYS.MAGIC_FX_BLUE_CIRCLE_EXPLOSION, path: 'assets/magic-fx-blue-circleexplosion.png', frameConfig: { frameWidth: 256, frameHeight: 256 } },
-  { key: ASSET_KEYS.MAGIC_FX_NOTES, path: 'assets/spell-music-11_grayscale.png', frameConfig: { frameWidth: 150, frameHeight: 150 } },
   { key: ASSET_KEYS.TILESET_BORDER, path: 'assets/tile-border.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
   { key: ASSET_KEYS.TILESET_DECORATION, path: 'assets/tile-decoration.png', frameConfig: { frameWidth: 64, frameHeight: 64 } },
   { key: ASSET_KEYS.TILESET_ANIMATED, path: 'assets/tile-animated.png', frameConfig: { frameWidth: 64, frameHeight: 64, margin: 2, spacing: 4 } },

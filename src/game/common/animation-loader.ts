@@ -228,12 +228,6 @@ export function createOtherAnimations(anims: AnimationManager): void {
     frameRate: 48,
     repeat: 0,
   });
-  anims.create({
-    key: 'spell-music-anim',
-    frames: anims.generateFrameNumbers(ASSET_KEYS.MAGIC_FX_NOTES, { start: 0, end: 10 }),
-    frameRate: 9,
-    repeat: 0,
-  });
 }
 
 function createFourDirectionAnimalAnimations(
