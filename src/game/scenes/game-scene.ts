@@ -111,8 +111,10 @@ export class GameScene extends Phaser.Scene {
         this.#progression.start(GAME_STATES.START);
     }
 
-    update() {
+    update(_time: number, delta: number) {
         if (!this.#isGameplayReady) { return; }
+
+        GameDataManager.instance.addPlayTime(delta);
 
         if (this.#controls.isMapKeyJustDown &&
             this.#progression?.isMapUnlocked &&

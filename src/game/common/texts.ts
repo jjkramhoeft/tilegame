@@ -428,6 +428,30 @@ const TEXTS = {
         en: 'Sky',
         da: 'Himlen',
     },
+    'legend.animalsCreated': {
+        en: 'Animals created',
+        da: 'Dyr skabt',
+    },
+    'legend.animalsKilled': {
+        en: 'Animals killed',
+        da: 'Dyr dræbt',
+    },
+    'legend.earthCreated': {
+        en: 'Earth created',
+        da: 'Jord skabt',
+    },
+    'legend.earthDecorated': {
+        en: 'Earth decorated',
+        da: 'Jord pyntet',
+    },
+    'legend.earthFilledIn': {
+        en: 'Earth filled in',
+        da: 'Jord udfyldt',
+    },
+    'legend.timePlayed': {
+        en: 'Time played',
+        da: 'Tid spillet',
+    },
 } as const;
 
 export type TextKey = keyof typeof TEXTS;

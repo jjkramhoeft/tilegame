@@ -49,7 +49,10 @@ export type PlayerData = {
   currentLivingCreatures: number;
   maxLivingCreaturesThisGame: number;
   creaturesEverCreated: Record<CreatureType, boolean>;
+  creaturesEverCreatedCount: number;
   tilesPlaced: Record<CastingUnlocks, number>;
+
+  totalPlayTimeMs: number;
 
   lastDialogOptionSelected: number;
   lastDialogResultInfo?: ChestDialogInfo;
@@ -83,7 +86,10 @@ export function createDefaultPlayerData(overrides: Partial<PlayerData> = {}): Pl
     currentLivingCreatures: 0,
     maxLivingCreaturesThisGame: 0,
     creaturesEverCreated: createEmptyCreaturesEverCreated(),
+    creaturesEverCreatedCount: 0,
     tilesPlaced: {} as Record<CastingUnlocks, number>,
+
+    totalPlayTimeMs: 0,
 
     lastDialogOptionSelected: 0,
     lastDialogResultInfo: undefined,
@@ -257,6 +263,7 @@ export class GameDataManager {
   }
 
   public increaseLivingCreatureCount(): void {
+    this.#data.creaturesEverCreatedCount += 1;
     const currentLivingCreatures = this.#data.currentLivingCreatures + 1;
     this.#updateLivingCreatureCount(
       currentLivingCreatures,
@@ -352,6 +359,35 @@ export class GameDataManager {
 
   public getTilesPlaced(castingUnlock: CastingUnlocks): number {
     return this.#data.tilesPlaced?.[castingUnlock] ?? 0;
+  }
+
+  // Sums all placed tiles whose casting unlock ends in the given suffix
+  // (e.g. '_BASIC' across every biome, including water/mountain/lava).
+  public getTotalTilesPlaced(suffix: '_BASIC' | '_DECORATION' | '_BLOCKING'): number {
+    const tilesPlaced = this.#data.tilesPlaced ?? {};
+    let total = 0;
+    for (const [key, count] of Object.entries(tilesPlaced)) {
+      if (key.endsWith(suffix)) {
+        total += count ?? 0;
+      }
+    }
+    return total;
+  }
+
+  public getCreaturesEverCreatedCount(): number {
+    return this.#data.creaturesEverCreatedCount ?? 0;
+  }
+
+  public getCreaturesKilled(): number {
+    return Math.max(0, this.getCreaturesEverCreatedCount() - this.#data.currentLivingCreatures);
+  }
+
+  public addPlayTime(deltaMs: number): void {
+    this.#data.totalPlayTimeMs = (this.#data.totalPlayTimeMs ?? 0) + deltaMs;
+  }
+
+  public getTotalPlayTimeMs(): number {
+    return this.#data.totalPlayTimeMs ?? 0;
   }
 
   #updateLivingCreatureCount(currentLivingCreatures: number, maxLivingCreaturesThisGame: number): void {

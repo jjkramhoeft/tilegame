@@ -4,6 +4,7 @@ import { ASSET_KEYS } from '../common/assets';
 import { CASTING_UNLOCKS, DEFAULT_UI_HEADING_STYLE } from '../common/common';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { GameDataManager } from '../common/game-data-manager';
+import { getCurrentLanguage, getText } from '../common/texts';
 import type { CastingUnlocks, CreatureType } from '../common/types';
 
 const MAP_WIDTH = 1024;
@@ -78,6 +79,7 @@ export class MapScene extends Phaser.Scene {
     this.#renderBase();
     this.#renderUnlockedMagicOverlays();
     this.#renderCreatureOverlays();
+    this.#renderCounters();
 
     this.add
       .text(MAP_WIDTH / 2, MAP_HEIGHT - 60, "Press 'x' or 'm' to return", DEFAULT_UI_HEADING_STYLE)
@@ -127,6 +129,45 @@ export class MapScene extends Phaser.Scene {
         this.add.image(overlay.x, overlay.y, ASSET_KEYS.MAP_STAR1).setOrigin(0.5).setDepth(10);
       }
     }
+  }
+
+  // Statistics for the current run, shown in the lower-left. Recomputed on every
+  // map entry because create() runs fresh each time the map is launched.
+  #renderCounters(): void {
+    const data = GameDataManager.instance;
+
+    const lines = [
+      `${getText('legend.timePlayed')}: ${this.#formatPlayTime(data.getTotalPlayTimeMs())}`,
+      '',
+      `${getText('legend.animalsCreated')}: ${data.getCreaturesEverCreatedCount()}`,
+      `${getText('legend.animalsKilled')}: ${data.getCreaturesKilled()}`,
+      '',
+      `${getText('legend.earthCreated')}: ${data.getTotalTilesPlaced('_BASIC')}`,
+      `${getText('legend.earthDecorated')}: ${data.getTotalTilesPlaced('_DECORATION')}`,
+      `${getText('legend.earthFilledIn')}: ${data.getTotalTilesPlaced('_BLOCKING')}`,
+    ];
+
+    const lineHeight = 26;
+    const startY = MAP_HEIGHT - 40 - lines.length * lineHeight;
+    lines.forEach((line, index) => {
+      this.add
+        .text(10, startY + index * lineHeight, line, { ...DEFAULT_UI_HEADING_STYLE, align: 'left', fontSize: 18 })
+        .setOrigin(0, 0)
+        .setDepth(20);
+    });
+  }
+
+  // Verbose, localized play time: "1h 23m" (en) / "1t 23m" (da).
+  #formatPlayTime(totalMs: number): string {
+    const isDanish = getCurrentLanguage() === 'da';
+    const hourUnit = isDanish ? 't' : 'h';
+    const totalSeconds = Math.floor(totalMs / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    if (hours > 0) { return `${hours}${hourUnit} ${minutes}m`; }
+    if (minutes > 0) { return `${minutes}m`; }
+    return `${seconds}s`;
   }
 
   #closeMap(): void {
