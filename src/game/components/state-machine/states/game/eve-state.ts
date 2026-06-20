@@ -5,15 +5,15 @@ import { ENABLE_LOGGING } from '../../../../common/config';
 
 /**
  * Deferred. See game-state.md -> Eve State.
+ * Trigger when the player reaches NUMBER_OF_ANIMALS_TO_TRIGGER_EVE_STATE animals (including enemies) spawned in the world.
  *
- * Prerequisites before this state can be implemented:
+ * Prerequisites before this state is done well:
  *  - Companion character type (Adam/Eve), opposite sex of the player, sharing
  *    the player's gear/weapon but unchangeable.
  *  - Following + auto-attack behaviour for the companion.
  *  - Companion adds to player's max health on introduction.
  *  - Can interact with Companion for a simple dialog
  *  - Animal multiplication mechanic.
- *  - A trigger from RegularState (TBD) to enter this state.
  *
  * Scripted beats once those land:
  *  1) Narrator: "It is not good to be alone..."
