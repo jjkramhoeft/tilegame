@@ -15,9 +15,7 @@
 - [ ] Add **Lizardman** creature w/ dagger from the included sprite sheets — preload + animations (model on Player, not the critter pattern) → see `ADDING_A_CREATURE.md`
 - [ ] **bossFightState** — Lizardman boss with timed snake-minion waves (start with sound) → `STATE_MACHINES.md`
 - [ ] **victoryState** — triggered by boss end or animal progression maxed
-- [~] **eveState** — companion dialog → place companion → hand off to follow-move-state *(depends on "follow-move-state" under Enemy AI)*
-
-    define trigger (could be number of animals created)
+- [x] **eveState** — companion dialog → place companion → hand off to follow-move-state 
 
 ## 🧍 Player & combat
 
