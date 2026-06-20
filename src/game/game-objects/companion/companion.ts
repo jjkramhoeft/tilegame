@@ -2,7 +2,8 @@ import * as Phaser from 'phaser';
 import { Position } from '../../common/types';
 import { InputComponent } from '../../components/input/input-component';
 import { CHARACTER_STATES } from '../../components/state-machine/states/character/character-states';
-import { IdleState } from '../../components/state-machine/states/character/idle-state';
+import { FollowMoveState } from '../../components/state-machine/states/character/follow-move-state';
+import { FollowIdleState } from '../../components/state-machine/states/character/follow-idle-state';
 import { AnimationConfig } from '../../components/game-object/animation-component';
 import { CharacterGameObject } from '../common/character-game-object';
 import { GameDataManager } from '../../common/game-data-manager';
@@ -15,11 +16,11 @@ export type CompanionConfig = {
 };
 
 /**
- * The companion introduced in EveState: a static, opposite-sex partner that
- * mirrors the player's current gear/weapon (snapshotted at spawn — it is
- * "unchangeable" per the design). This first pass is placement-only: the
- * companion just stands idle next to the player. Follow + auto-attack behaviour
- * (a future `follow-move-state`) is intentionally not wired yet.
+ * The companion introduced in EveState: an opposite-sex partner that mirrors
+ * the player's current gear/weapon (snapshotted at spawn — it is "unchangeable"
+ * per the design). It follows the player via FollowMoveState, dropping into
+ * FollowIdleState to rest whenever it gets close. Auto-attack behaviour is still
+ * deferred.
  */
 export class Companion extends CharacterGameObject {
   constructor(config: CompanionConfig) {
@@ -71,15 +72,16 @@ export class Companion extends CharacterGameObject {
     this.body?.setSize(this.body.width * 0.43, this.body.height * 0.45, true);
     this.body?.setOffset(this.body.offset.x+15, this.body.offset.y + 30);
 
-    // The companion only ever runs IdleState, which (unlike the move/bounce
-    // states) never assigns depth, so set it once here using the same
-    // feet-based convention as the player's move state (`y + 36`). Without
-    // this it would sit at the default depth 0 and render behind the player
-    // and blocking sprites.
+    // Seed the depth using the same feet-based convention as the player's move
+    // state (`y + 36`). FollowMoveState keeps it updated while walking; without
+    // this initial value the companion would sit at the default depth 0 and
+    // render behind the player and blocking sprites before it first moves.
     this.depth = config.position.y + 36;
 
-    // Placement-only: idle is the only behaviour for now.
-    this._stateMachine.addState(new IdleState(this));
-    this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
+    // Follow the player, resting (FollowIdleState) whenever it gets close.
+    const getTarget = () => (this.scene as unknown as { player?: CharacterGameObject }).player;
+    this._stateMachine.addState(new FollowMoveState(this, getTarget));
+    this._stateMachine.addState(new FollowIdleState(this, getTarget));
+    this._stateMachine.setState(CHARACTER_STATES.FOLLOW_MOVE_STATE);
   }
 }

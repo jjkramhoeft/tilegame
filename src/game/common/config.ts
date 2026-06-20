@@ -22,6 +22,15 @@ export const PLAYER_ATTACK_DAMAGE = 1;
 export const PLAYER_LAVA_DAMAGE = 1;
 export const IDLE_SLOWDOWN_FACTOR = 0.9;
 export const IDLE_STOP_SPEED = 5;
+
+// Companion follow behaviour (FollowMoveState <-> FollowIdleState). The two
+// radii form a hysteresis band: the companion stops once it gets within
+// STOP_RADIUS, and only resumes chasing once the player drifts past
+// RESUME_RADIUS, so it doesn't jitter back and forth at the boundary.
+export const COMPANION_FOLLOW_STOP_RADIUS = 60;
+export const COMPANION_FOLLOW_RESUME_RADIUS = 150;
+export const COMPANION_FOLLOW_IDLE_MIN_MS = 600;
+export const COMPANION_FOLLOW_IDLE_MAX_MS = 1500;
 export const PLAYER_SPELL_CAST_COOLDOWN = 500;
 export const SPELL_STAGGER_MS = 500;
 export const NUMBER_OF_ANIMALS_TO_TRIGGER_EVE_STATE = 2;
