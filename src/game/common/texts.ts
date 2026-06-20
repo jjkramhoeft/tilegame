@@ -284,6 +284,10 @@ const TEXTS = {
         en: 'Game Over...',
         da: 'Spillet er slut...',
     },
+    'narrator.victory': {
+        en: 'You have won!..',
+        da: 'Du har vundet!..',
+    },
     'narrator.helpWithTileCasting': {
         en: 'Go back to your first basic rock or desert tiles and keep casting music on them until they have both pebbles and rocks and palm trees!',
         da: 'Gå tilbage til dine første simple klippe eller ørken stykker og fortsæt med at kaste musik på dem, til de har både småsten og klipper og ørkenen har palmer!',

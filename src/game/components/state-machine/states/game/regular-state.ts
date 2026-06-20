@@ -3,7 +3,7 @@ import { GAME_STATES } from './game-state-keys';
 import { CUSTOM_EVENTS, EVENT_BUS, ProgressionHelpPayload, type TilePlacedPayload } from '../../../../common/event-bus';
 import { BIOME, CASTING_UNLOCKS } from '../../../../common/common';
 import type { GameScene } from '../../../../scenes/game-scene';
-import { ENABLE_LOGGING, NUMBER_OF_ANIMALS_TO_TRIGGER_EVE_STATE } from '../../../../common/config';
+import { ENABLE_LOGGING, NUMBER_OF_ANIMALS_TO_TRIGGER_EVE_STATE, NUMBER_OF_ANIMALS_TO_WIN } from '../../../../common/config';
 import { GameDataManager } from '../../../../common/game-data-manager';
 
 /**
@@ -17,6 +17,7 @@ export class RegularState extends BaseGameState {
   static #firstTreeFired = false;
   static #firstAnimalFired = false;
   static #eveFired = false;
+  static #winFired = false;
 
   #tileHandler?: (payload: TilePlacedPayload) => void;
   #animalHandler?: () => void;
@@ -42,7 +43,7 @@ export class RegularState extends BaseGameState {
       this.#creatureCountHandler = () => this.#onCreatureCountUpdated();
       EVENT_BUS.on(CUSTOM_EVENTS.LIVING_CREATURES_UPDATED, this.#creatureCountHandler);
     }
-    // TODO Phase 4/5: wire victory trigger; bossFight trigger.
+    // TODO Phase 4/5: wire bossFight trigger.
   }
 
   public onExit(): void {
@@ -66,6 +67,7 @@ export class RegularState extends BaseGameState {
     RegularState.#firstTreeFired = false;
     RegularState.#firstAnimalFired = false;
     RegularState.#eveFired = false;
+    RegularState.#winFired = false;
   }
 
   #onTilePlaced(payload: TilePlacedPayload): void {
@@ -109,6 +111,9 @@ export class RegularState extends BaseGameState {
     if (GameDataManager.instance.data.creaturesEverCreatedCount >= NUMBER_OF_ANIMALS_TO_TRIGGER_EVE_STATE) {
       RegularState.#eveFired = true;
       this._transitionTo(GAME_STATES.EVE);
+    }else if (GameDataManager.instance.data.creaturesEverCreatedCount >= NUMBER_OF_ANIMALS_TO_WIN){
+      RegularState.#winFired = true;
+      this._transitionTo(GAME_STATES.VICTORY);
     }
   }
 }
