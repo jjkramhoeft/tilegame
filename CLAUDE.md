@@ -29,6 +29,8 @@ Phaser 4 + TypeScript, built with Vite. ~107 `.ts` files under `src/`. No test f
 - `character/` — per-entity movement/action states (idle, move, attack, swim-move, casting, hurt, death, falling, bounce, open-chest, …).
 - `game/` — 13 game-progression states (start → first-tile → assignment → baby-steps → garden → regular → first-tree → first-animal → help-with-tilecasting → eve → boss-fight → game-over → victory). `eve`, `boss-fight`, and `victory` are stubbed. See `GameMechanics.md` for the per-state narrative.
 
+See `STATE_MACHINES.md` for how the FSM engine works, how the two machines are wired, and how to add a state.
+
 `Lizardman` and `Shark` are designed (`GameMechanics.md`) but not yet implemented.
 
 ### Tile Map
