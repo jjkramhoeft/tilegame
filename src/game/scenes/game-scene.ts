@@ -6,7 +6,11 @@ import { WEAPON, GEAR, DIRECTION, BIOME } from '../common/common';
 import {
     CUSTOM_EVENTS,
     EVENT_BUS,
+    PLAYER_UPDATE_TYPE,
     registerEventBusListenersUntilShutdown,
+    type PlayerHealthUpdated,
+    type PlayerPowerUpdated,
+    type PlayerProgressUpdated,
 } from '../common/event-bus';
 import { ChestJJK } from '../game-objects/objects/chestJJK';
 import { CharacterGameObject } from '../game-objects/common/character-game-object';
@@ -27,7 +31,8 @@ import { GAME_STATES } from '../components/state-machine/states/game/game-state-
 import { ChestSpawnService } from '../spawning/chest-spawn-service';
 import { AnimalSpawnService } from '../spawning/animal-spawn-service';
 import { ENABLE_LOGGING, PLAYER_START_MAX_HEALTH, PLAYER_START_HEALTH } from '../common/config';
-import { ASSET_KEYS } from '../common/assets';
+import { ASSET_KEYS, SPIN_HUD_ANIMATIONS } from '../common/assets';
+import { playLevelUpVfx } from '../game-objects/level-up-vfx';
 
 export class GameScene extends Phaser.Scene {
 
@@ -260,6 +265,9 @@ export class GameScene extends Phaser.Scene {
             { event: CUSTOM_EVENTS.OPENED_CHEST, listener: this.#handleOpenChest, context: this },
             { event: CUSTOM_EVENTS.PLAYER_DEFEATED, listener: this.#handlePlayerDefeatedEvent, context: this },
             { event: CUSTOM_EVENTS.CHEST_DIALOG_CLOSED, listener: this.#handleChestDialogClosed, context: this },
+            { event: CUSTOM_EVENTS.PLAYER_HEALTH_UPDATED, listener: this.#handleHealthUpdated, context: this },
+            { event: CUSTOM_EVENTS.PLAYER_POWER_UPDATED, listener: this.#handlePowerUpdated, context: this },
+            { event: CUSTOM_EVENTS.PLAYER_PROGRESS_UPDATED, listener: this.#handleProgressUpdated, context: this },
         ]);
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -329,6 +337,34 @@ export class GameScene extends Phaser.Scene {
 
     #handlePlayerDefeatedEvent(): void {
         //ToDo: show game over
+    }
+
+    #handleHealthUpdated(data: PlayerHealthUpdated): void {
+        if (data.type !== PLAYER_UPDATE_TYPE.INCREASE) {
+            return;
+        }
+        this.#playLevelUpVfxAbovePlayer(SPIN_HUD_ANIMATIONS.HEARTH);
+    }
+
+    #handlePowerUpdated(data: PlayerPowerUpdated): void {
+        if (data.type !== PLAYER_UPDATE_TYPE.INCREASE) {
+            return;
+        }
+        this.#playLevelUpVfxAbovePlayer(SPIN_HUD_ANIMATIONS.POWER);
+    }
+
+    #handleProgressUpdated(data: PlayerProgressUpdated): void {
+        if (data.type !== PLAYER_UPDATE_TYPE.INCREASE) {
+            return;
+        }
+        this.#playLevelUpVfxAbovePlayer(SPIN_HUD_ANIMATIONS.PROGRESS);
+    }
+
+    #playLevelUpVfxAbovePlayer(animationKey: string): void {
+        if (!this.#player) {
+            return;
+        }
+        playLevelUpVfx(this, this.#player.x, this.#player.y, animationKey);
     }
 
     #handleChestDialogClosed(): void {
