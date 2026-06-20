@@ -4,6 +4,33 @@ IMPORTANT: Try to preserve the original code and the logic of the original code 
 
 This is a Phaser TypeScript top-down RPG where the player dynamically builds the map while playing. Full game design is documented in `GameMechanics.md`.
 
+## Architecture
+
+Phaser 4 + TypeScript, built with Vite. ~107 `.ts` files under `src/`. No test framework.
+
+**Boot:** `index.html` → `src/main.ts` → `src/game/main.ts` (`StartGame` builds the Phaser config). Scene order: `PreloadScene` → `Intro` → `GameScene` + `UiScene` (run concurrently) → `MapScene`, `Credits`, `Reflection`, `Settings`. Physics: Arcade, zero gravity.
+
+**Module map** (`src/game/`):
+
+| Folder | Responsibility |
+| --- | --- |
+| `scenes/` | The 8 scenes above + `debug/` scenes (blocking, chests, enemies). `scene-keys.ts` holds scene identifiers. |
+| `ground/` | Dynamic tilemap world. `earth.ts` (the map + tile placement), `creator.ts`, `tile.ts`, `blocking-boxes.ts`. |
+| `game-objects/` | Entities: `player/`, `enemies/` (12 animals/enemies), `weapons/`, `objects/` (chest). Share `common/character-game-object.ts`. |
+| `components/game-object/` | Composable entity behaviors (life, weapon, animation, direction, speed, spell-casting, collision, …). |
+| `components/state-machine/` | Generic `state-machine.ts` + two FSMs under `states/` (see below). |
+| `spellcasting/` | `spell-casting-service.ts` — tile placement with biome-based unlock rules + cast VFX. |
+| `spawning/` | `animal-spawn-service.ts`, `chest-spawn-service.ts` — factory services. |
+| `progression/` | `game-progression.ts` — tile counts, power level, unlock tracking. |
+| `systems/` | Per-frame world systems: `falling-system`, `lava-damage-system`, `swimming-system`. |
+| `common/` | Shared infra: `assets.ts` (asset/animation keys), `event-bus.ts`, `game-data-manager.ts` (save/load), `config.ts`, `texts.ts`, dialogs, utils, `types.ts`. |
+
+**Two state machines** (`components/state-machine/states/`):
+- `character/` — per-entity movement/action states (idle, move, attack, swim-move, casting, hurt, death, falling, bounce, open-chest, …).
+- `game/` — 13 game-progression states (start → first-tile → assignment → baby-steps → garden → regular → first-tree → first-animal → help-with-tilecasting → eve → boss-fight → game-over → victory). `eve`, `boss-fight`, and `victory` are stubbed. See `GameMechanics.md` for the per-state narrative.
+
+`Lizardman` and `Shark` are designed (`GameMechanics.md`) but not yet implemented.
+
 ### Tile Map
 
 The map has six layers (bottom to top): Void, Base (biome), Border, Decoration, Blocking, Floating.

@@ -50,8 +50,8 @@ The tile map consist of six layers
 
 Can be used as a template for implementing the other animals.
 
-Main class is lamb.ts in src/game/game-objets/enemies
-SpriteSheet: 'Lamb.png' with the same key but without the file extension ('Lamb'), this is registered in public/asserts/data/assets.json
+Main class is lamb.ts in src/game/game-objects/enemies
+SpriteSheet: 'Lamb.png' is loaded (with its frame config) in src/game/common/asset-loader.ts, and its asset key ('Lamb') is defined in src/game/common/assets.ts
 
 The animations for the Lamb is set up in PreloadScene and the key for the animations are defined in src/game/common/assets.ts
 
@@ -147,7 +147,7 @@ Power level progress with the total count of tiles placed.
 
 The game narrator guides the player and introduce the game mechanics, The narrators text are shown via the narratorDialog in the UI-scene.
 
-The game play progression is implemented using StateMachine, a BaseGameState and 12 different game states
+The game play progression is implemented using StateMachine, a BaseGameState and 13 different game states
 
 ### Game States
 
@@ -224,6 +224,13 @@ Triggered by first Chicken, Lamb etc. This transition will be implemented later.
 1) 1 sec pause
 2) Text "You are not alone! let life multiply..."
 3) Transition to regular Game State
+
+#### Help With Tile Casting State
+
+A narrator game state, Player is passive.
+No player movement (movement locked on enter, unlocked on exit).
+Pause, then show the `narrator.helpWithTileCasting` narrator text, then pause.
+Transition to Regular Play State.
 
 #### Eve State
 
