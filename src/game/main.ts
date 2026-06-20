@@ -36,9 +36,9 @@ const config: Types.Core.GameConfig = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0, x: 0 },
-            debug: false,
-            debugShowBody: false,
-            debugShowStaticBody: false,
+            debug: true,
+            debugShowBody: true,
+            debugShowStaticBody: true,
         },
     },
 };

@@ -55,6 +55,7 @@ export class Plant extends CharacterGameObject {
   readonly #animationKeys: PlantAnimationKeys;
   #isAttacking = false;
   #lastAttackAt = -ENEMY_PLANT_ATTACK_COOLDOWN;
+  #attackCompleteEvent?: string;
 
   constructor(config: PlantConfig) {
     const variant = config.variant ?? Phaser.Utils.Array.GetRandom(PLANT_VARIANTS);
@@ -85,7 +86,11 @@ export class Plant extends CharacterGameObject {
       inputComponent: new InputComponent(),
       isInvulnerable: false,
       maxLife: ENEMY_PLANT_MAX_HEALTH,
-      contactDamage: ENEMY_PLANT_ATTACK_DAMAGE,
+      // The plant deals damage through its own range-based #attack() (with cooldown + attack
+      // animation), so it must NOT also use the generic per-frame contact-damage overlap in
+      // game-scene.ts. Otherwise the player takes damage every frame on body contact and dies
+      // instantly with no attack animation. (Matches snake/skeleton, which also self-attack.)
+      contactDamage: 0,
     });
 
     this.#animationKeys = variant.animationKeys;
@@ -106,6 +111,7 @@ export class Plant extends CharacterGameObject {
     super.enableObject();
     this.controls.reset();
     this.#resetVelocity();
+    this.#cancelAttack();
   }
 
   public update(): void {
@@ -118,7 +124,14 @@ export class Plant extends CharacterGameObject {
 
     const currentStateName = this._stateMachine.currentStateName;
     if (currentStateName === CHARACTER_STATES.HURT_STATE || currentStateName === CHARACTER_STATES.DEATH_STATE) {
-      this.#isAttacking = false;
+      // being hurt or dying interrupts the current swing
+      this.#cancelAttack();
+      return;
+    }
+
+    // once a swing has started, let the attack animation play through to the end
+    // without interruption - don't restart it, re-face the player, or drop to idle.
+    if (this.#isAttacking) {
       return;
     }
 
@@ -131,30 +144,59 @@ export class Plant extends CharacterGameObject {
     const directionChanged = this.#facePlayer(player);
     const distance = Phaser.Math.Distance.Between(this.x, this.y, player.x, player.y);
     if (distance <= ENEMY_PLANT_ATTACK_RANGE) {
-      this.#attack(player);
+      this.#attack();
       return;
     }
 
-    if (this.#isAttacking || directionChanged) {
+    if (directionChanged) {
       this.#setIdleAnimation();
     }
   }
 
-  #attack(player: CharacterGameObject): void {
-    const attackKey = this.#getAttackAnimationKey();
-    if (!this.#isAttacking || this.anims.currentAnim?.key !== attackKey) {
-      this.play({ key: attackKey, repeat: -1 }, true);
-    }
-
-    this.#isAttacking = true;
+  #attack(): void {
+    // only start a new swing once the cooldown since the previous one has elapsed
     const now = this.scene.time.now;
     if (now - this.#lastAttackAt < ENEMY_PLANT_ATTACK_COOLDOWN) {
       return;
     }
 
-    if (player.hit(this.direction, ENEMY_PLANT_ATTACK_DAMAGE)) {
-      this.#lastAttackAt = now;
+    this.#isAttacking = true;
+    this.#lastAttackAt = now;
+
+    // the registered attack clip loops (repeat: -1); override to play it exactly
+    // once and resolve the hit when the swing finishes.
+    const attackKey = this.#getAttackAnimationKey();
+    this.#attackCompleteEvent = Phaser.Animations.Events.ANIMATION_COMPLETE_KEY + attackKey;
+    this.once(this.#attackCompleteEvent, this.#onAttackComplete, this);
+    this.play({ key: attackKey, repeat: 0 }, true);
+  }
+
+  #onAttackComplete(): void {
+    this.#attackCompleteEvent = undefined;
+    this.#isAttacking = false;
+
+    if (!this.active || this._isDefeated) {
+      return;
     }
+
+    // the bite only lands if the player is still within range at the end of the swing
+    const player = (this.scene as unknown as { player?: CharacterGameObject }).player;
+    if (player !== undefined && player.active && !player.isDefeated) {
+      const distance = Phaser.Math.Distance.Between(this.x, this.y, player.x, player.y);
+      if (distance <= ENEMY_PLANT_ATTACK_RANGE) {
+        player.hit(this.direction, ENEMY_PLANT_ATTACK_DAMAGE);
+      }
+    }
+
+    this.#setIdleAnimation();
+  }
+
+  #cancelAttack(): void {
+    if (this.#attackCompleteEvent !== undefined) {
+      this.off(this.#attackCompleteEvent, this.#onAttackComplete, this);
+      this.#attackCompleteEvent = undefined;
+    }
+    this.#isAttacking = false;
   }
 
   #facePlayer(player: CharacterGameObject): boolean {
