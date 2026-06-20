@@ -8,7 +8,8 @@ import { DIFFICULTY } from '../../../../common/common';
 
 /**
  * Base class for the game progression states. Concrete states extend this and
- * implement the scripted flow described in `game-state.md`.
+ * implement the scripted flow described in `GameMechanics.md` (see also
+ * `STATE_MACHINES.md` for the FSM mechanics).
  *
  * Provides small helpers shared by all game states:
  *  - `_pause(ms, cb)` schedules a delayed callback that is automatically

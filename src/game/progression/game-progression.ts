@@ -19,7 +19,7 @@ import type { GameScene } from '../scenes/game-scene';
 import { GameDataManager } from '../common/game-data-manager';
 
 /**
- * Owns the game progression state machine and registers all 12 game states.
+ * Owns the game progression state machine and registers all 13 game states.
  * `GameScene` constructs one of these and ticks it from `update()`.
  */
 export class GameProgression {
