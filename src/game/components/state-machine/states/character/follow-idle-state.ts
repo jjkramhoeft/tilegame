@@ -7,8 +7,9 @@ import {
   COMPANION_FOLLOW_IDLE_MIN_MS,
   COMPANION_FOLLOW_RESUME_RADIUS,
 } from '../../../../common/config';
+import type { Earth } from '../../../../ground/earth';
 import { GetTarget } from './follow-move-state';
-import { shouldResumeFollowing } from './follow-state-utils';
+import { isOnWater, shouldResumeFollowing } from './follow-state-utils';
 
 /**
  * Resting counterpart to FollowMoveState. The companion plays its idle
@@ -29,8 +30,18 @@ export class FollowIdleState extends BaseCharacterState {
   }
 
   public onEnter(): void {
-    // play idle animation based on game object direction
-    this._gameObject.animationComponent.playAnimation(`IDLE_${this._gameObject.direction}`);
+    // While resting the companion never moves, so its water status is fixed for
+    // the duration of this state: tread water (swim anim + cropped) when on a
+    // water tile, otherwise the normal idle pose.
+    const earth = (this._gameObject.scene as unknown as { earth?: Earth }).earth;
+    const onWater = earth !== undefined && isOnWater(earth, this._gameObject.x, this._gameObject.y);
+    if (onWater) {
+      this._gameObject.setCrop(0, 0, this._gameObject.width, this._gameObject.height / 1.5);
+      this._gameObject.animationComponent.playAnimation(`SWIM_${this._gameObject.direction}`);
+    } else {
+      this._gameObject.setCrop();
+      this._gameObject.animationComponent.playAnimation(`IDLE_${this._gameObject.direction}`);
+    }
     this._resetObjectVelocity();
 
     this.#dwellElapsed = false;
@@ -45,6 +56,8 @@ export class FollowIdleState extends BaseCharacterState {
     // have already left this state.
     this.#dwellTimer?.remove(false);
     this.#dwellTimer = undefined;
+    // Restore the full sprite in case we were treading water (cropped).
+    this._gameObject.setCrop();
   }
 
   public onUpdate(): void {

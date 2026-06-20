@@ -2,27 +2,31 @@ import { BIOME, DIRECTION } from '../common/common';
 import { PLAYER_LAVA_DAMAGE } from '../common/config';
 import { Direction } from '../common/types';
 import { CHARACTER_STATES } from '../components/state-machine/states/character/character-states';
-import { Player } from '../game-objects/player/player';
+import { CharacterGameObject } from '../game-objects/common/character-game-object';
 import { Earth } from '../ground/earth';
 
-export function updateLavaDamageLogic(player: Player, earth: Earth): void {
-    if (player.currentState === CHARACTER_STATES.FALLING_STATE || player.currentState === CHARACTER_STATES.DEATH_STATE) {
+// Works on any CharacterGameObject (player or companion); behaviour is unchanged
+// for the player. Uses the base `stateMachine` rather than the Player-only
+// `currentState` getter so it can be reused.
+export function updateLavaDamageLogic(character: CharacterGameObject, earth: Earth): void {
+    const currentState = character.stateMachine.currentStateName;
+    if (currentState === CHARACTER_STATES.FALLING_STATE || currentState === CHARACTER_STATES.DEATH_STATE) {
         return;
     }
 
-    const playerTilePosition = earth.getTileXYFromScreenCoordinates(player.x, player.y, true);
-    const tile = earth.getTile(playerTilePosition.x, playerTilePosition.y);
+    const tilePosition = earth.getTileXYFromScreenCoordinates(character.x, character.y, true);
+    const tile = earth.getTile(tilePosition.x, tilePosition.y);
 
     if (tile === undefined || tile.biome !== BIOME.LAVA) {
         return;
     }
 
-    player.hit(getLavaPushBackDirection(player), PLAYER_LAVA_DAMAGE);
+    character.hit(getLavaPushBackDirection(character), PLAYER_LAVA_DAMAGE);
 }
 
-function getLavaPushBackDirection(player: Player): Direction {
-    const lastMoveDirections = player.getLastMoveDirections();
-    const lastMoveDirection = lastMoveDirections[lastMoveDirections.length - 1] ?? player.direction;
+function getLavaPushBackDirection(character: CharacterGameObject): Direction {
+    const lastMoveDirections = character.getLastMoveDirections();
+    const lastMoveDirection = lastMoveDirections[lastMoveDirections.length - 1] ?? character.direction;
 
     switch (lastMoveDirection) {
         case DIRECTION.DOWN:

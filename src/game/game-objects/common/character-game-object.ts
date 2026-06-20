@@ -113,6 +113,15 @@ export abstract class CharacterGameObject extends Phaser.Physics.Arcade.Sprite i
     return this._isPlayer;
   }
 
+  /**
+   * The companion is neither player nor enemy. Overridden by the Companion
+   * subclass so death/progression logic can treat it as its own category
+   * instead of falling into the enemy branch (it is not a counted creature).
+   */
+  get isCompanion(): boolean {
+    return false;
+  }
+
   get controls(): InputComponent {
     return this._controlsComponent.controls;
   }

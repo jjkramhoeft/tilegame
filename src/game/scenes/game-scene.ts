@@ -136,6 +136,14 @@ export class GameScene extends Phaser.Scene {
             critter.update();
         });
 
+        // The companion is no longer in #critterGroup, so tick its follow FSM
+        // explicitly and apply player-style lava damage to it (it handles water
+        // swimming itself, inside its follow states).
+        if (this.#companion?.active && !this.#companion.isDefeated) {
+            this.#companion.update();
+            updateLavaDamageLogic(this.#companion, this.#earth);
+        }
+
         updateFallingLogic(this.#player, this.#earth);
         updateSwimmingLogic(this.#player, this.#earth);
         updateLavaDamageLogic(this.#player, this.#earth);
@@ -252,6 +260,31 @@ export class GameScene extends Phaser.Scene {
         }));
 
         this.#trackCollider(this.physics.add.collider(this.#critterGroup!, creatureBlockingLayer));
+
+        // critters (passive animals) bounce off chests instead of walking through them.
+        // No callback: only the player should trigger chest-open (via its own collider above).
+        this.#trackCollider(this.physics.add.collider(this.#critterGroup!, this.#chestJJKGroup));
+    }
+
+    /**
+     * The companion uses a player-like collision set (not the animal/critter
+     * model) so it can enter water (swim) and lava (take damage). Registered at
+     * spawn time since the companion is created mid-game. It is blocked by the
+     * same solid geometry the player is, plus void and chests, but NOT by the
+     * creature-blocking layer (which would also block water/lava).
+     */
+    #registerCompanionColliders(): void {
+        if (!this.#companion) {
+            return;
+        }
+        const blockingGeometryGroup = this.#earth.getBlockingGeometryGroup();
+        // trees, stones and mountains
+        this.#trackCollider(this.physics.add.collider(this.#companion, blockingGeometryGroup));
+        // blocked from void (no fall-to-death; the player's FallingState is player-specific)
+        this.#trackCollider(this.physics.add.collider(this.#companion, this.#earth.getVoidLayer()));
+        // solid against chests (no open callback) and the player (no bump sound)
+        this.#trackCollider(this.physics.add.collider(this.#companion, this.#chestJJKGroup));
+        this.#trackCollider(this.physics.add.collider(this.#companion, this.#player));
     }
 
     #playWeaponHitSound(): void {
@@ -390,7 +423,11 @@ export class GameScene extends Phaser.Scene {
             position: { x: this.#player.x - tileSize, y: this.#player.y },
         });
         this.#companion.enableObject();
-        this.#critterGroup?.add(this.#companion);
+        // The companion has its OWN player-like collision (see
+        // #registerCompanionColliders) rather than the animal/critter model, so
+        // it can swim in water and take lava damage. It is intentionally NOT
+        // added to #critterGroup.
+        this.#registerCompanionColliders();
 
         // Celebratory golden-note burst as the companion appears, matching the
         // player-placement burst in StartState. Rendered just above the

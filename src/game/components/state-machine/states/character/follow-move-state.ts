@@ -2,8 +2,9 @@ import * as Phaser from 'phaser';
 import { CHARACTER_STATES } from './character-states';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
 import { COMPANION_FOLLOW_STOP_RADIUS } from '../../../../common/config';
+import type { Earth } from '../../../../ground/earth';
 import { BaseMoveState } from './base-move-state';
-import { shouldStopFollowing } from './follow-state-utils';
+import { isOnWater, shouldStopFollowing } from './follow-state-utils';
 
 export type GetTarget = () => CharacterGameObject | undefined;
 
@@ -29,6 +30,8 @@ export class FollowMoveState extends BaseMoveState {
   public onExit(): void {
     // Clear the synthesized input so it doesn't leak into the next state.
     this._gameObject.controls.reset();
+    // Restore the full sprite in case we exited while swimming (cropped).
+    this._gameObject.setCrop();
   }
 
   public onUpdate(): void {
@@ -53,6 +56,11 @@ export class FollowMoveState extends BaseMoveState {
       return;
     }
 
+    // Swim (animation + cropped sprite) when on water, walk otherwise — the same
+    // tiles the player swims on. This drives the WALK/SWIM prefix that
+    // handleCharacterMovement() uses below.
+    this.#applySwimVisual(this.#isOnWater());
+
     // Translate the vector toward the target into directional "key presses",
     // then let BaseMoveState do the actual velocity/animation/flip/depth work.
     const deltaX = target.x - this._gameObject.x;
@@ -63,5 +71,20 @@ export class FollowMoveState extends BaseMoveState {
     controls.isDownDown = deltaY > AXIS_DEADZONE;
 
     this.handleCharacterMovement();
+  }
+
+  #isOnWater(): boolean {
+    const earth = (this._gameObject.scene as unknown as { earth?: Earth }).earth;
+    return earth !== undefined && isOnWater(earth, this._gameObject.x, this._gameObject.y);
+  }
+
+  #applySwimVisual(onWater: boolean): void {
+    this._moveAnimationPrefix = onWater ? 'SWIM' : 'WALK';
+    if (onWater) {
+      // Crop to the top half so the legs read as submerged (matches SwimMoveState).
+      this._gameObject.setCrop(0, 0, this._gameObject.width, this._gameObject.height / 1.5);
+    } else {
+      this._gameObject.setCrop();
+    }
   }
 }

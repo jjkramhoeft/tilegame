@@ -4,11 +4,18 @@ import { InputComponent } from '../../components/input/input-component';
 import { CHARACTER_STATES } from '../../components/state-machine/states/character/character-states';
 import { FollowMoveState } from '../../components/state-machine/states/character/follow-move-state';
 import { FollowIdleState } from '../../components/state-machine/states/character/follow-idle-state';
+import { HurtState } from '../../components/state-machine/states/character/hurt-state';
+import { DeathState } from '../../components/state-machine/states/character/death-state';
 import { AnimationConfig } from '../../components/game-object/animation-component';
 import { CharacterGameObject } from '../common/character-game-object';
 import { GameDataManager } from '../../common/game-data-manager';
 import { SEX } from '../../common/common';
-import { PLAYER_SPEED, PLAYER_START_MAX_HEALTH } from '../../common/config';
+import {
+  PLAYER_HURT_PUSH_BACK_SPEED,
+  PLAYER_INVULNERABLE_AFTER_HIT_DURATION,
+  PLAYER_SPEED,
+  PLAYER_START_MAX_HEALTH,
+} from '../../common/config';
 
 export type CompanionConfig = {
   scene: Phaser.Scene;
@@ -31,9 +38,9 @@ export class Companion extends CharacterGameObject {
     const animP = `${companionSex}-${gear}-${weapon}-`;
 
     // Non-player game object, so it uses this static AnimationConfig directly
-    // (the player resolves keys dynamically instead). Only idle/walk are needed
-    // for now; HURT/DIE fall back to idle frames since the companion is
-    // invulnerable in this pass.
+    // (the player resolves keys dynamically instead). WALK/IDLE/SWIM are real;
+    // HURT/DIE fall back to idle frames since the eve/adam sheets have no
+    // dedicated hurt/death art.
     const animationConfig: AnimationConfig = {
       WALK_DOWN: { key: animP + 'walk-down', repeat: -1, ignoreIfPlaying: true },
       WALK_UP: { key: animP + 'walk-up', repeat: -1, ignoreIfPlaying: true },
@@ -43,6 +50,10 @@ export class Companion extends CharacterGameObject {
       IDLE_UP: { key: animP + 'idle-up', repeat: -1, ignoreIfPlaying: true },
       IDLE_LEFT: { key: animP + 'idle-left', repeat: -1, ignoreIfPlaying: true },
       IDLE_RIGHT: { key: animP + 'idle-right', repeat: -1, ignoreIfPlaying: true },
+      SWIM_DOWN: { key: animP + 'swim-down', repeat: -1, ignoreIfPlaying: true },
+      SWIM_UP: { key: animP + 'swim-up', repeat: -1, ignoreIfPlaying: true },
+      SWIM_LEFT: { key: animP + 'swim-left', repeat: -1, ignoreIfPlaying: true },
+      SWIM_RIGHT: { key: animP + 'swim-right', repeat: -1, ignoreIfPlaying: true },
       HURT_DOWN: { key: animP + 'idle-down', repeat: 0, ignoreIfPlaying: true },
       HURT_UP: { key: animP + 'idle-up', repeat: 0, ignoreIfPlaying: true },
       HURT_LEFT: { key: animP + 'idle-left', repeat: 0, ignoreIfPlaying: true },
@@ -63,7 +74,11 @@ export class Companion extends CharacterGameObject {
       animationConfig,
       speed: PLAYER_SPEED,
       inputComponent: new InputComponent(),
-      isInvulnerable: true,
+      // Vulnerable so lava can hurt it; the i-frame window makes lava damage
+      // periodic (per hurt cycle) instead of once per frame. Nothing else can
+      // damage it — it is not wired into the enemy/weapon overlaps.
+      isInvulnerable: false,
+      invulnerableAfterHitAnimationDuration: PLAYER_INVULNERABLE_AFTER_HIT_DURATION,
       maxLife: PLAYER_START_MAX_HEALTH,
       contactDamage: 0,
     });
@@ -79,9 +94,21 @@ export class Companion extends CharacterGameObject {
     this.depth = config.position.y + 36;
 
     // Follow the player, resting (FollowIdleState) whenever it gets close.
+    // Hurt/Death let it react to lava damage like a real character; HurtState
+    // returns to FOLLOW_MOVE_STATE (the companion has no plain IDLE_STATE).
     const getTarget = () => (this.scene as unknown as { player?: CharacterGameObject }).player;
     this._stateMachine.addState(new FollowMoveState(this, getTarget));
     this._stateMachine.addState(new FollowIdleState(this, getTarget));
+    this._stateMachine.addState(
+      new HurtState(this, PLAYER_HURT_PUSH_BACK_SPEED, undefined, CHARACTER_STATES.FOLLOW_MOVE_STATE),
+    );
+    this._stateMachine.addState(new DeathState(this));
     this._stateMachine.setState(CHARACTER_STATES.FOLLOW_MOVE_STATE);
+  }
+
+  // The companion is its own category (see DeathState / progression handling):
+  // not the player, not a counted creature.
+  get isCompanion(): boolean {
+    return true;
   }
 }

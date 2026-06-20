@@ -41,7 +41,10 @@ export class DeathState extends BaseCharacterState {
 
   #triggerDefeatedEvent(): void {
     this._gameObject.disableObject();
-    if (this._gameObject.isEnemy) {
+    if (this._gameObject.isCompanion) {
+      // The companion is neither a counted creature nor the player: it simply
+      // disappears on death, with no progression/game-over events.
+    } else if (this._gameObject.isEnemy) {
       GameDataManager.instance.decreaseLivingCreatureCount();
       EVENT_BUS.emit(CUSTOM_EVENTS.ENEMY_DESTROYED);
     } else {
