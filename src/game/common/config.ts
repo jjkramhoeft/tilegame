@@ -2,7 +2,7 @@ export let ENABLE_LOGGING = false;
 export function setEnableLogging(value: boolean) { ENABLE_LOGGING = value; }
 
 export const DIFFICULTY_HARD_SPEED_MULTIPLIER = 1.5;
-export  const DIFFICULTY_HARD_WAIT_FACTOR = 0.5;
+export const DIFFICULTY_HARD_WAIT_FACTOR = 0.5;
 
 export const MAX_POWER_LEVEL = 6;
 export const MAX_PROGRESS_LEVEL = 6;

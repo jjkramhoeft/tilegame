@@ -40,8 +40,17 @@ function ensureAmbientParticleTextures(scene: Phaser.Scene): void {
   }
 }
 
-function createViewportZone(scene: Phaser.Scene): Phaser.Types.GameObjects.Particles.RandomZoneSource {
-  const bounds = new Phaser.Geom.Rectangle(0, 0, scene.scale.width, scene.scale.height);
+function createViewportZone(
+  scene: Phaser.Scene,
+  topFraction = 0,
+  bottomFraction = 1,
+): Phaser.Types.GameObjects.Particles.RandomZoneSource {
+  const bounds = new Phaser.Geom.Rectangle(
+    0,
+    scene.scale.height * topFraction,
+    scene.scale.width,
+    scene.scale.height * (bottomFraction - topFraction),
+  );
   return {
     getRandomPoint: (point) => {
       point.x = Phaser.Math.FloatBetween(bounds.left, bounds.right);
@@ -54,7 +63,8 @@ function createDustEmitter(scene: Phaser.Scene, depth: number): Phaser.GameObjec
   const emitter = scene.add.particles(0, 0, DUST_TEXTURE_KEY, {
     emitZone: {
       type: 'random',
-      source: createViewportZone(scene),
+      // Keep dust in the lower two-thirds of the screen (no dust up in the clouds).
+      source: createViewportZone(scene, 1 / 3),
     },
     frequency: 420,
     quantity: 6,
@@ -78,7 +88,8 @@ function createFireflyEmitter(scene: Phaser.Scene, depth: number): Phaser.GameOb
   const emitter = scene.add.particles(0, 0, FIREFLY_TEXTURE_KEY, {
     emitZone: {
       type: 'random',
-      source: createViewportZone(scene),
+      // Keep fireflies in the bottom four-fifths of the screen.
+      source: createViewportZone(scene, 1 / 5, 1),
     },
     frequency: 1300,
     quantity: 2,
