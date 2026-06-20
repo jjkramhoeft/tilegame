@@ -93,6 +93,20 @@ export class AnimalSpawnService {
     return animal;
   }
 
+  /**
+   * Spawn a single snake at a world-pixel position and wire it into the scene
+   * exactly like a biome-spawned snake (enemy group + creature bookkeeping).
+   * Used by the Lizardman's "summon snakes" attack.
+   */
+  spawnSnakeAt(worldPosition: Position): CharacterGameObject {
+    const snake = new Snake({ scene: this.#scene, position: worldPosition });
+    snake.enableObject();
+    this.#enemyGroup.add(snake);
+    GameDataManager.instance.markCreatureEverCreated('snake');
+    GameDataManager.instance.increaseLivingCreatureCount();
+    return snake;
+  }
+
   #getTileCenterPosition(tilePosition: Position): Position {
     return {
       x: tilePosition.x * this.#tileSize + this.#tileSize / 2,

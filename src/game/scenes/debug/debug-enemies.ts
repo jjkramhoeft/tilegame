@@ -99,6 +99,13 @@ export function spawnDebugEnemies(
     const lizard = new Lizard({
         scene: scene,
         position: lizardWorldPosition,
+        summonSnake: (position: Position) => {
+            const summonedSnake = new Snake({ scene: scene, position });
+            summonedSnake.enableObject();
+            enemyGroup.add(summonedSnake);
+            GameDataManager.instance.markCreatureEverCreated('snake');
+            GameDataManager.instance.increaseLivingCreatureCount();
+        },
     });
     lizard.enableObject();
     enemyGroup.add(lizard);

@@ -81,6 +81,11 @@ export const ENEMY_LIZARD_ATTACK_COOLDOWN = 1100;
 export const ENEMY_LIZARD_ATTACK_HIT_DELAY = 300;
 export const ENEMY_LIZARD_ATTACK_LUNGE_SPEED = 150; // px/sec toward the player while attacking
 export const ENEMY_LIZARD_ATTACK_LUNGE_DURATION = 110; // ms the lunge velocity is applied
+export const ENEMY_LIZARD_SUMMON_RANGE = 100; // px; player must be this close to trigger summon snakes
+export const ENEMY_LIZARD_SUMMON_COOLDOWN = 20000; // ms between summons while the player stays close
+export const ENEMY_LIZARD_SUMMON_COUNT = 3; // number of snakes summoned per cast
+export const ENEMY_LIZARD_SUMMON_RADIUS = 28; // px; how far around the lizard the snakes appear
+export const ENEMY_LIZARD_SUMMON_DURATION = 700; // ms the lizard channels (idle pose) before returning to idle
 
 export const ENEMY_PLANT_SPEED = 0;
 export const ENEMY_PLANT_HURT_PUSH_BACK_SPEED = 0;

@@ -14,6 +14,11 @@ import {
   ENEMY_LIZARD_HURT_PUSH_BACK_SPEED,
   ENEMY_LIZARD_MAX_HEALTH,
   ENEMY_LIZARD_SPEED,
+  ENEMY_LIZARD_SUMMON_COOLDOWN,
+  ENEMY_LIZARD_SUMMON_COUNT,
+  ENEMY_LIZARD_SUMMON_RADIUS,
+  ENEMY_LIZARD_SUMMON_DURATION,
+  ENEMY_LIZARD_SUMMON_RANGE,
 } from '../../common/config';
 import { Position } from '../../common/types';
 import { AnimationConfig } from '../../components/game-object/animation-component';
@@ -24,15 +29,23 @@ import { HurtState } from '../../components/state-machine/states/character/hurt-
 import { IdleState } from '../../components/state-machine/states/character/idle-state';
 import { MoveState } from '../../components/state-machine/states/character/move-state';
 import { NaturalAttackState } from '../../components/state-machine/states/character/natural-attack-state';
+import { SummonState } from '../../components/state-machine/states/character/summon-state';
+import { playNoteBurst } from '../../spellcasting/note-burst-vfx';
 import { CharacterGameObject } from '../common/character-game-object';
+import { computeSummonPositions } from './summon-positions';
 
 export type LizardConfig = {
   scene: Phaser.Scene;
   position: Position;
+  // Spawns a single snake (wired into the scene) at the given world position.
+  // Supplied by whoever owns the enemy group; omit to disable the summon attack.
+  summonSnake?: (position: Position) => void;
 };
 
 export class Lizard extends CharacterGameObject {
   #lastAttackAt = -ENEMY_LIZARD_ATTACK_COOLDOWN;
+  #lastSummonAt = -ENEMY_LIZARD_SUMMON_COOLDOWN;
+  readonly #summonSnake?: (position: Position) => void;
 
   constructor(config: LizardConfig) {
     const animationConfig: AnimationConfig = {
@@ -73,6 +86,8 @@ export class Lizard extends CharacterGameObject {
       contactDamage: 0,
     });
 
+    this.#summonSnake = config.summonSnake;
+
     this.body?.setSize(24, 32, true);
     this.body?.setOffset(20, 24);
 
@@ -87,6 +102,10 @@ export class Lizard extends CharacterGameObject {
       hitDelay: ENEMY_LIZARD_ATTACK_HIT_DELAY,
       lungeSpeed: ENEMY_LIZARD_ATTACK_LUNGE_SPEED,
       lungeDuration: ENEMY_LIZARD_ATTACK_LUNGE_DURATION,
+    }));
+    this._stateMachine.addState(new SummonState(this, {
+      onSummon: () => this.#summonSnakes(),
+      duration: ENEMY_LIZARD_SUMMON_DURATION,
     }));
     this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);
   }
@@ -113,7 +132,8 @@ export class Lizard extends CharacterGameObject {
     if (
       currentStateName === CHARACTER_STATES.HURT_STATE ||
       currentStateName === CHARACTER_STATES.DEATH_STATE ||
-      currentStateName === CHARACTER_STATES.NATURAL_ATTACK_STATE
+      currentStateName === CHARACTER_STATES.NATURAL_ATTACK_STATE ||
+      currentStateName === CHARACTER_STATES.SUMMON_STATE
     ) {
       return;
     }
@@ -124,11 +144,38 @@ export class Lizard extends CharacterGameObject {
     }
 
     const distance = Phaser.Math.Distance.Between(this.x, this.y, player.x, player.y);
+
+    // Summon snakes when the player is near (wider range than the thrust) and the
+    // 20s cooldown has elapsed. Takes priority over the regular attack.
+    if (
+      this.#summonSnake !== undefined &&
+      distance <= ENEMY_LIZARD_SUMMON_RANGE &&
+      this.scene.time.now - this.#lastSummonAt >= ENEMY_LIZARD_SUMMON_COOLDOWN
+    ) {
+      this.controls.reset();
+      this.#faceTarget(player);
+      this.#lastSummonAt = this.scene.time.now;
+      this._stateMachine.setState(CHARACTER_STATES.SUMMON_STATE);
+      return;
+    }
+
     if (distance <= ENEMY_LIZARD_ATTACK_RANGE && this.scene.time.now - this.#lastAttackAt >= ENEMY_LIZARD_ATTACK_COOLDOWN) {
       this.controls.reset();
       this.#faceTarget(player);
       this.#lastAttackAt = this.scene.time.now;
       this._stateMachine.setState(CHARACTER_STATES.NATURAL_ATTACK_STATE);
+    }
+  }
+
+  #summonSnakes(): void {
+    // Epicenter burst at the lizard, then a snake (plus a small burst) at each
+    // evenly-spaced point around it.
+    playNoteBurst(this.scene, this.x, this.y, { count: 28, tint: 0x7dff8a });
+
+    const positions = computeSummonPositions({ x: this.x, y: this.y }, ENEMY_LIZARD_SUMMON_COUNT, ENEMY_LIZARD_SUMMON_RADIUS);
+    for (const position of positions) {
+      this.#summonSnake?.(position);
+      playNoteBurst(this.scene, position.x, position.y, { count: 12, tint: 0x7dff8a });
     }
   }
 
