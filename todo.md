@@ -1,68 +1,60 @@
-# Implementations ToDo
+# To-Do — The First Garden
 
-- Player extra rules
-  - no swimming when wearing armor (take damage if player is trying to swim in armor)
-  - take less damage when wearing armor
+> **Legend:** `[ ]` open · `[x]` done · `[~]` in progress · 🔒 blocked (needs asset) · ⚠️ needs acceptance criteria before it's actionable
+> **Docs:** game design → `GameMechanics.md` · state machines → `STATE_MACHINES.md` · new creatures → `ADDING_A_CREATURE.md` · testing/debug → `TESTING.md`
 
-- Alternative to bounce-movement
-  - Could be stay on biome, Could be hunt/chase/follow
-  - Bounce-move-state -> follow-move-state (intaeract w. animal)
-  - Prioriteze hirizontal movement, and move longer 
+## 🐞 Bugs
 
-- Implement deferred gameStates
-  - bossFightState
-  - victoryState
-  - eveState
-    - Present Companion dialog, Place, Make followMoveState
+- [ ] Fix Skeleton movement, attack & hit
+- [ ] Fix player ↔ mountain collision
+- [ ] Fix enemy attack animation
+- [ ] Fix spell tint: no forest-green before forest is unlocked (not even in the garden)
 
-- Fix Skeleton movement and attack & hit
+## 🎮 Boss arc — dependency chain, do in order
 
-- Fix colliding with mountain and player
+- [ ] Add **Lizardman** creature w/ dagger from the included sprite sheets — preload + animations (model on Player, not the critter pattern) → see `ADDING_A_CREATURE.md`
+- [ ] **bossFightState** — Lizardman boss with timed snake-minion waves (start with sound) → `STATE_MACHINES.md`
+- [ ] **victoryState** — triggered by boss end or animal progression maxed
+- [ ] **eveState** — companion dialog → place companion → hand off to follow-move-state *(depends on "follow-move-state" under Enemy AI)*
 
-- Add Lizard w. dagger from included sprite sheets
-  - Preload
-  - Animations (as Player)
+## 🧍 Player & combat
 
-- Implement boss; Lizard character with snake minions
-  
-- Sound efffect on all missig events  
-  - heath up
-  - animal progression up
-  - attack without hit
-  - enemy attack
+- [ ] Armor rules: no swimming in armor (take damage if the player tries); take less damage while wearing armor
+- [ ] Lunge toward the player on attack (add movement in the direction of the player)
 
-- Fix enemy attack anim
-- Add movement to attack (in direction of player)
+## 🤖 Enemy / animal AI
 
-- Triple ambient dust particles in Intro, Settings, Credits & Reflections scenes
+- [ ] **follow-move-state** to replace bounce-movement — options: stay-on-biome, hunt/chase/follow; prioritize horizontal movement and move longer *(also unblocks eveState)*
+- [ ] Enable animals to be pushed into the void and fall
+- [ ] Animal interaction on the `x` key for Bull & Piglet (Muhh & Oink)
 
-- Rework map to follow progression (avoid confusion)
-- Add counters to map: Time played, Tiles placed, decorations, blockings & Animals living, killed
-- Add red tint to map related til animals killed and lizard state
+## 🗺️ Map
 
-- Add animal interaction on x-key on Bull and piglet (Muhh & Oink)
+- [ ] Rework map to follow progression (avoid confusion) — ⚠️ define what the fixed map should look like
+- [ ] Add counters to map: time played, tiles placed, decorations, blockings, animals living & killed
+- [ ] Add red tint to map tied to animals killed and lizard state
 
-- Enable animal to be pushed into the void and fall
+## ✨ VFX / particles
 
-- New chest to start/stop music
-  Given by narrator at first animal game state
+- [ ] Rework spell particles: scale particle count with player power level; vary by target (decoration, blocking, chest, animal)
+- [ ] Add particles: place-garden, cloud-disperse, first-tile, player-placement
+- [ ] Triple ambient dust particles in Intro, Settings, Credits & Reflection scenes
 
-- easy/hard should change numbers
+## 🔊 Audio
 
-- dansk tekst er for lang
+- [ ] SFX for missing events: health-up, animal-progression-up, attack-without-hit, enemy-attack
+- [ ] New chest to start/stop music — given by the narrator at the first-animal game state
 
-- rework spell particles to scale number of particles with player power level
-- rework spell particles to change on decoration, blocking, chest & animals
-- fix spell tint, no forest green before unlocked, not even in garden
+## 🌍 Localization & balance
 
-- Add particels to place garden
-- Add particles to cloud disperse
-- Add particles to first tile
-- Add perticles to player placement
+- [ ] Danish text is too long — trim — ⚠️ specify which strings / which scene
+- [ ] easy/hard difficulty should change numbers — ⚠️ list target values (the `DIFFICULTY_HARD_*` constants in `common/config.ts`: speed, wait time, level-up divider)
 
-- In debug mode, trigger Game States by pressing 1-9 key
+## 🛠️ Tooling
 
-## Implementations that require new asserts
+- [ ] Debug mode: trigger game states by pressing keys `1`–`9` → `TESTING.md`
 
-- record voice-over for narrator. Nathan for english, Ulla, Taina or me for danish
-- Break a tile when an animal is killed
+## 🔒 Blocked — needs new assets
+
+- [ ] Record narrator voice-over — EN: Nathan; DA: Ulla, Taina, or me
+- [ ] Break-a-tile animation when an animal is killed
