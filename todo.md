@@ -17,16 +17,18 @@
 - [ ] **victoryState** — triggered by boss end or animal progression maxed
 - [ ] **eveState** — companion dialog → place companion → hand off to follow-move-state *(depends on "follow-move-state" under Enemy AI)*
 
+    define trigger (could be number of animals created)
+
 ## 🧍 Player & combat
 
 - [ ] Armor rules: no swimming in armor (take damage if the player tries); take less damage while wearing armor
-- [ ] Lunge toward the player on attack (add movement in the direction of the player)
+- [x] Lunge toward the player on attack (add movement in the direction of the player)
 
 ## 🤖 Enemy / animal AI
 
 - [ ] **follow-move-state** to replace bounce-movement — options: stay-on-biome, hunt/chase/follow; prioritize horizontal movement and move longer *(also unblocks eveState)*
 - [ ] Enable animals to be pushed into the void and fall
-- [ ] Animal interaction on the `x` key for Bull & Piglet (Muhh & Oink)
+- [ ] Animal interaction on the `x` key for Bull & Piglet (Muhh & Oink)— ⚠️ needs new sounds to work
 
 ## 🗺️ Map
 

@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { isArcadePhysicsBody } from '../../../../common/utils';
 import { CHARACTER_ANIMATIONS } from '../../../../common/assets';
 import { CharacterAnimation } from '../../../../common/types';
 import { CharacterGameObject } from '../../../../game-objects/common/character-game-object';
@@ -11,11 +12,15 @@ type NaturalAttackStateConfig = {
   range: number;
   hitDelay: number;
   nextState?: string;
+  // Brief lunge toward the target on attack. Omit lungeSpeed (or set to 0) to disable.
+  lungeSpeed?: number;
+  lungeDuration?: number;
 };
 
 export class NaturalAttackState extends BaseCharacterState {
   readonly #config: NaturalAttackStateConfig;
   #hitTimer?: Phaser.Time.TimerEvent;
+  #lungeTimer?: Phaser.Time.TimerEvent;
   #isActive = false;
 
   constructor(gameObject: CharacterGameObject, config: NaturalAttackStateConfig) {
@@ -25,7 +30,7 @@ export class NaturalAttackState extends BaseCharacterState {
 
   public onEnter(): void {
     this.#isActive = true;
-    this._resetObjectVelocity();
+    this.#startLunge();
 
     this.#hitTimer = this._gameObject.scene.time.delayedCall(this.#config.hitDelay, () => {
       this.#tryHitTarget();
@@ -43,6 +48,37 @@ export class NaturalAttackState extends BaseCharacterState {
     this.#isActive = false;
     this.#hitTimer?.remove(false);
     this.#hitTimer = undefined;
+    this.#lungeTimer?.remove(false);
+    this.#lungeTimer = undefined;
+    this._resetObjectVelocity();
+  }
+
+  // Lunge a few pixels toward the target, then stop while the rest of the attack plays out.
+  #startLunge(): void {
+    this._resetObjectVelocity();
+
+    const lungeSpeed = this.#config.lungeSpeed ?? 0;
+    const target = this.#config.getTarget();
+    if (lungeSpeed <= 0 || target === undefined) {
+      return;
+    }
+
+    const deltaX = target.x - this._gameObject.x;
+    const deltaY = target.y - this._gameObject.y;
+    const length = Math.hypot(deltaX, deltaY);
+    if (length === 0 || !isArcadePhysicsBody(this._gameObject.body)) {
+      return;
+    }
+
+    this._gameObject.body.velocity.x = (deltaX / length) * lungeSpeed;
+    this._gameObject.body.velocity.y = (deltaY / length) * lungeSpeed;
+
+    this.#lungeTimer = this._gameObject.scene.time.delayedCall(this.#config.lungeDuration ?? 100, () => {
+      if (!this.#isActive) {
+        return;
+      }
+      this._resetObjectVelocity();
+    });
   }
 
   #tryHitTarget(): void {
