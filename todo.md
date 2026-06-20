@@ -48,7 +48,7 @@
 
 ## 🌍 Localization & balance
 
-- [ ] Danish text is too long — trim — ⚠️ specify which strings / which scene
+- [x] Danish text is too long — trim —
 - [ ] easy/hard difficulty should change numbers — ⚠️ list target values (the `DIFFICULTY_HARD_*` constants in `common/config.ts`: speed, wait time, level-up divider)
 
 ## 🛠️ Tooling
