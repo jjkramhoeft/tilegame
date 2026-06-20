@@ -16,7 +16,7 @@ Phaser 4 + TypeScript, built with Vite. ~107 `.ts` files under `src/`. No test f
 | --- | --- |
 | `scenes/` | The 8 scenes above + `debug/` scenes (blocking, chests, enemies). `scene-keys.ts` holds scene identifiers. |
 | `ground/` | Dynamic tilemap world. `earth.ts` (the map + tile placement), `creator.ts`, `tile.ts`, `blocking-boxes.ts`. |
-| `game-objects/` | Entities: `player/`, `enemies/` (12 animals/enemies), `weapons/`, `objects/` (chest). Share `common/character-game-object.ts`. |
+| `game-objects/` | Entities: `player/`, `enemies/` (12 animals/enemies), `weapons/`, `objects/` (chest). Share `common/character-game-object.ts`. See `ADDING_A_CREATURE.md` to add a new animal/enemy. |
 | `components/game-object/` | Composable entity behaviors (life, weapon, animation, direction, speed, spell-casting, collision, …). |
 | `components/state-machine/` | Generic `state-machine.ts` + two FSMs under `states/` (see below). |
 | `spellcasting/` | `spell-casting-service.ts` — tile placement with biome-based unlock rules + cast VFX. |
