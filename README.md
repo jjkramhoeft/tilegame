@@ -73,6 +73,8 @@ This is the fastest way to exercise creatures, chests, and the map without playi
 
 **Tests.** `npm test` runs the Vitest unit suite (fast, no browser); `npm run test:e2e` runs a Playwright smoke test that boots the game via `?debug=1` and checks it renders, moves, and is error-free. See [`TESTING.md`](TESTING.md). Prefer a unit test for logic changes over a manual playthrough. You can also just hit `?debug=1` in the dev server to deep-link into a seeded world.
 
+> **Note for AI agents:** don't auto-launch the editor/agent browser preview to verify changes — the headless preview throttles `requestAnimationFrame` and stalls Phaser's loader/timers, so the game often never finishes booting there. Attempt a live preview only when explicitly asked; otherwise verify with a build plus the unit/e2e tests. See [`TESTING.md`](TESTING.md).
+
 ## Deploying to Production
 
 Run `npm run build`; the bundle and assets are written to `dist`. Deploy the **entire** contents of `dist` to any static web server.

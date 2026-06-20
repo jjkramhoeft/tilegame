@@ -71,6 +71,13 @@ export class Companion extends CharacterGameObject {
     this.body?.setSize(this.body.width * 0.43, this.body.height * 0.45, true);
     this.body?.setOffset(this.body.offset.x+15, this.body.offset.y + 30);
 
+    // The companion only ever runs IdleState, which (unlike the move/bounce
+    // states) never assigns depth, so set it once here using the same
+    // feet-based convention as the player's move state (`y + 36`). Without
+    // this it would sit at the default depth 0 and render behind the player
+    // and blocking sprites.
+    this.depth = config.position.y + 36;
+
     // Placement-only: idle is the only behaviour for now.
     this._stateMachine.addState(new IdleState(this));
     this._stateMachine.setState(CHARACTER_STATES.IDLE_STATE);

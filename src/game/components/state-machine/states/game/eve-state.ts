@@ -27,9 +27,9 @@ export class EveState extends BaseGameState {
     this._scene.lockPlayerMovement();
     this._pause(this.defaultWaitTime, () => {
       this._showNarrator('narrator.eve.alone', () => {
-        this._scene.spawnCompanion();
         this._pause(this.defaultWaitTime, () => {
           this._showNarrator('narrator.eve.companion', () => {
+            this._scene.spawnCompanion();
             this._scene.unlockPlayerMovement();
             this._transitionTo(GAME_STATES.REGULAR);
           });

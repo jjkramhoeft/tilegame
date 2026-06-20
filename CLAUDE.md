@@ -33,6 +33,8 @@ See `STATE_MACHINES.md` for how the FSM engine works, how the two machines are w
 
 **Testing:** `npm test` (Vitest unit tests for pure logic) and `npm run test:e2e` (Playwright smoke test that boots the game via `?debug=1`). See `TESTING.md` — prefer adding a unit test for logic changes over manual playthrough.
 
+**Do not auto-launch the browser preview.** Only start a dev-server browser preview (the `preview_*` tools / in-editor preview) when the user explicitly asks for it. The headless preview throttles `requestAnimationFrame`, which stalls Phaser's asset loader and all time-based logic (tile placement, narrator pauses), so the game often never reaches a verifiable state there. Default to a clean build (`npm run build-nolog`) plus unit/e2e tests; leave live visual checks to the user unless they request otherwise.
+
 `Lizardman` and `Shark` are designed (`GameMechanics.md`) but not yet implemented.
 
 ### Tile Map

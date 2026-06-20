@@ -34,6 +34,7 @@ import { AnimalSpawnService } from '../spawning/animal-spawn-service';
 import { ENABLE_LOGGING, PLAYER_START_MAX_HEALTH, PLAYER_START_HEALTH } from '../common/config';
 import { ASSET_KEYS, SPIN_HUD_ANIMATIONS } from '../common/assets';
 import { playLevelUpVfx } from '../game-objects/level-up-vfx';
+import { playNoteBurst } from '../spellcasting/note-burst-vfx';
 
 export class GameScene extends Phaser.Scene {
 
@@ -386,10 +387,45 @@ export class GameScene extends Phaser.Scene {
         const tileSize = this.#earth.getTileSize();
         this.#companion = new Companion({
             scene: this,
-            position: { x: this.#player.x + tileSize, y: this.#player.y },
+            position: { x: this.#player.x - tileSize, y: this.#player.y },
         });
         this.#companion.enableObject();
         this.#critterGroup?.add(this.#companion);
+
+        // Celebratory golden-note burst as the companion appears, matching the
+        // player-placement burst in StartState. Rendered just above the
+        // companion so the glyphs read on top of it.
+        playNoteBurst(this, this.#companion.x, this.#companion.y, {
+            count: 30,
+            depth: this.#companion.depth + 1,
+        });
+
+        // Same staggered magic chime as the player introduction in StartState.
+        this.#playCompanionIntroSound();
+    }
+
+    /**
+     * Staggered ascending magic chime played when the companion is introduced,
+     * mirroring StartState's player-introduction sound. Uses a scene timer
+     * (`time.delayedCall`) rather than a game-state `_pause`, since this runs
+     * from the scene.
+     */
+    #playCompanionIntroSound(): void {
+        const SOUND_EFFECT_COUNT = 7;
+        const SOUND_EFFECT_STAGGER_MS = 150;
+        const SOUND_EFFECT_DURATION = 1.5;
+        const SOUND_EFFECT_VOLUME = 1.0;
+        for (let markerIndex = 1; markerIndex <= SOUND_EFFECT_COUNT; markerIndex += 1) {
+            this.time.delayedCall((markerIndex - 1) * SOUND_EFFECT_STAGGER_MS, () => {
+                this.sound.play(ASSET_KEYS.MAGIC_AUDIO_SPRITE, {
+                    name: `spell-cast-${markerIndex}`,
+                    start: (markerIndex - 1) * 2,
+                    duration: SOUND_EFFECT_DURATION,
+                    volume: SOUND_EFFECT_VOLUME,
+                    config: {},
+                });
+            });
+        }
     }
 
     #openMap(): void {

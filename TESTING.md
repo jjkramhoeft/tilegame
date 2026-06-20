@@ -39,6 +39,12 @@ The current smoke test (`smoke.spec.ts`) navigates to `/?debug=1`, waits for the
 
 **Extending it:** add cases that cast a tile (`C`) and assert `__gameData.data.tilesPlaced` / `unlockedSpellCasting` grew, open a chest, or screenshot a specific biome. Because debug mode seeds everything, you can reach states that would take minutes to reach by hand.
 
+## Browser preview — only on request
+
+Do **not** auto-launch a dev-server browser preview (the editor/agent `preview_*` tools) to verify changes. The headless preview throttles `requestAnimationFrame`, which stalls Phaser's asset loader part-way through boot and freezes all time-based logic (garden tile placement, narrator pauses), so the game frequently never reaches the state you wanted to check.
+
+Default verification is a clean build (`npm run build-nolog`) plus the unit and e2e suites above. Reserve the live browser preview for when the user explicitly asks for a visual check — otherwise leave the in-app visual confirmation to them.
+
 ## Not yet set up
 
 No CI workflow runs these automatically.
