@@ -41,4 +41,4 @@ The current smoke test (`smoke.spec.ts`) navigates to `/?debug=1`, waits for the
 
 ## Not yet set up
 
-No CI workflow runs these automatically. A GitHub Action could run `npm test` on every push and `npm run test:e2e` on a schedule — say the word and I'll add one.
+No CI workflow runs these automatically.

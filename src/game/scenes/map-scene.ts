@@ -82,7 +82,7 @@ export class MapScene extends Phaser.Scene {
     this.#renderCounters();
 
     this.add
-      .text(MAP_WIDTH / 2, MAP_HEIGHT - 60, "Press 'x' or 'm' to return", DEFAULT_UI_HEADING_STYLE)
+      .text(MAP_WIDTH / 2, MAP_HEIGHT - 60, getText('map.return'), DEFAULT_UI_HEADING_STYLE)
       .setOrigin(0.5);
 
     if (!this.input.keyboard) { console.warn('[MapScene] keyboard plugin missing'); return; }

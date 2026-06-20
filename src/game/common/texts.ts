@@ -452,6 +452,10 @@ const TEXTS = {
         en: 'Time played',
         da: 'Tid spillet',
     },
+    'map.return': {
+        en: "Press 'x' or 'm' to return",
+        da: "Tryk 'x' eller 'm' for at vende tilbage",
+    },
 } as const;
 
 export type TextKey = keyof typeof TEXTS;
