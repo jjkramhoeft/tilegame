@@ -6,6 +6,7 @@ import { GameDataManager } from '../../../../common/game-data-manager';
 import { DIFFICULTY_HARD_WAIT_FACTOR, ENABLE_LOGGING } from '../../../../common/config';
 import { ASSET_KEYS } from '../../../../common/assets';
 import { DIFFICULTY } from '../../../../common/common';
+import { playNoteBurst } from '../../../../spellcasting/note-burst-vfx';
 
 const START_CLOUD_COUNT = 35;
 const START_CLOUD_DEPTH = 1000;
@@ -151,6 +152,9 @@ export class StartState extends BaseGameState {
     originVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
     originVFX.playReverse(ASSET_KEYS.CAST_ORIGIN);
     originVFX.on('animationcomplete', () => { originVFX.destroy(); });
+
+    // first-tile: golden notes burst out as the very first tile appears.
+    playNoteBurst(this._scene, center.x, center.y, { count: 24, depth: START_CLOUD_DEPTH + 1 });
   }
 
   #playVisualEffectAtCenter2(): void {
@@ -162,6 +166,9 @@ export class StartState extends BaseGameState {
     impactVFX.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
     impactVFX.play(ASSET_KEYS.CAST_TARGET_A);
     impactVFX.on('animationcomplete', () => { impactVFX.destroy(); });
+
+    // player-placement: golden notes burst outward as the player appears.
+    playNoteBurst(this._scene, center.x, center.y, { count: 30, depth: START_CLOUD_DEPTH + 1 });
   }
 
   #startCloudDrift(cloud: Phaser.GameObjects.Image): void {
@@ -203,6 +210,9 @@ export class StartState extends BaseGameState {
     const center = this._scene.getPlayerStartWorldPosition();
     const camera = this._scene.cameras.main;
     const escapeDistance = Math.max(camera.width, camera.height) + START_CLOUD_ESCAPE_PADDING;
+
+    // cloud-disperse: golden notes explode from the center as the clouds blow outward.
+    playNoteBurst(this._scene, center.x, center.y, { count: 40, speedMax: 240, depth: START_CLOUD_DEPTH + 1 });
 
     this.#clouds?.getChildren().forEach((child) => {
       const cloud = child as Phaser.GameObjects.Image;

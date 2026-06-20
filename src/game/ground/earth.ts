@@ -7,6 +7,7 @@ import { DecideBorder, PickDecoration, PickBlocking, PickFloating } from './crea
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
 import { CUSTOM_EVENTS, EVENT_BUS, type TilePlacedPayload } from '../common/event-bus';
 import { GameDataManager } from '../common/game-data-manager';
+import { playNoteBurst } from '../spellcasting/note-burst-vfx';
 
 export type ChestPlacementHandler = (position: Position, chestNumber: number) => void;
 
@@ -843,7 +844,17 @@ export class Earth {
 
         this.createBlockingGeometryBody(first.x, first.y, 42);// The big tree trunk blocking. (Currently hardcoded at nor ready for Save Game). ToDo: Fix blocking bigTree.
 
-        const placeTileAt = (tile: Tile): void => { this.AddTile(tile); };
+        const halfTile = this.tileSize / 2;
+        const placeTileAt = (tile: Tile): void => {
+            this.AddTile(tile);
+            // place-garden: a few golden notes sparkle out as each tile appears.
+            playNoteBurst(
+                this.scene,
+                tile.tileX * this.tileSize + halfTile,
+                tile.tileY * this.tileSize + halfTile,
+                { count: 2, speedMax: 90 },
+            );
+        };
 
         const spawnBigTree = (): void => {
             this.scene.sound.play(ASSET_KEYS.WHOOSH);
@@ -852,6 +863,14 @@ export class Earth {
                 .setOrigin(0.25, 0.85)
                 .setDepth(first.y * this.tileSize + 32)
                 .play('big-tree-growth', true);
+
+            // big-tree: a grand golden note burst crowns the garden's centerpiece.
+            playNoteBurst(
+                this.scene,
+                first.x * this.tileSize + halfTile,
+                first.y * this.tileSize + halfTile,
+                { count: 60, speedMax: 260, lifespanMax: 1400 },
+            );
 
             onComplete?.();
         };

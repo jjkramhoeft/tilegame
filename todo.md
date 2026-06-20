@@ -38,7 +38,7 @@
 ## ✨ VFX / particles
 
 - [ ] Rework spell particles: scale particle count with player power level; vary by target (decoration, blocking, chest, animal)
-- [ ] Add particles: place-garden, cloud-disperse, first-tile, player-placement
+- [x] Add particles: place-garden, cloud-disperse, first-tile, player-placement
 - [ ] Triple ambient dust particles in Intro, Settings, Credits & Reflection scenes 
 
 ## 🔊 Audio
