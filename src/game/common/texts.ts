@@ -272,6 +272,14 @@ const TEXTS = {
         en: 'You are not alone! Let life multiply...',
         da: 'Du er ikke alene! Lad livet formere sig...',
     },
+    'narrator.eve.alone': {
+        en: 'It is not good to be alone...',
+        da: 'Det er ikke godt at være alene...',
+    },
+    'narrator.eve.companion': {
+        en: '...Here is a companion fitting for you.',
+        da: '...Her er en ledsager der passer til dig.',
+    },
     'narrator.gameOver': {
         en: 'Game Over...',
         da: 'Spillet er slut...',

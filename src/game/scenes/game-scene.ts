@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { Player } from '../game-objects/player/player';
+import { Companion } from '../game-objects/companion/companion';
 import { KeyboardComponent } from '../components/input/keyboard-component';
 import { Earth } from '../ground/earth';
 import { WEAPON, GEAR, DIRECTION, BIOME, DIFFICULTY, CASTING_UNLOCKS } from '../common/common';
@@ -48,6 +49,7 @@ export class GameScene extends Phaser.Scene {
     #player!: Player;
     #enemyGroup?: Phaser.GameObjects.Group;
     #critterGroup?: Phaser.GameObjects.Group;
+    #companion?: Companion;
     #earth!: Earth;
     #playerStartWorldPosition = { x: 32035, y: 32020 };
     #chestJJKGroup!: Phaser.GameObjects.Group;
@@ -142,6 +144,7 @@ export class GameScene extends Phaser.Scene {
         this.#removeAllColliders();
         this.#enemyGroup = undefined;
         this.#critterGroup = undefined;
+        this.#companion = undefined;
         this.#isGameplayReady = false;
     }
 
@@ -368,6 +371,25 @@ export class GameScene extends Phaser.Scene {
 
     public lockPlayerMovement(): void {
         this.#controls.isMovementLocked = true;
+    }
+
+    /**
+     * Spawn the companion (EveState) one tile beside the player. Added to the
+     * critter group so it reuses the friendly bump collider and bounces against
+     * blocking geometry — no extra collider wiring needed. The critter group's
+     * per-frame update drives its idle animation.
+     */
+    public spawnCompanion(): void {
+        if (this.#companion) {
+            return;
+        }
+        const tileSize = this.#earth.getTileSize();
+        this.#companion = new Companion({
+            scene: this,
+            position: { x: this.#player.x + tileSize, y: this.#player.y },
+        });
+        this.#companion.enableObject();
+        this.#critterGroup?.add(this.#companion);
     }
 
     #openMap(): void {
