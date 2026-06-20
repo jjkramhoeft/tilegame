@@ -69,7 +69,7 @@ export class Companion extends CharacterGameObject {
 
     // Match the player's hitbox sizing/offset so the companion lines up visually.
     this.body?.setSize(this.body.width * 0.43, this.body.height * 0.45, true);
-    this.body?.setOffset(this.body.offset.x + 1, this.body.offset.y + 14);
+    this.body?.setOffset(this.body.offset.x+15, this.body.offset.y + 30);
 
     // Placement-only: idle is the only behaviour for now.
     this._stateMachine.addState(new IdleState(this));

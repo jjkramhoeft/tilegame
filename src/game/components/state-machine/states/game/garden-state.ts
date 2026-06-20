@@ -47,9 +47,15 @@ export class GardenState extends BaseGameState {
       this._pause(this.defaultWaitTime, () => {
         this._scene.placeFruitChestNearBigTree();
         this._pause(this.defaultWaitTime, () => {
-          // Transition to the regular play state.
+          // Transition to the regular play state. Debug-play drops straight into
+          // EveState instead, so late-game states can be tested without first
+          // spawning enough animals to trip the real eve trigger. EveState ends
+          // by transitioning back to RegularState, so normal play resumes after.
           this._scene.unlockPlayerMovement();
-          this._transitionTo(GAME_STATES.REGULAR);
+          const next = GameDataManager.instance.data.difficulty === DIFFICULTY.DEBUG_PLAY
+            ? GAME_STATES.EVE
+            : GAME_STATES.REGULAR;
+          this._transitionTo(next);
         });
       });
     });
