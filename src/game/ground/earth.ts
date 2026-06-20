@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { Tile } from './tile';
 import { CastingUnlocks, Position, TargetInfo } from '../common/types';
-import { BASE_DEPTH, CASTING_UNLOCKS, BIOME, BLOCKING_TILE_DEPTH, BORDER_DEPTH, CRYSTAL_GLIMTS_DEPTH, DECORATION_DEPTH, FLOATING_DEPTH, LAVA_DEPTH, VOID_ANIM_DEPTH, VOID_SOLID_DEPTH, WATER_DEPTH } from '../common/common';
+import { BASE_DEPTH, CASTING_UNLOCKS, BIOME, BLOCKING_TILE_DEPTH, BORDER_DEPTH, CRYSTAL_GLINTS_DEPTH, DECORATION_DEPTH, FLOATING_DEPTH, LAVA_DEPTH, VOID_ANIM_DEPTH, VOID_SOLID_DEPTH, WATER_DEPTH } from '../common/common';
 import { ASSET_KEYS } from '../common/assets';
 import { DecideBorder, PickDecoration, PickBlocking, PickFloating } from './creator';
 import { TileCollisionObject, getBlockingBoxesData } from './blocking-boxes';
@@ -599,7 +599,7 @@ export class Earth {
                         .sprite(tile.tileX * this.tileSize + this.tileSize / 2, tile.tileY * this.tileSize + this.tileSize / 2, ASSET_KEYS.TILESET_ANIMATED)
                         .setOrigin(0.5, 0.5)
                         .setAngle(Phaser.Math.RND.pick([0, 90, 180, 270]))
-                        .setDepth(CRYSTAL_GLIMTS_DEPTH)
+                        .setDepth(CRYSTAL_GLINTS_DEPTH)
                         .play('crystal-flow');
                 }
             } else if (tile.biome === BIOME.VOID) {

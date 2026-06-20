@@ -139,7 +139,7 @@ const audioAssets: readonly AudioAsset[] = [
   { key: ASSET_KEYS.UI_UP, path: 'assets/sound/ui_up.wav' },
   { key: ASSET_KEYS.UI_DOWN, path: 'assets/sound/ui_down.wav' },
   { key: ASSET_KEYS.UI_SELECT, path: 'assets/sound/ui_select.wav' },
-  { key: ASSET_KEYS.SUCCESS_1, path: 'assets/sound/sucess1.mp3' },
+  { key: ASSET_KEYS.SUCCESS_1, path: 'assets/sound/success1.mp3' },
   { key: ASSET_KEYS.NO_HIT, path: 'assets/sound/no-hit.wav' },
   { key: ASSET_KEYS.BUMP, path: 'assets/sound/bump.wav' },
   { key: ASSET_KEYS.POWERUP, path: 'assets/sound/powerup.mp3' },

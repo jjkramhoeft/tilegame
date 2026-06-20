@@ -87,7 +87,7 @@ export const FLOATING_DEPTH = 9999999;
 // BLOCKING_OBJECT_DEPTH MIN:1 MAX:9999998 (depending on y-axis value)
 export const BLOCKING_TILE_DEPTH = 0;
 export const DECORATION_DEPTH = -10;
-export const CRYSTAL_GLIMTS_DEPTH = -12;
+export const CRYSTAL_GLINTS_DEPTH = -12;
 export const WATER_DEPTH = -14;
 export const LAVA_DEPTH = -16;
 export const BORDER_DEPTH = -18;

@@ -91,7 +91,7 @@ From lowest to highest
   
   -16 Lava animation depth (LAVA_DEPTH)  
   -14 Water animation depth (WATER_DEPTH)  
-  -12 Crystal twinkling animation depth (CRYSTAL_GLIMTS_DEPTH)
+  -12 Crystal twinkling animation depth (CRYSTAL_GLINTS_DEPTH)
 - -10 Decoration Layer (DECORATION_DEPTH)
 - 0 Blocking Layer (BLOCKING_TILE_DEPTH)
 
@@ -347,7 +347,7 @@ The game has a page/scene with points to talk about to encourage thinking about 
 - Up [ui_up.wav]
 - Down [ui_down.wav]
 - Select [ui_select.wav]
-- Narrator (game state dialog shown) [sucess1.mp3]
+- Narrator (game state dialog shown) [success1.mp3]
 - open chest [chest.mp3]
 - close chest [chest2.mp3]
 - game over by falling [game-over.mp3]*
@@ -385,5 +385,5 @@ The game has a page/scene with points to talk about to encourage thinking about 
 - (max) health up [levelup2.mp3]*+
 - progression up (animal spawn) [powerup.mp3]*
 - progression down (animal died) [duii-laser.mp3]*
-- new unlock -> game state dialog shown [sucess1.mp3]*
+- new unlock -> game state dialog shown [success1.mp3]*
   
