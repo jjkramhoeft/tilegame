@@ -31,6 +31,8 @@ Phaser 4 + TypeScript, built with Vite. ~107 `.ts` files under `src/`. No test f
 
 See `STATE_MACHINES.md` for how the FSM engine works, how the two machines are wired, and how to add a state.
 
+**Testing:** `npm test` (Vitest unit tests for pure logic) and `npm run test:e2e` (Playwright smoke test that boots the game via `?debug=1`). See `TESTING.md` — prefer adding a unit test for logic changes over manual playthrough.
+
 `Lizardman` and `Shark` are designed (`GameMechanics.md`) but not yet implemented.
 
 ### Tile Map

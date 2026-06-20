@@ -10,6 +10,7 @@ A top-down RPG built with **Phaser 4** and **TypeScript**, where the player *cre
 | [`CLAUDE.md`](CLAUDE.md) | Architecture overview + module map (also loaded by Claude Code each session). |
 | [`STATE_MACHINES.md`](STATE_MACHINES.md) | How the FSM engine works and how the character / game-progression machines are wired. |
 | [`ADDING_A_CREATURE.md`](ADDING_A_CREATURE.md) | Step-by-step recipe for adding a new animal or enemy. |
+| [`TESTING.md`](TESTING.md) | Unit (Vitest) and smoke (Playwright) tests, and the debug-boot hooks. |
 | [`todo.md`](todo.md) | Working backlog. |
 
 ## Getting Started
@@ -70,7 +71,7 @@ This is the fastest way to exercise creatures, chests, and the map without playi
 
 > Planned (see [`todo.md`](todo.md)): jumping directly to a game state with the `1`–`9` keys in debug mode. Not yet implemented.
 
-**Tests.** There is currently no automated test framework. Verify changes by running `npm run dev` and exercising the relevant path — debug mode covers most of it.
+**Tests.** `npm test` runs the Vitest unit suite (fast, no browser); `npm run test:e2e` runs a Playwright smoke test that boots the game via `?debug=1` and checks it renders, moves, and is error-free. See [`TESTING.md`](TESTING.md). Prefer a unit test for logic changes over a manual playthrough. You can also just hit `?debug=1` in the dev server to deep-link into a seeded world.
 
 ## Deploying to Production
 
