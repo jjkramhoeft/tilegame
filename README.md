@@ -59,6 +59,19 @@ public/style.css        Global layout styles
 
 See [`CLAUDE.md`](CLAUDE.md) for a per-module breakdown and how the game boots.
 
+## Development & Debugging
+
+**Debug mode.** In the **Settings** scene, set Difficulty to **Debug**. This flips one switch that:
+
+- **Seeds the world immediately** — `GameScene` skips the narrated progression (`GameProgression.start()` is never called) and runs `#startDebugGameplay()`, which places the starting tile and uses the helpers in [`src/game/scenes/debug/`](src/game/scenes/debug) (`debug-chests`, `debug-blocking`, `debug-enemies`) to spawn all chests, sample blocking tiles, every enemy/critter, and void markers, then unlocks the map.
+- **Enables verbose logging** — turns on `ENABLE_LOGGING` (`src/game/common/config.ts`), which surfaces state-machine transitions in the console.
+
+This is the fastest way to exercise creatures, chests, and the map without playing through the full progression.
+
+> Planned (see [`todo.md`](todo.md)): jumping directly to a game state with the `1`–`9` keys in debug mode. Not yet implemented.
+
+**Tests.** There is currently no automated test framework. Verify changes by running `npm run dev` and exercising the relevant path — debug mode covers most of it.
+
 ## Deploying to Production
 
 Run `npm run build`; the bundle and assets are written to `dist`. Deploy the **entire** contents of `dist` to any static web server.
