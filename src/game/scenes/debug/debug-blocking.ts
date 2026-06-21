@@ -113,6 +113,12 @@ export function setupDebugBlocking(
     earth.AddTile(new Tile({tilenumber: { x: x0+2, y: y0+22 }, biome: 2, blocking:87   }));    
     earth.AddTile(new Tile({tilenumber: { x: x0+4, y: y0+22 }, biome: 2, blocking:88   }));    
     earth.AddTile(new Tile({tilenumber: { x: x0+6, y: y0+22 }, biome: 2, blocking:89   }));
+    earth.AddTile(new Tile({tilenumber: { x: x0+8, y: y0+22 }, biome: 9, blocking:1   }));// Mountain
+    earth.AddTile(new Tile({tilenumber: { x: x0+10, y: y0+22 }, biome: 9, blocking:2   }));
+    earth.AddTile(new Tile({tilenumber: { x: x0+12, y: y0+22 }, biome: 9, blocking:3   }));
+    earth.AddTile(new Tile({tilenumber: { x: x0+14, y: y0+22 }, biome: 9, blocking:4   }));
+
+    earth.AddTile(new Tile({tilenumber: { x: x0, y: y0+24 }, biome: 9, blocking:5   }));
 
     //Rock path
     let debugPathTile: Position[] = [];
@@ -186,7 +192,21 @@ export function setupDebugBlocking(
         debugPathTile.push({ x: dx+x0, y: y0+22});
     }
     debugPathTile.forEach((p) => {
-        const tile = new Tile({tilenumber: { x: p.x, y: p.y },biome: 1});
+        const tile = new Tile({tilenumber: { x: p.x, y: p.y },biome: 2});
+        earth.AddTile(tile);
+    });
+    // Mountain path
+    debugPathTile = [];
+    for (let dx = -1; dx < 16; dx++) {
+        debugPathTile.push({ x: dx+x0, y: y0+25 });
+        debugPathTile.push({ x: dx+x0, y: y0+27 });
+    }
+    for (let dx = -1; dx < 16; dx+=2) {
+        debugPathTile.push({ x: dx+x0, y: y0+24});
+        debugPathTile.push({ x: dx+x0, y: y0+26});
+    }
+    debugPathTile.forEach((p) => {
+        const tile = new Tile({tilenumber: { x: p.x, y: p.y },biome: 9});
         earth.AddTile(tile);
     });
 
