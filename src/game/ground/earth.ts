@@ -13,6 +13,11 @@ export type ChestPlacementHandler = (position: Position, chestNumber: number) =>
 
 const CREATURE_BLOCKING_BIOMES: readonly BIOME[] = [BIOME.VOID, BIOME.WATER, BIOME.LAVA, BIOME.MOUNTAIN];
 
+// Mountains fill the whole tile and have no per-shape collision boxes in
+// getBlockingBoxesData(), so they use a single near-full-tile footprint (inset
+// slightly so the player can still skirt the edges).
+const MOUNTAIN_BLOCKING_GEOMETRY: TileCollisionObject = { x: 4, y: 10, width: 56, height: 52 };
+
 function isCreatureBlockingBiome(biome: BIOME): boolean {
     return CREATURE_BLOCKING_BIOMES.includes(biome);
 }
@@ -632,6 +637,10 @@ export class Earth {
                 const worldY = tile.tileY * 64;
                 const sprite = this.scene.add.image(worldX, worldY, ASSET_KEYS.TILESET_MOUNTAIN, tile.blocking+5).setOrigin(0, 0);
                 sprite.setDepth(worldY + 64);
+                // Mountains are impassable: give them a solid body in the blocking
+                // geometry group so the player and companion are stopped (enemies and
+                // critters are already blocked via the creature-blocking layer).
+                this.createBlockingGeometryBody(tile.tileX, tile.tileY, tile.blocking, MOUNTAIN_BLOCKING_GEOMETRY);
             } else {
                 if (tile.blocking > 91) {
                     console.warn(`Blocking tile index ${tile.blocking} is out of expected range!`);
@@ -927,8 +936,8 @@ export class Earth {
         this.creatureBlockingLayer.removeTileAt(tile.tileX, tile.tileY, true, true);
     }
 
-    private createBlockingGeometryBody(tileX: number, tileY: number, tileIndex: number): void {
-        const geometry = this.blockingData.get(tileIndex) ?? { x: 32, y: 32, width: 16, height: 16 };
+    private createBlockingGeometryBody(tileX: number, tileY: number, tileIndex: number, geometryOverride?: TileCollisionObject): void {
+        const geometry = geometryOverride ?? this.blockingData.get(tileIndex) ?? { x: 32, y: 32, width: 16, height: 16 };
         const worldX = tileX * this.tileSize + geometry.x + geometry.width / 2;
         const worldY = tileY * this.tileSize + geometry.y + geometry.height / 2;
 
