@@ -446,12 +446,27 @@ export class UiScene extends Phaser.Scene {
   }
 
   #syncLivingCreaturesMeter(currentLivingCreatures: number): void {
+    const meterValue = this.#getLivingCreaturesMeterValue(currentLivingCreatures);
+    this.#ensureProgressMeterCapacity(meterValue);
     this.#syncMeter(
       this.#progress,
-      this.#getLivingCreaturesMeterValue(currentLivingCreatures),
+      meterValue,
       PROGRESS_TEXTURE_FRAME.FULL,
       PROGRESS_TEXTURE_FRAME.NONE,
     );
+  }
+
+  #ensureProgressMeterCapacity(meterValue: number): void {
+    const visible = this.#progress[0]?.visible ?? true;
+    for (let index = this.#progress.length; index < meterValue; index += 1) {
+      const position = this.#getMeterSpritePosition(HUD_PROGRESS_X, index);
+      const frame = meterValue > index ? PROGRESS_TEXTURE_FRAME.FULL : PROGRESS_TEXTURE_FRAME.NONE;
+      const sprite = this.add.sprite(position.x, position.y, ASSET_KEYS.HUD_ICONS, frame)
+        .setOrigin(0)
+        .setVisible(visible);
+      this.#progress.push(sprite);
+      this.#hudContainer.add(sprite);
+    }
   }
 
   #getLivingCreaturesMeterValue(currentLivingCreatures: number): number {
