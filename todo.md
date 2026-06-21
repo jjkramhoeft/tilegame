@@ -5,7 +5,6 @@
 
 ## 🐞 Bugs
 
-- [ ] Fix player ↔ mountain collision
 - [ ] Fix spell tint: no forest-green before forest is unlocked (not even in the garden)
 
 ## 🧍 Player & combat

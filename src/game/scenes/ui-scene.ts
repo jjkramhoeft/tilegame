@@ -470,7 +470,7 @@ export class UiScene extends Phaser.Scene {
   }
 
   #getLivingCreaturesMeterValue(currentLivingCreatures: number): number {
-    return Math.min(currentLivingCreatures, HUD_METER_SPRITE_COUNT) * 2;
+    return Math.min(currentLivingCreatures, HUD_METER_SPRITE_COUNT);
   }
 
   #getMeterSpritePosition(startX: number, index: number, horizontalSpacing: number = 0): { x: number; y: number } {
